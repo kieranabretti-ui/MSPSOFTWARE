@@ -72,7 +72,11 @@ export default function AppLayout() {
   const { workspace, busy, backend, isDemoSession } = useStore()
   const [open, setOpen] = useState(false)
   const loc = useLocation()
-  useEffect(() => window.scrollTo(0, 0), [loc.pathname])
+  // Block body: newer browsers return a Promise from scrollTo, and React would
+  // call an effect's return value as its cleanup.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [loc.pathname])
 
   return (
     <div className="min-h-screen lg:pl-60 print:pl-0">
