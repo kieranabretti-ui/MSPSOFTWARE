@@ -22,9 +22,10 @@ const until = async (fn, msg, ms = 5000) => {
 }
 
 const browser = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {})
+console.log(`browser: ${browser.version()}`)
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, acceptDownloads: true })
 const page = await ctx.newPage()
-page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`))
+page.on('pageerror', (e) => errors.push(`pageerror: ${e.stack ?? e.message}`))
 page.on('console', (m) => m.type() === 'error' && !/fonts\.g/.test(m.text()) && errors.push(`console: ${m.text()}`))
 const shot = (n) => page.screenshot({ path: `${SHOTS}/${n}.png`, fullPage: true })
 
