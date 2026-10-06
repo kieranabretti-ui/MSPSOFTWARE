@@ -27,15 +27,15 @@ export function AuthShell({
 }) {
   return (
     <div className="min-h-screen bg-canvas lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,30rem)]">
-      <aside className="hidden lg:flex lg:flex-col lg:justify-between lg:gap-12 lg:border-r lg:border-line lg:px-12 lg:py-11 xl:px-16">
-        <Link to="/" className="w-fit rounded-sm">
-          <Logo />
-        </Link>
-        <div className="max-w-[34rem]">
-          <p className="text-h1 text-balance text-ink">{BRAND.tagline}</p>
+      <aside className="hidden lg:flex lg:flex-col lg:items-center lg:justify-center lg:border-r lg:border-line lg:px-12 lg:py-14">
+        <div className="w-full max-w-[30rem]">
+          <Link to="/" className="inline-flex w-fit rounded-sm">
+            <Logo />
+          </Link>
+          <p className="mt-10 text-h1 text-balance text-ink">{BRAND.tagline}</p>
           <p className="mt-4 max-w-[58ch] text-body text-ink-3">{asideBody}</p>
+          <div className="mt-10">{aside}</div>
         </div>
-        <div className="max-w-[34rem]">{aside}</div>
       </aside>
 
       <main className="flex min-h-screen flex-col bg-surface lg:min-h-0">
@@ -76,18 +76,18 @@ const DEMO = { total: 4281, billed: 143220, findings: 40 } as const
 // One real proof element: the signature GapBar on the demo MSP.
 export function DemoProof() {
   return (
-    <figure className="rounded-lg border border-line bg-surface p-5">
-      <figcaption className="text-caption text-ink-3">Demo MSP, six months to September 2026</figcaption>
-      <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-        <Figure tone="accent">{money(DEMO.total)}</Figure>
-        <span className="tnum text-small text-ink-2">potential leakage across {DEMO.findings} findings</span>
-      </div>
-      <GapBar billed={DEMO.billed} gap={DEMO.total} height={8} label={false} className="mt-6" />
-      <p className="tnum mt-2.5 text-caption text-ink-3">
-        {money(DEMO.billed)} billed over the period, 2.9% leaking
-      </p>
-      <Disclaimer className="mt-5 border-t border-line-soft pt-5" />
-    </figure>
+    <div>
+      <figure className="rounded-lg border border-line bg-surface p-5">
+        <figcaption className="text-caption text-ink-3">Demo MSP, six months to September 2026</figcaption>
+        <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+          <Figure tone="accent">{money(DEMO.total)}</Figure>
+          <span className="tnum text-small text-ink-2">potential leakage across {DEMO.findings} findings</span>
+        </div>
+        <GapBar billed={DEMO.billed} gap={DEMO.total} height={10} label={false} className="mt-6" />
+        <p className="tnum mt-2.5 text-caption text-ink-3">{money(DEMO.billed)} billed over the period, 2.9% leaking</p>
+      </figure>
+      <Disclaimer className="mt-4 max-w-[62ch]" />
+    </div>
   )
 }
 

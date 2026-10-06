@@ -34,12 +34,15 @@ export default function Onboarding() {
       asideBody="One workspace per MSP. Name it, then load the demo or your own exports and see where the money is going."
       aside={<NextSteps />}
       footer={
-        <div className="flex items-center gap-3 border-t border-line-soft pt-5">
-          <span className="flex shrink-0 gap-1" aria-hidden>
-            <span className="h-1 w-6 rounded-full bg-ink" />
-            <span className="h-1 w-6 rounded-full bg-line" />
-          </span>
-          <span className="text-caption text-ink-3">Step 1 of 2. Next: upload your exports or load the demo MSP.</span>
+        <div className="border-t border-line-soft pt-5">
+          <div className="flex items-center gap-2.5">
+            <span className="flex shrink-0 gap-1" aria-hidden>
+              <span className="h-1 w-7 rounded-full bg-ink" />
+              <span className="h-1 w-7 rounded-full bg-line" />
+            </span>
+            <span className="text-caption font-medium text-ink-2">Step 1 of 2</span>
+          </div>
+          <p className="mt-2 text-caption text-ink-3">Next: upload your exports or load the demo MSP.</p>
         </div>
       }
     >

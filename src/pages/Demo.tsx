@@ -40,10 +40,12 @@ export default function Demo() {
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
-      <div className="border-b border-line-soft px-5 py-4 sm:px-8">
-        <Link to="/" className="inline-flex w-fit rounded-sm">
-          <Logo />
-        </Link>
+      <div className="border-b border-line-soft">
+        <div className="mx-auto w-full max-w-6xl px-5 py-4 sm:px-8">
+          <Link to="/" className="inline-flex w-fit rounded-sm">
+            <Logo />
+          </Link>
+        </div>
       </div>
 
       <main className="flex flex-1 items-center justify-center px-5 py-10 sm:px-8">
@@ -85,7 +87,7 @@ export default function Demo() {
                   <li
                     key={s}
                     aria-current={i === stage ? 'step' : undefined}
-                    className={cx('flex items-start gap-2.5 text-small', i < stage ? 'text-ink-3' : i === stage ? 'text-ink' : 'text-ink-4')}
+                    className={cx('flex items-start gap-2.5 text-small', i < stage ? 'text-ink-2' : i === stage ? 'text-ink' : 'text-ink-3')}
                   >
                     <span className="flex size-4 shrink-0 items-center justify-center pt-0.5">
                       {i < stage ? (
