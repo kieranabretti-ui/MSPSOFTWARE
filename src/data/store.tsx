@@ -11,8 +11,8 @@ import { importRows, newClient, uuid, type CsvKind, type ImportResult, type Mapp
 const SB_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined
 const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 export const supabaseConfigured = !!(SB_URL && SB_KEY)
-const MODE_KEY = 'mspleak:mode'
-const DEMO_EMAIL = 'demo@mspleak.app'
+const MODE_KEY = 'headroom:mode'
+const DEMO_EMAIL = 'alex.morgan@northlight-it.example'
 const DEMO_PASSWORD = 'northlight-demo'
 
 function pickBackend(): Backend {

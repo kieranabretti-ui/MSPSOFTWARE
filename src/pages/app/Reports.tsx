@@ -10,15 +10,15 @@ import { downloadFile, hours, money, pct, relative } from '../../lib/format'
 import { IS_PREVIEW } from '../../lib/env'
 
 function H2({ children }: { children: ReactNode }) {
-  return <h2 className="mb-3 mt-10 text-lg font-semibold tracking-tight text-zinc-900 print:break-after-avoid">{children}</h2>
+  return <h2 className="mb-3 mt-10 text-lg font-semibold tracking-tight text-ink print:break-after-avoid">{children}</h2>
 }
 
 function T({ head, rows, right = [] }: { head: string[]; rows: ReactNode[][]; right?: number[] }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[520px] text-sm">
+      <table className="w-full min-w-[520px] text-body">
         <thead>
-          <tr className="border-b border-zinc-200 text-left text-xs text-zinc-500">
+          <tr className="border-b border-line text-left text-caption text-ink-3">
             {head.map((h, i) => (
               <th key={h} className={cx('py-2 pr-4 font-medium', right.includes(i) && 'text-right')}>
                 {h}
@@ -26,7 +26,7 @@ function T({ head, rows, right = [] }: { head: string[]; rows: ReactNode[][]; ri
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-zinc-100">
+        <tbody className="divide-y divide-line-soft">
           {rows.map((r, i) => (
             <tr key={i} className="align-top">
               {r.map((c, j) => (
@@ -61,7 +61,7 @@ export default function Reports() {
   const pdf = async () => {
     setPdfBusy(true)
     try {
-      if (downloadFile(`msp-leak-report-${slug}.pdf`, await reportPdf(r), 'application/pdf')) {
+      if (downloadFile(`headroom-report-${slug}.pdf`, await reportPdf(r), 'application/pdf')) {
         await recordReport()
         toast('Report downloaded.')
       }
@@ -72,7 +72,7 @@ export default function Reports() {
     }
   }
   const csv = () => {
-    if (downloadFile(`msp-leak-findings-${slug}.csv`, findingsCsv(data.findings.filter((f) => f.status !== 'dismissed'), m.clientName), 'text/csv')) toast('Findings CSV downloaded.')
+    if (downloadFile(`headroom-findings-${slug}.csv`, findingsCsv(data.findings.filter((f) => f.status !== 'dismissed'), m.clientName), 'text/csv')) toast('Findings CSV downloaded.')
   }
 
   return (
@@ -99,14 +99,14 @@ export default function Reports() {
         />
       </div>
 
-      <Card className="mx-auto max-w-[880px] px-6 py-10 shadow-sm sm:px-12 sm:py-14 print:border-0 print:shadow-none">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">
+      <Card className="mx-auto max-w-[880px] px-6 py-10 sm:px-12 sm:py-14 print:border-0 print:shadow-none">
+        <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-3">
           {r.workspace}
-          {r.isDemo && <span className="ml-2 text-orange-600">· Demo data</span>}
+          {r.isDemo && <span className="ml-2 text-ink-3">· Demo data</span>}
         </p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{r.title}</h1>
-        <p className="mt-2 text-sm text-zinc-500">
-          Period: <span className="font-medium text-zinc-800">{r.period}</span> · Generated {r.generated}
+        <p className="mt-2 text-body text-ink-3">
+          Period: <span className="font-medium text-ink">{r.period}</span> · Generated {r.generated}
         </p>
 
         <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -115,16 +115,16 @@ export default function Reports() {
             [`${money(r.monthly)}/month`, 'Monthly recurring opportunity'],
             [money(r.annual), 'Annualised opportunity'],
           ].map(([v, l]) => (
-            <div key={l} className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-4">
+            <div key={l} className="rounded-lg border border-line bg-sunken p-4">
               <p className="tnum text-2xl font-semibold tracking-tight">{v}</p>
-              <p className="mt-1 text-xs text-zinc-500">{l}</p>
+              <p className="mt-1 text-caption text-ink-3">{l}</p>
             </div>
           ))}
         </div>
-        <blockquote className="mt-6 border-l-2 border-orange-500 pl-4 text-lg font-medium text-zinc-900">We identified {money(r.total)} of potential revenue leakage across your MSP.</blockquote>
+        <blockquote className="mt-6 pl-0 text-lg font-medium text-ink">We identified {money(r.total)} of potential revenue leakage across your MSP.</blockquote>
 
         <H2>Executive summary</H2>
-        <div className="space-y-3 text-[15px] leading-relaxed text-zinc-700">
+        <div className="space-y-3 text-[15px] leading-relaxed text-ink-2">
           {r.executiveSummary.map((p) => (
             <p key={p}>{p}</p>
           ))}
@@ -137,14 +137,14 @@ export default function Reports() {
         <T
           head={['Client', 'Leakage', 'Margin', 'Main reason']}
           right={[1, 2]}
-          rows={r.riskClients.map((c) => [c.name, money(c.leakage), pct(c.margin), <span className="font-normal text-zinc-600">{c.reason}</span>])}
+          rows={r.riskClients.map((c) => [c.name, money(c.leakage), pct(c.margin), <span className="font-normal text-ink-2">{c.reason}</span>])}
         />
 
         {r.sections.map((s) => (
           <section key={s.key}>
             <H2>{s.title}</H2>
-            <p className="mb-3 text-sm text-zinc-600">{s.intro}</p>
-            {s.rows.length > 0 && <T head={['Client', 'Finding', 'Reference', 'Confidence', 'Value']} right={[3, 4]} rows={s.rows.map((x) => [x.client, <span className="font-normal">{x.title}</span>, <span className="text-zinc-500">{x.detail}</span>, `${x.confidence}%`, money(x.value)])} />}
+            <p className="mb-3 text-body text-ink-2">{s.intro}</p>
+            {s.rows.length > 0 && <T head={['Client', 'Finding', 'Reference', 'Confidence', 'Value']} right={[3, 4]} rows={s.rows.map((x) => [x.client, <span className="font-normal">{x.title}</span>, <span className="text-ink-3">{x.detail}</span>, `${x.confidence}%`, money(x.value)])} />}
           </section>
         ))}
 
@@ -158,10 +158,10 @@ export default function Reports() {
         <H2>Recommended actions</H2>
         <ol className="space-y-3">
           {r.actions.map((a, i) => (
-            <li key={i} className="flex gap-3 text-sm">
-              <span className="tnum mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-[11px] font-semibold text-white">{i + 1}</span>
-              <span className="flex-1 text-zinc-700">
-                <span className="font-medium text-zinc-900">{a.client}.</span> {a.action}
+            <li key={i} className="flex gap-3 text-body">
+              <span className="tnum mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-ink text-[11px] font-semibold text-ink">{i + 1}</span>
+              <span className="flex-1 text-ink-2">
+                <span className="font-medium text-ink">{a.client}.</span> {a.action}
               </span>
               <span className="tnum font-semibold">{money(a.value)}</span>
             </li>
@@ -169,12 +169,12 @@ export default function Reports() {
         </ol>
 
         <H2>Estimated annual opportunity</H2>
-        <p className="text-[15px] leading-relaxed text-zinc-700">
+        <p className="text-[15px] leading-relaxed text-ink-2">
           If the recurring items in this report are corrected, the estimated annual opportunity is <strong className="tnum">{money(r.annual)}</strong> ({money(r.monthly)} a month), in addition to the{' '}
           <strong className="tnum">{money(r.total)}</strong> identified in {r.period}.
         </p>
 
-        <p className="mt-10 border-t border-zinc-100 pt-5 text-xs leading-relaxed text-zinc-500">{DISCLAIMER}</p>
+        <p className="mt-10 border-t border-line-soft pt-5 text-caption leading-relaxed text-ink-3">{DISCLAIMER}</p>
       </Card>
     </>
   )

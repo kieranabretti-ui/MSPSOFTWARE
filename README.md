@@ -1,8 +1,8 @@
-# MSP Leak
+# Headroom
 
 **Find the work your MSP is doing for free.**
 
-MSP Leak reads the exports an MSP already has (tickets, time entries, users and devices, billing lines and contracts) and finds revenue leakage: out-of-scope work done for free, billable time that never reached an invoice, clients who have grown past their agreement, licences that aren't billed, and clients priced below your target margin. Every finding shows the evidence behind it, a confidence score, an estimated value and a recommended action.
+Headroom reads the exports an MSP already has (tickets, time entries, users and devices, billing lines and contracts) and finds revenue leakage: out-of-scope work done for free, billable time that never reached an invoice, clients who have grown past their agreement, licences that aren't billed, and clients priced below your target margin. Every finding shows the evidence behind it, a confidence score, an estimated value and a recommended action.
 
 This is a working MVP. It runs from CSV and PDF uploads only; there are no PSA, RMM, accounting or Microsoft 365 integrations yet.
 

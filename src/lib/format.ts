@@ -26,7 +26,7 @@ export function relative(iso: string) {
   return dateTime(iso)
 }
 
-export const DOWNLOAD_BLOCKED = 'mspleak:download-blocked'
+export const DOWNLOAD_BLOCKED = 'headroom:download-blocked'
 
 // Returns false when downloads aren't possible (the hosted preview).
 export function downloadFile(name: string, content: BlobPart, type: string): boolean {

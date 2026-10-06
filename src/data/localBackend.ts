@@ -3,10 +3,10 @@
 import { DEFAULT_SETTINGS, type Workspace } from '../engine/types'
 import { emptyData, type Backend, type DataPatch, type SessionUser, type WorkspaceData } from './backend'
 
-const USERS = 'mspleak:users'
-const SESSION = 'mspleak:session'
-const WS_INDEX = 'mspleak:workspaces'
-const dataKey = (id: string) => `mspleak:data:${id}`
+const USERS = 'headroom:users'
+const SESSION = 'headroom:session'
+const WS_INDEX = 'headroom:workspaces'
+const dataKey = (id: string) => `headroom:data:${id}`
 
 interface StoredUser extends SessionUser {
   salt: string

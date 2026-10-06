@@ -1,0 +1,110 @@
+/*
+ * Maps the brand tokens (brand/brand-tokens.css) onto Tailwind utilities.
+ * Components use these semantic names (bg-surface, text-ink-2, border-line)
+ * and never raw palette colours, so a token change restyles the whole app.
+ */
+@theme inline {
+  --color-canvas: var(--brand-background);
+  --color-sunken: var(--brand-surface-sunken);
+  --color-surface: var(--brand-surface);
+  --color-hover: var(--brand-surface-hover);
+  --color-raised: var(--brand-surface-raised);
+
+  --color-line: var(--brand-border);
+  --color-line-soft: var(--brand-border-muted);
+  --color-line-strong: var(--brand-border-strong);
+
+  --color-ink: var(--brand-text);
+  --color-ink-2: var(--brand-text-secondary);
+  --color-ink-3: var(--brand-muted);
+  --color-ink-4: var(--brand-faint);
+
+  --color-accent: var(--brand-accent);
+  --color-accent-hover: var(--brand-accent-hover);
+  --color-accent-ink: var(--brand-accent-ink);
+  --color-accent-soft: var(--brand-accent-soft);
+  --color-accent-line: var(--brand-accent-line);
+  --color-accent-deep: var(--brand-accent-deep);
+
+  --color-success: var(--brand-success);
+  --color-success-soft: var(--brand-success-soft);
+  --color-success-line: var(--brand-success-line);
+  --color-warning: var(--brand-warning);
+  --color-warning-soft: var(--brand-warning-soft);
+  --color-warning-line: var(--brand-warning-line);
+  --color-danger: var(--brand-danger);
+  --color-danger-soft: var(--brand-danger-soft);
+  --color-danger-line: var(--brand-danger-line);
+  --color-info: var(--brand-info);
+  --color-info-soft: var(--brand-info-soft);
+  --color-info-line: var(--brand-info-line);
+
+  --color-viz-series: var(--viz-series);
+  --color-viz-series-strong: var(--viz-series-strong);
+  --color-viz-grid: var(--viz-grid);
+
+  --font-sans: var(--font-body);
+
+  --text-display: var(--type-display);
+  --text-display--line-height: var(--type-display-leading);
+  --text-display--letter-spacing: var(--type-display-tracking);
+  --text-display--font-weight: 600;
+  --text-h1: var(--type-h1);
+  --text-h1--line-height: var(--type-h1-leading);
+  --text-h1--letter-spacing: var(--type-h1-tracking);
+  --text-h1--font-weight: 600;
+  --text-h2: var(--type-h2);
+  --text-h2--line-height: var(--type-h2-leading);
+  --text-h2--letter-spacing: var(--type-h2-tracking);
+  --text-h2--font-weight: 600;
+  --text-h3: var(--type-h3);
+  --text-h3--line-height: var(--type-h3-leading);
+  --text-h3--letter-spacing: var(--type-h3-tracking);
+  --text-h3--font-weight: 600;
+  --text-lead: var(--type-lead);
+  --text-lead--line-height: var(--type-lead-leading);
+  --text-body: var(--type-body);
+  --text-body--line-height: var(--type-body-leading);
+  --text-small: var(--type-small);
+  --text-small--line-height: var(--type-small-leading);
+  --text-caption: var(--type-caption);
+  --text-caption--line-height: var(--type-caption-leading);
+  --text-label: var(--type-eyebrow);
+  --text-label--line-height: 1.3;
+  --text-label--letter-spacing: var(--type-eyebrow-tracking);
+  --text-label--font-weight: 600;
+  --text-data-xl: var(--type-data-xl);
+  --text-data-xl--line-height: 0.95;
+  --text-data-xl--letter-spacing: var(--type-data-xl-tracking);
+  --text-data-xl--font-weight: 600;
+  --text-data-lg: var(--type-data-lg);
+  --text-data-lg--line-height: 1.1;
+  --text-data-lg--letter-spacing: var(--type-data-lg-tracking);
+  --text-data-lg--font-weight: 600;
+  --text-data-md: var(--type-data-md);
+  --text-data-md--line-height: 1.2;
+  --text-data-md--letter-spacing: -0.015em;
+  --text-data-md--font-weight: 600;
+
+  --ease-out-brand: var(--ease-out);
+}
+
+/* Elevation: floating layers only. Cards sit on a hairline, not a shadow. */
+@utility elevate-1 {
+  box-shadow: var(--shadow-sm);
+}
+@utility elevate-2 {
+  box-shadow: var(--shadow-md);
+}
+@utility elevate-3 {
+  box-shadow: var(--shadow-lg);
+}
+@utility glow-accent {
+  box-shadow: var(--shadow-glow);
+}
+
+/* Figures: every number that can change is tabular. */
+@utility tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}

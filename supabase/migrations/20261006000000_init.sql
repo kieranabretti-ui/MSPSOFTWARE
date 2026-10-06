@@ -1,4 +1,4 @@
--- MSP Leak: initial schema.
+-- Headroom: initial schema.
 -- Every business table carries workspace_id; Row Level Security restricts
 -- all access to members of that workspace.
 

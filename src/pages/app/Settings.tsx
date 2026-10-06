@@ -68,7 +68,7 @@ export default function Settings() {
               {FIELDS.map((f) => (
                 <Field key={f.key} label={f.label + (f.pct ? ' (%)' : '')} hint={f.hint}>
                   <div className="relative">
-                    {f.prefix && <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">{f.prefix}</span>}
+                    {f.prefix && <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-body text-ink-3">{f.prefix}</span>}
                     <input className={`${inputCls} ${f.prefix ? 'pl-7' : ''}`} inputMode="decimal" value={vals[f.key]} onChange={(e) => setVals({ ...vals, [f.key]: e.target.value })} />
                   </div>
                 </Field>
@@ -80,7 +80,7 @@ export default function Settings() {
                 <input className={inputCls} type="time" value={vals.business_hours_end} onChange={(e) => setVals({ ...vals, business_hours_end: e.target.value })} />
               </Field>
             </div>
-            {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+            {error && <p className="rounded-md bg-danger-soft px-3 py-2 text-body text-danger">{error}</p>}
             <div className="flex flex-wrap gap-2">
               <Button onClick={save} loading={saving}>
                 Save{analysis ? ' and re-run analysis' : ''}
@@ -103,20 +103,20 @@ export default function Settings() {
         <div className="space-y-6">
           <Card>
             <CardHeader title="Account" />
-            <div className="space-y-1 p-5 text-sm">
+            <div className="space-y-1 p-5 text-body">
               <p className="font-medium">{user?.name}</p>
-              <p className="text-zinc-500">{user?.email}</p>
+              <p className="text-ink-3">{user?.email}</p>
             </div>
           </Card>
           <Card>
             <CardHeader title="Storage" />
-            <div className="space-y-3 p-5 text-sm text-zinc-600">
+            <div className="space-y-3 p-5 text-body text-ink-2">
               <div className="flex items-center justify-between">
                 <span>Backend</span>
-                {backend.mode === 'supabase' ? <Badge tone="green">Supabase</Badge> : <Badge tone="amber">This browser only</Badge>}
+                {backend.mode === 'supabase' ? <Badge tone="success">Supabase</Badge> : <Badge tone="warning">This browser only</Badge>}
               </div>
               {backend.mode === 'local' && (
-                <p className="text-xs text-zinc-500">
+                <p className="text-caption text-ink-3">
                   {supabaseConfigured
                     ? 'This is the demo sandbox. Sign out and create an account to keep data in your workspace.'
                     : 'Supabase is not configured for this deployment, so data stays in this browser. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable accounts and shared storage.'}
@@ -124,7 +124,7 @@ export default function Settings() {
               )}
               <div className="flex items-center justify-between">
                 <span>Integrations</span>
-                <span className="text-xs text-zinc-500">PSA, RMM and accounting coming soon</span>
+                <span className="text-caption text-ink-3">PSA, RMM and accounting coming soon</span>
               </div>
             </div>
           </Card>

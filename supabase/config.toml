@@ -1,5 +1,5 @@
 # Local Supabase settings (`supabase start`). Hosted projects take these from the dashboard.
-project_id = "msp-leak"
+project_id = "headroom"
 
 [auth]
 site_url = "http://localhost:5173"

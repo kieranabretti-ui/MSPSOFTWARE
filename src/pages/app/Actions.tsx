@@ -10,7 +10,7 @@ import { parseNumber } from '../../data/importers'
 import type { ActionStatus } from '../../engine/types'
 
 const TABS: (ActionStatus | 'all')[] = ['open', 'in_progress', 'resolved', 'dismissed', 'all']
-const DOT: Record<ActionStatus, string> = { open: 'bg-zinc-400', in_progress: 'bg-sky-500', resolved: 'bg-emerald-500', dismissed: 'bg-zinc-300' }
+const DOT: Record<ActionStatus, string> = { open: 'bg-ink-3', in_progress: 'bg-info', resolved: 'bg-success', dismissed: 'bg-ink-4' }
 
 export default function Actions() {
   const { data, setActionStatus, createAction } = useStore()
@@ -57,9 +57,9 @@ export default function Actions() {
           { label: 'Resolved actions', value: money(recovered), sub: 'Potential value actioned' },
         ].map((s) => (
           <Card key={s.label} className="p-4 sm:p-5">
-            <p className="text-[13px] text-zinc-500">{s.label}</p>
+            <p className="text-small text-ink-3">{s.label}</p>
             <p className="tnum mt-2 text-2xl font-semibold tracking-tight">{s.value}</p>
-            <p className="mt-1 text-xs text-zinc-500">{s.sub}</p>
+            <p className="mt-1 text-caption text-ink-3">{s.sub}</p>
           </Card>
         ))}
       </div>
@@ -68,8 +68,8 @@ export default function Actions() {
         {TABS.map((t) => {
           const n = t === 'all' ? data.actions.length : data.actions.filter((a) => a.status === t).length
           return (
-            <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={cx('whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium', tab === t ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100')}>
-              {t === 'all' ? 'All' : ACTION_STATUS[t]} <span className={cx('tnum ml-1 text-xs', tab === t ? 'text-zinc-300' : 'text-zinc-400')}>{n}</span>
+            <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={cx('whitespace-nowrap rounded-md px-3 py-1.5 text-body font-medium', tab === t ? 'bg-raised text-ink ring-1 ring-inset ring-line-strong' : 'text-ink-2 hover:bg-raised')}>
+              {t === 'all' ? 'All' : ACTION_STATUS[t]} <span className={cx('tnum ml-1 text-caption', tab === t ? 'text-ink-4' : 'text-ink-3')}>{n}</span>
             </button>
           )
         })}
@@ -77,31 +77,31 @@ export default function Actions() {
 
       <Card className="overflow-hidden">
         {rows.length ? (
-          <ul className="divide-y divide-zinc-100">
+          <ul className="divide-y divide-line-soft">
             {rows.map((a) => {
               const finding = data.findings.find((f) => f.id === a.finding_id)
               return (
                 <li key={a.id} className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center">
                   <span className={cx('hidden size-2 shrink-0 rounded-full sm:block', DOT[a.status])} aria-hidden />
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium">{a.title}</p>
-                    <p className="mt-0.5 truncate text-xs text-zinc-500">
+                    <p className="text-body font-medium">{a.title}</p>
+                    <p className="mt-0.5 truncate text-caption text-ink-3">
                       {a.client_id ? m.clientName(a.client_id) : 'No client'}
                       {finding && (
                         <>
                           {' · '}
-                          <Link to={`/app/findings/${finding.id}`} className="hover:text-zinc-900 hover:underline">
+                          <Link to={`/app/findings/${finding.id}`} className="hover:text-ink hover:underline">
                             {finding.title}
                           </Link>
                         </>
                       )}
                       {' · '}created {relative(a.created_at)}
                     </p>
-                    {a.notes && <p className="mt-1 text-xs text-zinc-600">{a.notes}</p>}
+                    {a.notes && <p className="mt-1 text-caption text-ink-2">{a.notes}</p>}
                   </div>
-                  <span className="tnum text-sm font-semibold sm:w-20 sm:text-right">{money(a.value)}</span>
+                  <span className="tnum text-body font-semibold sm:w-20 sm:text-right">{money(a.value)}</span>
                   <select
-                    className={cx(inputCls, 'h-8 w-full text-[13px] sm:w-36')}
+                    className={cx(inputCls, 'h-8 w-full text-small sm:w-36')}
                     value={a.status}
                     onChange={async (e) => {
                       const s = e.target.value as ActionStatus
@@ -125,7 +125,7 @@ export default function Actions() {
             icon={<ListChecks className="size-5" />}
             title={data.actions.length ? `No ${tab === 'all' ? '' : ACTION_STATUS[tab as ActionStatus].toLowerCase()} actions` : 'No actions yet'}
             body={data.actions.length ? 'Actions in other states are in the other tabs.' : `Open a finding and choose “Create action” to start recovering revenue. You have ${plural(m.openCount, 'open opportunity', 'open opportunities')}.`}
-            action={!data.actions.length && m.openCount > 0 ? <Link to="/app/findings" className="text-sm font-medium underline">Review findings</Link> : undefined}
+            action={!data.actions.length && m.openCount > 0 ? <Link to="/app/findings" className="text-body font-medium underline">Review findings</Link> : undefined}
           />
         )}
       </Card>
@@ -165,7 +165,7 @@ export default function Actions() {
           <Field label="Notes">
             <textarea className={cx(inputCls, 'h-20 py-2')} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
           </Field>
-          {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+          {error && <p className="rounded-md bg-danger-soft px-3 py-2 text-body text-danger">{error}</p>}
         </div>
       </Modal>
     </>

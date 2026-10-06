@@ -2,13 +2,13 @@ import { useMemo, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Download, Search } from 'lucide-react'
 import { useMetrics, useStore } from '../../data/store'
-import { Badge, Button, Card, Confidence, EmptyState, PageHeader, SeverityBadge, inputCls, cx } from '../../components/ui'
+import { Badge, type Tone, Button, Card, Confidence, EmptyState, PageHeader, SeverityBadge, inputCls, cx } from '../../components/ui'
 import { GetStarted } from './Overview'
 import { downloadFile, money, plural, toCsv } from '../../lib/format'
 import { ALL_CATEGORIES, CATEGORY_META, FINDING_STATUS, SEVERITY_ORDER } from '../../lib/labels'
 import type { Finding, FindingStatus } from '../../engine/types'
 
-const STATUS_TONE: Record<FindingStatus, 'zinc' | 'blue' | 'green' | 'amber'> = { open: 'zinc', valid: 'blue', resolved: 'green', dismissed: 'amber' }
+const STATUS_TONE: Record<FindingStatus, Tone> = { open: 'neutral', valid: 'info', resolved: 'success', dismissed: 'neutral' }
 
 export function StatusBadge({ status }: { status: FindingStatus }) {
   return <Badge tone={STATUS_TONE[status]}>{FINDING_STATUS[status]}</Badge>
@@ -75,7 +75,7 @@ export default function Findings() {
         title="Findings"
         subtitle={`${plural(rows.length, 'finding')} · ${money(total)} potential value`}
         actions={
-          <Button variant="secondary" size="sm" onClick={() => downloadFile('msp-leak-findings.csv', findingsCsv(rows, m.clientName), 'text/csv')} disabled={!rows.length}>
+          <Button variant="secondary" size="sm" onClick={() => downloadFile('headroom-findings.csv', findingsCsv(rows, m.clientName), 'text/csv')} disabled={!rows.length}>
             <Download className="size-3.5" /> Export CSV
           </Button>
         }
@@ -83,7 +83,7 @@ export default function Findings() {
 
       <div className="mb-4 flex flex-wrap gap-2">
         <div className="relative min-w-[200px] flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-400" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3" />
           <input className={cx(inputCls, 'pl-9')} placeholder="Search findings, clients, ticket #" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search findings" />
         </div>
         <select
@@ -134,9 +134,9 @@ export default function Findings() {
       <Card className="overflow-hidden">
         {rows.length ? (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[820px] text-sm">
+            <table className="w-full min-w-[820px] text-body">
               <thead>
-                <tr className="border-b border-zinc-100 bg-zinc-50/60 text-left text-xs text-zinc-500">
+                <tr className="border-b border-line-soft bg-sunken text-left text-caption text-ink-3">
                   <th className="px-5 py-2.5 font-medium">Finding</th>
                   <th className="px-3 py-2.5 font-medium">Category</th>
                   <th className="px-3 py-2.5 font-medium">Severity</th>
@@ -145,19 +145,19 @@ export default function Findings() {
                   <th className="px-5 py-2.5 font-medium">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-line-soft">
                 {rows.map((f) => (
-                  <tr key={f.id} className="cursor-pointer hover:bg-zinc-50" onClick={() => nav(`/app/findings/${f.id}`)}>
+                  <tr key={f.id} className="cursor-pointer hover:bg-hover" onClick={() => nav(`/app/findings/${f.id}`)}>
                     <td className="max-w-[380px] px-5 py-3">
-                      <Link to={`/app/findings/${f.id}`} className="block truncate font-medium text-zinc-900" onClick={(e) => e.stopPropagation()}>
+                      <Link to={`/app/findings/${f.id}`} className="block truncate font-medium text-ink" onClick={(e) => e.stopPropagation()}>
                         {f.title}
                       </Link>
-                      <span className="block truncate text-xs text-zinc-500">
+                      <span className="block truncate text-caption text-ink-3">
                         {m.clientName(f.client_id)}
                         {f.meta.ticket_ref && ` · Ticket #${f.meta.ticket_ref}`}
                       </span>
                     </td>
-                    <td className="px-3 py-3 text-zinc-600">{CATEGORY_META[f.category].short}</td>
+                    <td className="px-3 py-3 text-ink-2">{CATEGORY_META[f.category].short}</td>
                     <td className="px-3 py-3">
                       <SeverityBadge severity={f.severity} />
                     </td>
@@ -166,7 +166,7 @@ export default function Findings() {
                     </td>
                     <td className="tnum px-3 py-3 text-right">
                       <span className="font-semibold">{money(f.estimated_value)}</span>
-                      {f.monthly_value > 0 && <span className="block text-xs text-zinc-500">{money(f.monthly_value)}/mo</span>}
+                      {f.monthly_value > 0 && <span className="block text-caption text-ink-3">{money(f.monthly_value)}/mo</span>}
                     </td>
                     <td className="px-5 py-3">
                       <StatusBadge status={f.status} />

@@ -106,7 +106,7 @@ export function buildReport(ws: Workspace, analysis: Analysis, data: WorkspaceDa
 }
 
 export const DISCLAIMER =
-  'All figures are estimates of potential revenue based on the data provided and the assumptions configured in MSP Leak. They are not guaranteed to be recoverable. Review each finding against the client agreement before taking action.'
+  'All figures are estimates of potential revenue based on the data provided and the assumptions configured in Headroom. They are not guaranteed to be recoverable. Review each finding against the client agreement before taking action.'
 
 export async function reportPdf(r: ReportModel): Promise<Blob> {
   const { jsPDF } = await import('jspdf')
@@ -220,7 +220,7 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
   for (let i = 1; i <= pages; i++) {
     doc.setPage(i)
     doc.setFont('helvetica', 'normal').setFontSize(8).setTextColor(...muted)
-    doc.text(`MSP Leak · ${r.workspace} · ${r.period}`, M, doc.internal.pageSize.getHeight() - 24)
+    doc.text(`Headroom · ${r.workspace} · ${r.period}`, M, doc.internal.pageSize.getHeight() - 24)
     doc.text(`${i} / ${pages}`, W - M, doc.internal.pageSize.getHeight() - 24, { align: 'right' })
   }
   return doc.output('blob')

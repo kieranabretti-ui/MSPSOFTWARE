@@ -18,7 +18,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), tone === 'error' ? 6000 : 3500)
   }, [])
   useEffect(() => {
-    const blocked = () => push('Downloads are turned off in this hosted preview. Run MSP Leak locally to download files.', 'error')
+    const blocked = () => push('Downloads are turned off in this hosted preview. Run Headroom locally to download files.', 'error')
     window.addEventListener(DOWNLOAD_BLOCKED, blocked)
     return () => window.removeEventListener(DOWNLOAD_BLOCKED, blocked)
   }, [push])
@@ -27,8 +27,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       <div className="no-print pointer-events-none fixed bottom-4 left-1/2 z-[60] flex w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 flex-col gap-2 sm:left-auto sm:right-4 sm:translate-x-0" aria-live="polite">
         {toasts.map((t) => (
-          <div key={t.id} className="pointer-events-auto flex items-start gap-2.5 rounded-xl bg-zinc-900 px-4 py-3 text-sm text-white shadow-lg">
-            {t.tone === 'ok' ? <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-400" /> : <AlertCircle className="mt-0.5 size-4 shrink-0 text-red-400" />}
+          <div key={t.id} className="elevate-3 pointer-events-auto flex items-start gap-2.5 rounded-lg border border-line bg-raised px-4 py-3 text-body text-ink">
+            {t.tone === 'ok' ? <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-accent" /> : <AlertCircle className="mt-0.5 size-4 shrink-0 text-danger" />}
             <span>{t.text}</span>
           </div>
         ))}

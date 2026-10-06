@@ -1,64 +1,59 @@
 import { useEffect, type ButtonHTMLAttributes, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Loader2, X } from 'lucide-react'
-import type { Severity } from '../engine/types'
+import type { Health, Severity } from '../engine/types'
 import { HEALTH } from '../lib/labels'
-import type { Health } from '../engine/types'
+export { Logo, LogoMark } from '../brand/Logo'
 
 export const cx = (...xs: (string | false | null | undefined)[]) => xs.filter(Boolean).join(' ')
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
+// Buttons. Primary is bone on ink; the lime accent is kept for the one action
+// on a screen that leads to money (find, recover, run).
+type Variant = 'primary' | 'accent' | 'secondary' | 'ghost' | 'danger'
 const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-zinc-900 text-white hover:bg-zinc-800 shadow-sm',
-  secondary: 'bg-white text-zinc-900 border border-zinc-200 hover:bg-zinc-50 shadow-xs',
-  ghost: 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100',
-  danger: 'bg-white text-red-700 border border-red-200 hover:bg-red-50',
+  primary: 'bg-ink text-canvas hover:bg-white',
+  accent: 'bg-accent text-accent-ink hover:bg-accent-hover',
+  secondary: 'bg-raised text-ink border border-line hover:border-line-strong hover:bg-hover',
+  ghost: 'text-ink-2 hover:text-ink hover:bg-raised',
+  danger: 'bg-danger-soft text-danger border border-danger-line hover:bg-danger/20',
 }
+type Size = 'sm' | 'md' | 'lg'
+const SIZES: Record<Size, string> = {
+  sm: 'h-8 px-3 text-small gap-1.5',
+  md: 'h-9 px-4 text-body gap-2',
+  lg: 'h-11 px-5 text-[15px] gap-2',
+}
+const buttonBase =
+  'inline-flex items-center justify-center rounded-md font-medium whitespace-nowrap transition-[background-color,border-color,color,box-shadow] duration-150 ease-out disabled:cursor-not-allowed disabled:opacity-45'
 
-export function Button({ variant = 'primary', size = 'md', loading, className, children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; size?: 'sm' | 'md' | 'lg'; loading?: boolean }) {
+export function Button({ variant = 'primary', size = 'md', loading, className, children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; size?: Size; loading?: boolean }) {
   return (
-    <button
-      {...rest}
-      disabled={rest.disabled || loading}
-      className={cx(
-        'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap',
-        size === 'sm' ? 'h-8 px-3 text-[13px]' : size === 'lg' ? 'h-11 px-5 text-[15px]' : 'h-9 px-4 text-sm',
-        VARIANTS[variant],
-        className,
-      )}
-    >
+    <button {...rest} disabled={rest.disabled || loading} aria-busy={loading || undefined} className={cx(buttonBase, SIZES[size], VARIANTS[variant], className)}>
       {loading && <Loader2 className="size-4 animate-spin" />}
       {children}
     </button>
   )
 }
 
-export function ButtonLink({ to, variant = 'primary', size = 'md', className, children }: { to: string; variant?: Variant; size?: 'sm' | 'md' | 'lg'; className?: string; children: ReactNode }) {
+export function ButtonLink({ to, variant = 'primary', size = 'md', className, children }: { to: string; variant?: Variant; size?: Size; className?: string; children: ReactNode }) {
   return (
-    <Link
-      to={to}
-      className={cx(
-        'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors whitespace-nowrap',
-        size === 'sm' ? 'h-8 px-3 text-[13px]' : size === 'lg' ? 'h-11 px-5 text-[15px]' : 'h-9 px-4 text-sm',
-        VARIANTS[variant],
-        className,
-      )}
-    >
+    <Link to={to} className={cx(buttonBase, SIZES[size], VARIANTS[variant], className)}>
       {children}
     </Link>
   )
 }
 
+// Containers
 export function Card({ className, children }: { className?: string; children: ReactNode }) {
-  return <div className={cx('rounded-xl border border-zinc-200 bg-white', className)}>{children}</div>
+  return <div className={cx('rounded-lg border border-line bg-surface', className)}>{children}</div>
 }
 
 export function CardHeader({ title, subtitle, right }: { title: ReactNode; subtitle?: ReactNode; right?: ReactNode }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-zinc-100 px-5 py-4">
-      <div>
-        <h3 className="text-[15px] font-semibold text-zinc-900">{title}</h3>
-        {subtitle && <p className="mt-0.5 text-[13px] text-zinc-500">{subtitle}</p>}
+    <div className="flex items-start justify-between gap-4 border-b border-line-soft px-5 py-4">
+      <div className="min-w-0">
+        <h3 className="text-h3 text-ink">{title}</h3>
+        {subtitle && <p className="mt-0.5 text-small text-ink-3">{subtitle}</p>}
       </div>
       {right}
     </div>
@@ -67,47 +62,87 @@ export function CardHeader({ title, subtitle, right }: { title: ReactNode; subti
 
 export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: ReactNode; actions?: ReactNode }) {
   return (
-    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{title}</h1>
-        {subtitle && <p className="mt-1 text-sm text-zinc-500">{subtitle}</p>}
+    <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="min-w-0">
+        <h1 className="text-h1 text-ink">{title}</h1>
+        {subtitle && <p className="mt-1.5 text-body text-ink-3">{subtitle}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
     </div>
   )
 }
 
-const SEV: Record<Severity, string> = {
-  CRITICAL: 'bg-red-50 text-red-700 ring-red-200',
-  HIGH: 'bg-orange-50 text-orange-700 ring-orange-200',
-  MEDIUM: 'bg-amber-50 text-amber-800 ring-amber-200',
-  LOW: 'bg-zinc-100 text-zinc-600 ring-zinc-200',
+// A text link in the product's voice: quiet until hovered.
+export function TextLink({ to, children, className }: { to: string; children: ReactNode; className?: string }) {
+  return (
+    <Link to={to} className={cx('text-small font-medium text-ink-2 underline-offset-4 transition-colors hover:text-ink hover:underline', className)}>
+      {children}
+    </Link>
+  )
+}
+
+// Money and other headline figures. Tabular, tight, and bone unless the figure
+// is money recovered or recoverable, which may take the accent.
+export function Figure({ children, size = 'lg', tone = 'default', className, testId }: { children: ReactNode; size?: 'xl' | 'lg' | 'md'; tone?: 'default' | 'accent' | 'muted'; className?: string; testId?: string }) {
+  return (
+    <span
+      data-testid={testId}
+      className={cx(
+        'tnum',
+        size === 'xl' ? 'text-[clamp(3rem,7vw,var(--type-data-xl))] font-semibold leading-[0.95] tracking-[-0.045em]' : size === 'lg' ? 'text-data-lg' : 'text-data-md',
+        tone === 'accent' ? 'text-accent' : tone === 'muted' ? 'text-ink-2' : 'text-ink',
+        className,
+      )}
+    >
+      {children}
+    </span>
+  )
+}
+
+// Severity: a label plus a bar count, so it never relies on colour alone.
+const SEV: Record<Severity, { label: string; cls: string; bars: number }> = {
+  CRITICAL: { label: 'Critical', cls: 'bg-danger-soft text-danger ring-danger-line', bars: 3 },
+  HIGH: { label: 'High', cls: 'bg-warning-soft text-warning ring-warning-line', bars: 2 },
+  MEDIUM: { label: 'Medium', cls: 'bg-raised text-ink-2 ring-line', bars: 1 },
+  LOW: { label: 'Low', cls: 'text-ink-3 ring-line-soft', bars: 0 },
 }
 
 export function SeverityBadge({ severity }: { severity: Severity }) {
-  return <span className={cx('inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-semibold tracking-wide ring-1 ring-inset', SEV[severity])}>{severity}</span>
+  const s = SEV[severity]
+  return (
+    <span className={cx('inline-flex h-5 items-center gap-1.5 rounded-xs px-1.5 text-[11px] font-semibold ring-1 ring-inset', s.cls)}>
+      <span className="flex items-end gap-px" aria-hidden>
+        {[0, 1, 2].map((i) => (
+          <span key={i} className={cx('w-[2px] rounded-full bg-current', i < s.bars ? 'opacity-100' : 'opacity-25')} style={{ height: 4 + i * 2 }} />
+        ))}
+      </span>
+      {s.label}
+    </span>
+  )
 }
 
-export function Badge({ children, tone = 'zinc' }: { children: ReactNode; tone?: 'zinc' | 'green' | 'amber' | 'red' | 'blue' | 'orange' }) {
-  const tones = {
-    zinc: 'bg-zinc-100 text-zinc-700 ring-zinc-200',
-    green: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-    amber: 'bg-amber-50 text-amber-800 ring-amber-200',
-    red: 'bg-red-50 text-red-700 ring-red-200',
-    blue: 'bg-sky-50 text-sky-700 ring-sky-200',
-    orange: 'bg-orange-50 text-orange-700 ring-orange-200',
-  }
-  return <span className={cx('inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ring-inset', tones[tone])}>{children}</span>
+export type Tone = 'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'info'
+const TONES: Record<Tone, string> = {
+  neutral: 'bg-raised text-ink-2 ring-line',
+  accent: 'bg-accent-soft text-accent ring-accent-line',
+  success: 'bg-success-soft text-success ring-success-line',
+  warning: 'bg-warning-soft text-warning ring-warning-line',
+  danger: 'bg-danger-soft text-danger ring-danger-line',
+  info: 'bg-info-soft text-info ring-info-line',
+}
+
+export function Badge({ children, tone = 'neutral' }: { children: ReactNode; tone?: Tone }) {
+  return <span className={cx('inline-flex h-5 items-center gap-1 rounded-xs px-1.5 text-[11px] font-medium ring-1 ring-inset', TONES[tone])}>{children}</span>
 }
 
 export function Confidence({ value, showLabel = true }: { value: number; showLabel?: boolean }) {
-  const tone = value >= 85 ? 'bg-zinc-900' : value >= 70 ? 'bg-zinc-600' : 'bg-zinc-400'
+  const tone = value >= 85 ? 'bg-ink' : value >= 70 ? 'bg-ink-3' : 'bg-ink-4'
   return (
     <span className="inline-flex items-center gap-2" title={`Confidence ${value}%`}>
-      <span className="h-1.5 w-12 overflow-hidden rounded-full bg-zinc-200">
+      <span className="h-1 w-12 overflow-hidden rounded-full bg-line">
         <span className={cx('block h-full rounded-full', tone)} style={{ width: `${value}%` }} />
       </span>
-      {showLabel && <span className="tnum text-xs text-zinc-600">{value}%</span>}
+      {showLabel && <span className="tnum text-caption text-ink-2">{value}%</span>}
     </span>
   )
 }
@@ -115,8 +150,8 @@ export function Confidence({ value, showLabel = true }: { value: number; showLab
 export function HealthDot({ health, withLabel = true }: { health: Health; withLabel?: boolean }) {
   const h = HEALTH[health]
   return (
-    <span className={cx('inline-flex items-center gap-1.5 text-xs font-medium', h.text)}>
-      <span className={cx('size-2 rounded-full', h.dot)} aria-hidden />
+    <span className={cx('inline-flex items-center gap-1.5 text-caption font-medium', h.text)}>
+      <span className={cx('size-1.5 rounded-full', h.dot)} aria-hidden />
       {withLabel ? h.label : <span className="sr-only">{h.label}</span>}
     </span>
   )
@@ -124,11 +159,11 @@ export function HealthDot({ health, withLabel = true }: { health: Health; withLa
 
 export function EmptyState({ icon, title, body, action }: { icon?: ReactNode; title: string; body: ReactNode; action?: ReactNode }) {
   return (
-    <div className="flex flex-col items-center justify-center px-6 py-14 text-center">
-      {icon && <div className="mb-4 flex size-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-500 shadow-xs">{icon}</div>}
-      <h3 className="text-[15px] font-semibold text-zinc-900">{title}</h3>
-      <p className="mt-1 max-w-md text-sm text-zinc-500">{body}</p>
-      {action && <div className="mt-5 flex flex-wrap justify-center gap-2">{action}</div>}
+    <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
+      {icon && <div className="mb-5 flex size-11 items-center justify-center rounded-md border border-line bg-raised text-ink-2">{icon}</div>}
+      <h3 className="text-h3 text-ink">{title}</h3>
+      <p className="mt-1.5 max-w-md text-body text-ink-3">{body}</p>
+      {action && <div className="mt-6 flex flex-wrap justify-center gap-2">{action}</div>}
     </div>
   )
 }
@@ -142,16 +177,22 @@ export function Modal({ open, onClose, title, children, footer, wide }: { open: 
   }, [open, onClose])
   if (!open) return null
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-zinc-950/40 p-0 backdrop-blur-[2px] sm:items-center sm:p-6" onMouseDown={onClose}>
-      <div role="dialog" aria-modal aria-label={title} className={cx('max-h-[92vh] w-full overflow-y-auto rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl', wide ? 'sm:max-w-3xl' : 'sm:max-w-lg')} onMouseDown={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-4">
-          <h2 className="text-[15px] font-semibold">{title}</h2>
-          <button onClick={onClose} className="rounded-md p-1 text-zinc-500 hover:bg-zinc-100" aria-label="Close">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-[var(--brand-overlay)] p-0 backdrop-blur-[3px] sm:items-center sm:p-6" onMouseDown={onClose}>
+      <div
+        role="dialog"
+        aria-modal
+        aria-label={title}
+        className={cx('elevate-3 max-h-[92vh] w-full overflow-y-auto rounded-t-xl border border-line bg-surface sm:rounded-xl', wide ? 'sm:max-w-3xl' : 'sm:max-w-lg')}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-line-soft px-5 py-4">
+          <h2 className="text-h3 text-ink">{title}</h2>
+          <button onClick={onClose} className="rounded-sm p-1 text-ink-3 transition-colors hover:bg-raised hover:text-ink" aria-label="Close">
             <X className="size-4" />
           </button>
         </div>
         <div className="px-5 py-5">{children}</div>
-        {footer && <div className="flex justify-end gap-2 border-t border-zinc-100 px-5 py-4">{footer}</div>}
+        {footer && <div className="flex justify-end gap-2 border-t border-line-soft px-5 py-4">{footer}</div>}
       </div>
     </div>
   )
@@ -160,41 +201,29 @@ export function Modal({ open, onClose, title, children, footer, wide }: { open: 
 export function Field({ label, hint, children, error }: { label: string; hint?: string; error?: string | null; children: ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-[13px] font-medium text-zinc-700">{label}</span>
+      <span className="mb-1.5 block text-small font-medium text-ink-2">{label}</span>
       {children}
-      {hint && !error && <span className="mt-1 block text-xs text-zinc-500">{hint}</span>}
-      {error && <span className="mt-1 block text-xs text-red-600">{error}</span>}
+      {hint && !error && <span className="mt-1.5 block text-caption text-ink-3">{hint}</span>}
+      {error && <span className="mt-1.5 block text-caption text-danger">{error}</span>}
     </label>
   )
 }
 
 export const inputCls =
-  'block w-full h-9 rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-xs focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900/10'
+  'block w-full h-9 rounded-md border border-line-strong bg-sunken px-3 text-body text-ink placeholder:text-ink-3 transition-[border-color,box-shadow] duration-150 hover:border-ink-4 focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent-soft disabled:opacity-50'
 
 export function Spinner({ label }: { label?: string }) {
   return (
-    <div className="flex items-center justify-center gap-2 py-20 text-sm text-zinc-500">
-      <Loader2 className="size-4 animate-spin" />
+    <div className="flex items-center justify-center gap-2.5 py-20 text-body text-ink-3" role="status">
+      <Loader2 className="size-4 animate-spin text-accent" />
       {label ?? 'Loading…'}
     </div>
   )
 }
 
-export function Logo({ className }: { className?: string }) {
-  return (
-    <span className={cx('inline-flex items-center gap-2 font-semibold tracking-tight text-zinc-900', className)}>
-      <svg viewBox="0 0 32 32" className="size-6" aria-hidden>
-        <rect width="32" height="32" rx="8" fill="#18181b" />
-        <path d="M16 7c3.6 4.6 6 8 6 11a6 6 0 0 1-12 0c0-3 2.4-6.4 6-11z" fill="#f97316" />
-      </svg>
-      MSP Leak
-    </span>
-  )
-}
-
 export function Disclaimer({ className }: { className?: string }) {
   return (
-    <p className={cx('text-xs text-zinc-500', className)}>
+    <p className={cx('text-caption text-ink-3', className)}>
       Figures are estimates of potential revenue based on the data provided. They are not guaranteed to be recoverable and should be reviewed before acting.
     </p>
   )

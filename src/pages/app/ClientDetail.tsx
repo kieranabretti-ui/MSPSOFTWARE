@@ -13,8 +13,8 @@ import { monthLabel } from '../../engine/analyse'
 function Row({ label, value, strong, tone }: { label: string; value: string; strong?: boolean; tone?: string }) {
   return (
     <div className="flex items-baseline justify-between py-2">
-      <span className="text-sm text-zinc-600">{label}</span>
-      <span className={`tnum text-sm ${strong ? 'font-semibold' : ''} ${tone ?? ''}`}>{value}</span>
+      <span className="text-body text-ink-2">{label}</span>
+      <span className={`tnum text-body ${strong ? 'font-semibold' : ''} ${tone ?? ''}`}>{value}</span>
     </div>
   )
 }
@@ -49,7 +49,7 @@ export default function ClientDetail() {
 
   return (
     <>
-      <Link to="/app/clients" className="mb-4 inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-900">
+      <Link to="/app/clients" className="mb-4 inline-flex items-center gap-1.5 text-body text-ink-3 hover:text-ink">
         <ArrowLeft className="size-4" /> Clients
       </Link>
       <PageHeader
@@ -66,37 +66,37 @@ export default function ClientDetail() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <Card className="lg:col-span-1">
             <CardHeader title="Profitability" subtitle={`Monthly average, ${analysis!.summary.period_label}`} />
-            <div className="divide-y divide-zinc-100 px-5">
+            <div className="divide-y divide-line-soft px-5">
               <Row label="MRR" value={money(mt.mrr)} />
               <Row label="Estimated labour" value={`− ${money(mt.labour_cost)}`} />
               <Row label="Software" value={`− ${money(mt.software_cost)}`} />
               <Row label="Gross contribution" value={money(mt.contribution)} strong />
-              <Row label="Gross margin" value={pct(mt.margin)} strong tone={mt.margin < target ? 'text-red-700' : mt.margin < target + 0.12 ? 'text-amber-700' : 'text-emerald-700'} />
+              <Row label="Gross margin" value={pct(mt.margin)} strong tone={mt.margin < target ? 'text-danger' : mt.margin < target + 0.12 ? 'text-warning' : 'text-success'} />
               <Row label="Support hours" value={`${hours(mt.avg_monthly_hours)} / month`} />
               <Row label="Revenue per technician hour" value={mt.revenue_per_hour ? money(mt.revenue_per_hour) : '—'} />
               <Row label="Potential leakage" value={money(leakage)} strong />
             </div>
-            <div className="space-y-3 border-t border-zinc-100 p-5">
+            <div className="space-y-3 border-t border-line-soft p-5">
               <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Status</p>
+                <p className="text-caption font-medium uppercase tracking-wide text-ink-3">Status</p>
                 <div className="mt-1">
                   <HealthDot health={mt.health} />
                 </div>
               </div>
               {mt.reasons.length > 0 && (
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Why</p>
-                  <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-zinc-700">
+                  <p className="text-caption font-medium uppercase tracking-wide text-ink-3">Why</p>
+                  <ul className="mt-1 list-disc space-y-1 pl-4 text-body text-ink-2">
                     {mt.reasons.map((r) => (
                       <li key={r}>{r}</li>
                     ))}
                   </ul>
-                  <p className="mt-2 text-xs text-zinc-500">Average client: {hours(analysis!.summary.average_monthly_hours)} support a month.</p>
+                  <p className="mt-2 text-caption text-ink-3">Average client: {hours(analysis!.summary.average_monthly_hours)} support a month.</p>
                 </div>
               )}
               <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Recommendation</p>
-                <p className="mt-1 text-sm text-zinc-700">{mt.recommendation}</p>
+                <p className="text-caption font-medium uppercase tracking-wide text-ink-3">Recommendation</p>
+                <p className="mt-1 text-body text-ink-2">{mt.recommendation}</p>
               </div>
             </div>
           </Card>
@@ -112,36 +112,36 @@ export default function ClientDetail() {
             <Card>
               <CardHeader title="Findings" subtitle={`${findings.length} for this client`} />
               {findings.length ? (
-                <ul className="divide-y divide-zinc-100">
+                <ul className="divide-y divide-line-soft">
                   {findings.map((f) => (
                     <li key={f.id}>
-                      <Link to={`/app/findings/${f.id}`} className="flex items-center gap-3 px-5 py-3 hover:bg-zinc-50">
+                      <Link to={`/app/findings/${f.id}`} className="flex items-center gap-3 px-5 py-3 hover:bg-hover">
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium">{f.title}</p>
-                          <p className="text-xs text-zinc-500">{CATEGORY_META[f.category].label}</p>
+                          <p className="truncate text-body font-medium">{f.title}</p>
+                          <p className="text-caption text-ink-3">{CATEGORY_META[f.category].label}</p>
                         </div>
                         <SeverityBadge severity={f.severity} />
                         <StatusBadge status={f.status} />
-                        <span className="tnum w-16 text-right text-sm font-semibold">{money(f.estimated_value)}</span>
+                        <span className="tnum w-16 text-right text-body font-semibold">{money(f.estimated_value)}</span>
                       </Link>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="px-5 py-6 text-sm text-zinc-500">No leakage found for this client.</p>
+                <p className="px-5 py-6 text-body text-ink-3">No leakage found for this client.</p>
               )}
             </Card>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <Card>
                 <CardHeader title="Agreement vs actual" />
-                <div className="divide-y divide-zinc-100 px-5">
-                  <Row label="Users (contracted / actual)" value={`${client.contracted_users ?? '—'} / ${mt.users || '—'}`} tone={client.contracted_users != null && mt.users > client.contracted_users ? 'text-orange-700 font-semibold' : ''} />
-                  <Row label="Devices (contracted / actual)" value={`${client.contracted_devices ?? '—'} / ${mt.devices || '—'}`} tone={client.contracted_devices != null && mt.devices > client.contracted_devices ? 'text-orange-700 font-semibold' : ''} />
+                <div className="divide-y divide-line-soft px-5">
+                  <Row label="Users (contracted / actual)" value={`${client.contracted_users ?? '—'} / ${mt.users || '—'}`} tone={client.contracted_users != null && mt.users > client.contracted_users ? 'text-warning font-semibold' : ''} />
+                  <Row label="Devices (contracted / actual)" value={`${client.contracted_devices ?? '—'} / ${mt.devices || '—'}`} tone={client.contracted_devices != null && mt.devices > client.contracted_devices ? 'text-warning font-semibold' : ''} />
                   {billing.map((b) => (
                     <Row key={b.id} label={b.service} value={`${num(b.quantity)} × ${money(b.unit_price, { decimals: true })}`} />
                   ))}
-                  {!billing.length && <p className="py-3 text-sm text-zinc-500">No billing lines uploaded.</p>}
+                  {!billing.length && <p className="py-3 text-body text-ink-3">No billing lines uploaded.</p>}
                 </div>
               </Card>
               <Card>
@@ -152,25 +152,25 @@ export default function ClientDetail() {
                       const clauses = extractClauses(c.text)
                       return (
                         <div key={c.id}>
-                          <p className="flex items-center gap-2 text-sm font-medium">
-                            <FileText className="size-4 text-zinc-400" /> {c.title}
+                          <p className="flex items-center gap-2 text-body font-medium">
+                            <FileText className="size-4 text-ink-3" /> {c.title}
                           </p>
                           <div className="mt-2 flex flex-wrap gap-1.5">
                             {[...new Set(clauses.map((cl) => cl.type))].map((t) => (
                               <Badge key={t}>{CLAUSE_LABELS[t]}</Badge>
                             ))}
-                            {!clauses.length && <span className="text-xs text-zinc-500">No scope clauses detected.</span>}
+                            {!clauses.length && <span className="text-caption text-ink-3">No scope clauses detected.</span>}
                           </div>
                           <details className="mt-2">
-                            <summary className="cursor-pointer text-xs text-zinc-500 hover:text-zinc-900">Show contract text</summary>
-                            <p className="mt-2 max-h-64 overflow-y-auto whitespace-pre-line rounded-lg bg-zinc-50 p-3 text-xs leading-relaxed text-zinc-700">{c.text}</p>
+                            <summary className="cursor-pointer text-caption text-ink-3 hover:text-ink">Show contract text</summary>
+                            <p className="mt-2 max-h-64 overflow-y-auto whitespace-pre-line rounded-md bg-sunken p-3 text-caption leading-relaxed text-ink-2">{c.text}</p>
                           </details>
                         </div>
                       )
                     })
                   ) : (
-                    <p className="text-sm text-zinc-500">
-                      No contract uploaded. <Link to="/app/data" className="font-medium text-zinc-900 hover:underline">Upload a PDF</Link> to check tickets against its scope.
+                    <p className="text-body text-ink-3">
+                      No contract uploaded. <Link to="/app/data" className="font-medium text-ink hover:underline">Upload a PDF</Link> to check tickets against its scope.
                     </p>
                   )}
                 </div>

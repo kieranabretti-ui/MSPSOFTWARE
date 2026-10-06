@@ -100,32 +100,32 @@ export default function Overview() {
       <Card className="overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr]">
           <div className="p-6 sm:p-8">
-            <p className="text-sm font-medium text-zinc-500">Potential revenue leakage identified</p>
-            <p className="tnum mt-2 text-5xl font-semibold tracking-tight text-zinc-950 sm:text-6xl" data-testid="hero-total">
+            <p className="text-body font-medium text-ink-3">Potential revenue leakage identified</p>
+            <p className="tnum mt-2 text-5xl font-semibold tracking-tight text-ink sm:text-6xl" data-testid="hero-total">
               {money(m.total)}
             </p>
-            <p className="mt-3 text-sm text-zinc-500">
+            <p className="mt-3 text-body text-ink-3">
               Across {plural(m.count, 'finding')} in {s.period_label}.{' '}
-              <Link to="/app/findings" className="font-medium text-zinc-900 underline-offset-2 hover:underline">
+              <Link to="/app/findings" className="font-medium text-ink underline-offset-2 hover:underline">
                 Review findings
               </Link>
             </p>
           </div>
-          <div className="grid grid-cols-2 border-t border-zinc-100 lg:grid-cols-1 lg:border-l lg:border-t-0">
-            <div className="border-r border-zinc-100 p-6 lg:border-b lg:border-r-0">
+          <div className="grid grid-cols-2 border-t border-line-soft lg:grid-cols-1 lg:border-l lg:border-t-0">
+            <div className="border-r border-line-soft p-6 lg:border-b lg:border-r-0">
               <p className="tnum text-2xl font-semibold tracking-tight">
                 {money(m.monthly)}
-                <span className="text-base font-medium text-zinc-500">/month</span>
+                <span className="text-base font-medium text-ink-3">/month</span>
               </p>
-              <p className="mt-1 text-[13px] text-zinc-500">Recurring leakage, if left uncorrected</p>
+              <p className="mt-1 text-small text-ink-3">Recurring leakage, if left uncorrected</p>
             </div>
             <div className="p-6">
               <p className="tnum text-2xl font-semibold tracking-tight">{money(m.annual)}</p>
-              <p className="mt-1 text-[13px] text-zinc-500">Annualised recurring opportunity</p>
+              <p className="mt-1 text-small text-ink-3">Annualised recurring opportunity</p>
             </div>
           </div>
         </div>
-        <div className="border-t border-zinc-100 bg-zinc-50/60 px-6 py-3 sm:px-8">
+        <div className="border-t border-line-soft bg-sunken px-6 py-3 sm:px-8">
           <Disclaimer />
         </div>
       </Card>
@@ -136,13 +136,13 @@ export default function Overview() {
           const v = m.byCategory[c]
           const isClients = c === 'UNDERPRICED_CLIENT'
           return (
-            <Link key={c} to={`/app/findings?category=${c}`} className="group rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300 hover:shadow-sm sm:p-5">
+            <Link key={c} to={`/app/findings?category=${c}`} className="group rounded-lg border border-line bg-surface p-4 transition hover:border-line-strong sm:p-5">
               <div className="flex items-start justify-between">
-                <p className="text-[13px] font-medium text-zinc-600">{CATEGORY_META[c].label}</p>
-                <ArrowUpRight className="size-4 text-zinc-300 transition group-hover:text-zinc-600" />
+                <p className="text-small font-medium text-ink-2">{CATEGORY_META[c].label}</p>
+                <ArrowUpRight className="size-4 text-ink-4 transition group-hover:text-ink-2" />
               </div>
               <p className="tnum mt-3 text-2xl font-semibold tracking-tight">{money(v?.value ?? 0)}</p>
-              <p className="mt-1 text-xs text-zinc-500">{isClients ? plural(v?.clients.size ?? 0, 'client') : plural(v?.count ?? 0, 'finding')}</p>
+              <p className="mt-1 text-caption text-ink-3">{isClients ? plural(v?.clients.size ?? 0, 'client') : plural(v?.count ?? 0, 'finding')}</p>
             </Link>
           )
         })}
@@ -150,32 +150,32 @@ export default function Overview() {
       {others.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
           {others.map((c) => (
-            <Link key={c} to={`/app/findings?category=${c}`} className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-[13px] text-zinc-600 hover:border-zinc-300">
+            <Link key={c} to={`/app/findings?category=${c}`} className="inline-flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-1.5 text-small text-ink-2 hover:border-line-strong">
               {CATEGORY_META[c].label}
-              <span className="tnum font-semibold text-zinc-900">{money(m.byCategory[c].value)}</span>
-              <span className="text-zinc-400">· {m.byCategory[c].count}</span>
+              <span className="tnum font-semibold text-ink">{money(m.byCategory[c].value)}</span>
+              <span className="text-ink-3">· {m.byCategory[c].count}</span>
             </Link>
           ))}
         </div>
       )}
 
       {/* opportunities strip */}
-      <div className="mt-6 flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+      <div className="mt-6 flex flex-col gap-3 rounded-lg border border-line bg-surface p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
         <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
-          <p className="text-sm">
-            <span className="tnum text-lg font-semibold">{m.openCount}</span> <span className="text-zinc-600">open revenue opportunities</span>
+          <p className="text-body">
+            <span className="tnum text-lg font-semibold">{m.openCount}</span> <span className="text-ink-2">open revenue opportunities</span>
           </p>
-          <p className="text-sm">
-            <span className="tnum text-lg font-semibold">{money(m.openValue)}</span> <span className="text-zinc-600">potential value</span>
+          <p className="text-body">
+            <span className="tnum text-lg font-semibold">{money(m.openValue)}</span> <span className="text-ink-2">potential value</span>
           </p>
           {activeActions.length > 0 && (
-            <p className="text-sm">
-              <span className="tnum text-lg font-semibold">{activeActions.length}</span> <span className="text-zinc-600">actions in progress</span>
+            <p className="text-body">
+              <span className="tnum text-lg font-semibold">{activeActions.length}</span> <span className="text-ink-2">actions in progress</span>
             </p>
           )}
           {m.resolvedValue > 0 && (
-            <p className="text-sm">
-              <span className="tnum text-lg font-semibold text-emerald-700">{money(m.resolvedValue)}</span> <span className="text-zinc-600">resolved</span>
+            <p className="text-body">
+              <span className="tnum text-lg font-semibold text-success">{money(m.resolvedValue)}</span> <span className="text-ink-2">resolved</span>
             </p>
           )}
         </div>
@@ -192,42 +192,42 @@ export default function Overview() {
           </div>
         </Card>
         <Card className="lg:col-span-2">
-          <CardHeader title="Top 5 leakage sources" right={<Link to="/app/findings" className="text-[13px] font-medium text-zinc-600 hover:text-zinc-900">All findings</Link>} />
-          <ol className="divide-y divide-zinc-100">
+          <CardHeader title="Top 5 leakage sources" right={<Link to="/app/findings" className="text-small font-medium text-ink-2 hover:text-ink">All findings</Link>} />
+          <ol className="divide-y divide-line-soft">
             {top.map((f, i) => (
               <li key={f.id}>
-                <Link to={`/app/findings/${f.id}`} className="flex items-start gap-3 px-5 py-3 hover:bg-zinc-50">
-                  <span className="tnum mt-0.5 w-4 text-xs font-medium text-zinc-400">{i + 1}</span>
+                <Link to={`/app/findings/${f.id}`} className="flex items-start gap-3 px-5 py-3 hover:bg-hover">
+                  <span className="tnum mt-0.5 w-4 text-caption font-medium text-ink-3">{i + 1}</span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-zinc-900">{f.title}</p>
-                    <p className="truncate text-xs text-zinc-500">
+                    <p className="truncate text-body font-medium text-ink">{f.title}</p>
+                    <p className="truncate text-caption text-ink-3">
                       {m.clientName(f.client_id)} · {CATEGORY_META[f.category].short}
                     </p>
                   </div>
-                  <span className="tnum text-sm font-semibold">{money(f.estimated_value)}</span>
+                  <span className="tnum text-body font-semibold">{money(f.estimated_value)}</span>
                 </Link>
               </li>
             ))}
-            {!top.length && <li className="px-5 py-8 text-center text-sm text-zinc-500">No leakage found.</li>}
+            {!top.length && <li className="px-5 py-8 text-center text-body text-ink-3">No leakage found.</li>}
           </ol>
         </Card>
       </div>
 
       <Card className="mt-6">
-        <CardHeader title="Highest risk clients" subtitle="Clients with the most potential leakage or weakest margins" right={<Link to="/app/clients" className="text-[13px] font-medium text-zinc-600 hover:text-zinc-900">All clients</Link>} />
+        <CardHeader title="Highest risk clients" subtitle="Clients with the most potential leakage or weakest margins" right={<Link to="/app/clients" className="text-small font-medium text-ink-2 hover:text-ink">All clients</Link>} />
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[640px] text-sm">
+          <table className="w-full min-w-[640px] text-body">
             <thead>
-              <tr className="border-b border-zinc-100 text-left text-xs text-zinc-500">
+              <tr className="border-b border-line-soft text-left text-caption text-ink-3">
                 <th className="px-5 py-2.5 font-medium">Client</th>
                 <th className="px-3 py-2.5 text-right font-medium">Leakage</th>
                 <th className="px-3 py-2.5 font-medium">Risk</th>
                 <th className="px-5 py-2.5 font-medium">Main reason</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-line-soft">
               {risky.map((c) => (
-                <tr key={c.client_id} className="hover:bg-zinc-50">
+                <tr key={c.client_id} className="hover:bg-hover">
                   <td className="px-5 py-3 font-medium">
                     <Link to={`/app/clients/${c.client_id}`} className="hover:underline">
                       {c.name}
@@ -237,7 +237,7 @@ export default function Overview() {
                   <td className="px-3 py-3">
                     <HealthDot health={c.health} />
                   </td>
-                  <td className="max-w-[360px] truncate px-5 py-3 text-zinc-600">{c.reasons[0] ?? 'Potentially billable work found'}</td>
+                  <td className="max-w-[360px] truncate px-5 py-3 text-ink-2">{c.reasons[0] ?? 'Potentially billable work found'}</td>
                 </tr>
               ))}
             </tbody>
@@ -246,7 +246,7 @@ export default function Overview() {
       </Card>
 
       {data.findings.some((f) => openish(f) && f.severity === 'CRITICAL') && (
-        <div className="mt-6 flex items-center gap-2 text-sm text-zinc-600">
+        <div className="mt-6 flex items-center gap-2 text-body text-ink-2">
           <SeverityBadge severity="CRITICAL" /> findings need attention first.
         </div>
       )}

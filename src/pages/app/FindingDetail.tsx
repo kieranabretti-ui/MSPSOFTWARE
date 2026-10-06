@@ -19,7 +19,7 @@ export function Highlighted({ text, highlights }: { text: string; highlights?: s
     <>
       {text.split(re).map((part, i) =>
         hs.some((h) => h.toLowerCase() === part.toLowerCase()) ? (
-          <mark key={i} className="rounded bg-orange-100 px-0.5 text-orange-950">
+          <mark key={i} className="rounded-xs bg-accent-soft px-0.5 text-accent">
             {part}
           </mark>
         ) : (
@@ -43,8 +43,8 @@ const EVIDENCE_ICON: Record<Evidence['kind'], typeof FileText> = {
 function Fact({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div>
-      <dt className="text-xs text-zinc-500">{label}</dt>
-      <dd className="mt-0.5 text-sm font-medium text-zinc-900">{children}</dd>
+      <dt className="text-caption text-ink-3">{label}</dt>
+      <dd className="mt-0.5 text-body font-medium text-ink">{children}</dd>
     </div>
   )
 }
@@ -92,20 +92,20 @@ export default function FindingDetail() {
 
   return (
     <>
-      <Link to="/app/findings" className="mb-4 inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-900">
+      <Link to="/app/findings" className="mb-4 inline-flex items-center gap-1.5 text-body text-ink-3 hover:text-ink">
         <ArrowLeft className="size-4" /> Findings
       </Link>
 
       <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+          <div className="mb-2 flex flex-wrap items-center gap-2 text-caption text-ink-3">
             <span>{CATEGORY_META[f.category].label}</span>
             <span>·</span>
             <StatusBadge status={f.status} />
           </div>
           <h1 className="text-2xl font-semibold tracking-tight">{f.title}</h1>
-          <p className="mt-1 text-sm text-zinc-500">
-            <Link to={`/app/clients/${f.client_id}`} className="font-medium text-zinc-700 hover:underline">
+          <p className="mt-1 text-body text-ink-3">
+            <Link to={`/app/clients/${f.client_id}`} className="font-medium text-ink-2 hover:underline">
               {client?.name}
             </Link>
           </p>
@@ -147,26 +147,26 @@ export default function FindingDetail() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <Card>
-            <div className="grid grid-cols-3 divide-x divide-zinc-100">
+            <div className="grid grid-cols-3 divide-x divide-line-soft">
               <div className="p-5">
-                <p className="text-xs text-zinc-500">Potential value</p>
+                <p className="text-caption text-ink-3">Potential value</p>
                 <p className="tnum mt-1 text-3xl font-semibold tracking-tight" data-testid="finding-value">
                   {money(f.estimated_value)}
                 </p>
-                {f.monthly_value > 0 && <p className="tnum mt-1 text-xs text-zinc-500">{money(f.monthly_value)}/month · {money(f.annual_value)}/year</p>}
+                {f.monthly_value > 0 && <p className="tnum mt-1 text-caption text-ink-3">{money(f.monthly_value)}/month · {money(f.annual_value)}/year</p>}
               </div>
               <div className="p-5">
-                <p className="text-xs text-zinc-500">Severity</p>
+                <p className="text-caption text-ink-3">Severity</p>
                 <div className="mt-2.5">
                   <SeverityBadge severity={f.severity} />
                 </div>
               </div>
               <div className="p-5">
-                <p className="text-xs text-zinc-500">Confidence</p>
+                <p className="text-caption text-ink-3">Confidence</p>
                 <p className="tnum mt-1 text-3xl font-semibold tracking-tight">{f.confidence}%</p>
               </div>
             </div>
-            <dl className="grid grid-cols-2 gap-4 border-t border-zinc-100 p-5 sm:grid-cols-4">
+            <dl className="grid grid-cols-2 gap-4 border-t border-line-soft p-5 sm:grid-cols-4">
               <Fact label="Client">{client?.name}</Fact>
               {f.meta.ticket_ref ? (
                 <>
@@ -187,20 +187,20 @@ export default function FindingDetail() {
           <Card>
             <CardHeader title="Why we flagged this" />
             <div className="space-y-4 p-5">
-              <p className="text-sm leading-relaxed text-zinc-700">{f.description}</p>
+              <p className="text-body leading-relaxed text-ink-2">{f.description}</p>
               {(contractEv || ticketEv) && (
                 <div className="space-y-2">
                   {contractEv && (
-                    <blockquote className="flex gap-3 rounded-lg border-l-2 border-zinc-900 bg-zinc-50 px-4 py-3 text-sm">
-                      <Quote className="mt-0.5 size-3.5 shrink-0 text-zinc-400" />
+                    <blockquote className="flex gap-3 rounded-md border border-line bg-sunken px-4 py-3 text-body">
+                      <Quote className="mt-0.5 size-3.5 shrink-0 text-ink-3" />
                       <span>
                         <span className="font-medium">Contract states:</span> “{contractEv.text}”
                       </span>
                     </blockquote>
                   )}
                   {ticketEv && (
-                    <blockquote className="flex gap-3 rounded-lg border-l-2 border-orange-400 bg-orange-50/50 px-4 py-3 text-sm">
-                      <Quote className="mt-0.5 size-3.5 shrink-0 text-zinc-400" />
+                    <blockquote className="flex gap-3 rounded-md border border-accent-line bg-accent-soft px-4 py-3 text-body">
+                      <Quote className="mt-0.5 size-3.5 shrink-0 text-ink-3" />
                       <span>
                         <span className="font-medium">Ticket states:</span> “{ticketEv.text.split('\n')[0]}”
                       </span>
@@ -208,27 +208,27 @@ export default function FindingDetail() {
                   )}
                 </div>
               )}
-              <div className="flex items-center gap-3 text-sm">
+              <div className="flex items-center gap-3 text-body">
                 <span className="font-semibold">Confidence: {f.confidence}%</span>
                 <Confidence value={f.confidence} showLabel={false} />
               </div>
-              <p className="text-xs text-zinc-500">
-                Detected by rule <code className="rounded bg-zinc-100 px-1 py-0.5 font-mono text-[11px]">{f.meta.rule}</code>. Every statement above is taken from your uploaded data.
+              <p className="text-caption text-ink-3">
+                Detected by rule <code className="rounded-xs bg-raised px-1 py-0.5 font-mono text-[11px]">{f.meta.rule}</code>. Every statement above is taken from your uploaded data.
               </p>
             </div>
           </Card>
 
           <Card>
             <CardHeader title="Evidence" subtitle="The source records behind this finding. Matched phrases are highlighted." />
-            <div className="divide-y divide-zinc-100">
+            <div className="divide-y divide-line-soft">
               {f.evidence.map((e, i) => {
                 const Icon = EVIDENCE_ICON[e.kind]
                 return (
                   <div key={i} className="p-5">
-                    <div className="mb-2 flex items-center gap-2 text-xs font-medium text-zinc-500">
+                    <div className="mb-2 flex items-center gap-2 text-caption font-medium text-ink-3">
                       <Icon className="size-3.5" /> {e.label}
                     </div>
-                    <div className={cx('whitespace-pre-line rounded-lg border border-zinc-100 bg-zinc-50/70 px-4 py-3 text-sm leading-relaxed text-zinc-800', e.kind === 'time_entry' && 'font-mono text-[12px]')}>
+                    <div className={cx('whitespace-pre-line rounded-md border border-line-soft bg-sunken px-4 py-3 text-body leading-relaxed text-ink', e.kind === 'time_entry' && 'font-mono text-[12px]')}>
                       <Highlighted text={e.text} highlights={e.highlights} />
                     </div>
                   </div>
@@ -242,22 +242,22 @@ export default function FindingDetail() {
           <Card>
             <CardHeader title="Recommended action" />
             <div className="space-y-4 p-5">
-              <p className="text-sm leading-relaxed text-zinc-700">{f.recommended_action}</p>
+              <p className="text-body leading-relaxed text-ink-2">{f.recommended_action}</p>
               <Disclaimer />
             </div>
           </Card>
 
           <Card>
             <CardHeader title="AI review" subtitle="Plain-English explanation grounded in the evidence" />
-            <div className="p-5 text-sm">
+            <div className="p-5 text-body">
               {f.ai_explanation ? (
-                <p className="whitespace-pre-line leading-relaxed text-zinc-700">{f.ai_explanation}</p>
+                <p className="whitespace-pre-line leading-relaxed text-ink-2">{f.ai_explanation}</p>
               ) : backend.mode === 'supabase' ? (
                 <Button variant="secondary" size="sm" onClick={explain} loading={aiLoading}>
                   <Sparkles className="size-3.5" /> Explain this finding
                 </Button>
               ) : (
-                <p className="text-zinc-500">Available when MSP Leak is connected to Supabase with an AI key configured on the server. The rules engine above works without it.</p>
+                <p className="text-ink-3">Available when Headroom is connected to Supabase with an AI key configured on the server. The rules engine above works without it.</p>
               )}
             </div>
           </Card>
@@ -268,30 +268,30 @@ export default function FindingDetail() {
               {linkedActions.length ? (
                 <ul className="space-y-2">
                   {linkedActions.map((a) => (
-                    <li key={a.id} className="flex items-center justify-between gap-2 text-sm">
+                    <li key={a.id} className="flex items-center justify-between gap-2 text-body">
                       <Link to="/app/actions" className="truncate hover:underline">
                         {a.title}
                       </Link>
-                      <span className="shrink-0 text-xs text-zinc-500">{a.status.replace('_', ' ')}</span>
+                      <span className="shrink-0 text-caption text-ink-3">{a.status.replace('_', ' ')}</span>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-zinc-500">No actions yet. Create one to track recovering this revenue.</p>
+                <p className="text-body text-ink-3">No actions yet. Create one to track recovering this revenue.</p>
               )}
             </div>
           </Card>
 
           <Card>
             <CardHeader title="Source data" />
-            <ul className="space-y-1.5 p-5 text-sm">
+            <ul className="space-y-1.5 p-5 text-body">
               {f.source_data.map((s) => (
                 <li key={`${s.table}:${s.id}`} className="flex items-center justify-between gap-3">
-                  <span className="truncate text-zinc-700">{s.label}</span>
-                  <span className="shrink-0 font-mono text-[11px] text-zinc-400">{s.table}</span>
+                  <span className="truncate text-ink-2">{s.label}</span>
+                  <span className="shrink-0 font-mono text-[11px] text-ink-3">{s.table}</span>
                 </li>
               ))}
-              {f.meta.work_date && <li className="pt-2 text-xs text-zinc-500">Work date {dateTime(f.meta.work_date)}</li>}
+              {f.meta.work_date && <li className="pt-2 text-caption text-ink-3">Work date {dateTime(f.meta.work_date)}</li>}
             </ul>
           </Card>
         </div>
@@ -326,7 +326,7 @@ export default function FindingDetail() {
           <Field label="Notes">
             <textarea className={cx(inputCls, 'h-24 py-2')} value={notes} onChange={(e) => setNotes(e.target.value)} />
           </Field>
-          <p className="text-sm text-zinc-600">
+          <p className="text-body text-ink-2">
             Potential value <span className="tnum font-semibold">{money(f.estimated_value)}</span> · {m.clientName(f.client_id)}
           </p>
         </div>

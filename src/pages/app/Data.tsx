@@ -42,11 +42,11 @@ function Dropzone({ accept, onFile, label }: { accept: string; onFile: (f: File)
       onDragLeave={() => setOver(false)}
       onDrop={onDrop}
       onClick={() => ref.current?.click()}
-      className={cx('flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-10 text-center transition', over ? 'border-zinc-900 bg-zinc-50' : 'border-zinc-200 hover:border-zinc-400')}
+      className={cx('flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 text-center transition', over ? 'border-accent bg-accent-soft' : 'border-line hover:border-line-strong')}
     >
-      <FileUp className="mb-3 size-6 text-zinc-400" />
-      <p className="text-sm font-medium">{label}</p>
-      <p className="mt-1 text-xs text-zinc-500">Drag and drop, or click to browse</p>
+      <FileUp className="mb-3 size-6 text-ink-3" />
+      <p className="text-body font-medium">{label}</p>
+      <p className="mt-1 text-caption text-ink-3">Drag and drop, or click to browse</p>
       <input
         ref={ref}
         type="file"
@@ -136,38 +136,38 @@ function CsvImportModal({ kind, onClose }: { kind: CsvKind; onClose: () => void 
     >
       {step === 1 && (
         <div className="space-y-4">
-          <p className="text-sm text-zinc-600">{schema.description}</p>
+          <p className="text-body text-ink-2">{schema.description}</p>
           <Dropzone accept=".csv,text/csv" onFile={onFile} label={`Upload ${schema.title} CSV`} />
-          {parseError && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{parseError}</p>}
-          <p className="text-xs text-zinc-500">Column names don't need to match exactly. You'll map them on the next step.</p>
+          {parseError && <p className="rounded-md bg-danger-soft px-3 py-2 text-body text-danger">{parseError}</p>}
+          <p className="text-caption text-ink-3">Column names don't need to match exactly. You'll map them on the next step.</p>
         </div>
       )}
 
       {step === 2 && (
         <div className="space-y-5">
-          <p className="text-sm text-zinc-600">
-            <span className="font-medium text-zinc-900">{file!.name}</span> · {plural(rows.length, 'row')}, {plural(headers.length, 'column')}. Match your columns to the fields MSP Leak uses.
+          <p className="text-body text-ink-2">
+            <span className="font-medium text-ink">{file!.name}</span> · {plural(rows.length, 'row')}, {plural(headers.length, 'column')}. Match your columns to the fields Headroom uses.
           </p>
-          <div className="overflow-hidden rounded-xl border border-zinc-200">
-            <table className="w-full text-sm">
+          <div className="overflow-hidden rounded-lg border border-line">
+            <table className="w-full text-body">
               <thead>
-                <tr className="bg-zinc-50 text-left text-xs text-zinc-500">
-                  <th className="px-4 py-2 font-medium">MSP Leak field</th>
+                <tr className="bg-sunken text-left text-caption text-ink-3">
+                  <th className="px-4 py-2 font-medium">Headroom field</th>
                   <th className="px-4 py-2 font-medium">Your column</th>
                   <th className="hidden px-4 py-2 font-medium sm:table-cell">Sample</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-line-soft">
                 {schema.fields.map((fd) => (
                   <tr key={fd.key}>
                     <td className="px-4 py-2">
                       <span className="font-medium">{fd.label}</span>
-                      {fd.required ? <span className="ml-1 text-red-600">*</span> : <span className="ml-1.5 text-xs text-zinc-400">optional</span>}
-                      {fd.help && <span className="block text-xs text-zinc-500">{fd.help}</span>}
+                      {fd.required ? <span className="ml-1 text-danger">*</span> : <span className="ml-1.5 text-caption text-ink-3">optional</span>}
+                      {fd.help && <span className="block text-caption text-ink-3">{fd.help}</span>}
                     </td>
                     <td className="px-4 py-2">
                       <select
-                        className={cx(inputCls, 'h-8 text-[13px]', fd.required && !mapping[fd.key] && 'border-red-300')}
+                        className={cx(inputCls, 'h-8 text-small', fd.required && !mapping[fd.key] && 'border-danger-line')}
                         value={mapping[fd.key] ?? ''}
                         onChange={(e) => setMapping({ ...mapping, [fd.key]: e.target.value })}
                         aria-label={`Column for ${fd.label}`}
@@ -180,19 +180,19 @@ function CsvImportModal({ kind, onClose }: { kind: CsvKind; onClose: () => void 
                         ))}
                       </select>
                     </td>
-                    <td className="hidden max-w-[200px] truncate px-4 py-2 text-xs text-zinc-500 sm:table-cell">{mapping[fd.key] ? rows.slice(0, 2).map((r) => r[mapping[fd.key]]).filter(Boolean).join(', ') : ''}</td>
+                    <td className="hidden max-w-[200px] truncate px-4 py-2 text-caption text-ink-3 sm:table-cell">{mapping[fd.key] ? rows.slice(0, 2).map((r) => r[mapping[fd.key]]).filter(Boolean).join(', ') : ''}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          {missingRequired.length > 0 && <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">Map the required fields: {missingRequired.map((f) => f.label).join(', ')}.</p>}
+          {missingRequired.length > 0 && <p className="rounded-md bg-warning-soft px-3 py-2 text-body text-warning">Map the required fields: {missingRequired.map((f) => f.label).join(', ')}.</p>}
           {missingRequired.length === 0 && errors.length > 0 && (
-            <div className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            <div className="rounded-md bg-warning-soft px-3 py-2 text-body text-warning">
               <p className="font-medium">
                 {plural(new Set(errors.map((e) => e.row)).size, 'row')} will be skipped:
               </p>
-              <ul className="mt-1 list-disc pl-5 text-[13px]">
+              <ul className="mt-1 list-disc pl-5 text-small">
                 {errors.slice(0, 4).map((e, i) => (
                   <li key={i}>
                     Row {e.row}: {e.message}
@@ -203,7 +203,7 @@ function CsvImportModal({ kind, onClose }: { kind: CsvKind; onClose: () => void 
             </div>
           )}
           {missingRequired.length === 0 && errors.length === 0 && (
-            <p className="flex items-center gap-2 text-sm text-emerald-700">
+            <p className="flex items-center gap-2 text-body text-success">
               <CheckCircle2 className="size-4" /> All {plural(rows.length, 'row')} look valid.
             </p>
           )}
@@ -211,17 +211,17 @@ function CsvImportModal({ kind, onClose }: { kind: CsvKind; onClose: () => void 
       )}
 
       {step === 3 && result && (
-        <div className="space-y-3 text-sm">
-          <p className="flex items-center gap-2 font-medium text-emerald-700">
+        <div className="space-y-3 text-body">
+          <p className="flex items-center gap-2 font-medium text-success">
             <CheckCircle2 className="size-4" /> Imported {plural(result.imported, 'row')}.
           </p>
-          {result.errors.length > 0 && <p className="text-zinc-600">{plural(new Set(result.errors.map((e) => e.row)).size, 'row')} skipped because of errors.</p>}
+          {result.errors.length > 0 && <p className="text-ink-2">{plural(new Set(result.errors.map((e) => e.row)).size, 'row')} skipped because of errors.</p>}
           {result.warnings.map((w) => (
-            <p key={w} className="flex gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-900">
+            <p key={w} className="flex gap-2 rounded-md bg-warning-soft px-3 py-2 text-warning">
               <AlertTriangle className="mt-0.5 size-4 shrink-0" /> {w}
             </p>
           ))}
-          <p className="text-zinc-600">Run the analysis when you've uploaded everything.</p>
+          <p className="text-ink-2">Run the analysis when you've uploaded everything.</p>
         </div>
       )}
     </Modal>
@@ -316,36 +316,36 @@ function ContractModal({ onClose }: { onClose: () => void }) {
         {!text ? (
           <>
             <Dropzone accept=".pdf,application/pdf,.txt" onFile={onFile} label={extracting ? 'Extracting text…' : 'Upload contract PDF'} />
-            <p className="text-xs text-zinc-500">We extract the text to check scope clauses such as company-owned devices only, project work exclusions and support hours. Original files are stored privately.</p>
+            <p className="text-caption text-ink-3">We extract the text to check scope clauses such as company-owned devices only, project work exclusions and support hours. Original files are stored privately.</p>
           </>
         ) : (
           <>
             <div>
               <div className="mb-1.5 flex items-center justify-between">
-                <span className="text-[13px] font-medium text-zinc-700">Extracted text</span>
-                <button className="text-xs text-zinc-500 hover:text-zinc-900" onClick={() => (setText(''), setFile(null))}>
+                <span className="text-small font-medium text-ink-2">Extracted text</span>
+                <button className="text-caption text-ink-3 hover:text-ink" onClick={() => (setText(''), setFile(null))}>
                   Replace file
                 </button>
               </div>
-              <textarea className={cx(inputCls, 'h-48 py-2 font-mono text-xs leading-relaxed')} value={text} onChange={(e) => setText(e.target.value)} aria-label="Contract text" />
+              <textarea className={cx(inputCls, 'h-48 py-2 font-mono text-caption leading-relaxed')} value={text} onChange={(e) => setText(e.target.value)} aria-label="Contract text" />
             </div>
             <div>
-              <p className="mb-1.5 text-[13px] font-medium text-zinc-700">Scope clauses detected</p>
+              <p className="mb-1.5 text-small font-medium text-ink-2">Scope clauses detected</p>
               {clauses.length ? (
                 <ul className="space-y-1.5">
                   {clauses.map((c, i) => (
-                    <li key={i} className="text-sm">
-                      <Badge tone="blue">{CLAUSE_LABELS[c.type]}</Badge> <span className="text-zinc-600">“{c.sentence}”</span>
+                    <li key={i} className="text-body">
+                      <Badge tone="info">{CLAUSE_LABELS[c.type]}</Badge> <span className="text-ink-2">“{c.sentence}”</span>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-zinc-500">No scope clauses detected. The contract will still be stored, and tickets will be checked for potentially billable work.</p>
+                <p className="text-body text-ink-3">No scope clauses detected. The contract will still be stored, and tickets will be checked for potentially billable work.</p>
               )}
             </div>
           </>
         )}
-        {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+        {error && <p className="rounded-md bg-danger-soft px-3 py-2 text-body text-danger">{error}</p>}
       </div>
       <AddClientModal open={adding} onClose={() => setAdding(false)} onCreated={setClientId} />
     </Modal>
@@ -415,10 +415,10 @@ export default function DataPage() {
         }
       />
 
-      <Card className={cx('mb-6 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between', stale && 'border-amber-300 bg-amber-50/40')}>
+      <Card className={cx('mb-6 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between', stale && 'border-warning-line bg-warning-soft')}>
         <div>
-          <p className="text-sm font-medium">{analysis ? (stale ? 'New data since the last analysis' : 'Analysis up to date') : hasData ? 'Ready to analyse' : 'No data yet'}</p>
-          <p className="text-[13px] text-zinc-500">
+          <p className="text-body font-medium">{analysis ? (stale ? 'New data since the last analysis' : 'Analysis up to date') : hasData ? 'Ready to analyse' : 'No data yet'}</p>
+          <p className="text-small text-ink-3">
             {analysis
               ? `Last run ${relative(analysis.created_at)} on ${analysis.summary.period_label}.${stale ? ' Run it again to include your latest uploads.' : ''}`
               : hasData
@@ -442,27 +442,27 @@ export default function DataPage() {
               <div className="flex-1 p-5">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="text-[15px] font-semibold">{s.title}</h3>
-                  {count > 0 ? <Badge tone="green">{num(count)} rows</Badge> : <Badge>CSV</Badge>}
+                  {count > 0 ? <Badge tone="success">{num(count)} rows</Badge> : <Badge>CSV</Badge>}
                 </div>
-                <p className="mt-1.5 text-[13px] text-zinc-500">{s.description}</p>
-                <p className="mt-3 text-xs font-medium text-zinc-500">Suggested columns</p>
+                <p className="mt-1.5 text-small text-ink-3">{s.description}</p>
+                <p className="mt-3 text-caption font-medium text-ink-3">Suggested columns</p>
                 <div className="mt-1.5 flex flex-wrap gap-1">
                   {s.fields.map((f) => (
-                    <code key={f.key} className={cx('rounded px-1.5 py-0.5 font-mono text-[11px]', f.required ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-600')}>
+                    <code key={f.key} className={cx('rounded-xs px-1.5 py-0.5 font-mono text-[11px]', f.required ? 'bg-raised text-ink ring-1 ring-inset ring-line-strong' : 'bg-raised text-ink-2')}>
                       {f.key}
                     </code>
                   ))}
                 </div>
               </div>
-              <div className="flex flex-wrap items-center gap-2 border-t border-zinc-100 px-5 py-3">
+              <div className="flex flex-wrap items-center gap-2 border-t border-line-soft px-5 py-3">
                 <Button size="sm" onClick={() => setImportKind(kind)} data-testid={`upload-${kind}`}>
                   <UploadIcon className="size-3.5" /> Upload CSV
                 </Button>
-                <button className="text-xs text-zinc-500 hover:text-zinc-900" onClick={() => template(kind, false)}>
+                <button className="text-caption text-ink-3 hover:text-ink" onClick={() => template(kind, false)}>
                   Template
                 </button>
-                <span className="text-zinc-300">·</span>
-                <button className="text-xs text-zinc-500 hover:text-zinc-900" onClick={() => template(kind, true)}>
+                <span className="text-ink-4">·</span>
+                <button className="text-caption text-ink-3 hover:text-ink" onClick={() => template(kind, true)}>
                   Demo file
                 </button>
               </div>
@@ -473,16 +473,16 @@ export default function DataPage() {
           <div className="flex-1 p-5">
             <div className="flex items-start justify-between gap-2">
               <h3 className="text-[15px] font-semibold">Contracts & SOWs</h3>
-              {data.contracts.length > 0 ? <Badge tone="green">{plural(data.contracts.length, 'contract')}</Badge> : <Badge>PDF</Badge>}
+              {data.contracts.length > 0 ? <Badge tone="success">{plural(data.contracts.length, 'contract')}</Badge> : <Badge>PDF</Badge>}
             </div>
-            <p className="mt-1.5 text-[13px] text-zinc-500">Client contracts, statements of work and service agreements. We read the scope and exclusions so tickets can be checked against them.</p>
-            <p className="mt-3 text-xs text-zinc-500">Looks for: company-owned devices only, hardware, project and onsite exclusions, support hours, included hours, third-party applications, new user and device setup.</p>
+            <p className="mt-1.5 text-small text-ink-3">Client contracts, statements of work and service agreements. We read the scope and exclusions so tickets can be checked against them.</p>
+            <p className="mt-3 text-caption text-ink-3">Looks for: company-owned devices only, hardware, project and onsite exclusions, support hours, included hours, third-party applications, new user and device setup.</p>
           </div>
-          <div className="flex flex-wrap items-center gap-2 border-t border-zinc-100 px-5 py-3">
+          <div className="flex flex-wrap items-center gap-2 border-t border-line-soft px-5 py-3">
             <Button size="sm" onClick={() => setContractOpen(true)} disabled={!data.clients.length} title={!data.clients.length ? 'Add a client first' : undefined}>
               <FileText className="size-3.5" /> Upload PDF
             </Button>
-            <button className="text-xs text-zinc-500 hover:text-zinc-900" onClick={samplePdf}>
+            <button className="text-caption text-ink-3 hover:text-ink" onClick={samplePdf}>
               Sample contract PDF
             </button>
           </div>
@@ -493,24 +493,24 @@ export default function DataPage() {
         <CardHeader title="Upload history" right={hasData && <Button variant="ghost" size="sm" onClick={() => setConfirmReset(true)}><RotateCcw className="size-3.5" /> Clear all data</Button>} />
         {data.uploads.length ? (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[560px] text-sm">
-              <tbody className="divide-y divide-zinc-100">
+            <table className="w-full min-w-[560px] text-body">
+              <tbody className="divide-y divide-line-soft">
                 {[...data.uploads]
                   .sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
                   .map((u) => (
                     <tr key={u.id}>
                       <td className="px-5 py-3 font-medium">{u.file_name}</td>
-                      <td className="px-3 py-3 text-zinc-600">{u.kind === 'contract' ? 'Contract' : SCHEMAS[u.kind].title}</td>
-                      <td className="tnum px-3 py-3 text-zinc-600">{plural(u.row_count, u.kind === 'contract' ? 'document' : 'row')}</td>
-                      <td className="px-3 py-3">{u.warnings.length ? <span title={u.warnings.join('\n')}><Badge tone="amber">{plural(u.warnings.length, 'warning')}</Badge></span> : <Badge tone="green">Imported</Badge>}</td>
-                      <td className="px-5 py-3 text-right text-xs text-zinc-500">{relative(u.created_at)}</td>
+                      <td className="px-3 py-3 text-ink-2">{u.kind === 'contract' ? 'Contract' : SCHEMAS[u.kind].title}</td>
+                      <td className="tnum px-3 py-3 text-ink-2">{plural(u.row_count, u.kind === 'contract' ? 'document' : 'row')}</td>
+                      <td className="px-3 py-3">{u.warnings.length ? <span title={u.warnings.join('\n')}><Badge tone="warning">{plural(u.warnings.length, 'warning')}</Badge></span> : <Badge tone="success">Imported</Badge>}</td>
+                      <td className="px-5 py-3 text-right text-caption text-ink-3">{relative(u.created_at)}</td>
                     </tr>
                   ))}
               </tbody>
             </table>
           </div>
         ) : (
-          <p className="px-5 py-6 text-sm text-zinc-500">Nothing uploaded yet.</p>
+          <p className="px-5 py-6 text-body text-ink-3">Nothing uploaded yet.</p>
         )}
       </Card>
 
@@ -529,7 +529,7 @@ export default function DataPage() {
           </>
         }
       >
-        <p className="text-sm text-zinc-600">This clears everything in {workspace?.name} (clients, uploads, findings and actions) and loads Northlight IT, a fictional MSP with 15 clients.</p>
+        <p className="text-body text-ink-2">This clears everything in {workspace?.name} (clients, uploads, findings and actions) and loads Northlight IT, a fictional MSP with 15 clients.</p>
       </Modal>
       <Modal
         open={confirmReset}
@@ -553,7 +553,7 @@ export default function DataPage() {
           </>
         }
       >
-        <p className="text-sm text-zinc-600">This removes every client, upload, finding and action in {workspace?.name}. It can't be undone.</p>
+        <p className="text-body text-ink-2">This removes every client, upload, finding and action in {workspace?.name}. It can't be undone.</p>
       </Modal>
     </>
   )
