@@ -1,7 +1,7 @@
 // One report model, rendered both on screen and as a PDF.
 import type { Analysis, ClientMetrics, Finding, Workspace } from '../engine/types'
 import type { WorkspaceData } from '../data/backend'
-import { CATEGORY_META } from './labels'
+import { CATEGORY_META, HEALTH } from './labels'
 import { money, pct, hours, plural } from './format'
 
 export interface ReportModel {
@@ -48,7 +48,7 @@ export function buildReport(ws: Workspace, analysis: Analysis, data: WorkspaceDa
     .filter((c) => c.leakage > 0 || c.health === 'at_risk')
     .sort((a, b) => b.leakage - a.leakage)
     .slice(0, 6)
-    .map((c) => ({ name: c.name, leakage: c.leakage, margin: c.margin, health: c.health === 'at_risk' ? 'High' : c.health === 'watch' ? 'Medium' : 'Low', reason: c.reasons[0] ?? '' }))
+    .map((c) => ({ name: c.name, leakage: c.leakage, margin: c.margin, health: HEALTH[c.health].label, reason: c.reasons[0] ?? '' }))
 
   const section = (key: ReportModel['sections'][number]['key'], title: string, intro: string) => {
     const fs = live.filter((f) => f.category === key).sort((a, b) => b.estimated_value - a.estimated_value)
