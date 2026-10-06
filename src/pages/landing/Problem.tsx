@@ -17,7 +17,7 @@ function Example({ source, value, quote, children }: { source: ReactNode; value:
     <div className="min-w-0">
       <div className="flex items-baseline justify-between gap-4">
         <p className="tnum min-w-0 text-small text-ink-3">{source}</p>
-        <p className="tnum shrink-0 text-small font-semibold text-ink">{money(value)}</p>
+        <p className="tnum shrink-0 text-small font-medium text-ink-2">{money(value)}</p>
       </div>
       <p className="mt-1.5 text-body font-medium text-ink">{quote}</p>
       <p className="mt-1 max-w-[62ch] text-small text-ink-2">{children}</p>
@@ -34,7 +34,8 @@ export function Problem() {
       category: 'OUT_OF_SCOPE',
       example: (
         <Example source={`${scope.finding.client} · Ticket #${scope.finding.ticketRef}`} value={scope.finding.value} quote={`“${scope.subject}”`}>
-          {scope.time.duration} logged as non-billable at {scope.time.time} on {shortDate(scope.time.date)}. The contract says: “<Highlighted text={scope.clause ?? ''} highlights={scope.clauseHighlights} />”
+          {scope.time.duration} logged as non-billable at {scope.time.time} on {shortDate(scope.time.date)}. The contract says: “
+          <Highlighted text={scope.clause ?? ''} highlights={scope.clauseHighlights} />”
         </Example>
       ),
     },
@@ -63,7 +64,11 @@ export function Problem() {
       def: 'Support effort that has quietly eaten the margin.',
       category: 'UNDERPRICED_CLIENT',
       example: (
-        <Example source={`${underpriced.finding.client} · Profitability`} value={underpriced.finding.value} quote={`${money(underpriced.mrr)} a month for ${underpriced.avgHours} support hours a month.`}>
+        <Example
+          source={`${underpriced.finding.client} · Profitability`}
+          value={underpriced.finding.value}
+          quote={`${money(underpriced.mrr)} a month for ${underpriced.avgHours} support hours a month.`}
+        >
           Gross margin {Math.round(underpriced.margin * 100)}% against a {Math.round(DEMO.settings.targetMargin * 100)}% target, {money(underpriced.finding.monthly)} a month short on average.
         </Example>
       ),
@@ -79,7 +84,10 @@ export function Problem() {
   return (
     <Section id="problem" label="problem-title">
       <SectionIntro id="problem-title" title="Your MSP can be profitable on paper while quietly losing thousands every month.">
-        <p>Agreements are signed once. Clients change every month. New starters arrive, devices multiply and engineers do the quick favour nobody bills. None of it reaches an invoice, and nobody has time to check a thousand tickets against fifteen contracts.</p>
+        <p>
+          Agreements are signed once. Clients change every month. New starters arrive, devices multiply and engineers do the quick favour nobody bills. None of it reaches an invoice, and nobody has
+          time to check a thousand tickets against fifteen contracts.
+        </p>
       </SectionIntro>
 
       <div className="mt-14 lg:mt-20">
@@ -100,7 +108,7 @@ export function Problem() {
               {r.example}
               <div className="flex items-baseline justify-between gap-4 border-t border-line-soft pt-3 lg:block lg:border-0 lg:pt-0 lg:text-right">
                 <p className="text-small text-ink-3 lg:hidden">Across {DEMO.msp}</p>
-                <div>
+                <div className="text-right">
                   <Figure size="md" className="lg:text-data-lg">
                     {money(c.value)}
                   </Figure>
@@ -118,7 +126,7 @@ export function Problem() {
           <p className="tnum text-small text-ink-3 lg:self-center">
             Of {money(DEMO.totals.identified)} found in {DEMO.period.label}.{restText && ` ${restText[0].toUpperCase()}${restText.slice(1)} make up the rest.`}
           </p>
-          <p className="lg:text-right">
+          <p className="text-right">
             <Figure>{money(shown)}</Figure>
           </p>
         </div>

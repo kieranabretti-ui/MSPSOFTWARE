@@ -48,6 +48,11 @@ export const paper = {
   warning: '#9a6200',
   danger: '#c2412d',
   info: '#2563c4',
+  accent: '#4d6b00',
+  borderStrong: '#c9ced4',
+  faint: '#9aa1aa',
+  mark: '#0a0b0d',
+  markAccent: '#5a8700',
 } as const
 
 export const rgb = (hex: string): [number, number, number] => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)) as [number, number, number]

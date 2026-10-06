@@ -29,7 +29,9 @@ export default function Landing() {
 
             <div className="mt-8 grid grid-cols-1 gap-x-10 gap-y-12 lg:mt-12 lg:grid-cols-12">
               <div className="lg:col-span-4 lg:pt-1">
-                <p className="max-w-[46ch] text-lead text-ink-2">Headroom analyses your tickets, contracts and billing data to uncover revenue that quietly disappears through scope creep, missed charges and underpriced clients.</p>
+                <p className="max-w-[46ch] text-lead text-ink-2">
+                  Headroom analyses your tickets, contracts and billing data to uncover revenue that quietly disappears through scope creep, missed charges and underpriced clients.
+                </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
                   <ButtonLink to="/signup" variant="accent" size="lg">
                     Find My Lost Revenue <ArrowRight className="size-4" aria-hidden />

@@ -24,6 +24,10 @@
   --brand-accent-line: rgb(196 242 91 / 0.3);
   --brand-accent-deep: #4d6b00; /* the accent on paper, where lime is unreadable */
 
+  /* The mark: body and lifted piece. Paper swaps both (see below). */
+  --brand-mark: #edeef0;
+  --brand-mark-accent: #c4f25b;
+
   /* UI: surfaces, from the page down to things that float */
   --brand-background: #0a0b0d;
   --brand-surface-sunken: #0d0e10;
@@ -138,7 +142,13 @@
   --brand-text-secondary: #464c55;
   --brand-muted: #636a74;
   --brand-faint: #9aa1aa;
+  --brand-accent: #4d6b00;
+  --brand-accent-hover: #3e5700;
+  --brand-accent-ink: #ffffff;
   --brand-accent-soft: rgb(77 107 0 / 0.08);
+  --brand-accent-line: rgb(77 107 0 / 0.3);
+  --brand-mark: #0a0b0d;
+  --brand-mark-accent: #5a8700; /* lime on white: a graphic, 4.3:1, never text */
   --brand-success: #17804d;
   --brand-warning: #9a6200;
   --brand-danger: #c2412d;

@@ -4,7 +4,7 @@
 import type { jsPDF } from 'jspdf'
 import regularTtf from '../assets/fonts/HostGrotesk-400.ttf?inline'
 import boldTtf from '../assets/fonts/HostGrotesk-600.ttf?inline'
-import { color, rgb } from '../brand/tokens'
+import { color, paper, rgb } from '../brand/tokens'
 
 export const PDF_FONT = 'HostGrotesk'
 
@@ -27,22 +27,54 @@ export function registerFonts(doc: jsPDF): string {
   }
 }
 
-// The Headroom mark, drawn from the placeholder LogoMark in src/brand/Logo.tsx
-// (a 32-unit square). `on` is the ground it sits on: on ink the tile is bone,
-// on paper it inverts to an ink tile. The recovery chip is lime in both, as it
-// always sits on ink or a bar, never on white. Replace the body of this
-// function when the final mark lands; callers only pass position and size.
-export function drawMark(doc: jsPDF, x: number, y: number, size: number, on: 'ink' | 'paper' = 'ink') {
-  const s = size / 32
-  const tile = rgb(on === 'ink' ? color.bone : color.ink)
-  const bar = rgb(on === 'ink' ? color.ink : color.bone)
-  const chip = rgb(color.accent)
+// The Headroom mark as vectors, from the same geometry as LogoMark in
+// src/brand/Logo.tsx: a square on a 32-unit grid with its top-right quarter
+// lifted clear. Each outline is a list of straight runs ('L') and quarter
+// arcs ('A', given by the corner they round and the point they end on).
+type Step = ['L', number, number] | ['A', number, number, number, number]
+const BODY: { from: [number, number]; steps: Step[] } = {
+  from: [9, 8],
+  steps: [['L', 13, 8], ['A', 14, 8, 14, 9], ['L', 14, 19], ['A', 14, 20, 15, 20], ['L', 25, 20], ['A', 26, 20, 26, 21], ['L', 26, 25], ['A', 26, 28, 23, 28], ['L', 9, 28], ['A', 6, 28, 6, 25], ['L', 6, 11], ['A', 6, 8, 9, 8]],
+}
+const PIECE: { from: [number, number]; steps: Step[] } = {
+  from: [17, 4],
+  steps: [['L', 23, 4], ['A', 26, 4, 26, 7], ['L', 26, 13], ['A', 26, 14, 25, 14], ['L', 17, 14], ['A', 16, 14, 16, 13], ['L', 16, 5], ['A', 16, 4, 17, 4]],
+}
+// Control-point distance for a quarter circle drawn as one cubic Bézier.
+const K = 0.5523
+
+function outline(doc: jsPDF, shape: typeof BODY, x: number, y: number, s: number) {
+  let [px, py] = shape.from
+  const segs: number[][] = []
+  for (const step of shape.steps) {
+    if (step[0] === 'L') {
+      segs.push([(step[1] - px) * s, (step[2] - py) * s])
+      ;[px, py] = [step[1], step[2]]
+    } else {
+      const [, cx, cy, ex, ey] = step
+      const c1 = [px + K * (cx - px), py + K * (cy - py)]
+      const c2 = [ex + K * (cx - ex), ey + K * (cy - ey)]
+      segs.push([(c1[0] - px) * s, (c1[1] - py) * s, (c2[0] - px) * s, (c2[1] - py) * s, (ex - px) * s, (ey - py) * s])
+      ;[px, py] = [ex, ey]
+    }
+  }
+  doc.lines(segs, x + (shape.from[0] - 6) * s, y + (shape.from[1] - 4) * s, [1, 1], 'F', true)
+}
+
+// Draws the bare mark with its top-left at (x, y), `height` tall and 5/6 as
+// wide. Set `height` to the wordmark's font size and the mark's foot to its
+// baseline, with a gap of 0.3 × the font size, to match the lockup. `on` is
+// the ground: on ink the body is bone and the piece lime; on paper the body
+// is ink and the piece the deeper paper lime.
+export function drawMark(doc: jsPDF, x: number, y: number, height: number, on: 'ink' | 'paper' = 'ink') {
+  const s = height / 24
   doc.saveGraphicsState()
-  doc.setFillColor(...tile).roundedRect(x, y, size, size, 8 * s, 8 * s, 'F')
-  doc.setFillColor(...bar)
-  doc.roundedRect(x + 8 * s, y + 9 * s, 16 * s, 4 * s, s, s, 'F')
-  doc.roundedRect(x + 8 * s, y + 19 * s, 9 * s, 4 * s, s, s, 'F')
-  doc.setFillColor(...chip).setDrawColor(...bar).setLineWidth(1.2 * s)
-  doc.roundedRect(x + 19 * s, y + 19 * s, 5 * s, 4 * s, s, s, 'FD')
+  doc.setFillColor(...rgb(on === 'ink' ? color.bone : paper.mark))
+  outline(doc, BODY, x, y, s)
+  doc.setFillColor(...rgb(on === 'ink' ? color.accent : paper.markAccent))
+  outline(doc, PIECE, x, y, s)
   doc.restoreGraphicsState()
 }
+
+// Width of the mark plus the lockup gap, for placing the wordmark after it.
+export const markAdvance = (height: number) => height * (20 / 24) + height * 0.3

@@ -481,6 +481,10 @@ export function analyse(ds: Dataset): AnalysisOutput {
       if (margin < s.target_margin && identified > 0) {
         const avgHours = sumValues(h) / months.length
         const monthly = round(identified / months.length)
+        // The price that earns the target margin on average costs: raising the
+        // price raises the margin owed on it, so this is more than the shortfall.
+        const avgCost = client.monthly_recurring_revenue - totalContribution / months.length
+        const targetPrice = round(avgCost / (1 - s.target_margin))
         const conf = 82
         findings.push({
           finding_key: `UNDERPRICED_CLIENT:${client.id}`,
@@ -498,7 +502,7 @@ export function analyse(ds: Dataset): AnalysisOutput {
           estimated_value: identified,
           monthly_value: monthly,
           annual_value: monthly * 12,
-          recommended_action: `Review pricing with ${client.name}: an increase of about ${gbp(monthly)}/month would restore your target margin. Alternatively, look at what's driving ticket volume or move them to a higher support tier.`,
+          recommended_action: `Review pricing with ${client.name}: at this period's average hours and costs, about ${gbp(targetPrice)}/month (+${gbp(targetPrice - client.monthly_recurring_revenue)}) would restore your ${Math.round(s.target_margin * 100)}% target margin. Alternatively, look at what's driving ticket volume or move them to a higher support tier.`,
           source_data: [{ table: 'clients', id: client.id, label: client.name }],
           meta: { rule: 'margin.below_target', period_values: pv },
         })

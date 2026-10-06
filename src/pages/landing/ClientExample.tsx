@@ -40,7 +40,8 @@ export function ClientExample() {
             One client. {monthsWord} months. {money(c.leakage)} of potential leakage.
           </h2>
           <p className="mt-5 max-w-[52ch] text-lead text-ink-2">
-            {c.name} pays {money(c.mrr)} a month{c.package ? ` on ${c.package}` : ''}. Its support has grown from {first.hours} to {last.hours} hours a month, and {extraUsers > 0 ? `${extraUsers} new starters were never added to the agreement` : 'its agreement has not moved'}.
+            {c.name} pays {money(c.mrr)} a month{c.package ? ` on ${c.package}` : ''}. Its support has grown from {first.hours} to {last.hours} hours a month, and{' '}
+            {extraUsers > 0 ? `${extraUsers} new starters were never added to the agreement` : 'its agreement has not moved'}.
           </p>
 
           <dl className="mt-8 grid grid-cols-2 border-y border-line-soft">
@@ -89,25 +90,19 @@ export function ClientExample() {
               <Line label="Monthly agreement" value={money(c.mrr)} />
               <Line className="border-t border-line-soft" label="Labour" sub={`${c.avgHours}h a month at ${money(labourRate)}/h`} value={`−${money(c.labour)}`} />
               <Line className="border-t border-line-soft" label="Software" value={`−${money(c.software)}`} />
-              <Line
-                className="border-t border-line"
-                strong
-                label="Gross contribution"
-                sub={`${pct(c.margin)} margin against a ${pct(targetMargin)} target`}
-                value={money(c.contribution)}
-              />
+              <Line className="border-t border-line" strong label="Gross contribution" sub={`${pct(c.margin)} margin against a ${pct(targetMargin)} target`} value={money(c.contribution)} />
             </dl>
             <div className="border-t-[3px] border-double border-line-strong bg-sunken px-5 py-5 sm:px-7">
-              <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-                <div className="min-w-0">
-                  <p className="text-small font-medium text-ink">Recommended contract value</p>
-                  <p className="mt-0.5 max-w-[40ch] text-caption text-ink-3">The monthly price at which its labour and software cost leave a {pct(targetMargin)} margin.</p>
-                </div>
-                <p className="tnum text-right">
+              <div className="flex items-baseline justify-between gap-4">
+                <p className="text-small font-medium text-ink">Recommended contract value</p>
+                <p className="tnum shrink-0 text-right">
                   <Figure>{money(c.recommended)}</Figure>
                   <span className="ml-1.5 text-small text-ink-3">a month</span>
-                  <span className="mt-0.5 block text-small font-semibold text-accent">+{money(c.uplift)} a month</span>
                 </p>
+              </div>
+              <div className="mt-1 flex items-baseline justify-between gap-4">
+                <p className="max-w-[40ch] text-caption text-ink-3">The monthly price at which its labour and software cost leave a {pct(targetMargin)} margin.</p>
+                <p className="tnum shrink-0 text-small font-semibold text-accent">+{money(c.uplift)} a month</p>
               </div>
             </div>
 
@@ -135,7 +130,8 @@ export function ClientExample() {
           </div>
           {c.driftMonthly > 0 && (
             <p className="tnum mt-4 max-w-[68ch] text-small text-ink-2">
-              Billing the {extraUsers} extra users alone (+{money(c.driftMonthly)} a month) takes {c.name} to {money(c.mrrAfterDrift)}, a {(c.marginAfterDrift * 100).toFixed(1)}% margin, before any price conversation.
+              Billing the {extraUsers} extra users alone (+{money(c.driftMonthly)} a month) takes {c.name} to {money(c.mrrAfterDrift)}, a {(c.marginAfterDrift * 100).toFixed(1)}% margin, before any
+              price conversation.
             </p>
           )}
         </div>

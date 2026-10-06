@@ -24,7 +24,7 @@ const SIZES: Record<Size, string> = {
   lg: 'h-11 px-5 text-[15px] gap-2',
 }
 const buttonBase =
-  'inline-flex items-center justify-center rounded-md font-medium whitespace-nowrap transition-[background-color,border-color,color,box-shadow] duration-150 ease-out disabled:cursor-not-allowed disabled:opacity-45'
+  'inline-flex items-center justify-center rounded-md font-medium whitespace-nowrap [&>svg]:shrink-0 transition-[background-color,border-color,color,box-shadow] duration-150 ease-out disabled:cursor-not-allowed disabled:opacity-45'
 
 export function Button({ variant = 'primary', size = 'md', loading, className, children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; size?: Size; loading?: boolean }) {
   return (
@@ -100,20 +100,22 @@ export function Figure({ children, size = 'lg', tone = 'default', className, tes
 }
 
 // Severity: a label plus a bar count, so it never relies on colour alone.
-const SEV: Record<Severity, { label: string; cls: string; bars: number }> = {
-  CRITICAL: { label: 'Critical', cls: 'bg-danger-soft text-danger ring-danger-line', bars: 3 },
-  HIGH: { label: 'High', cls: 'bg-warning-soft text-warning ring-warning-line', bars: 2 },
-  MEDIUM: { label: 'Medium', cls: 'bg-raised text-ink-2 ring-line', bars: 1 },
-  LOW: { label: 'Low', cls: 'text-ink-3 ring-line-soft', bars: 0 },
+// Only Critical takes a coloured pill; High colours its bars, so a column of
+// High findings stays calm.
+const SEV: Record<Severity, { label: string; cls: string; bar: string; bars: number }> = {
+  CRITICAL: { label: 'Critical', cls: 'bg-danger-soft text-danger ring-danger-line', bar: 'bg-current', bars: 3 },
+  HIGH: { label: 'High', cls: 'bg-raised text-ink ring-line', bar: 'bg-warning', bars: 2 },
+  MEDIUM: { label: 'Medium', cls: 'text-ink-2 ring-line', bar: 'bg-ink-3', bars: 1 },
+  LOW: { label: 'Low', cls: 'text-ink-3 ring-line-soft', bar: 'bg-ink-3', bars: 0 },
 }
 
 export function SeverityBadge({ severity }: { severity: Severity }) {
   const s = SEV[severity]
   return (
-    <span className={cx('inline-flex h-5 items-center gap-1.5 rounded-xs px-1.5 text-[11px] font-semibold ring-1 ring-inset', s.cls)}>
+    <span className={cx('inline-flex h-5 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xs px-1.5 text-[11px] font-semibold ring-1 ring-inset', s.cls)}>
       <span className="flex items-end gap-px" aria-hidden>
         {[0, 1, 2].map((i) => (
-          <span key={i} className={cx('w-[2px] rounded-full bg-current', i < s.bars ? 'opacity-100' : 'opacity-25')} style={{ height: 4 + i * 2 }} />
+          <span key={i} className={cx('w-[2px] rounded-full', i < s.bars ? s.bar : 'bg-current opacity-25')} style={{ height: 4 + i * 2 }} />
         ))}
       </span>
       {s.label}
@@ -132,7 +134,7 @@ const TONES: Record<Tone, string> = {
 }
 
 export function Badge({ children, tone = 'neutral' }: { children: ReactNode; tone?: Tone }) {
-  return <span className={cx('inline-flex h-5 items-center gap-1 rounded-xs px-1.5 text-[11px] font-medium ring-1 ring-inset', TONES[tone])}>{children}</span>
+  return <span className={cx('inline-flex h-5 shrink-0 items-center gap-1 whitespace-nowrap rounded-xs px-1.5 text-[11px] font-medium ring-1 ring-inset', TONES[tone])}>{children}</span>
 }
 
 export function Confidence({ value, showLabel = true }: { value: number; showLabel?: boolean }) {

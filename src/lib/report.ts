@@ -276,8 +276,8 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
   // Cover band
   const BAND = 326
   doc.setFillColor(...band).rect(0, 0, W, BAND, 'F')
-  brand.drawMark(doc, M, 40, 22)
-  type(14, 'bold', bone).text('Headroom', M + 31, 56)
+  brand.drawMark(doc, M, 56 - 15, 15)
+  type(15, 'bold', bone).text('Headroom', M + brand.markAdvance(15), 56, { charSpace: -0.3 })
   if (r.isDemo) {
     const label = 'Demo data'
     const pw = width(label, 8, 'bold') + 16
@@ -425,8 +425,8 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
     doc.setPage(i)
     const fy = H - 30
     doc.setDrawColor(...rule).setLineWidth(0.4).line(M, fy - 14, W - M, fy - 14)
-    brand.drawMark(doc, M, fy - 7.4, 9, 'paper')
-    type(7.5, 'normal', muted).text(`Headroom  ·  ${r.workspace}  ·  ${r.period}`, M + 15, fy)
+    brand.drawMark(doc, M, fy - 7.5, 7.5, 'paper')
+    type(7.5, 'normal', muted).text(`Headroom  ·  ${r.workspace}  ·  ${r.period}`, M + brand.markAdvance(7.5), fy)
     doc.text(`Page ${i} of ${pages}`, W - M, fy, { align: 'right' })
   }
   return doc.output('blob')

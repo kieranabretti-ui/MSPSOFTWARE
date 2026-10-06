@@ -37,7 +37,11 @@ function parseTime(text: string): SnapshotTime {
 export function buildLandingSnapshot(): LandingSnapshot {
   const ds = buildDemoDataset('landing')
   const { summary: s, findings } = analyse(ds)
-  const clientName = (id: string) => must(ds.clients.find((c) => c.id === id), `client ${id}`).name
+  const clientName = (id: string) =>
+    must(
+      ds.clients.find((c) => c.id === id),
+      `client ${id}`,
+    ).name
 
   const lite = (f: FindingDraft): SnapshotFinding => ({
     title: f.title,
@@ -74,7 +78,11 @@ export function buildLandingSnapshot(): LandingSnapshot {
   }
 
   const byClient = (name: string) => findings.filter((f) => clientName(f.client_id) === name)
-  const metrics = (name: string) => must(s.client_metrics.find((c) => c.name === name), `metrics for ${name}`)
+  const metrics = (name: string) =>
+    must(
+      s.client_metrics.find((c) => c.name === name),
+      `metrics for ${name}`,
+    )
 
   // Agreement drift example: contracted against active users, at the agreed price.
   const driftFinding = must(
@@ -100,7 +108,7 @@ export function buildLandingSnapshot(): LandingSnapshot {
 
   // Product section: the out-of-scope findings, newest first, as the findings table lists them.
   const oos = findings.filter((f) => f.category === 'OUT_OF_SCOPE')
-  const oosRows = [...oos].sort((a, b) => (b.meta.work_date ?? '').localeCompare(a.meta.work_date ?? '')).slice(0, 6)
+  const oosRows = [...oos].sort((a, b) => (b.meta.work_date ?? '').localeCompare(a.meta.work_date ?? '')).slice(0, 8)
 
   const spotlightFinding = must(
     findings.find((f) => f.meta.ticket_ref === PICKS.spotlightTicket),
@@ -135,7 +143,8 @@ export function buildLandingSnapshot(): LandingSnapshot {
   return {
     msp: DEMO_MSP,
     period: {
-      label: first.slice(0, 4) === last.slice(0, 4) ? `${monthName(first)} to ${monthName(last)} ${last.slice(0, 4)}` : `${monthName(first)} ${first.slice(0, 4)} to ${monthName(last)} ${last.slice(0, 4)}`,
+      label:
+        first.slice(0, 4) === last.slice(0, 4) ? `${monthName(first)} to ${monthName(last)} ${last.slice(0, 4)}` : `${monthName(first)} ${first.slice(0, 4)} to ${monthName(last)} ${last.slice(0, 4)}`,
       months: s.months.length,
       first,
       last,
@@ -163,7 +172,13 @@ export function buildLandingSnapshot(): LandingSnapshot {
       .sort((a, b) => b.value - a.value),
     topFindings: findings.slice(0, 5).map(lite),
     // Rows are the agreement and billing corrections; repricing is told through the client example.
-    recurring: { count: recurring.length, rows: recurring.filter((f) => f.category !== 'UNDERPRICED_CLIENT').slice(0, 4).map(lite) },
+    recurring: {
+      count: recurring.length,
+      rows: recurring
+        .filter((f) => f.category !== 'UNDERPRICED_CLIENT')
+        .slice(0, 4)
+        .map(lite),
+    },
     leaks: {
       scope: ticketExample(PICKS.scopeTicket),
       unbilled: ticketExample(PICKS.unbilledTicket),

@@ -43,20 +43,24 @@ export function ProductPreview() {
 
       <figure className="mt-12 lg:mt-16">
         <div className="overflow-hidden rounded-xl border border-line bg-surface">
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line bg-sunken px-4 py-3 sm:px-5">
-            <div className="flex min-w-0 items-center gap-2.5">
-              <ICONS.findings className="size-4 text-ink-3" aria-hidden />
-              <p className="text-h3 text-ink">Findings</p>
-              <span className="tnum truncate text-small text-ink-3">
+          <div className="flex items-start justify-between gap-4 border-b border-line bg-sunken px-4 py-3 sm:items-center sm:px-5">
+            <div className="flex min-w-0 flex-col gap-x-2.5 gap-y-0.5 sm:flex-row sm:items-center">
+              <p className="flex items-center gap-2.5 text-h3 text-ink">
+                <ICONS.findings className="size-4 text-ink-3" aria-hidden />
+                Findings
+              </p>
+              <span className="tnum text-small text-ink-3">
                 {CATEGORY_META.OUT_OF_SCOPE.label} · {plural(oos.count, 'finding')} · {money(oos.value)}
               </span>
             </div>
-            <Badge>Demo data</Badge>
+            <span className="shrink-0 whitespace-nowrap">
+              <Badge>Demo data</Badge>
+            </span>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
             {/* The list */}
-            <div className="min-w-0 border-b border-line lg:border-b-0 lg:border-r">
+            <div className="flex min-w-0 flex-col border-b border-line lg:border-b-0 lg:border-r">
               <table className="w-full text-small">
                 <caption className="sr-only">Out-of-scope findings in the demo, newest first</caption>
                 <thead>
@@ -68,9 +72,7 @@ export function ProductPreview() {
                       Severity
                     </th>
                     <th scope="col" className={cx(TH, 'whitespace-nowrap pl-3 pr-4 text-right sm:pr-5')}>
-                      <span className="inline-flex items-center gap-1">
-                        Value
-                      </span>
+                      Value
                     </th>
                   </tr>
                 </thead>
@@ -80,7 +82,8 @@ export function ProductPreview() {
                       <td className="w-full max-w-0 py-3 pl-4 pr-3 sm:pl-5">
                         <span className={cx('block truncate font-medium', selected(r.ticketRef) ? 'text-ink' : 'text-ink-2')}>{r.title}</span>
                         <span className="tnum mt-0.5 block truncate text-caption text-ink-3">
-                          {r.client} · #{r.ticketRef} · {shortDate(r.workDate ?? '')}
+                          {r.client} · #{r.ticketRef}
+                          <span className="hidden sm:inline"> · {shortDate(r.workDate ?? '')}</span>
                         </span>
                       </td>
                       <td className="hidden whitespace-nowrap px-3 py-3 sm:table-cell">
@@ -91,7 +94,7 @@ export function ProductPreview() {
                   ))}
                 </tbody>
               </table>
-              <p className="tnum flex items-center gap-1.5 border-t border-line-soft px-4 py-3 text-caption text-ink-3 sm:px-5">
+              <p className="tnum mt-auto flex items-center gap-1.5 border-t border-line-soft px-4 py-3 text-caption text-ink-3 sm:px-5">
                 <ArrowDown className="size-3.5" aria-hidden />
                 {plural(oos.count - oos.rows.length, 'more finding')} in this category
               </p>

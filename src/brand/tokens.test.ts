@@ -44,6 +44,8 @@ describe('brand tokens', () => {
       ['viz-cat-3', viz.categorical[2]],
       ['viz-cat-4', viz.categorical[3]],
       ['viz-cat-other', viz.other],
+      ['brand-mark', color.bone],
+      ['brand-mark-accent', color.accent],
     ]
     for (const [name, value] of pairs) expect(read(':root', name), name).toBe(value)
   })
@@ -62,6 +64,11 @@ describe('brand tokens', () => {
       ['brand-warning', paper.warning],
       ['brand-danger', paper.danger],
       ['brand-info', paper.info],
+      ['brand-accent', paper.accent],
+      ['brand-border-strong', paper.borderStrong],
+      ['brand-faint', paper.faint],
+      ['brand-mark', paper.mark],
+      ['brand-mark-accent', paper.markAccent],
     ]
     for (const [name, value] of pairs) expect(read('[data-surface="paper"]', name), name).toBe(value)
   })

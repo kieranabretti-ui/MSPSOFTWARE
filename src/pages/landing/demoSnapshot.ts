@@ -336,6 +336,28 @@ export const DEMO: LandingSnapshot = {
         "monthly": 0,
         "ticketRef": "18017",
         "workDate": "2026-08-13T14:15:00"
+      },
+      {
+        "title": "Onsite visit not charged",
+        "client": "Pennine Engineering",
+        "category": "OUT_OF_SCOPE",
+        "severity": "HIGH",
+        "confidence": 90,
+        "value": 120,
+        "monthly": 0,
+        "ticketRef": "17965",
+        "workDate": "2026-08-04T12:30:00"
+      },
+      {
+        "title": "Out-of-hours work not charged",
+        "client": "Meridian Logistics",
+        "category": "OUT_OF_SCOPE",
+        "severity": "HIGH",
+        "confidence": 90,
+        "value": 90,
+        "monthly": 0,
+        "ticketRef": "17872",
+        "workDate": "2026-07-18T10:05:00"
       }
     ]
   },

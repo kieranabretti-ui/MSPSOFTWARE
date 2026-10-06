@@ -6,6 +6,7 @@ import { BRAND } from '../../brand/brand'
 import { ICONS } from '../../brand/icons'
 import { money } from '../../lib/format'
 import { supabaseConfigured } from '../../data/store'
+import { DEMO as SNAPSHOT } from '../landing/demoSnapshot'
 
 // The shell every page outside the workspace shares: the form on the surface,
 // and beside it a quiet brand panel on the canvas carrying the line and one
@@ -68,10 +69,9 @@ export function AuthShell({
   )
 }
 
-// The demo MSP's own figures, as the analysis reports them: £4,281 of potential
-// leakage against £143,220 of agreement revenue over the six months to
-// September 2026. Pinned by src/engine/analyse.test.ts.
-const DEMO = { total: 4281, billed: 143220, findings: 40 } as const
+// The demo MSP's own figures, from the engine-generated snapshot the landing
+// page uses (its test fails if they drift from the analysis).
+const DEMO = { total: SNAPSHOT.totals.identified, billed: SNAPSHOT.totals.billed, findings: SNAPSHOT.totals.findings }
 
 // One real proof element: the signature GapBar on the demo MSP.
 export function DemoProof() {

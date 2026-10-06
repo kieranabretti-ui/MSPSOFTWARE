@@ -36,7 +36,10 @@ export function TopBar({ signedIn }: { signedIn: boolean }) {
             </ButtonLink>
           ) : (
             <>
-              <Link to="/login" className="hidden h-8 items-center rounded-md px-3 text-small font-medium text-ink-2 transition-colors hover:bg-raised hover:text-ink min-[400px]:inline-flex">
+              <Link
+                to="/login"
+                className="hidden h-8 items-center rounded-md px-2.5 text-small font-medium text-ink-2 transition-colors hover:bg-raised hover:text-ink min-[360px]:inline-flex sm:px-3"
+              >
                 Sign in
               </Link>
               <ButtonLink to="/signup" size="sm">
@@ -91,7 +94,9 @@ export function BuiltForMsps() {
           <h2 id="built-title" className={sectionTitleCls}>
             Built for the data MSPs already have.
           </h2>
-          <p className="mt-5 max-w-[48ch] text-lead text-ink-2">If your PSA, RMM and billing system can export a CSV, you can run an audit today. No agent to install, no admin access, no integration project.</p>
+          <p className="mt-5 max-w-[48ch] text-lead text-ink-2">
+            If your PSA, RMM and billing system can export a CSV, you can run an audit today. No agent to install, no admin access, no integration project.
+          </p>
         </div>
         <dl className="lg:col-span-7">
           {FACTS.map((f) => (
@@ -114,7 +119,7 @@ export function Close() {
     <section aria-labelledby="close-title" className="border-t border-line-soft">
       <div className={`${wrap} grid grid-cols-1 gap-x-12 gap-y-10 py-24 sm:py-28 lg:grid-cols-12 lg:items-end lg:py-36`}>
         <div className="lg:col-span-8">
-          <h2 id="close-title" className={displayCls}>
+          <h2 id="close-title" className={`${displayCls} text-balance`}>
             Stop doing work for free.
           </h2>
           <p className="mt-5 text-[length:clamp(1.25rem,1rem+1vw,1.75rem)] font-medium leading-snug tracking-[-0.02em] text-ink-2">Run your first revenue audit.</p>
@@ -169,9 +174,7 @@ export function Footer() {
       </div>
       <div className="border-t border-line-soft">
         <div className={`${wrap} space-y-2 py-6`}>
-          <p className="text-caption text-ink-3">
-            Demo data: {DEMO.msp} and its clients, tickets, contracts and figures are fictional, built to show how Headroom works.
-          </p>
+          <p className="text-caption text-ink-3">Demo data: {DEMO.msp} and its clients, tickets, contracts and figures are fictional, built to show how Headroom works.</p>
           <Disclaimer />
         </div>
       </div>

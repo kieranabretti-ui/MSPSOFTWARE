@@ -26,7 +26,7 @@ function Pane({ verb, line, last, children, foot, className }: { verb: string; l
         )}
       </div>
       <div className="flex-1 px-5 pb-6 sm:px-7">{children}</div>
-      {foot && <div className="border-t border-line-soft bg-sunken px-5 py-3.5 sm:px-7">{foot}</div>}
+      {foot && <div className="flex min-h-13 items-center border-t border-line-soft bg-sunken px-5 py-3 sm:px-7">{foot}</div>}
     </div>
   )
 }
@@ -73,47 +73,53 @@ export function Flow() {
         </Pane>
 
         <Pane
-            className="border-t border-line lg:border-l lg:border-t-0"
-            verb="Analyse"
-            line="Rules check every ticket, time entry, user, device and charge against the agreement."
-            foot={<p className="tnum text-caption text-ink-3">{plural(DEMO.totals.findings, 'finding')}, each tied to the record behind it.</p>}
-          >
-            <ShareBars rows={DEMO.categories.map((c) => ({ label: CATEGORY_META[c.category].label, value: c.value, sub: c.category === 'UNDERPRICED_CLIENT' ? plural(c.clients, 'client') : plural(c.count, 'finding') }))} />
-          </Pane>
+          className="border-t border-line lg:border-l lg:border-t-0"
+          verb="Analyse"
+          line="Rules check every ticket, time entry, user, device and charge against the agreement."
+          foot={<p className="tnum text-caption text-ink-3">{plural(DEMO.totals.findings, 'finding')}, each tied to the record behind it.</p>}
+        >
+          <ShareBars
+            rows={DEMO.categories.map((c) => ({
+              label: CATEGORY_META[c.category].label,
+              value: c.value,
+              sub: c.category === 'UNDERPRICED_CLIENT' ? plural(c.clients, 'client') : plural(c.count, 'finding'),
+            }))}
+          />
+        </Pane>
 
         <Pane
-            className="border-t border-line lg:border-l lg:border-t-0"
-            verb="Recover"
-            line="Correct the agreement, bill the work, or reprice the client."
-            last
-            foot={
-              <div className="flex items-baseline justify-between gap-4">
-                <p className="tnum text-caption text-ink-3">Recurring, across {plural(DEMO.recurring.count, 'finding')}</p>
-                <p className="tnum text-right">
-                  <Figure size="md" tone="accent">
-                    {money(DEMO.totals.monthly)}
-                  </Figure>
-                  <span className="ml-1 text-small text-ink-3">a month</span>
-                </p>
-              </div>
-            }
-          >
-            <ul>
-              {recurringShown.map((f) => (
-                <li key={f.title + f.client} className="flex items-baseline justify-between gap-4 border-t border-line-soft py-2.5 first:border-t-0">
-                  <span className="min-w-0">
-                    <span className="block truncate text-small font-medium text-ink">{f.client}</span>
-                    <span className="block truncate text-caption text-ink-3">{f.title}</span>
-                  </span>
-                  <span className="tnum shrink-0 text-small font-semibold text-ink">
-                    +{money(f.monthly)}
-                    <span className="font-normal text-ink-3">/mo</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <p className="tnum mt-3 text-caption text-ink-3">{money(DEMO.totals.annual)} a year if left uncorrected.</p>
-          </Pane>
+          className="border-t border-line lg:border-l lg:border-t-0"
+          verb="Recover"
+          line="Correct the agreement, bill the work, or reprice the client."
+          last
+          foot={
+            <div className="flex w-full items-baseline justify-between gap-4">
+              <p className="tnum text-caption text-ink-3">Recurring, across {plural(DEMO.recurring.count, 'finding')}</p>
+              <p className="tnum text-right">
+                <Figure size="md" tone="accent">
+                  {money(DEMO.totals.monthly)}
+                </Figure>
+                <span className="ml-1 text-small text-ink-3">a month</span>
+              </p>
+            </div>
+          }
+        >
+          <ul>
+            {recurringShown.map((f) => (
+              <li key={f.title + f.client} className="flex items-baseline justify-between gap-4 border-t border-line-soft py-2.5 first:border-t-0">
+                <span className="min-w-0">
+                  <span className="block truncate text-small font-medium text-ink">{f.client}</span>
+                  <span className="block truncate text-caption text-ink-3">{f.title}</span>
+                </span>
+                <span className="tnum shrink-0 text-small font-semibold text-ink">
+                  +{money(f.monthly)}
+                  <span className="font-normal text-ink-3">/mo</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className="tnum mt-3 text-caption text-ink-3">{money(DEMO.totals.annual)} a year if left uncorrected.</p>
+        </Pane>
       </div>
     </Section>
   )

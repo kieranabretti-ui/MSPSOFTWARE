@@ -10,8 +10,6 @@ import { buildReport, reportPdf, DISCLAIMER } from '../../lib/report'
 import { downloadFile, hours, money, pct, plural, relative } from '../../lib/format'
 import { IS_PREVIEW } from '../../lib/env'
 
-// On paper the mark inverts to an ink tile, as it does in the PDF footer.
-const markOnPaper = 'print:[--brand-secondary:var(--brand-text)] print:[--brand-primary:var(--brand-background)]'
 
 function Section({ id, title, figure, intro, children }: { id: string; title: string; figure?: string; intro?: ReactNode; children: ReactNode }) {
   return (
@@ -162,7 +160,7 @@ export default function Reports() {
         {/* Cover: the same masthead, title and money as the PDF's ink band */}
         <header className="px-5 pb-8 pt-5 sm:px-12 sm:pb-10 sm:pt-8 print:px-0">
           <div className="flex items-center justify-between gap-4">
-            <Logo className={markOnPaper} />
+            <Logo />
             {r.isDemo && <Badge>Demo data</Badge>}
           </div>
           <h2 id="report-title" className="mt-12 text-balance text-[clamp(1.875rem,4.4vw,2.625rem)] font-semibold leading-[1.06] tracking-[-0.03em] text-ink sm:mt-16">
@@ -339,7 +337,7 @@ export default function Reports() {
         <footer className="border-t border-line-soft px-5 py-6 sm:px-12 print:px-0">
           <p className="max-w-[78ch] text-caption leading-relaxed text-ink-3">{DISCLAIMER}</p>
           <p className="tnum mt-4 flex items-center gap-2 text-caption text-ink-3">
-            <LogoMark className={cx('size-4', markOnPaper)} />
+            <LogoMark className="h-3 w-auto" />
             Headroom · {r.workspace} · {r.period}
           </p>
         </footer>

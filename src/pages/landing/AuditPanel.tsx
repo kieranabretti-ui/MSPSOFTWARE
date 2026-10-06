@@ -17,6 +17,8 @@ import { DEMO } from './demoSnapshot'
 const RUN_MS = 2300
 const LEDGER_ROWS = 4
 const expoOut = (x: number) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x))
+// The count reads as counting: a gentler quartic ease-out so the figure is still climbing as the findings land.
+const quartOut = (x: number) => 1 - Math.pow(1 - x, 4)
 
 type Phase = 'final' | 'armed' | 'running'
 
@@ -63,7 +65,7 @@ function useAuditRun() {
   }, [])
 
   // Eased progress of a step on the run's timeline, 0 to 1.
-  const at = (start: number, duration: number) => (phase === 'final' ? 1 : phase === 'armed' ? 0 : expoOut(Math.min(1, Math.max(0, (t - start) / duration))))
+  const at = (start: number, duration: number, ease = expoOut) => (phase === 'final' ? 1 : phase === 'armed' ? 0 : ease(Math.min(1, Math.max(0, (t - start) / duration))))
   return { ref, phase, t, at }
 }
 
@@ -96,7 +98,7 @@ export function AuditPanel() {
   const { ref, phase, t, at } = useAuditRun()
   const { totals, data, period } = DEMO
   const live = phase !== 'final'
-  const count = at(120, 1750)
+  const count = at(120, 1900, quartOut)
   const bar = at(120, 1500)
   const rows = DEMO.topFindings.slice(0, LEDGER_ROWS)
   const landAt = (i: number) => 480 + i * 240
@@ -116,17 +118,19 @@ export function AuditPanel() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_13.5rem]">
-        <div className="px-4 pb-6 pt-5 sm:px-6 sm:pb-7 sm:pt-6">
-          <p className="text-small font-medium text-ink-2">Potential revenue leakage identified</p>
-          <div className="mt-2">
-            <Figure size="xl">
-              <Counting value={money(totals.identified)} shown={money(Math.round(totals.identified * count))} live={live} />
-            </Figure>
+        <div className="flex flex-col justify-between gap-6 px-4 pb-6 pt-5 sm:px-6 sm:pb-7 sm:pt-6">
+          <div>
+            <p className="text-small font-medium text-ink-2">Potential revenue leakage identified</p>
+            <div className="mt-2">
+              <Figure size="xl">
+                <Counting value={money(totals.identified)} shown={money(Math.round(totals.identified * count))} live={live} />
+              </Figure>
+            </div>
+            <p className="tnum mt-2.5 text-small text-ink-3">
+              Across {plural(totals.findings, 'finding')} at {totals.clients} clients, measured against {period.months} months of agreement revenue.
+            </p>
           </div>
-          <p className="tnum mt-2.5 text-small text-ink-3">
-            Across {plural(totals.findings, 'finding')} at {totals.clients} clients, measured against {period.months} months of agreement revenue.
-          </p>
-          <div className="mt-6">
+          <div>
             <div style={bar < 1 ? { clipPath: `inset(0 ${(1 - bar) * 100}% 0 0)` } : undefined}>
               <GapBar billed={totals.billed} gap={totals.identified} height={12} label={false} />
             </div>
