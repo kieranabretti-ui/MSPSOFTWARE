@@ -1,4 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react'
+import { ChevronDown } from 'lucide-react'
 import { useStore, supabaseConfigured } from '../../data/store'
 import { Badge, Button, Card, Field, PageHeader, TextLink, cx, inputCls } from '../../components/ui'
 import { useToast } from '../../components/toast'
@@ -51,6 +52,31 @@ function UnitInput({ prefix, suffix, invalid, ...rest }: { prefix?: string; suff
   )
 }
 
+// Support hours as a 24-hour select of half-hour slots, styled like every other
+// input. A saved time off the half hour stays selectable.
+const SLOTS = Array.from({ length: 48 }, (_, i) => `${String(Math.floor(i / 2)).padStart(2, '0')}:${i % 2 ? '30' : '00'}`)
+
+function TimeSelect({ value, onChange, invalid }: { value: string; onChange: (v: string) => void; invalid?: boolean }) {
+  const options = SLOTS.includes(value) || !value ? SLOTS : [...SLOTS, value].sort()
+  return (
+    <div className="relative max-w-[10rem]">
+      <select
+        className={cx(inputCls, 'tnum cursor-pointer appearance-none pr-9', invalid && 'border-danger-line')}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        aria-invalid={invalid || undefined}
+      >
+        {options.map((t) => (
+          <option key={t} value={t}>
+            {t}
+          </option>
+        ))}
+      </select>
+      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 size-4 -translate-y-1/2 text-ink-3" aria-hidden />
+    </div>
+  )
+}
+
 export default function Settings() {
   const { workspace, user, updateSettings, runAnalysis, analysis, backend } = useStore()
   const toast = useToast()
@@ -83,6 +109,7 @@ export default function Settings() {
       if (!/^\d{2}:\d{2}$/.test(vals[k])) return fail('hours', 'Business hours must be in HH:MM format.')
       patch[k] = vals[k]
     }
+    if (vals.business_hours_start >= vals.business_hours_end) return fail('hours', 'Support hours must end after they start.')
     setSaving(true)
     try {
       await updateSettings(patch, name.trim())
@@ -136,10 +163,10 @@ export default function Settings() {
             <Section title="Support hours" body="Work outside these hours is valued at the out-of-hours rate." last>
               <div className="grid grid-cols-2 gap-5 sm:max-w-md">
                 <Field label="Start" error={errFor('hours')}>
-                  <input className={cx(inputCls, 'tnum', errFor('hours') && 'border-danger-line')} type="time" value={vals.business_hours_start} onChange={(e) => setVals({ ...vals, business_hours_start: e.target.value })} />
+                  <TimeSelect value={vals.business_hours_start} invalid={!!errFor('hours')} onChange={(v) => setVals({ ...vals, business_hours_start: v })} />
                 </Field>
                 <Field label="End">
-                  <input className={cx(inputCls, 'tnum', errFor('hours') && 'border-danger-line')} type="time" value={vals.business_hours_end} onChange={(e) => setVals({ ...vals, business_hours_end: e.target.value })} />
+                  <TimeSelect value={vals.business_hours_end} invalid={!!errFor('hours')} onChange={(v) => setVals({ ...vals, business_hours_end: v })} />
                 </Field>
               </div>
             </Section>

@@ -132,7 +132,7 @@ export function AuditPanel() {
           </div>
           <div>
             <div style={bar < 1 ? { clipPath: `inset(0 ${(1 - bar) * 100}% 0 0)` } : undefined}>
-              <GapBar billed={totals.billed} gap={totals.identified} height={12} label={false} />
+              <GapBar billed={totals.billed} gap={totals.identified} height={16} label={false} />
             </div>
             <div className="tnum mt-2.5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-caption" style={arrive(at(1150, 600))}>
               <span className="text-ink-3">

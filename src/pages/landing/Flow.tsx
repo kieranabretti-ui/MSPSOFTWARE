@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ArrowDown, ArrowRight } from 'lucide-react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import { Badge, Figure, cx } from '../../components/ui'
 import { ShareBars } from '../../components/charts'
 import { money, num, plural } from '../../lib/format'
@@ -9,21 +9,24 @@ import { Section, SectionIntro } from './primitives'
 
 // Upload, Analyse, Recover: one frame, three panes, each showing what that
 // step actually produced for the demo MSP rather than an icon and a promise.
+// The sequence lives in the joins: a small chevron set into the hairline
+// between panes, across on desktop and down on mobile.
 
-function Pane({ verb, line, last, children, foot, className }: { verb: string; line: string; last?: boolean; children: ReactNode; foot?: ReactNode; className?: string }) {
+function Pane({ verb, line, join, children, foot, className }: { verb: string; line: string; join?: boolean; children: ReactNode; foot?: ReactNode; className?: string }) {
   return (
-    <div className={cx('flex min-w-0 flex-col', className)}>
-      <div className="flex items-start justify-between gap-4 px-5 pb-5 pt-6 sm:px-7">
-        <div className="min-w-0">
-          <h3 className="text-h2 text-ink">{verb}</h3>
-          <p className="mt-1 text-small text-ink-3">{line}</p>
-        </div>
-        {!last && (
-          <span className="mt-1 flex size-7 shrink-0 items-center justify-center rounded-sm border border-line text-ink-3" aria-hidden>
-            <ArrowRight className="hidden size-4 lg:block" />
-            <ArrowDown className="size-4 lg:hidden" />
-          </span>
-        )}
+    <div className={cx('relative flex min-w-0 flex-col', className)}>
+      {join && (
+        <span
+          className="absolute left-5 top-0 flex h-4 w-6 -translate-y-1/2 items-center justify-center bg-surface text-ink-3 sm:left-7 lg:left-0 lg:top-[2.375rem] lg:h-6 lg:w-4 lg:-translate-x-1/2"
+          aria-hidden
+        >
+          <ChevronDown className="size-3.5 lg:hidden" />
+          <ChevronRight className="hidden size-3.5 lg:block" />
+        </span>
+      )}
+      <div className="px-5 pb-5 pt-6 sm:px-7">
+        <h3 className="text-h2 text-ink">{verb}</h3>
+        <p className="mt-1 text-small text-ink-3">{line}</p>
       </div>
       <div className="flex-1 px-5 pb-6 sm:px-7">{children}</div>
       {foot && <div className="flex min-h-13 items-center border-t border-line-soft bg-sunken px-5 py-3 sm:px-7">{foot}</div>}
@@ -74,6 +77,7 @@ export function Flow() {
 
         <Pane
           className="border-t border-line lg:border-l lg:border-t-0"
+          join
           verb="Analyse"
           line="Rules check every ticket, time entry, user, device and charge against the agreement."
           foot={<p className="tnum text-caption text-ink-3">{plural(DEMO.totals.findings, 'finding')}, each tied to the record behind it.</p>}
@@ -89,9 +93,9 @@ export function Flow() {
 
         <Pane
           className="border-t border-line lg:border-l lg:border-t-0"
+          join
           verb="Recover"
           line="Correct the agreement, bill the work, or reprice the client."
-          last
           foot={
             <div className="flex w-full items-baseline justify-between gap-4">
               <p className="tnum text-caption text-ink-3">Recurring, across {plural(DEMO.recurring.count, 'finding')}</p>

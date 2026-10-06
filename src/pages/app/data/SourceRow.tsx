@@ -32,7 +32,7 @@ export function SourceRow({
   return (
     <li className="grid grid-cols-[1.25rem_minmax(0,1fr)] gap-x-4 gap-y-4 px-4 py-5 sm:px-5 lg:grid-cols-[1.25rem_minmax(0,1fr)_9rem_11.5rem] lg:gap-x-6">
       <span
-        className={cx('mt-px flex size-5 items-center justify-center rounded-full', loaded ? 'bg-success-soft text-success ring-1 ring-inset ring-success-line' : 'border border-dashed border-line-strong')}
+        className={cx('mt-px flex size-5 items-center justify-center rounded-full', loaded ? 'bg-raised text-ink-3 ring-1 ring-inset ring-line-strong' : 'border border-dashed border-line-strong')}
         aria-hidden
       >
         {loaded && <Check className="size-3" />}

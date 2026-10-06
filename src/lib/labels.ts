@@ -18,8 +18,10 @@ export const SEVERITY_ORDER: Severity[] = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']
 
 export const FINDING_STATUS: Record<FindingStatus, string> = { open: 'Open', valid: 'Confirmed', dismissed: 'Dismissed', resolved: 'Resolved' }
 export const ACTION_STATUS: Record<ActionStatus, string> = { open: 'Open', in_progress: 'In progress', resolved: 'Resolved', dismissed: 'Dismissed' }
+// Health stays calm: only At risk takes colour, as one small danger dot beside
+// a neutral label. Watch is a hollow ring, Healthy carries no mark at all.
 export const HEALTH: Record<Health, { label: string; dot: string; text: string }> = {
-  healthy: { label: 'Healthy', dot: 'bg-success', text: 'text-success' },
-  watch: { label: 'Watch', dot: 'bg-warning', text: 'text-warning' },
-  at_risk: { label: 'At risk', dot: 'bg-danger', text: 'text-danger' },
+  healthy: { label: 'Healthy', dot: 'bg-transparent', text: 'text-ink-3' },
+  watch: { label: 'Watch', dot: 'border border-ink-3', text: 'text-ink-3' },
+  at_risk: { label: 'At risk', dot: 'bg-danger', text: 'text-ink-2' },
 }

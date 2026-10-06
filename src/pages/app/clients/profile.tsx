@@ -55,7 +55,7 @@ export function LeakagePanel({
             {billed > 0 ? `, against ${plural(months, 'month')} of MRR.` : '.'}
           </p>
           <div className="mt-5 max-w-[640px]">
-            {billed > 0 ? <GapBar billed={billed} gap={leakage} height={10} /> : <p className="text-caption text-ink-3">Add this client's monthly recurring revenue to see leakage against what you bill.</p>}
+            {billed > 0 ? <GapBar billed={billed} gap={leakage} height={14} /> : <p className="text-caption text-ink-3">Add this client's monthly recurring revenue to see leakage against what you bill.</p>}
           </div>
         </div>
         <dl className="flex flex-col justify-center border-t border-line-soft px-5 py-6 sm:px-7 md:border-l md:border-t-0">
@@ -130,14 +130,16 @@ export function ClientFindings({ findings, total, periodLabel }: { findings: Fin
                       <span aria-hidden> · </span>
                       <span className="tnum whitespace-nowrap">{f.confidence}% confidence</span>
                     </span>
-                    <span className="mt-2 flex flex-wrap items-center gap-1.5 sm:hidden">
+                    <span className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 sm:hidden">
                       <SeverityBadge severity={f.severity} />
-                      <StatusBadge status={f.status} />
+                      {f.status !== 'open' && <StatusBadge status={f.status} />}
                     </span>
                   </span>
-                  <span className="hidden shrink-0 sm:block">
-                    <StatusBadge status={f.status} />
-                  </span>
+                  {f.status !== 'open' && (
+                    <span className="hidden shrink-0 sm:block">
+                      <StatusBadge status={f.status} />
+                    </span>
+                  )}
                   <span className="flex shrink-0 items-center gap-2">
                     <span className={cx('tnum min-w-[4.5rem] text-right text-body font-semibold', dismissed ? 'font-normal text-ink-3 line-through' : 'text-ink')}>{money(f.estimated_value)}</span>
                     <ChevronRight className="hidden size-4 text-ink-4 transition-colors group-hover:text-ink-2 sm:block" aria-hidden />
@@ -170,24 +172,37 @@ function LedgerRow({ label, sub, value, swatch, strong }: { label: ReactNode; su
   )
 }
 
-// Where each pound of MRR goes: labour, software, and what is left. The tick
-// marks where contribution has to start for the target margin.
-function MrrSplit({ mrr, labour, software, target }: { mrr: number; labour: number; software: number; target: number }) {
+// Where each pound of MRR goes: labour, software, and what is left, stepped
+// by lightness so the legend below can name each part. The tick marks where
+// contribution has to start for the target margin; when costs run past it,
+// the overrun is a hatched danger notch labelled with the shortfall.
+function MrrSplit({ mrr, labour, software, target, margin }: { mrr: number; labour: number; software: number; target: number; margin: number }) {
   const costs = labour + software
   const scale = Math.max(mrr, costs, 1)
-  const w = (n: number) => `${(Math.max(n, 0) / scale) * 100}%`
+  const at = (n: number) => (Math.max(n, 0) / scale) * 100
   const tick = Math.min(Math.max((1 - target) * (mrr / scale) * 100, 0), 100)
+  const costEnd = Math.min(at(costs), 100)
+  const short = mrr > 0 && costEnd > tick
   return (
-    <div className="pb-6" role="img" aria-label={`Of ${money(mrr)} MRR: labour ${money(labour)}, software ${money(software)}, contribution ${money(mrr - costs)}. Target margin ${pct(target)}.`}>
+    <div className="pb-7" role="img" aria-label={`Of ${money(mrr)} MRR: labour ${money(labour)}, software ${money(software)}, contribution ${money(mrr - costs)}. Margin ${pct(margin)} against a ${pct(target)} target.`}>
       <div className="relative">
-        <div className="flex h-2.5 w-full gap-[2px] overflow-hidden rounded-[3px] bg-line-soft">
-          <div className="h-full bg-viz-series-strong" style={{ width: w(labour) }} />
-          <div className="h-full bg-viz-series" style={{ width: w(software) }} />
-          {mrr - costs > 0 && <div className="h-full bg-ink-2" style={{ width: w(mrr - costs) }} />}
+        <div className="flex h-3 w-full gap-[2px] overflow-hidden rounded-[3px] bg-line-soft">
+          <div className="h-full bg-ink-4" style={{ width: `${at(labour)}%` }} />
+          <div className="h-full bg-ink-3" style={{ width: `${at(software)}%` }} />
+          {mrr - costs > 0 && <div className="h-full bg-ink" style={{ width: `${at(mrr - costs)}%` }} />}
         </div>
+        {short && (
+          <div
+            className="absolute inset-y-0 rounded-[2px] ring-1 ring-inset ring-danger"
+            style={{ left: `${tick}%`, width: `${costEnd - tick}%`, backgroundImage: 'repeating-linear-gradient(135deg, var(--brand-danger) 0 1.5px, transparent 1.5px 4px)' }}
+            aria-hidden
+          />
+        )}
         {mrr > 0 && (
-          <div className="absolute -bottom-1.5 -top-1.5 w-px bg-ink" style={{ left: `${tick}%` }}>
-            <span className="tnum absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap text-caption text-ink-3">{pct(target)} target</span>
+          <div className="absolute -bottom-1.5 -top-1.5 w-px bg-ink-2" style={{ left: `${tick}%` }}>
+            <span className={cx('tnum absolute left-1/2 top-full mt-1.5 -translate-x-1/2 whitespace-nowrap text-caption', short ? 'font-medium text-ink-2' : 'text-ink-3')}>
+              {short ? `${pct(margin)} vs ${pct(target)} target` : `${pct(target)} target`}
+            </span>
           </div>
         )}
       </div>
@@ -207,13 +222,13 @@ export function ProfitabilityCard({ mt, target, periodLabel, avgHours, labourRat
     <Card className="flex flex-col overflow-hidden">
       <CardHeader title="Profitability" subtitle={`Monthly average, ${periodLabel}`} />
       <div className="flex-1 px-5 pt-5">
-        <MrrSplit mrr={mt.mrr} labour={mt.labour_cost} software={mt.software_cost} target={target} />
+        <MrrSplit mrr={mt.mrr} labour={mt.labour_cost} software={mt.software_cost} target={target} margin={mt.margin} />
         <dl className="divide-y divide-line-soft">
           <LedgerRow label="MRR" value={money(mt.mrr)} />
-          <LedgerRow label="Estimated labour" sub={`${hours(mt.avg_monthly_hours)} at ${money(labourRate)}/h`} swatch="bg-viz-series-strong" value={`− ${money(mt.labour_cost)}`} />
-          <LedgerRow label="Software" swatch="bg-viz-series" value={`− ${money(mt.software_cost)}`} />
-          <LedgerRow label="Gross contribution" swatch={mt.contribution > 0 ? 'bg-ink-2' : 'bg-transparent'} value={<span className={mt.contribution < 0 ? 'text-danger' : undefined}>{money(mt.contribution)}</span>} strong />
-          <LedgerRow label="Gross margin" sub={`target ${pct(target)}`} value={<MarginValue margin={mt.margin} target={target} className="font-semibold" />} strong />
+          <LedgerRow label="Estimated labour" sub={`${hours(mt.avg_monthly_hours)} at ${money(labourRate)}/h`} swatch="bg-ink-4" value={`− ${money(mt.labour_cost)}`} />
+          <LedgerRow label="Software" swatch="bg-ink-3" value={`− ${money(mt.software_cost)}`} />
+          <LedgerRow label="Gross contribution" swatch={mt.contribution > 0 ? 'bg-ink' : 'bg-transparent'} value={<span className={mt.contribution < 0 ? 'text-danger' : undefined}>{money(mt.contribution)}</span>} strong />
+          <LedgerRow label="Gross margin" sub={`target ${pct(target)}`} value={<MarginValue margin={mt.margin} target={target} mark={false} className="font-semibold" />} strong />
           <LedgerRow label="Support hours" sub={avgHours > 0 ? `client average ${hours(avgHours)}` : undefined} value={`${hours(mt.avg_monthly_hours)} / month`} />
           <LedgerRow label="Revenue per technician hour" value={mt.revenue_per_hour ? money(mt.revenue_per_hour) : '—'} />
         </dl>
@@ -252,14 +267,14 @@ function CompareRow({ label, contracted, actual, unit = '' }: { label: string; c
       <td className="tnum px-3 py-2.5 text-right text-body text-ink-2">{contracted != null ? fmt(contracted) : <span className="text-ink-3">Not set</span>}</td>
       <td className="tnum py-2.5 pl-3 text-right text-body">
         {actual ? (
-          <span className={cx('inline-flex items-center gap-1', over ? 'font-semibold text-warning' : 'text-ink')}>
-            {over > 0 && <ArrowUp className="size-3.5" aria-hidden />}
+          <span className={cx('inline-flex items-center gap-1', over ? 'font-semibold text-ink' : 'text-ink')}>
+            {over > 0 && <ArrowUp className="size-3.5 text-ink-3" aria-hidden />}
             {fmt(actual)}
           </span>
         ) : (
           <span className="text-ink-3">—</span>
         )}
-        {over > 0 && <span className="block text-caption font-normal text-warning">{fmt(over)} above contract</span>}
+        {over > 0 && <span className="block text-caption font-normal text-ink-3">{fmt(over)} above contract</span>}
       </td>
     </tr>
   )

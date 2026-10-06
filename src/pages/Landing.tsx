@@ -7,7 +7,7 @@ import { Flow } from './landing/Flow'
 import { ProductPreview } from './landing/ProductPreview'
 import { Problem } from './landing/Problem'
 import { BuiltForMsps, Close, Footer, TopBar } from './landing/chrome'
-import { displayCls, wrap } from './landing/primitives'
+import { wrap } from './landing/primitives'
 
 // The landing page is the audit. It asks the question and the real product
 // answers it in the first viewport, using the demo MSP's real figures from a
@@ -22,13 +22,16 @@ export default function Landing() {
 
       <main>
         <section aria-labelledby="hero-title">
-          <div className={`${wrap} pb-20 pt-12 sm:pt-16 lg:pb-28 lg:pt-20`}>
-            <h1 id="hero-title" className={`${displayCls} max-w-[16ch] text-balance lg:max-w-[22ch]`}>
-              How much money is your MSP giving away?
-            </h1>
-
-            <div className="mt-8 grid grid-cols-1 gap-x-10 gap-y-12 lg:mt-12 lg:grid-cols-12">
-              <div className="lg:col-span-4 lg:pt-1">
+          {/* The question and its supporting copy share a column; the audit panel
+              starts beside the question's second line, so both columns end together. */}
+          <div
+            className={`${wrap} grid grid-cols-1 gap-x-12 gap-y-12 pb-20 pt-12 [--hero-size:clamp(2.75rem,1.15rem_+_5.4vw,5rem)] sm:pt-16 lg:grid-cols-12 lg:pb-28 lg:pt-20 lg:[--hero-size:clamp(3.5rem,0.5rem_+_4.6vw,4.75rem)]`}
+          >
+            <div className="lg:col-span-5 lg:flex lg:flex-col">
+              <h1 id="hero-title" className="max-w-[16ch] text-balance text-[length:var(--hero-size)] font-semibold leading-[0.98] tracking-(--type-display-tracking) text-ink">
+                How much money is your MSP giving away?
+              </h1>
+              <div className="mt-8 lg:mt-10">
                 <p className="max-w-[46ch] text-lead text-ink-2">
                   Headroom analyses your tickets, contracts and billing data to uncover revenue that quietly disappears through scope creep, missed charges and underpriced clients.
                 </p>
@@ -40,11 +43,12 @@ export default function Landing() {
                     View Demo
                   </ButtonLink>
                 </div>
-                <p className="mt-5 max-w-[40ch] text-small text-ink-3">Works from the CSV exports and contract PDFs you already have. Figures are potential leakage to review, never promised.</p>
               </div>
-              <div className="lg:col-span-8">
-                <AuditPanel />
-              </div>
+              {/* The small print settles at the foot of the column, level with the panel's own footnote. */}
+              <p className="mt-5 max-w-[40ch] text-small text-ink-3 lg:mt-auto lg:pt-8">Works from the CSV exports and contract PDFs you already have. Figures are potential leakage to review, never promised.</p>
+            </div>
+            <div className="lg:col-span-7 lg:mt-[calc(var(--hero-size)*0.98)]">
+              <AuditPanel />
             </div>
           </div>
         </section>

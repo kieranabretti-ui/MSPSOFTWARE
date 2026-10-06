@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#18181b"/><path d="M16 7c3.6 4.6 6 8 6 11a6 6 0 0 1-12 0c0-3 2.4-6.4 6-11z" fill="#f97316"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img">
+  <title>Headroom</title>
+  <rect width="32" height="32" rx="7" fill="#0a0b0d"/>
+  <path fill="#edeef0" d="M9 8H13A1 1 0 0 1 14 9V19A1 1 0 0 0 15 20H25A1 1 0 0 1 26 21V25A3 3 0 0 1 23 28H9A3 3 0 0 1 6 25V11A3 3 0 0 1 9 8Z"/>
+  <path fill="#c4f25b" d="M17 4H23A3 3 0 0 1 26 7V13A1 1 0 0 1 25 14H17A1 1 0 0 1 16 13V5A1 1 0 0 1 17 4Z"/>
+</svg>

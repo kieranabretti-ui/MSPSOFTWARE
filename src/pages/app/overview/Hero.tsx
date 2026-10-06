@@ -43,7 +43,7 @@ export function Hero({
 
           <div className="mt-7 max-w-[720px]">
             {billed > 0 ? (
-              <GapBar billed={billed} gap={total} height={12} />
+              <GapBar billed={billed} gap={total} height={16} />
             ) : (
               <p className="text-caption text-ink-3">Add each client's monthly recurring revenue to see leakage against what you bill.</p>
             )}

@@ -1,10 +1,9 @@
-import { useState, type ReactNode } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useEffect, useState, type ReactNode } from 'react'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Check, CircleCheck, CircleX, ListPlus, RotateCcw, Sparkles } from 'lucide-react'
 import { useMetrics, useStore } from '../../data/store'
 import { SupabaseBackend } from '../../data/supabaseBackend'
 import { Badge, Button, Card, CardHeader, Disclaimer, EmptyState, Field, Figure, Modal, SeverityBadge, inputCls, cx, type Tone } from '../../components/ui'
-import { ICONS } from '../../brand/icons'
 import { useToast } from '../../components/toast'
 import { StatusBadge } from './Findings'
 import { EvidenceRow, ValueByMonth } from './findings/evidence'
@@ -82,12 +81,29 @@ export default function FindingDetail() {
   const f = data.findings.find((x) => x.id === id)
   const [title, setTitle] = useState('')
   const [notes, setNotes] = useState('')
+  const [params, setParams] = useSearchParams()
+  const client = data.clients.find((c) => c.id === f?.client_id)
+
+  // The action modal, prefilled from the recommended action. The Actions page
+  // links here with ?action=new to open it straight away.
+  const openAction = () => {
+    if (!f) return
+    setTitle(f.recommended_action.split('. ')[0].replace(/\.$/, ''))
+    setNotes(`${client?.name}: ${f.title}`)
+    setActionOpen(true)
+  }
+  const wantsAction = params.get('action') === 'new' && !!f
+  useEffect(() => {
+    if (!wantsAction) return
+    openAction()
+    setParams({}, { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wantsAction])
 
   if (!f)
     return (
       <Card>
         <EmptyState
-          icon={<ICONS.findings className="size-5" />}
           title="Finding not found"
           body="It may have been removed when the analysis was re-run."
           action={
@@ -99,7 +115,6 @@ export default function FindingDetail() {
       </Card>
     )
 
-  const client = data.clients.find((c) => c.id === f.client_id)
   const linkedActions = data.actions.filter((a) => a.finding_id === f.id)
   const months = Object.keys(f.meta.period_values)
   const hasHighlights = f.evidence.some((e) => e.highlights?.length)
@@ -114,12 +129,6 @@ export default function FindingDetail() {
     } finally {
       setPending(null)
     }
-  }
-
-  const openAction = () => {
-    setTitle(f.recommended_action.split('. ')[0].replace(/\.$/, ''))
-    setNotes(`${client?.name}: ${f.title}`)
-    setActionOpen(true)
   }
 
   const explain = async () => {
@@ -348,6 +357,7 @@ export default function FindingDetail() {
               Cancel
             </Button>
             <Button
+              variant="accent"
               disabled={!title.trim()}
               loading={pending === 'action'}
               onClick={async () => {

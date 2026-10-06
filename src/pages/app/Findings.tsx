@@ -3,7 +3,6 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowDown, Download, FilterX, Search } from 'lucide-react'
 import { useMetrics, useStore } from '../../data/store'
 import { Button, Card, Confidence, EmptyState, PageHeader, SeverityBadge, inputCls, cx } from '../../components/ui'
-import { ICONS } from '../../brand/icons'
 import { GetStarted } from './Overview'
 import { FilterSelect } from './findings/FilterSelect'
 import { FindingStatusTag } from './findings/StatusTag'
@@ -226,7 +225,7 @@ export default function Findings() {
                         {f.meta.ticket_ref && <span className="tnum"> · Ticket #{f.meta.ticket_ref}</span>}
                         <span className="hidden sm:inline xl:hidden"> · {CATEGORY_META[f.category].short}</span>
                       </span>
-                      <span className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1.5 sm:hidden">
+                      <span className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 sm:hidden">
                         <SeverityBadge severity={f.severity} />
                         <span className="text-caption text-ink-3">{CATEGORY_META[f.category].short}</span>
                         {f.status !== 'open' && <StatusBadge status={f.status} />}
@@ -240,7 +239,7 @@ export default function Findings() {
                       <Confidence value={f.confidence} />
                     </td>
                     <td className={cx('whitespace-nowrap px-3 py-3', COL.status)}>
-                      <StatusBadge status={f.status} />
+                      {f.status === 'open' ? <span className="sr-only">Open</span> : <StatusBadge status={f.status} />}
                     </td>
                     <td className="whitespace-nowrap py-3 pl-3 pr-4 text-right align-top sm:pr-5 sm:align-middle">
                       <span className="tnum block text-body font-semibold text-ink">{money(f.estimated_value)}</span>
@@ -268,7 +267,6 @@ export default function Findings() {
           </div>
         ) : data.findings.length ? (
           <EmptyState
-            icon={<ICONS.findings className="size-5" />}
             title="No findings match these filters"
             body="Clear a filter or search for a different client, category or ticket number."
             action={
@@ -279,7 +277,6 @@ export default function Findings() {
           />
         ) : (
           <EmptyState
-            icon={<ICONS.findings className="size-5" />}
             title="No leakage found in this data"
             body="The analysis checked every ticket, time entry, agreement and billing line and found nothing to flag. Add more months of exports to widen the check."
           />

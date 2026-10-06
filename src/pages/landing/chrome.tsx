@@ -90,7 +90,7 @@ export function BuiltForMsps() {
   return (
     <Section id="built" label="built-title">
       <div className="grid grid-cols-1 gap-x-12 gap-y-10 lg:grid-cols-12">
-        <div className="lg:col-span-5">
+        <div className="lg:sticky lg:top-24 lg:col-span-5 lg:self-start">
           <h2 id="built-title" className={sectionTitleCls}>
             Built for the data MSPs already have.
           </h2>
@@ -117,26 +117,22 @@ export function BuiltForMsps() {
 export function Close() {
   return (
     <section aria-labelledby="close-title" className="border-t border-line-soft">
-      <div className={`${wrap} grid grid-cols-1 gap-x-12 gap-y-10 py-24 sm:py-28 lg:grid-cols-12 lg:items-end lg:py-36`}>
-        <div className="lg:col-span-8">
-          <h2 id="close-title" className={`${displayCls} text-balance`}>
-            Stop doing work for free.
-          </h2>
-          <p className="mt-5 text-[length:clamp(1.25rem,1rem+1vw,1.75rem)] font-medium leading-snug tracking-[-0.02em] text-ink-2">Run your first revenue audit.</p>
+      <div className={`${wrap} py-16 sm:py-20 lg:py-24`}>
+        <h2 id="close-title" className={`${displayCls} max-w-[18ch] text-balance`}>
+          Stop doing work for free.
+        </h2>
+        <p className="mt-5 text-[length:clamp(1.25rem,1rem+1vw,1.75rem)] font-medium leading-snug tracking-[-0.02em] text-ink-2">Run your first revenue audit.</p>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <ButtonLink to="/signup" variant="accent" size="lg">
+            Find My Lost Revenue <ArrowRight className="size-4" aria-hidden />
+          </ButtonLink>
+          <ButtonLink to="/demo" variant="secondary" size="lg">
+            View Demo
+          </ButtonLink>
         </div>
-        <div className="lg:col-span-4">
-          <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
-            <ButtonLink to="/signup" variant="accent" size="lg">
-              Find My Lost Revenue <ArrowRight className="size-4" aria-hidden />
-            </ButtonLink>
-            <ButtonLink to="/demo" variant="secondary" size="lg">
-              View Demo
-            </ButtonLink>
-          </div>
-          <p className="tnum mt-4 max-w-[44ch] text-small text-ink-3">
-            The demo found {money(DEMO.totals.identified)} of potential leakage in {DEMO.period.months} months of {DEMO.msp}'s data. Upload your own exports to see yours.
-          </p>
-        </div>
+        <p className="tnum mt-4 max-w-[64ch] text-small text-ink-3">
+          The demo found {money(DEMO.totals.identified)} of potential leakage in {DEMO.period.months} months of {DEMO.msp}'s data. Upload your own exports to see yours.
+        </p>
       </div>
     </section>
   )

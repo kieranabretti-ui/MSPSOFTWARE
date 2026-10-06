@@ -105,18 +105,21 @@ export default function AppLayout() {
       )}
 
       {(workspace?.is_demo || backend.mode === 'local') && (
-        <div className="no-print flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-line-soft bg-sunken px-4 py-2 text-small text-ink-2 sm:px-8">
-          <FlaskConical className="size-3.5 text-accent" />
+        <div className="no-print flex items-start gap-2 border-b border-line-soft bg-sunken px-4 py-2 text-small text-ink-2 sm:px-8">
+          <FlaskConical className="mt-[3px] size-3.5 shrink-0 text-ink-3" aria-hidden />
           {workspace?.is_demo ? (
-            <span>
-              <strong className="font-semibold text-ink">Demo data.</strong> Northlight IT and its clients are fictional, built to show how Headroom works.
-            </span>
+            <p className="min-w-0">
+              <strong className="font-semibold text-ink">Demo data</strong>
+              <span className="sm:hidden">: a fictional MSP{isDemoSession ? ', nothing is saved.' : '.'}</span>
+              <span className="hidden sm:inline">. Northlight IT and its clients are fictional, built to show how Headroom works.</span>
+              {isDemoSession && <span className="hidden text-ink-3 sm:inline"> Nothing you do here is saved to a server.</span>}
+            </p>
           ) : (
-            <span>
+            <p className="min-w-0">
               <strong className="font-semibold text-ink">Local mode.</strong> Your data is stored only in this browser.
-            </span>
+              {isDemoSession && <span className="hidden text-ink-3 sm:inline"> Nothing you do here is saved to a server.</span>}
+            </p>
           )}
-          {isDemoSession && <span className="text-ink-3">Nothing you do here is saved to a server.</span>}
         </div>
       )}
 

@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { useStore, counted } from '../../data/store'
 import { Card, EmptyState, HealthDot, PageHeader, ButtonLink } from '../../components/ui'
-import { ICONS } from '../../brand/icons'
 import { money } from '../../lib/format'
 import { monthLabel } from '../../engine/analyse'
 import { AgreementCard, AgreementFacts, ClientFindings, ContractsCard, HoursCard, LeakagePanel, ProfitabilityCard } from './clients/profile'
@@ -30,7 +29,6 @@ export default function ClientDetail() {
     return (
       <Card>
         <EmptyState
-          icon={<ICONS.clients className="size-5" />}
           title="Client not found"
           body="This client may have been removed, or the link is out of date."
           action={
@@ -74,7 +72,6 @@ export default function ClientDetail() {
           <AgreementFacts client={client} />
           <Card>
             <EmptyState
-              icon={<ICONS.findings className="size-5" />}
               title="Not analysed yet"
               body="Upload tickets, time and agreement data for this client, then run the analysis from the Data page."
               action={<ButtonLink to="/app/data">Go to data</ButtonLink>}

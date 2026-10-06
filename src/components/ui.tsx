@@ -99,23 +99,22 @@ export function Figure({ children, size = 'lg', tone = 'default', className, tes
   )
 }
 
-// Severity: a label plus a bar count, so it never relies on colour alone.
-// Only Critical takes a coloured pill; High colours its bars, so a column of
-// High findings stays calm.
-const SEV: Record<Severity, { label: string; cls: string; bar: string; bars: number }> = {
-  CRITICAL: { label: 'Critical', cls: 'bg-danger-soft text-danger ring-danger-line', bar: 'bg-current', bars: 3 },
-  HIGH: { label: 'High', cls: 'bg-raised text-ink ring-line', bar: 'bg-warning', bars: 2 },
-  MEDIUM: { label: 'Medium', cls: 'text-ink-2 ring-line', bar: 'bg-ink-3', bars: 1 },
-  LOW: { label: 'Low', cls: 'text-ink-3 ring-line-soft', bar: 'bg-ink-3', bars: 0 },
+// Severity: a plain label plus a bar count, never a pill, so a column of
+// findings stays calm. Only Critical takes colour, and only in its bars.
+const SEV: Record<Severity, { label: string; text: string; bar: string; bars: number }> = {
+  CRITICAL: { label: 'Critical', text: 'text-ink', bar: 'bg-danger', bars: 3 },
+  HIGH: { label: 'High', text: 'text-ink-2', bar: 'bg-ink-2', bars: 2 },
+  MEDIUM: { label: 'Medium', text: 'text-ink-2', bar: 'bg-ink-3', bars: 1 },
+  LOW: { label: 'Low', text: 'text-ink-3', bar: 'bg-ink-3', bars: 0 },
 }
 
 export function SeverityBadge({ severity }: { severity: Severity }) {
   const s = SEV[severity]
   return (
-    <span className={cx('inline-flex h-5 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xs px-1.5 text-[11px] font-semibold ring-1 ring-inset', s.cls)}>
-      <span className="flex items-end gap-px" aria-hidden>
+    <span className={cx('inline-flex h-5 shrink-0 items-center gap-1.5 whitespace-nowrap text-caption font-medium', s.text)}>
+      <span className="flex items-end gap-[2px]" aria-hidden>
         {[0, 1, 2].map((i) => (
-          <span key={i} className={cx('w-[2px] rounded-full', i < s.bars ? s.bar : 'bg-current opacity-25')} style={{ height: 4 + i * 2 }} />
+          <span key={i} className={cx('w-[2px] rounded-full', i < s.bars ? s.bar : 'bg-line-strong')} style={{ height: 4 + i * 2 }} />
         ))}
       </span>
       {s.label}
@@ -149,23 +148,26 @@ export function Confidence({ value, showLabel = true }: { value: number; showLab
   )
 }
 
+// Client health, kept calm: a neutral label, with the one danger dot reserved
+// for At risk. The mark keeps its slot when empty so labels line up in a column.
 export function HealthDot({ health, withLabel = true }: { health: Health; withLabel?: boolean }) {
   const h = HEALTH[health]
   return (
     <span className={cx('inline-flex items-center gap-1.5 text-caption font-medium', h.text)}>
-      <span className={cx('size-1.5 rounded-full', h.dot)} aria-hidden />
+      <span className={cx('size-1.5 shrink-0 rounded-full', h.dot)} aria-hidden />
       {withLabel ? h.label : <span className="sr-only">{h.label}</span>}
     </span>
   )
 }
 
-export function EmptyState({ icon, title, body, action }: { icon?: ReactNode; title: string; body: ReactNode; action?: ReactNode }) {
+// An empty or no-match state in the ledger voice: left-aligned, a title, one
+// line of explanation and at most a couple of actions. No icon tile.
+export function EmptyState({ title, body, action }: { title: string; body: ReactNode; action?: ReactNode }) {
   return (
-    <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-      {icon && <div className="mb-5 flex size-11 items-center justify-center rounded-md border border-line bg-raised text-ink-2">{icon}</div>}
+    <div className="px-5 py-10 sm:px-6">
       <h3 className="text-h3 text-ink">{title}</h3>
-      <p className="mt-1.5 max-w-md text-body text-ink-3">{body}</p>
-      {action && <div className="mt-6 flex flex-wrap justify-center gap-2">{action}</div>}
+      <p className="mt-1.5 max-w-[60ch] text-body text-ink-3">{body}</p>
+      {action && <div className="mt-5 flex flex-wrap gap-2">{action}</div>}
     </div>
   )
 }

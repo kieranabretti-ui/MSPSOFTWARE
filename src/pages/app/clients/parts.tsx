@@ -1,7 +1,6 @@
 import { ArrowUp } from 'lucide-react'
 import { cx } from '../../../components/ui'
-import { GapBar } from '../../../components/charts'
-import { ICONS } from '../../../brand/icons'
+import { LeakBar } from '../../../components/charts'
 import { money, num, pct } from '../../../lib/format'
 
 // Small, shared pieces of the clients area: margin as status text, contracted
@@ -9,14 +8,14 @@ import { money, num, pct } from '../../../lib/format'
 
 export const isBelowTarget = (margin: number, target: number) => margin < target
 
-// Margin is plain text. Only a margin below target takes colour, and then
-// always with the alert icon and a spoken label, never colour alone.
-export function MarginValue({ margin, target, className }: { margin: number; target: number; className?: string }) {
+// Margin is plain ink. A margin below target is set semibold with one small
+// danger dot and a spoken label, so the risk shows once and never as red text.
+// `mark={false}` drops the dot where a chart beside it already carries it.
+export function MarginValue({ margin, target, className, mark = true }: { margin: number; target: number; className?: string; mark?: boolean }) {
   const below = isBelowTarget(margin, target)
-  const Alert = ICONS.alerts
   return (
-    <span className={cx('tnum inline-flex items-center gap-1', below ? 'font-semibold text-danger' : 'text-ink', className)} title={below ? `Below your ${pct(target)} target margin` : undefined}>
-      {below && <Alert className="size-3.5 shrink-0" aria-hidden />}
+    <span className={cx('tnum inline-flex items-center gap-1.5 text-ink', below && 'font-semibold', className)} title={below ? `Below your ${pct(target)} target margin` : undefined}>
+      {below && mark && <span className="size-1.5 shrink-0 rounded-full bg-danger" aria-hidden />}
       {pct(margin)}
       {below && <span className="sr-only">, below your {pct(target)} target</span>}
     </span>
@@ -24,14 +23,14 @@ export function MarginValue({ margin, target, className }: { margin: number; tar
 }
 
 // Actual users or devices against the contracted number. Anything above
-// contract is amber with an up arrow; the contracted figure stays quiet.
+// contract is semibold ink with a neutral up-tick; the contracted figure stays quiet.
 export function SeatCount({ actual, contracted, noun }: { actual: number; contracted: number | null; noun: string }) {
   if (!actual) return <span className="text-ink-3">—</span>
   const over = contracted != null && actual > contracted ? actual - contracted : 0
   return (
     <span className="tnum inline-flex items-baseline justify-end gap-1" title={contracted != null ? `${num(actual)} ${noun} supported, ${num(contracted)} contracted` : `${num(actual)} ${noun} supported, none contracted`}>
-      <span className={cx('inline-flex items-center gap-0.5', over ? 'font-semibold text-warning' : 'text-ink')}>
-        {over > 0 && <ArrowUp className="size-3 shrink-0" aria-hidden />}
+      <span className={cx('inline-flex items-center gap-0.5', over ? 'font-semibold text-ink' : 'text-ink')}>
+        {over > 0 && <ArrowUp className="size-3 shrink-0 text-ink-3" aria-hidden />}
         {num(actual)}
       </span>
       {contracted != null && <span className="text-ink-3">/ {num(contracted)}</span>}
@@ -40,13 +39,14 @@ export function SeatCount({ actual, contracted, noun }: { actual: number; contra
   )
 }
 
-// A client's potential leakage with the signature GapBar: what was billed over
-// the analysis period in neutral, the unbilled gap in lime.
-export function LeakageCell({ leakage, billed }: { leakage: number; billed: number }) {
+// A client's potential leakage, ranked against the client with the most: the
+// signature's lime at row scale, so the rows read apart at a glance. A total
+// row passes no `max` and shows the figure alone.
+export function LeakageCell({ leakage, max }: { leakage: number; max?: number }) {
   return (
     <span className="flex flex-col items-end gap-1.5 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
       <span className={cx('tnum min-w-[4.5rem] text-right', leakage > 0 ? 'font-semibold text-ink' : 'text-ink-3')}>{money(leakage)}</span>
-      {billed > 0 && <GapBar billed={billed} gap={leakage} height={4} label={false} className={cx('w-20 sm:order-first lg:w-24', leakage > 0 ? '' : 'opacity-60')} />}
+      {max != null && <LeakBar value={leakage} max={max} className="w-20 sm:order-first lg:w-24" />}
     </span>
   )
 }

@@ -1,14 +1,13 @@
 import { useId, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus } from 'lucide-react'
-import { useMetrics, useStore } from '../../data/store'
-import { Button, ButtonLink, Card, EmptyState, Field, Modal, PageHeader, cx, inputCls } from '../../components/ui'
+import { ArrowRight, Plus } from 'lucide-react'
+import { openish, useMetrics, useStore } from '../../data/store'
+import { Button, ButtonLink, Card, EmptyState, Field, Modal, PageHeader, TextLink, cx, inputCls } from '../../components/ui'
 import { useToast } from '../../components/toast'
 import { money, plural, relative } from '../../lib/format'
-import { ACTION_STATUS } from '../../lib/labels'
+import { ACTION_STATUS, CATEGORY_META } from '../../lib/labels'
 import { parseNumber } from '../../data/importers'
-import { ICONS } from '../../brand/icons'
-import type { ActionStatus } from '../../engine/types'
+import type { ActionStatus, Finding } from '../../engine/types'
 import { Callout, Select } from './data/kit'
 
 const TABS: (ActionStatus | 'all')[] = ['open', 'in_progress', 'resolved', 'dismissed', 'all']
@@ -24,6 +23,52 @@ const DOT: Record<ActionStatus, string> = {
 
 function Dot({ status, className }: { status: ActionStatus; className?: string }) {
   return <span className={cx('inline-block size-2 shrink-0 rounded-full', DOT[status], className)} aria-hidden />
+}
+
+// Before the first action: the largest open findings as a short ledger, each
+// one a step from becoming tracked recovery work.
+function StartWith({ findings, clientName, openCount, openValue }: { findings: Finding[]; clientName: (id: string) => string; openCount: number; openValue: number }) {
+  return (
+    <div>
+      <div className="flex items-end justify-between gap-4 border-b border-line-soft px-4 py-4 sm:px-5">
+        <div className="min-w-0">
+          <h2 className="text-h3 text-ink">Start with these</h2>
+          <p className="mt-0.5 text-small text-ink-3">No actions yet. Your largest open findings, ready to track through to recovery.</p>
+        </div>
+        <TextLink to="/app/findings" className="shrink-0 pb-0.5">
+          Review findings
+        </TextLink>
+      </div>
+      <ol className="divide-y divide-line-soft">
+        {findings.map((f) => (
+          <li key={f.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 px-4 py-3.5 sm:grid-cols-[minmax(0,1fr)_6rem_9rem] sm:px-5">
+            <div className="min-w-0">
+              <Link to={`/app/findings/${f.id}`} className="block truncate text-body font-medium text-ink underline-offset-4 hover:underline">
+                {f.title}
+              </Link>
+              <p className="mt-0.5 truncate text-caption text-ink-3">
+                {clientName(f.client_id)} · {CATEGORY_META[f.category].short}
+              </p>
+            </div>
+            <span className="tnum text-right text-body font-semibold text-ink">{money(f.estimated_value)}</span>
+            <Link
+              to={`/app/findings/${f.id}?action=new`}
+              aria-label={`Create action for ${f.title}`}
+              className="group col-span-2 inline-flex items-center gap-1 justify-self-start rounded-sm text-small font-medium text-ink-2 transition-colors hover:text-ink sm:col-span-1 sm:justify-self-end"
+            >
+              Create action
+              <ArrowRight className="size-3.5 transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden />
+            </Link>
+          </li>
+        ))}
+      </ol>
+      {openCount > findings.length && (
+        <p className="tnum border-t border-line-soft px-4 py-3 text-caption text-ink-3 sm:px-5">
+          {plural(openCount, 'open finding')} worth {money(openValue)} potential in all.
+        </p>
+      )}
+    </div>
+  )
 }
 
 export default function Actions() {
@@ -72,7 +117,10 @@ export default function Actions() {
     tabRefs.current[j]?.focus()
   }
 
-  const Empty = ICONS.actions
+  const startWith = data.findings
+    .filter(openish)
+    .sort((a, b) => b.estimated_value - a.estimated_value)
+    .slice(0, 3)
   return (
     <>
       <PageHeader
@@ -189,33 +237,13 @@ export default function Actions() {
             </ul>
           ) : data.actions.length ? (
             <EmptyState
-              icon={<Empty className="size-5" />}
               title={tab === 'all' ? 'No actions' : `Nothing ${ACTION_STATUS[tab].toLowerCase()}`}
               body={tab === 'resolved' ? 'Resolve an action when the money is billed or the agreement is updated. Its value counts here.' : 'Actions in other stages are in the other tabs.'}
             />
+          ) : startWith.length ? (
+            <StartWith findings={startWith} clientName={m.clientName} openCount={m.openCount} openValue={m.openValue} />
           ) : (
-            <EmptyState
-              icon={<Empty className="size-5" />}
-              title="No actions yet"
-              body={
-                m.openCount > 0 ? (
-                  <>
-                    You have <span className="tnum font-medium text-ink-2">{plural(m.openCount, 'open finding')}</span> worth <span className="tnum font-medium text-ink-2">{money(m.openValue)}</span> potential. Open one and choose Create action to
-                    track the work of recovering it.
-                  </>
-                ) : (
-                  'Open a finding and choose Create action to track the work of recovering it, or add your own.'
-                )
-              }
-              action={
-                <>
-                  {m.openCount > 0 && <ButtonLink to="/app/findings">Review findings</ButtonLink>}
-                  <Button variant="secondary" onClick={() => setCreating(true)}>
-                    <Plus className="size-4 shrink-0" aria-hidden /> New action
-                  </Button>
-                </>
-              }
-            />
+            <EmptyState title="No actions yet" body="Open a finding and choose Create action to track the work of recovering it, or add your own with New action." />
           )}
         </div>
       </Card>

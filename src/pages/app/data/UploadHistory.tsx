@@ -81,7 +81,7 @@ export function UploadHistory({ uploads, onClear }: { uploads: Upload[]; onClear
                           </Badge>
                         </button>
                       ) : (
-                        <Badge tone="success">Imported</Badge>
+                        <Badge>Imported</Badge>
                       )}
                     </td>
                     <td className="hidden whitespace-nowrap py-3 pl-3 pr-5 text-right text-caption text-ink-3 md:table-cell">{relative(u.created_at)}</td>

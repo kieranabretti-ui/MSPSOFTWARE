@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import type { Action, Category, ClientMetrics, Finding } from '../../../engine/types'
 import { Card, HealthDot, SeverityBadge, TextLink, cx } from '../../../components/ui'
-import { GapBar, TrendChart } from '../../../components/charts'
+import { LeakBar, TrendChart } from '../../../components/charts'
 import { money, plural, relative } from '../../../lib/format'
 import { ACTION_STATUS, CATEGORY_META } from '../../../lib/labels'
 
@@ -82,8 +82,9 @@ export function PriorityFindings({ findings, clientName, criticalCount }: { find
 
 export type RiskClient = ClientMetrics & { leakage: number; billed: number }
 
-// 3. Clients with the most leakage or the weakest margins, each with its own gap.
-export function ClientRisk({ clients }: { clients: RiskClient[] }) {
+// 3. Clients with the most leakage or the weakest margins. Each bar ranks the
+//    client's leakage against the largest across all clients.
+export function ClientRisk({ clients, maxLeakage }: { clients: RiskClient[]; maxLeakage: number }) {
   return (
     <section aria-labelledby="ov-clients" className="min-w-0">
       <SectionHeading id="ov-clients" title="Clients at risk" sub="Weakest health first, then leakage" right={<TextLink to="/app/clients">All clients</TextLink>} />
@@ -103,12 +104,8 @@ export function ClientRisk({ clients }: { clients: RiskClient[] }) {
                     <span className="mt-0.5 block truncate text-caption text-ink-3">{c.reasons[0] ?? 'Potentially billable work found'}</span>
                   </span>
                   <span className="w-24 shrink-0 sm:w-28">
-                    <span className="tnum block text-right text-body font-semibold text-ink">{money(c.leakage)}</span>
-                    {c.billed > 0 ? (
-                      <GapBar billed={c.billed} gap={c.leakage} height={4} label={false} className="mt-2" />
-                    ) : (
-                      <span className="mt-1 block text-right text-caption text-ink-3">No MRR on file</span>
-                    )}
+                    <span className={cx('tnum block text-right text-body', c.leakage > 0 ? 'font-semibold text-ink' : 'text-ink-3')}>{money(c.leakage)}</span>
+                    <LeakBar value={c.leakage} max={maxLeakage} className="mt-2" />
                   </span>
                 </Link>
               </li>

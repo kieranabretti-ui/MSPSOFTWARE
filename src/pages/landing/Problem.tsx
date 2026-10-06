@@ -83,7 +83,7 @@ export function Problem() {
 
   return (
     <Section id="problem" label="problem-title">
-      <SectionIntro id="problem-title" title="Your MSP can be profitable on paper while quietly losing thousands every month.">
+      <SectionIntro id="problem-title" stacked title="Your MSP can be profitable on paper while quietly losing thousands every month.">
         <p>
           Agreements are signed once. Clients change every month. New starters arrive, devices multiply and engineers do the quick favour nobody bills. None of it reaches an invoice, and nobody has
           time to check a thousand tickets against fifteen contracts.

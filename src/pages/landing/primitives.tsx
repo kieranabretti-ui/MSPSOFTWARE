@@ -19,7 +19,18 @@ export function Section({ id, className, children, label }: { id?: string; class
   )
 }
 
-export function SectionIntro({ id, title, children, className }: { id: string; title: ReactNode; children?: ReactNode; className?: string }) {
+// `stacked` sets the intro under the heading, for a section whose module
+// below should carry the width on its own.
+export function SectionIntro({ id, title, children, className, stacked }: { id: string; title: ReactNode; children?: ReactNode; className?: string; stacked?: boolean }) {
+  if (stacked)
+    return (
+      <div className={className}>
+        <h2 id={id} className={cx(sectionTitleCls, 'max-w-[24ch]')}>
+          {title}
+        </h2>
+        {children && <div className="mt-6 max-w-[68ch] text-lead text-ink-2">{children}</div>}
+      </div>
+    )
   return (
     <div className={cx('grid grid-cols-1 gap-x-8 gap-y-5 lg:grid-cols-12 lg:items-end', className)}>
       <h2 id={id} className={cx(sectionTitleCls, 'lg:col-span-7')}>

@@ -74,6 +74,8 @@ export default function Clients() {
   const totalContribution = sum((r) => r.mt.contribution)
   const totalMtMrr = sum((r) => r.mt.mrr)
   const totalLeakage = rows.reduce((a, r) => a + r.leakage, 0)
+  // Bars rank against the largest leak across every client, so a search keeps the scale.
+  const maxLeakage = Math.max(0, ...all.map((r) => r.leakage))
 
   const onTabKey = (e: KeyboardEvent<HTMLButtonElement>, i: number) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
@@ -109,7 +111,6 @@ export default function Clients() {
       {data.clients.length === 0 ? (
         <Card>
           <EmptyState
-            icon={<ICONS.clients className="size-5" />}
             title="No clients yet"
             body="Add a client by hand, upload a clients CSV, or load the demo MSP from the Data page."
             action={
@@ -219,7 +220,7 @@ export default function Clients() {
                           <td className={cx(td, COL.devices)}>{mt ? <SeatCount actual={mt.devices} contracted={c.contracted_devices} noun="devices" /> : dash}</td>
                           <td className={cx(td, COL.support, 'text-ink-2')}>{mt ? hours(mt.avg_monthly_hours) : dash}</td>
                           <td className={cx(td, COL.margin)}>{mt ? <MarginValue margin={mt.margin} target={target} /> : dash}</td>
-                          <td className={cx(td, 'pr-4 sm:pr-3')}>{mt ? <LeakageCell leakage={leakage} billed={c.monthly_recurring_revenue * months} /> : dash}</td>
+                          <td className={cx(td, 'pr-4 sm:pr-3')}>{mt ? <LeakageCell leakage={leakage} max={maxLeakage} /> : dash}</td>
                         </>
                       ) : (
                         <>
@@ -259,7 +260,7 @@ export default function Clients() {
                           <td className={cx(td, COL.support, 'font-normal text-ink-3')}>{avg ? `avg ${hours(avg)}` : ''}</td>
                           <td className={cx(td, COL.margin)}>{totalMtMrr > 0 && <MarginValue margin={totalContribution / totalMtMrr} target={target} />}</td>
                           <td className={cx(td, 'pr-4 sm:pr-3')}>
-                            <LeakageCell leakage={totalLeakage} billed={totalMrr * months} />
+                            <LeakageCell leakage={totalLeakage} />
                           </td>
                         </>
                       ) : (
@@ -280,9 +281,9 @@ export default function Clients() {
           </Card>
           <p className="mt-3 max-w-[90ch] text-caption text-ink-3">
             {view === 'overview'
-              ? `Users and devices show supported / contracted; anything above contract is marked in amber. The bar is potential leakage against MRR billed over ${months ? plural(months, 'month') : 'the period'}. `
+              ? `Users and devices show supported / contracted; anything above contract carries an up arrow. The bar ranks each client's potential leakage over ${months ? plural(months, 'month') : 'the period'} against the largest. `
               : 'Contribution is MRR less estimated labour and software, before overheads. '}
-            Margins below your {Math.round(target * 100)}% target are marked in red.
+            Margins below your {Math.round(target * 100)}% target carry a red dot.
           </p>
         </>
       )}

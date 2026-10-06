@@ -126,7 +126,7 @@ export default function DataPage() {
         </div>
         <div className="flex shrink-0 items-center gap-4 pl-5 sm:pl-0">
           {!data.clients.length && <span className="text-caption text-ink-3">Upload clients first</span>}
-          <Button variant="accent" onClick={run} loading={running} disabled={!data.clients.length} data-testid="run-analysis">
+          <Button onClick={run} loading={running} disabled={!data.clients.length} data-testid="run-analysis">
             {!running && <Play className="size-4 shrink-0" aria-hidden />} {analysis ? 'Run analysis again' : 'Run analysis'}
           </Button>
         </div>

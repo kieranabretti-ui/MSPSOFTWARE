@@ -83,7 +83,7 @@ export function DemoProof() {
           <Figure tone="accent">{money(DEMO.total)}</Figure>
           <span className="tnum text-small text-ink-2">potential leakage across {DEMO.findings} findings</span>
         </div>
-        <GapBar billed={DEMO.billed} gap={DEMO.total} height={10} label={false} className="mt-6" />
+        <GapBar billed={DEMO.billed} gap={DEMO.total} height={14} label={false} className="mt-6" />
         <p className="tnum mt-2.5 text-caption text-ink-3">{money(DEMO.billed)} billed over the period, 2.9% leaking</p>
       </figure>
       <Disclaimer className="mt-4 max-w-[62ch]" />

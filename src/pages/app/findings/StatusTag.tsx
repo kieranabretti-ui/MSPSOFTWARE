@@ -3,13 +3,14 @@ import { cx } from '../../../components/ui'
 import { FINDING_STATUS } from '../../../lib/labels'
 import type { FindingStatus } from '../../../engine/types'
 
-// Finding status, kept calm: most findings are open, so open is the quietest
-// state. Confirmed takes info, resolved takes success with a tick, dismissed
-// fades back. Every state carries its word, never colour alone.
+// Finding status, kept neutral: lists show a tag only once a finding has
+// moved on from Open, so the tags that do appear mean something. Confirmed
+// takes a filled dot, resolved a tick, dismissed fades back. Every state
+// carries its word, never colour alone.
 const STYLE: Record<FindingStatus, { cls: string; mark: 'ring' | 'dot' | 'tick' }> = {
   open: { cls: 'text-ink-2 ring-line', mark: 'ring' },
-  valid: { cls: 'bg-info-soft text-info ring-info-line', mark: 'dot' },
-  resolved: { cls: 'bg-success-soft text-success ring-success-line', mark: 'tick' },
+  valid: { cls: 'bg-raised text-ink-2 ring-line', mark: 'dot' },
+  resolved: { cls: 'bg-raised text-ink-2 ring-line', mark: 'tick' },
   dismissed: { cls: 'text-ink-3 ring-line-soft', mark: 'dot' },
 }
 

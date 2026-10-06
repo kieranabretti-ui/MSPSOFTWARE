@@ -42,6 +42,7 @@ export default function Overview() {
     .filter((c) => c.health !== 'healthy' || c.leakage > 0)
     .sort((a, b) => HEALTH_RANK[a.health] - HEALTH_RANK[b.health] || b.leakage - a.leakage)
     .slice(0, 5)
+  const maxLeakage = Math.max(0, ...m.leakageByClient.values())
 
   const categories = ALL_CATEGORIES.filter((c) => PRIMARY_CATEGORIES.includes(c) || m.byCategory[c])
     .map((c) => {
@@ -78,7 +79,7 @@ export default function Overview() {
 
       <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-6">
         <PriorityFindings findings={priority} clientName={m.clientName} criticalCount={criticalCount} />
-        <ClientRisk clients={risky} />
+        <ClientRisk clients={risky} maxLeakage={maxLeakage} />
       </div>
 
       <div className="mt-10">

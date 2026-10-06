@@ -1,0 +1,546 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-06T14:17:27+00:00",
+  "title": "Design System: Headroom",
+  "extensions": {
+    "colorMeta": {
+      "ink-canvas": {
+        "role": "neutral",
+        "displayName": "Ink Canvas",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#0d0e10",
+          "#111316",
+          "#15181b",
+          "#181b1f",
+          "#262a30",
+          "#363b43",
+          "#5b616a"
+        ]
+      },
+      "graphite-sunken": {
+        "role": "neutral",
+        "displayName": "Graphite Sunken",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#0d0e10",
+          "#111316",
+          "#15181b",
+          "#181b1f",
+          "#262a30",
+          "#363b43",
+          "#5b616a"
+        ]
+      },
+      "graphite-surface": {
+        "role": "neutral",
+        "displayName": "Graphite Surface",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#0d0e10",
+          "#111316",
+          "#15181b",
+          "#181b1f",
+          "#262a30",
+          "#363b43",
+          "#5b616a"
+        ]
+      },
+      "graphite-hover": {
+        "role": "neutral",
+        "displayName": "Graphite Hover",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#0d0e10",
+          "#111316",
+          "#15181b",
+          "#181b1f",
+          "#262a30",
+          "#363b43",
+          "#5b616a"
+        ]
+      },
+      "graphite-raised": {
+        "role": "neutral",
+        "displayName": "Graphite Raised",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#0d0e10",
+          "#111316",
+          "#15181b",
+          "#181b1f",
+          "#262a30",
+          "#363b43",
+          "#5b616a"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#0d0e10",
+          "#111316",
+          "#15181b",
+          "#181b1f",
+          "#262a30",
+          "#363b43",
+          "#5b616a"
+        ]
+      },
+      "hairline-soft": {
+        "role": "neutral",
+        "displayName": "Soft Hairline",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#0d0e10",
+          "#111316",
+          "#15181b",
+          "#181b1f",
+          "#262a30",
+          "#363b43",
+          "#5b616a"
+        ]
+      },
+      "hairline-strong": {
+        "role": "neutral",
+        "displayName": "Strong Hairline",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#0d0e10",
+          "#111316",
+          "#15181b",
+          "#181b1f",
+          "#262a30",
+          "#363b43",
+          "#5b616a"
+        ]
+      },
+      "bone": {
+        "role": "neutral",
+        "displayName": "Bone",
+        "tonalRamp": [
+          "#363b43",
+          "#5b616a",
+          "#7f8690",
+          "#a9afb8",
+          "#c9ced4",
+          "#dfe2e6",
+          "#edeef0",
+          "#f6f7f8"
+        ]
+      },
+      "bone-secondary": {
+        "role": "neutral",
+        "displayName": "Bone Secondary",
+        "tonalRamp": [
+          "#363b43",
+          "#5b616a",
+          "#7f8690",
+          "#a9afb8",
+          "#c9ced4",
+          "#dfe2e6",
+          "#edeef0",
+          "#f6f7f8"
+        ]
+      },
+      "bone-muted": {
+        "role": "neutral",
+        "displayName": "Bone Muted",
+        "tonalRamp": [
+          "#363b43",
+          "#5b616a",
+          "#7f8690",
+          "#a9afb8",
+          "#c9ced4",
+          "#dfe2e6",
+          "#edeef0",
+          "#f6f7f8"
+        ]
+      },
+      "bone-faint": {
+        "role": "neutral",
+        "displayName": "Bone Faint",
+        "tonalRamp": [
+          "#363b43",
+          "#5b616a",
+          "#7f8690",
+          "#a9afb8",
+          "#c9ced4",
+          "#dfe2e6",
+          "#edeef0",
+          "#f6f7f8"
+        ]
+      },
+      "recovery-lime": {
+        "role": "primary",
+        "displayName": "Recovery Lime",
+        "tonalRamp": [
+          "#1f2b00",
+          "#2e4000",
+          "#4d6b00",
+          "#7fa421",
+          "#a6d43a",
+          "#c4f25b",
+          "#d4f87f",
+          "#eefbd0"
+        ]
+      },
+      "recovery-lime-hover": {
+        "role": "primary",
+        "displayName": "Lime Hover",
+        "tonalRamp": [
+          "#1f2b00",
+          "#2e4000",
+          "#4d6b00",
+          "#7fa421",
+          "#a6d43a",
+          "#c4f25b",
+          "#d4f87f",
+          "#eefbd0"
+        ]
+      },
+      "recovery-lime-deep": {
+        "role": "primary",
+        "displayName": "Deep Lime",
+        "tonalRamp": [
+          "#1f2b00",
+          "#2e4000",
+          "#4d6b00",
+          "#7fa421",
+          "#a6d43a",
+          "#c4f25b",
+          "#d4f87f",
+          "#eefbd0"
+        ]
+      },
+      "signal-success": {
+        "role": "semantic",
+        "displayName": "Success Green",
+        "tonalRamp": [
+          "#163e2a",
+          "#266847",
+          "#359264",
+          "#42b77d",
+          "#4cd18f",
+          "#78dcab",
+          "#a5e8c7",
+          "#d2f3e3"
+        ]
+      },
+      "signal-warning": {
+        "role": "semantic",
+        "displayName": "Warning Amber",
+        "tonalRamp": [
+          "#483716",
+          "#795c25",
+          "#a98034",
+          "#d4a142",
+          "#f2b84b",
+          "#f5c978",
+          "#f8dba5",
+          "#fbedd2"
+        ]
+      },
+      "signal-danger": {
+        "role": "semantic",
+        "displayName": "Danger Coral",
+        "tonalRamp": [
+          "#48221c",
+          "#79392f",
+          "#a95042",
+          "#d46553",
+          "#f2735f",
+          "#f59687",
+          "#f8b9af",
+          "#fbdcd7"
+        ]
+      },
+      "signal-info": {
+        "role": "semantic",
+        "displayName": "Info Blue",
+        "tonalRamp": [
+          "#223249",
+          "#3a547b",
+          "#5176ac",
+          "#6694d8",
+          "#74a9f6",
+          "#96bef8",
+          "#b9d4fa",
+          "#dce9fc"
+        ]
+      },
+      "viz-series": {
+        "role": "data",
+        "displayName": "Series",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#0d0e10",
+          "#111316",
+          "#15181b",
+          "#181b1f",
+          "#262a30",
+          "#363b43",
+          "#5b616a"
+        ]
+      },
+      "viz-series-strong": {
+        "role": "data",
+        "displayName": "Series Strong",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#0d0e10",
+          "#111316",
+          "#15181b",
+          "#181b1f",
+          "#262a30",
+          "#363b43",
+          "#5b616a"
+        ]
+      },
+      "viz-grid": {
+        "role": "data",
+        "displayName": "Grid",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#0d0e10",
+          "#111316",
+          "#15181b",
+          "#181b1f",
+          "#262a30",
+          "#363b43",
+          "#5b616a"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Landing hero question; section titles use a 30-48px step of the same treatment."
+      },
+      "data-xl": {
+        "displayName": "Data XL",
+        "purpose": "The one headline money figure per screen."
+      },
+      "data-lg": {
+        "displayName": "Data LG",
+        "purpose": "KPI figures."
+      },
+      "data-md": {
+        "displayName": "Data MD",
+        "purpose": "Inline figures."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section headings in a page."
+      },
+      "title-sm": {
+        "displayName": "Title SM",
+        "purpose": "Card, modal and empty-state titles."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Marketing body."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "App body."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Table cells, field labels, secondary text."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Helper text, meta lines, disclaimers."
+      },
+      "column-label": {
+        "displayName": "Column Label",
+        "purpose": "Uppercase table and ledger column headers only; never a kicker above a heading."
+      }
+    },
+    "shadows": [
+      {
+        "name": "float",
+        "value": "0 1px 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -12px rgb(0 0 0 / 0.75)",
+        "purpose": "Chart tooltips."
+      },
+      {
+        "name": "overlay",
+        "value": "0 1px 0 rgb(255 255 255 / 0.05) inset, 0 32px 80px -24px rgb(0 0 0 / 0.85), 0 0 0 1px rgb(255 255 255 / 0.04)",
+        "purpose": "Modals, mobile nav drawer, toasts, busy panel."
+      },
+      {
+        "name": "scrim",
+        "value": "rgb(4 5 6 / 0.72) with 3px backdrop blur",
+        "purpose": "Behind modals and the drawer."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Panels and the landing audit run."
+      },
+      {
+        "name": "control-transition",
+        "value": "150ms ease-out",
+        "purpose": "Colour and border transitions on buttons, inputs, nav (as shipped; tokens declare 120ms/200ms)."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0.01ms",
+        "purpose": "prefers-reduced-motion collapses all animation; the audit run is skipped with final figures in the DOM."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Bone on ink. The default action on a screen.",
+      "html": "<button class=\"ds-btn-primary\">View report</button>",
+      "css": ".ds-btn-primary { display:inline-flex; align-items:center; justify-content:center; gap:8px; height:36px; padding:0 16px; border-radius:8px; font-family: var(--font-body, \"Host Grotesk Variable\", \"Host Grotesk\", ui-sans-serif, system-ui, sans-serif); font-size:14px; font-weight:500; white-space:nowrap; cursor:pointer; border:1px solid transparent; transition: background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out; } .ds-btn-primary:focus-visible { outline:2px solid #c4f25b; outline-offset:2px; } .ds-btn-primary:disabled { opacity:.45; cursor:not-allowed; } .ds-btn-primary { background:#edeef0; color:#0a0b0d; } .ds-btn-primary:hover { background:#ffffff; }"
+    },
+    {
+      "name": "Accent Button",
+      "kind": "button",
+      "refersTo": "button-accent",
+      "description": "Lime with ink text. One per screen, only for the action that leads to money.",
+      "html": "<button class=\"ds-btn-accent\">Review findings <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button>",
+      "css": ".ds-btn-accent { display:inline-flex; align-items:center; justify-content:center; gap:8px; height:36px; padding:0 16px; border-radius:8px; font-family: var(--font-body, \"Host Grotesk Variable\", \"Host Grotesk\", ui-sans-serif, system-ui, sans-serif); font-size:14px; font-weight:500; white-space:nowrap; cursor:pointer; border:1px solid transparent; transition: background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out; } .ds-btn-accent:focus-visible { outline:2px solid #c4f25b; outline-offset:2px; } .ds-btn-accent:disabled { opacity:.45; cursor:not-allowed; } .ds-btn-accent { background:#c4f25b; color:#0a0b0d; } .ds-btn-accent:hover { background:#d4f87f; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Raised graphite with a hairline. Everything alongside the main action.",
+      "html": "<button class=\"ds-btn-secondary\">View Demo</button>",
+      "css": ".ds-btn-secondary { display:inline-flex; align-items:center; justify-content:center; gap:8px; height:36px; padding:0 16px; border-radius:8px; font-family: var(--font-body, \"Host Grotesk Variable\", \"Host Grotesk\", ui-sans-serif, system-ui, sans-serif); font-size:14px; font-weight:500; white-space:nowrap; cursor:pointer; border:1px solid transparent; transition: background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out; } .ds-btn-secondary:focus-visible { outline:2px solid #c4f25b; outline-offset:2px; } .ds-btn-secondary:disabled { opacity:.45; cursor:not-allowed; } .ds-btn-secondary { background:#181b1f; color:#edeef0; border-color:#262a30; } .ds-btn-secondary:hover { background:#15181b; border-color:#363b43; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Text only until hovered. Tertiary actions in a header.",
+      "html": "<button class=\"ds-btn-ghost\">Data</button>",
+      "css": ".ds-btn-ghost { display:inline-flex; align-items:center; justify-content:center; gap:8px; height:36px; padding:0 16px; border-radius:8px; font-family: var(--font-body, \"Host Grotesk Variable\", \"Host Grotesk\", ui-sans-serif, system-ui, sans-serif); font-size:14px; font-weight:500; white-space:nowrap; cursor:pointer; border:1px solid transparent; transition: background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out; } .ds-btn-ghost:focus-visible { outline:2px solid #c4f25b; outline-offset:2px; } .ds-btn-ghost:disabled { opacity:.45; cursor:not-allowed; } .ds-btn-ghost { background:transparent; color:#a9afb8; } .ds-btn-ghost:hover { background:#181b1f; color:#edeef0; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Sunken fill, strong hairline, lime border and soft-lime ring on focus.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Workspace name</span><input class=\"ds-input\" placeholder=\"Northlight IT\"></label>",
+      "css": ".ds-field { display:block; font-family: var(--font-body, \"Host Grotesk Variable\", \"Host Grotesk\", ui-sans-serif, system-ui, sans-serif); } .ds-field-label { display:block; margin-bottom:6px; font-size:13px; font-weight:500; color:#a9afb8; } .ds-input { display:block; width:100%; height:36px; padding:0 12px; border-radius:8px; border:1px solid #363b43; background:#0d0e10; color:#edeef0; font:inherit; font-size:14px; caret-color:#c4f25b; transition: border-color 150ms, box-shadow 150ms; } .ds-input::placeholder { color:#7f8690; } .ds-input:hover { border-color:#5b616a; } .ds-input:focus { outline:none; border-color:#c4f25b; box-shadow:0 0 0 3px rgb(196 242 91 / 0.1); }"
+    },
+    {
+      "name": "Sidebar Navigation",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "App rail items; the active item takes the raised fill and a lime icon.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item is-active\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"5\" rx=\"1\"/><rect x=\"14\" y=\"12\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"3\" y=\"16\" width=\"7\" height=\"5\" rx=\"1\"/></svg><span>Overview</span></a><a class=\"ds-nav-item\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\"><circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m21 21-4.3-4.3\"/></svg><span>Findings</span><span class=\"ds-nav-count\">40</span></a></nav>",
+      "css": ".ds-nav { width:224px; padding:8px; background:#0a0b0d; display:flex; flex-direction:column; gap:2px; font-family: var(--font-body, \"Host Grotesk Variable\", \"Host Grotesk\", ui-sans-serif, system-ui, sans-serif); } .ds-nav-item { display:flex; align-items:center; gap:10px; padding:6px 10px; border-radius:8px; font-size:14px; font-weight:500; color:#a9afb8; text-decoration:none; transition: background-color 150ms, color 150ms; } .ds-nav-item svg { opacity:.7; } .ds-nav-item span:first-of-type { flex:1; } .ds-nav-item:hover { background:rgb(24 27 31 / 0.6); color:#edeef0; } .ds-nav-item:focus-visible { outline:2px solid #c4f25b; outline-offset:2px; } .ds-nav-item.is-active { background:#181b1f; color:#edeef0; } .ds-nav-item.is-active svg { color:#c4f25b; opacity:1; } .ds-nav-count { font-variant-numeric:tabular-nums; border-radius:4px; background:#262a30; padding:0 6px; font-size:11px; color:#a9afb8; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Graphite surface, 12px radius, hairline, no shadow; header divided by a soft hairline.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-head\"><h3>Act on these first</h3><p>Open findings by severity, then value</p></div><div class=\"ds-card-row\"><span>Support usage above the 10h monthly allowance</span><strong>£355</strong></div></div>",
+      "css": ".ds-card { border:1px solid #262a30; border-radius:12px; background:#111316; color:#edeef0; font-family: var(--font-body, \"Host Grotesk Variable\", \"Host Grotesk\", ui-sans-serif, system-ui, sans-serif); } .ds-card-head { padding:16px 20px; border-bottom:1px solid #1b1e22; } .ds-card-head h3 { margin:0; font-size:15px; font-weight:600; letter-spacing:-0.005em; } .ds-card-head p { margin:2px 0 0; font-size:13px; color:#7f8690; } .ds-card-row { display:flex; justify-content:space-between; gap:16px; padding:14px 20px; font-size:14px; transition: background-color 150ms; } .ds-card-row:hover { background:#15181b; } .ds-card-row strong { font-weight:600; font-variant-numeric:tabular-nums; }"
+    },
+    {
+      "name": "Severity Badge",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "A word beside three tiny ascending bars; only Critical takes colour, in its bars.",
+      "html": "<span class=\"ds-sev\"><span class=\"ds-sev-bars\"><i class=\"on crit\" style=\"height:4px\"></i><i class=\"on crit\" style=\"height:6px\"></i><i class=\"on crit\" style=\"height:8px\"></i></span>Critical</span> <span class=\"ds-sev ds-sev-high\"><span class=\"ds-sev-bars\"><i class=\"on\" style=\"height:4px\"></i><i class=\"on\" style=\"height:6px\"></i><i style=\"height:8px\"></i></span>High</span>",
+      "css": ".ds-sev { display:inline-flex; align-items:center; gap:6px; height:20px; font-family: var(--font-body, \"Host Grotesk Variable\", \"Host Grotesk\", ui-sans-serif, system-ui, sans-serif); font-size:12px; font-weight:500; color:#edeef0; margin-right:12px; } .ds-sev-high { color:#a9afb8; } .ds-sev-bars { display:flex; align-items:flex-end; gap:2px; } .ds-sev-bars i { display:block; width:2px; border-radius:999px; background:#363b43; } .ds-sev-bars i.on { background:#a9afb8; } .ds-sev-bars i.on.crit { background:#f2735f; }"
+    },
+    {
+      "name": "GapBar",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "The signature: billed in neutral, the unbilled gap in lime, a hairline tick at the junction.",
+      "html": "<div class=\"ds-gap\"><div class=\"ds-gap-track\"><div class=\"ds-gap-billed\" style=\"width:97.1%\"></div><div class=\"ds-gap-gap\" style=\"width:2.9%\"></div><span class=\"ds-gap-tick\" style=\"right:calc(2.9% + 1.5px)\"></span></div><div class=\"ds-gap-legend\"><span>Billed <b class=\"n\">£143,220</b></span><span>Unbilled <b class=\"a\">£4,281</b> 2.9%</span></div></div>",
+      "css": ".ds-gap { width:420px; font-family: var(--font-body, \"Host Grotesk Variable\", \"Host Grotesk\", ui-sans-serif, system-ui, sans-serif); } .ds-gap-track { position:relative; display:flex; gap:3px; height:14px; } .ds-gap-billed { height:100%; border-radius:3px 0 0 3px; background:#3d434c; } .ds-gap-gap { height:100%; min-width:4px; border-radius:0 3px 3px 0; background:#c4f25b; } .ds-gap-tick { position:absolute; top:-6px; bottom:-6px; width:1px; background:#a9afb8; } .ds-gap-legend { margin-top:10px; display:flex; justify-content:space-between; font-size:12px; color:#7f8690; font-variant-numeric:tabular-nums; } .ds-gap-legend b.n { font-weight:400; color:#a9afb8; } .ds-gap-legend b.a { font-size:13px; font-weight:600; color:#c4f25b; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Ledger of Found Money",
+    "overview": "**Creative North Star: \"The Ledger of Found Money\"**\n\nHeadroom is a dark financial ledger. An ink canvas, graphite surfaces stepped in very small lightness increments, hairline borders and bone type carry everything; the figures are the brightest thing on screen. One electric lime is reserved for money found or recoverable and the single action on a screen that leads to money. Problems are stated calmly in neutrals, with danger confined to small marks, so the product reads as confident about fixes rather than alarmed about issues.\n\nDensity is that of a serious operations tool: 14px body, 13px table cells, tabular figures everywhere a number can change, rows separated by hairlines rather than zebra fills or pills. The marketing site is the same world at a larger scale: display type up to 80px, the real components showing real demo figures, sections laid out as statements of account rather than feature cards.\n\nThe system refuses the grey admin panel with a coloured pill on every row, and the centred headline over a gradient followed by three feature cards.",
+    "keyCharacteristics": [
+      "Ink canvas, graphite steps and hairlines; depth without shadows on anything that sits on the page.",
+      "One family (Host Grotesk), semibold for headings and figures, tabular numerals throughout.",
+      "Lime means money. Everything else is neutral.",
+      "The GapBar (billed in neutral, unbilled gap in lime) is the signature form, repeated from hero to client row.",
+      "Severity and health are quiet marks plus words, never pills."
+    ],
+    "rules": [
+      {
+        "name": "The Lime Means Money Rule",
+        "body": "Lime appears only on money found or recoverable, the one money action per screen, and the system accents listed above. A lime heading, lime body text, a lime card border or lime on a download button is a bug. The full allowed inventory is §8.4 of the brand guidelines.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Lime Button Rule",
+        "body": "At most one accent button per viewport. The landing top bar's \"Find My Lost Revenue\" is bone primary so the hero's lime button stays the only one.",
+        "section": "colors"
+      },
+      {
+        "name": "The Calm Problems Rule",
+        "body": "Danger is a mark, not a field: three small bars, a 6px dot, a caption-size error. No row, card or banner is filled with a signal colour at full strength.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Every number that can change is set with tabular numerals. Money is semibold and bone, or lime when it is money found.",
+        "section": "typography"
+      },
+      {
+        "name": "The Column Label Rule",
+        "body": "The 11px uppercase label exists to head a column of a table or ledger. It is never placed above a heading as a kicker or eyebrow.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hairline, Not Shadow Rule",
+        "body": "Anything that sits on the page separates by a surface step and a hairline. A shadow on a card is a bug; only things that float get one.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep lime to money found or recoverable, the one money action per screen, and the system accents (focus, caret, selection, spinner, active nav icon).",
+      "Do set every changeable number in tabular figures, semibold, and give the screen's headline figure Data XL.",
+      "Do separate surfaces with a lightness step and a 1px hairline; reserve shadows for tooltips, modals, drawers and toasts.",
+      "Do show severity as a word plus bars and health as a word plus a small mark.",
+      "Do reuse the GapBar or LeakBar wherever billed is compared with unbilled.",
+      "Do build landing imagery from the real components and real demo figures, labelled as demo data.",
+      "Do use the 11px uppercase label only as a table or ledger column header."
+    ],
+    "donts": [
+      "Don't use lime for headings, body text, card borders, download buttons, or as a mood; don't put two lime buttons in one viewport.",
+      "Don't put a coloured pill on every row, or fill a row, card or banner with a signal colour.",
+      "Don't put a shadow on a card or table.",
+      "Don't lay out a page as a centred headline over a gradient followed by three feature cards, or as a grid of same-size icon cards.",
+      "Don't place an uppercase kicker or eyebrow above a heading.",
+      "Don't use bone faint for body text.",
+      "Don't introduce a second typeface or a gradient."
+    ]
+  }
+}

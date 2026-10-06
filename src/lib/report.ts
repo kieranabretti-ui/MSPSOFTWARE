@@ -18,6 +18,8 @@ export interface ReportModel {
   billed: number
   months: number
   findingCount: number
+  /** The workspace's target gross margin, so margins below it can be marked. */
+  targetMargin: number
   executiveSummary: string[]
   breakdown: { label: string; count: number; value: number; share: number }[]
   riskClients: { name: string; leakage: number; margin: number; health: string; status: Health; reason: string }[]
@@ -99,6 +101,7 @@ export function buildReport(ws: Workspace, analysis: Analysis, data: WorkspaceDa
     billed: s.client_metrics.reduce((a, c) => a + c.mrr, 0) * s.months.length,
     months: s.months.length,
     findingCount: live.length,
+    targetMargin: ws.settings.target_margin,
     executiveSummary,
     breakdown,
     riskClients,
@@ -144,7 +147,14 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
   const track = rgb(paper.borderMuted)
   const sunken = rgb(paper.surfaceSunken)
   const found = rgb(color.accentDeep)
-  const HEALTH_INK: Record<Health, RGB> = { healthy: rgb(paper.success), watch: rgb(paper.warning), at_risk: rgb(paper.danger) }
+  // Health, calm as on screen: one danger dot for At risk beside a neutral
+  // label, a hollow ring for Watch, no mark for Healthy.
+  const danger = rgb(paper.danger)
+  const HEALTH_MARK: Record<Health, { text: RGB; mark: 'dot' | 'ring' | null }> = {
+    at_risk: { text: ink2, mark: 'dot' },
+    watch: { text: muted, mark: 'ring' },
+    healthy: { text: muted, mark: null },
+  }
   // Ink band
   const band = rgb(color.ink)
   const bone = rgb(color.bone)
@@ -218,7 +228,9 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
     y += 24
   }
 
-  type Col = { head: string; right?: boolean; width?: number; c?: RGB; bold?: boolean; dot?: (row: number) => RGB }
+  // health: the column is a client's health label. flag: the row's figure is
+  // below target, so it is set bold with a small danger dot before it.
+  type Col = { head: string; right?: boolean; width?: number; c?: RGB; bold?: boolean; health?: (row: number) => Health; flag?: (row: number) => boolean }
   const PAD = { top: 5.5, bottom: 5.5, left: 0, right: 10 }
   const HEAD_PAD = { top: 0, bottom: 6, left: 0, right: 10 }
   const table = (cols: Col[], body: string[][], o: { foot?: string[]; size?: number; bar?: { col: number; share: (row: number) => number } } = {}) => {
@@ -244,19 +256,29 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
         if (c.right) s.halign = 'right'
         const pad = { ...(d.section === 'head' ? HEAD_PAD : PAD) }
         if (i === cols.length - 1) pad.right = 0
-        if (c.dot && d.section === 'body') pad.left = 9
+        if (c.health && d.section === 'body') pad.left = 9
         s.cellPadding = pad
         if (c.width) s.cellWidth = c.width
         if (d.section === 'body') {
-          s.textColor = c.dot ? c.dot(d.row.index) : (c.c ?? (i === 0 || c.right ? ink : ink2))
-          if (c.bold) s.fontStyle = 'bold'
+          s.textColor = c.health ? HEALTH_MARK[c.health(d.row.index)].text : (c.c ?? (i === 0 || c.right ? ink : ink2))
+          if (c.bold || c.flag?.(d.row.index)) s.fontStyle = 'bold'
         }
       },
       didDrawCell: (d) => {
         if (d.section !== 'body') return
         const c = cols[d.column.index]
         const mid = d.cell.y + PAD.top + size * 0.5
-        if (c.dot) doc.setFillColor(...c.dot(d.row.index)).circle(d.cell.x + 2.5, mid, 2, 'F')
+        if (c.health) {
+          const mark = HEALTH_MARK[c.health(d.row.index)].mark
+          if (mark === 'dot') doc.setFillColor(...danger).circle(d.cell.x + 2.5, mid, 2, 'F')
+          if (mark === 'ring') doc.setDrawColor(...muted).setLineWidth(0.6).circle(d.cell.x + 2.5, mid, 1.7, 'S')
+        }
+        if (c.flag?.(d.row.index)) {
+          const text = String(d.cell.raw ?? '')
+          const right = d.cell.x + d.cell.width - (d.column.index === cols.length - 1 ? 0 : PAD.right)
+          const x = c.right ? right - width(text, size, 'bold') - 5 : d.cell.x + PAD.left - 5
+          doc.setFillColor(...danger).circle(x, mid, 1.6, 'F')
+        }
         if (o.bar && d.column.index === o.bar.col) {
           const x0 = d.cell.x + 4
           const tw = d.cell.width - 4 - 34
@@ -311,10 +333,11 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
   stat(COL1, COL2 - COL1 - 12, 'Recurring leakage', money(r.monthly), r.monthly > 0 ? lime : bone2, 'a month', 'Potential MRR to recover')
   stat(COL2, W - M - COL2, 'Annualised', money(r.annual), bone, null, 'If left uncorrected')
 
-  // The gap: what the agreements billed, and the leakage on top.
+  // The gap: what the agreements billed, and the leakage on top, with a
+  // hairline tick at the junction as on screen.
   if (r.billed > 0) {
-    const gy = 282
-    const gh = 8
+    const gy = 280
+    const gh = 12
     const share = r.total / (r.billed + r.total)
     const gw = r.total > 0 ? Math.max(CW * share, CW * 0.015) : 0
     const bw = CW - (gw ? gw + 2 : 0)
@@ -322,6 +345,7 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
     if (gw) {
       doc.rect(M + bw - 2, gy, 2, gh, 'F')
       doc.setFillColor(...lime).roundedRect(W - M - gw, gy, gw, gh, 2, 2, 'F').rect(W - M - gw, gy, Math.min(2, gw), gh, 'F')
+      doc.setDrawColor(...bone2).setLineWidth(0.6).line(M + bw + 1, gy - 4, M + bw + 1, gy + gh + 4)
     }
     runs(
       [
@@ -365,7 +389,13 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
 
   h2('Highest risk clients', undefined, tableH(r.riskClients.length))
   table(
-    [{ head: 'Client', width: 128 }, { head: 'Leakage', right: true }, { head: 'Margin', right: true }, { head: 'Status', width: 64, dot: (i) => HEALTH_INK[r.riskClients[i].status] }, { head: 'Main reason' }],
+    [
+      { head: 'Client', width: 128 },
+      { head: 'Leakage', right: true },
+      { head: 'Margin', right: true, flag: (i) => r.riskClients[i].margin < r.targetMargin },
+      { head: 'Status', width: 64, health: (i) => r.riskClients[i].status },
+      { head: 'Main reason' },
+    ],
     r.riskClients.map((c) => [c.name, money(c.leakage), pct(c.margin), c.health, c.reason]),
   )
 
@@ -387,9 +417,9 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
       { head: 'Labour', right: true },
       { head: 'Software', right: true },
       { head: 'Contribution', right: true },
-      { head: 'Margin', right: true },
+      { head: 'Margin', right: true, flag: (i) => r.profitability[i].margin < r.targetMargin },
       { head: 'Hours/mo', right: true },
-      { head: 'Status', width: 58, dot: (i) => HEALTH_INK[r.profitability[i].health] },
+      { head: 'Status', width: 58, health: (i) => r.profitability[i].health },
     ],
     r.profitability.map((c) => [c.name, money(c.mrr), money(c.labour_cost), money(c.software_cost), money(c.contribution), pct(c.margin), hours(c.avg_monthly_hours), HEALTH[c.health].label]),
     { size: 8 },
