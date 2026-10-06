@@ -1,0 +1,1279 @@
+date,client,technician,ticket_id,minutes,billable
+2026-04-01 12:00,Elmfield Dental,Tom Walker,17240,60,No
+2026-04-01 12:52,Bramley Homes,Tom Walker,17241,90,No
+2026-04-01 13:24,Castle Accountancy,Daniel Hughes,17242,75,No
+2026-04-01 15:24,Castle Accountancy,James Smith,17242,75,No
+2026-04-01 13:42,ABC Ltd,Daniel Hughes,17243,90,No
+2026-04-02 09:20,Northgate Veterinary,Sophie Clarke,17244,45,No
+2026-04-02 09:31,ABC Ltd,Tom Walker,17245,90,No
+2026-04-02 10:07,Pennine Engineering,Sophie Clarke,17246,45,No
+2026-04-02 10:47,Northgate Veterinary,Daniel Hughes,17247,120,No
+2026-04-02 11:40,Harbour Physio,Sophie Clarke,17248,60,No
+2026-04-02 12:18,Elmfield Dental,Sophie Clarke,17249,75,No
+2026-04-02 12:45,Castle Accountancy,Priya Patel,17250,60,No
+2026-04-02 12:58,Harbour Physio,Daniel Hughes,17251,150,No
+2026-04-02 13:15,Dorset Legal,Daniel Hughes,17252,75,No
+2026-04-02 14:00,Meridian Logistics,Priya Patel,17253,35,No
+2026-04-03 10:10,Castle Accountancy,James Smith,17254,30,No
+2026-04-03 11:42,Dorset Legal,James Smith,17255,45,No
+2026-04-03 13:26,Dorset Legal,Sophie Clarke,17256,60,No
+2026-04-06 09:10,ABC Ltd,Priya Patel,17257,45,No
+2026-04-06 09:45,Thames Valley Recruitment,Tom Walker,17258,45,No
+2026-04-06 10:12,Thames Valley Recruitment,James Smith,17259,165,No
+2026-04-06 10:59,Willow & Hart Interiors,Tom Walker,17260,45,No
+2026-04-06 12:59,Willow & Hart Interiors,Sophie Clarke,17260,45,No
+2026-04-06 11:27,Meridian Logistics,Priya Patel,17261,15,No
+2026-04-06 11:29,Elmfield Dental,Sophie Clarke,17262,30,No
+2026-04-06 11:57,Bramley Homes,James Smith,17263,30,No
+2026-04-06 12:30,Meridian Logistics,Tom Walker,17264,75,No
+2026-04-07 09:58,ABC Ltd,Sophie Clarke,17265,45,No
+2026-04-07 10:56,Harbour Physio,Daniel Hughes,17266,60,No
+2026-04-07 12:06,ABC Ltd,Daniel Hughes,17267,30,No
+2026-04-07 13:05,Kingsbridge Architects,Daniel Hughes,17268,95,No
+2026-04-07 15:05,Kingsbridge Architects,James Smith,17268,90,No
+2026-04-07 13:47,Willow & Hart Interiors,Priya Patel,17269,150,No
+2026-04-08 10:36,Sterling Wealth Partners,Daniel Hughes,17270,60,Yes
+2026-04-08 11:19,Pennine Engineering,James Smith,17271,30,No
+2026-04-08 12:23,Kingsbridge Architects,Tom Walker,17272,15,No
+2026-04-08 12:53,Sterling Wealth Partners,Tom Walker,17273,30,No
+2026-04-09 09:25,Dorset Legal,Priya Patel,17274,60,No
+2026-04-09 10:00,Bramley Homes,Sophie Clarke,17275,180,No
+2026-04-09 10:12,Dorset Legal,Tom Walker,17276,30,No
+2026-04-09 10:18,ABC Ltd,Tom Walker,17277,15,No
+2026-04-09 10:50,Smith & Co,Sophie Clarke,17278,75,No
+2026-04-09 12:14,ABC Ltd,Sophie Clarke,17279,60,No
+2026-04-09 12:46,Meridian Logistics,Daniel Hughes,17280,45,No
+2026-04-09 13:01,ABC Ltd,Priya Patel,17281,60,No
+2026-04-09 13:36,Pennine Engineering,Tom Walker,17282,60,No
+2026-04-10 09:05,Kingsbridge Architects,Priya Patel,17283,45,No
+2026-04-10 09:33,Elmfield Dental,James Smith,17284,60,No
+2026-04-10 11:33,Elmfield Dental,Priya Patel,17284,60,No
+2026-04-10 10:04,Sterling Wealth Partners,Tom Walker,17285,120,No
+2026-04-10 10:40,Castle Accountancy,Daniel Hughes,17286,60,No
+2026-04-10 11:12,Dorset Legal,Sophie Clarke,17287,120,No
+2026-04-10 12:53,Riverside Care Group,Sophie Clarke,17288,45,No
+2026-04-10 13:16,Castle Accountancy,Daniel Hughes,17289,60,No
+2026-04-13 09:19,Castle Accountancy,Tom Walker,17290,45,No
+2026-04-13 09:26,Northgate Veterinary,Priya Patel,17291,135,No
+2026-04-13 09:44,Meridian Logistics,Sophie Clarke,17292,75,No
+2026-04-13 10:17,Castle Accountancy,James Smith,17293,30,No
+2026-04-13 10:34,Castle Accountancy,Sophie Clarke,17294,45,No
+2026-04-13 12:34,Castle Accountancy,Daniel Hughes,17294,45,No
+2026-04-13 11:00,Castle Accountancy,James Smith,17295,20,No
+2026-04-13 11:43,Riverside Care Group,Tom Walker,17296,30,No
+2026-04-13 12:02,ABC Ltd,James Smith,17297,150,No
+2026-04-13 12:45,Riverside Care Group,Sophie Clarke,17298,45,No
+2026-04-13 14:45,Riverside Care Group,Daniel Hughes,17298,45,No
+2026-04-13 12:53,Meridian Logistics,Sophie Clarke,17299,90,No
+2026-04-13 13:07,ABC Ltd,Priya Patel,17300,45,No
+2026-04-13 15:07,ABC Ltd,Tom Walker,17300,45,No
+2026-04-13 13:24,Sterling Wealth Partners,James Smith,17301,45,No
+2026-04-13 13:27,Kingsbridge Architects,James Smith,17302,30,No
+2026-04-14 09:54,Harbour Physio,Priya Patel,17303,15,No
+2026-04-14 09:55,Northgate Veterinary,Sophie Clarke,17304,15,No
+2026-04-14 09:57,Pennine Engineering,Daniel Hughes,17305,30,No
+2026-04-14 11:00,Riverside Care Group,James Smith,17306,15,No
+2026-04-14 12:01,Castle Accountancy,Tom Walker,17307,20,No
+2026-04-14 12:29,Dorset Legal,James Smith,17308,20,No
+2026-04-14 12:45,Meridian Logistics,James Smith,17309,30,No
+2026-04-14 12:49,Meridian Logistics,Priya Patel,17310,45,No
+2026-04-14 14:49,Meridian Logistics,Tom Walker,17310,45,No
+2026-04-14 13:11,Willow & Hart Interiors,Priya Patel,17311,150,No
+2026-04-14 13:43,Dorset Legal,Sophie Clarke,17312,45,No
+2026-04-14 15:43,Dorset Legal,Daniel Hughes,17312,45,No
+2026-04-15 09:20,Pennine Engineering,Sophie Clarke,17313,30,No
+2026-04-15 10:28,Kingsbridge Architects,Daniel Hughes,17314,20,No
+2026-04-15 10:35,Elmfield Dental,James Smith,17315,30,No
+2026-04-15 11:18,Willow & Hart Interiors,Tom Walker,17316,75,No
+2026-04-15 13:18,Willow & Hart Interiors,Sophie Clarke,17316,75,No
+2026-04-15 11:29,Riverside Care Group,Daniel Hughes,17317,175,No
+2026-04-15 12:26,Riverside Care Group,Sophie Clarke,17318,75,No
+2026-04-15 13:14,Harbour Physio,Daniel Hughes,17319,120,No
+2026-04-16 09:29,Castle Accountancy,James Smith,17320,60,No
+2026-04-16 09:41,Riverside Care Group,Daniel Hughes,17321,45,No
+2026-04-16 09:59,Kingsbridge Architects,Daniel Hughes,17322,20,No
+2026-04-16 10:25,Riverside Care Group,Tom Walker,17323,60,No
+2026-04-16 12:02,Smith & Co,Tom Walker,17324,45,No
+2026-04-16 12:59,Thames Valley Recruitment,Daniel Hughes,17325,180,No
+2026-04-16 13:14,Smith & Co,Sophie Clarke,17326,90,No
+2026-04-16 15:14,Smith & Co,Daniel Hughes,17326,90,No
+2026-04-16 13:19,Castle Accountancy,Priya Patel,17327,30,No
+2026-04-16 13:59,ABC Ltd,Tom Walker,17328,15,No
+2026-04-17 09:50,Northgate Veterinary,James Smith,17329,15,No
+2026-04-17 10:15,Sterling Wealth Partners,Tom Walker,17330,60,No
+2026-04-17 12:15,Sterling Wealth Partners,Sophie Clarke,17330,60,No
+2026-04-17 11:18,Kingsbridge Architects,Tom Walker,17331,60,No
+2026-04-17 11:24,Kingsbridge Architects,James Smith,17332,75,No
+2026-04-17 11:41,Meridian Logistics,Daniel Hughes,17333,15,Yes
+2026-04-17 11:50,Riverside Care Group,Tom Walker,17334,20,No
+2026-04-17 13:19,Sterling Wealth Partners,James Smith,17335,90,No
+2026-04-17 13:27,Harbour Physio,James Smith,17336,30,No
+2026-04-17 13:52,Pennine Engineering,James Smith,17337,15,No
+2026-04-17 13:55,Dorset Legal,James Smith,17338,90,No
+2026-04-17 15:55,Dorset Legal,Priya Patel,17338,90,No
+2026-04-20 09:04,Bramley Homes,James Smith,17339,75,No
+2026-04-20 10:59,Elmfield Dental,Tom Walker,17340,60,No
+2026-04-20 11:31,Sterling Wealth Partners,Priya Patel,17341,45,No
+2026-04-20 11:55,Kingsbridge Architects,Tom Walker,17342,60,No
+2026-04-20 11:55,Pennine Engineering,Sophie Clarke,17343,90,No
+2026-04-20 12:27,ABC Ltd,James Smith,17344,90,Yes
+2026-04-20 14:27,ABC Ltd,Priya Patel,17344,90,Yes
+2026-04-20 12:34,Meridian Logistics,Daniel Hughes,17345,60,No
+2026-04-20 12:49,Elmfield Dental,James Smith,17346,45,No
+2026-04-20 12:53,Meridian Logistics,James Smith,17347,120,No
+2026-04-20 13:15,Sterling Wealth Partners,Priya Patel,17348,60,No
+2026-04-20 15:15,Sterling Wealth Partners,Tom Walker,17348,60,No
+2026-04-20 13:17,Castle Accountancy,Sophie Clarke,17349,75,No
+2026-04-20 13:30,Sterling Wealth Partners,Tom Walker,17350,30,No
+2026-04-20 13:40,Bramley Homes,James Smith,17351,45,No
+2026-04-21 10:08,Pennine Engineering,James Smith,17352,45,No
+2026-04-21 12:08,Pennine Engineering,Priya Patel,17352,45,No
+2026-04-21 12:21,ABC Ltd,Daniel Hughes,17353,75,No
+2026-04-22 09:02,Kingsbridge Architects,Priya Patel,17354,15,No
+2026-04-22 09:05,Riverside Care Group,Daniel Hughes,17355,90,No
+2026-04-22 09:29,Pennine Engineering,Daniel Hughes,17356,60,No
+2026-04-22 11:29,Pennine Engineering,James Smith,17356,60,No
+2026-04-22 09:48,ABC Ltd,Tom Walker,17357,120,No
+2026-04-22 10:02,Riverside Care Group,Sophie Clarke,17358,45,No
+2026-04-22 10:03,Castle Accountancy,Priya Patel,17359,90,No
+2026-04-22 10:54,Pennine Engineering,Sophie Clarke,17360,45,No
+2026-04-22 12:09,Dorset Legal,Tom Walker,17361,20,No
+2026-04-22 12:27,Castle Accountancy,Daniel Hughes,17362,85,Yes
+2026-04-22 14:27,Castle Accountancy,James Smith,17362,80,Yes
+2026-04-22 12:31,Sterling Wealth Partners,James Smith,17363,45,No
+2026-04-23 10:20,Riverside Care Group,Daniel Hughes,17364,45,No
+2026-04-23 12:20,Riverside Care Group,James Smith,17364,45,No
+2026-04-23 10:29,ABC Ltd,James Smith,17365,60,No
+2026-04-23 10:46,Pennine Engineering,Sophie Clarke,17366,60,No
+2026-04-23 12:46,Pennine Engineering,Daniel Hughes,17366,60,No
+2026-04-23 12:53,Northgate Veterinary,Sophie Clarke,17367,90,No
+2026-04-23 13:25,Riverside Care Group,Daniel Hughes,17368,75,No
+2026-04-23 15:25,Riverside Care Group,James Smith,17368,75,No
+2026-04-23 13:57,Kingsbridge Architects,Tom Walker,17369,90,No
+2026-04-24 09:19,Bramley Homes,Sophie Clarke,17370,60,Yes
+2026-04-24 11:19,Bramley Homes,Daniel Hughes,17370,60,Yes
+2026-04-24 09:35,Sterling Wealth Partners,James Smith,17371,75,No
+2026-04-24 09:41,Dorset Legal,James Smith,17372,95,No
+2026-04-24 11:41,Dorset Legal,Priya Patel,17372,90,No
+2026-04-24 09:43,Castle Accountancy,Priya Patel,17373,60,Yes
+2026-04-24 10:08,Thames Valley Recruitment,James Smith,17374,75,No
+2026-04-24 12:08,Thames Valley Recruitment,Priya Patel,17374,75,No
+2026-04-24 10:14,Meridian Logistics,Daniel Hughes,17375,180,No
+2026-04-24 11:59,Dorset Legal,James Smith,17376,60,No
+2026-04-24 13:06,ABC Ltd,Sophie Clarke,17377,30,No
+2026-04-24 13:44,ABC Ltd,James Smith,17378,60,No
+2026-04-27 09:13,Pennine Engineering,Priya Patel,17379,45,No
+2026-04-27 10:12,Elmfield Dental,Sophie Clarke,17380,90,No
+2026-04-27 12:12,Elmfield Dental,Daniel Hughes,17380,90,No
+2026-04-27 10:13,Bramley Homes,Tom Walker,17381,120,No
+2026-04-27 10:54,Riverside Care Group,Sophie Clarke,17382,75,No
+2026-04-27 11:10,Pennine Engineering,Priya Patel,17383,180,No
+2026-04-27 11:59,Castle Accountancy,Priya Patel,17384,30,No
+2026-04-27 12:09,Elmfield Dental,Priya Patel,17385,150,No
+2026-04-27 13:25,Kingsbridge Architects,James Smith,17386,60,No
+2026-04-27 15:25,Kingsbridge Architects,Priya Patel,17386,60,No
+2026-04-27 13:31,Castle Accountancy,Tom Walker,17387,60,No
+2026-04-28 09:40,ABC Ltd,Daniel Hughes,17388,30,No
+2026-04-28 10:10,Kingsbridge Architects,Sophie Clarke,17389,60,Yes
+2026-04-28 10:30,Dorset Legal,Tom Walker,17390,45,No
+2026-04-28 10:33,Castle Accountancy,Tom Walker,17391,20,No
+2026-04-28 10:35,Meridian Logistics,Sophie Clarke,17392,30,No
+2026-04-28 11:13,Harbour Physio,Tom Walker,17393,15,No
+2026-04-28 11:34,Castle Accountancy,Daniel Hughes,17394,45,No
+2026-04-28 13:34,Castle Accountancy,James Smith,17394,45,No
+2026-04-28 13:28,Dorset Legal,Tom Walker,17395,15,No
+2026-04-28 13:36,Riverside Care Group,Priya Patel,17396,45,No
+2026-04-29 09:51,Castle Accountancy,James Smith,17397,60,No
+2026-04-29 10:09,Castle Accountancy,Priya Patel,17398,30,No
+2026-04-29 10:54,Meridian Logistics,Daniel Hughes,17399,145,No
+2026-04-29 12:20,Castle Accountancy,James Smith,17400,15,Yes
+2026-04-29 13:17,Castle Accountancy,Tom Walker,17401,90,No
+2026-04-30 09:01,Northgate Veterinary,James Smith,17402,45,No
+2026-04-30 11:01,Northgate Veterinary,Priya Patel,17402,45,No
+2026-04-30 09:06,Elmfield Dental,Tom Walker,17403,30,No
+2026-04-30 09:06,Meridian Logistics,James Smith,17404,15,No
+2026-04-30 10:03,Harbour Physio,James Smith,17405,90,No
+2026-04-30 10:09,Riverside Care Group,Tom Walker,17406,30,No
+2026-04-30 11:28,Riverside Care Group,Daniel Hughes,17407,180,No
+2026-04-30 11:49,ABC Ltd,Priya Patel,17408,75,No
+2026-04-30 12:24,Kingsbridge Architects,Sophie Clarke,17409,45,No
+2026-04-30 12:44,Dorset Legal,Tom Walker,17410,15,No
+2026-04-30 13:30,Northgate Veterinary,Tom Walker,17411,90,No
+2026-04-30 13:56,Smith & Co,Daniel Hughes,17412,60,No
+2026-04-30 15:56,Smith & Co,James Smith,17412,60,No
+2026-05-01 09:34,Castle Accountancy,James Smith,17413,15,No
+2026-05-01 09:36,Sterling Wealth Partners,Tom Walker,17414,20,No
+2026-05-01 09:53,ABC Ltd,James Smith,17415,90,No
+2026-05-01 10:08,Dorset Legal,Daniel Hughes,17416,45,No
+2026-05-01 12:08,Dorset Legal,James Smith,17416,45,No
+2026-05-01 10:17,ABC Ltd,James Smith,17417,90,No
+2026-05-01 10:31,Riverside Care Group,Sophie Clarke,17418,60,No
+2026-05-01 12:10,Elmfield Dental,James Smith,17419,30,No
+2026-05-01 12:16,Northgate Veterinary,Daniel Hughes,17420,30,No
+2026-05-01 12:19,Dorset Legal,Priya Patel,17421,30,No
+2026-05-01 12:22,ABC Ltd,Tom Walker,17422,60,No
+2026-05-01 13:28,Meridian Logistics,James Smith,17423,15,No
+2026-05-01 13:54,Riverside Care Group,Priya Patel,17424,45,No
+2026-05-04 09:04,Thames Valley Recruitment,Priya Patel,17425,45,No
+2026-05-04 09:11,Castle Accountancy,Sophie Clarke,17426,30,No
+2026-05-04 09:21,Meridian Logistics,Tom Walker,17427,20,No
+2026-05-04 09:41,Riverside Care Group,Tom Walker,17428,65,No
+2026-05-04 11:41,Riverside Care Group,Sophie Clarke,17428,65,No
+2026-05-04 10:19,Pennine Engineering,Priya Patel,17429,30,No
+2026-05-04 10:19,Sterling Wealth Partners,Daniel Hughes,17430,45,No
+2026-05-04 12:19,Sterling Wealth Partners,James Smith,17430,45,No
+2026-05-04 10:34,Harbour Physio,Daniel Hughes,17431,45,No
+2026-05-04 10:51,Kingsbridge Architects,Tom Walker,17432,60,No
+2026-05-04 12:51,Kingsbridge Architects,Sophie Clarke,17432,60,No
+2026-05-04 11:27,Pennine Engineering,Tom Walker,17433,90,No
+2026-05-04 12:04,Smith & Co,Tom Walker,17434,60,No
+2026-05-04 14:04,Smith & Co,Sophie Clarke,17434,60,No
+2026-05-04 12:05,Meridian Logistics,Daniel Hughes,17435,150,No
+2026-05-04 13:18,ABC Ltd,James Smith,17436,75,No
+2026-05-04 15:18,ABC Ltd,Priya Patel,17436,75,No
+2026-05-04 13:24,Riverside Care Group,James Smith,17437,20,No
+2026-05-05 09:23,Dorset Legal,Tom Walker,17438,90,No
+2026-05-05 11:23,Dorset Legal,Sophie Clarke,17438,90,No
+2026-05-05 09:28,Riverside Care Group,Tom Walker,17439,180,No
+2026-05-05 10:06,Pennine Engineering,Daniel Hughes,17440,30,No
+2026-05-05 10:18,Dorset Legal,James Smith,17441,150,No
+2026-05-05 10:32,Northgate Veterinary,James Smith,17442,45,No
+2026-05-05 12:32,Northgate Veterinary,Priya Patel,17442,45,No
+2026-05-05 11:40,Kingsbridge Architects,Daniel Hughes,17443,45,No
+2026-05-05 11:59,Northgate Veterinary,Sophie Clarke,17444,20,No
+2026-05-06 09:31,Riverside Care Group,Sophie Clarke,17445,45,No
+2026-05-06 10:04,Willow & Hart Interiors,James Smith,17446,15,No
+2026-05-06 11:04,Northgate Veterinary,Daniel Hughes,17447,15,No
+2026-05-06 11:16,Bramley Homes,Daniel Hughes,17448,45,No
+2026-05-06 11:45,Riverside Care Group,James Smith,17449,75,No
+2026-05-06 11:46,Willow & Hart Interiors,Daniel Hughes,17450,15,No
+2026-05-06 13:10,Bramley Homes,Daniel Hughes,17451,75,No
+2026-05-06 13:38,ABC Ltd,Sophie Clarke,17452,45,No
+2026-05-06 15:38,ABC Ltd,Daniel Hughes,17452,45,No
+2026-05-06 13:38,Harbour Physio,Priya Patel,17453,75,No
+2026-05-07 09:26,Harbour Physio,James Smith,17454,55,No
+2026-05-07 09:48,Dorset Legal,Sophie Clarke,17455,150,No
+2026-05-07 10:53,Northgate Veterinary,Tom Walker,17456,90,No
+2026-05-07 12:53,Northgate Veterinary,Sophie Clarke,17456,90,No
+2026-05-07 11:00,Dorset Legal,Priya Patel,17457,45,No
+2026-05-07 11:08,ABC Ltd,Sophie Clarke,17458,15,No
+2026-05-07 12:05,Northgate Veterinary,Daniel Hughes,17459,40,No
+2026-05-07 12:14,Northgate Veterinary,Tom Walker,17460,30,No
+2026-05-07 12:23,Riverside Care Group,Priya Patel,17461,90,No
+2026-05-07 12:30,Castle Accountancy,Tom Walker,17462,75,No
+2026-05-07 14:30,Castle Accountancy,Sophie Clarke,17462,75,No
+2026-05-07 12:48,Meridian Logistics,Tom Walker,17463,60,No
+2026-05-08 09:03,Sterling Wealth Partners,Sophie Clarke,17464,20,No
+2026-05-08 09:28,Pennine Engineering,Sophie Clarke,17465,120,No
+2026-05-08 09:55,Pennine Engineering,Priya Patel,17466,60,No
+2026-05-08 09:58,Kingsbridge Architects,Daniel Hughes,17467,120,No
+2026-05-08 10:57,Smith & Co,James Smith,17468,60,No
+2026-05-08 12:57,Smith & Co,Priya Patel,17468,60,No
+2026-05-08 12:13,Bramley Homes,Daniel Hughes,17469,90,No
+2026-05-08 12:41,Dorset Legal,Tom Walker,17470,45,No
+2026-05-08 14:41,Dorset Legal,Sophie Clarke,17470,45,No
+2026-05-08 12:47,Castle Accountancy,Daniel Hughes,17471,75,No
+2026-05-08 13:44,Meridian Logistics,Sophie Clarke,17472,45,No
+2026-05-08 13:48,Castle Accountancy,Priya Patel,17473,60,No
+2026-05-11 09:41,ABC Ltd,James Smith,17474,45,No
+2026-05-11 11:41,ABC Ltd,Priya Patel,17474,45,No
+2026-05-11 11:45,Thames Valley Recruitment,Daniel Hughes,17475,45,No
+2026-05-11 11:52,Castle Accountancy,Daniel Hughes,17476,45,No
+2026-05-11 12:00,Smith & Co,James Smith,17477,120,No
+2026-05-11 12:13,Harbour Physio,Tom Walker,17478,20,No
+2026-05-11 12:40,Elmfield Dental,Priya Patel,17479,45,No
+2026-05-11 12:59,Castle Accountancy,Priya Patel,17480,90,No
+2026-05-11 14:59,Castle Accountancy,Tom Walker,17480,90,No
+2026-05-11 13:01,Pennine Engineering,James Smith,17481,60,No
+2026-05-11 13:12,Elmfield Dental,Tom Walker,17482,60,No
+2026-05-11 15:12,Elmfield Dental,Sophie Clarke,17482,60,No
+2026-05-11 13:39,Dorset Legal,Daniel Hughes,17483,150,No
+2026-05-12 09:08,Kingsbridge Architects,Sophie Clarke,17484,60,No
+2026-05-12 10:32,Sterling Wealth Partners,James Smith,17485,45,No
+2026-05-12 10:55,ABC Ltd,James Smith,17486,30,No
+2026-05-12 12:08,Northgate Veterinary,Tom Walker,17487,90,No
+2026-05-12 12:11,Sterling Wealth Partners,Tom Walker,17488,60,No
+2026-05-12 14:11,Sterling Wealth Partners,Sophie Clarke,17488,60,No
+2026-05-13 09:52,Castle Accountancy,Sophie Clarke,17489,180,No
+2026-05-13 10:10,Elmfield Dental,Priya Patel,17490,45,No
+2026-05-13 10:40,Riverside Care Group,Priya Patel,17491,75,No
+2026-05-13 11:00,Sterling Wealth Partners,Priya Patel,17492,55,No
+2026-05-13 11:57,Harbour Physio,Priya Patel,17493,60,No
+2026-05-13 12:12,ABC Ltd,James Smith,17494,60,No
+2026-05-14 10:11,Sterling Wealth Partners,Sophie Clarke,17495,20,No
+2026-05-14 10:15,Meridian Logistics,Priya Patel,17496,90,No
+2026-05-14 12:15,Meridian Logistics,Tom Walker,17496,90,No
+2026-05-14 10:38,Meridian Logistics,Priya Patel,17497,15,No
+2026-05-14 11:24,Riverside Care Group,Priya Patel,17498,75,No
+2026-05-14 13:24,Riverside Care Group,Tom Walker,17498,75,No
+2026-05-14 12:07,Willow & Hart Interiors,Sophie Clarke,17499,150,No
+2026-05-14 13:28,Riverside Care Group,Tom Walker,17500,45,No
+2026-05-15 09:02,Elmfield Dental,James Smith,17501,30,No
+2026-05-15 09:36,Castle Accountancy,Sophie Clarke,17502,45,No
+2026-05-15 09:37,Kingsbridge Architects,James Smith,17503,90,No
+2026-05-15 12:10,Kingsbridge Architects,Daniel Hughes,17504,45,No
+2026-05-15 12:15,Sterling Wealth Partners,James Smith,17505,20,No
+2026-05-15 12:29,Northgate Veterinary,Daniel Hughes,17506,45,No
+2026-05-15 13:17,Harbour Physio,Sophie Clarke,17507,75,No
+2026-05-18 09:55,Willow & Hart Interiors,Daniel Hughes,17508,30,No
+2026-05-18 10:07,Willow & Hart Interiors,Tom Walker,17509,60,No
+2026-05-18 10:51,Kingsbridge Architects,Daniel Hughes,17510,15,No
+2026-05-18 11:26,Riverside Care Group,Sophie Clarke,17511,60,No
+2026-05-18 11:45,Willow & Hart Interiors,Tom Walker,17512,45,No
+2026-05-18 12:05,ABC Ltd,James Smith,17513,60,No
+2026-05-18 12:08,Bramley Homes,James Smith,17514,60,No
+2026-05-18 13:02,ABC Ltd,Sophie Clarke,17515,45,No
+2026-05-18 13:13,Elmfield Dental,Daniel Hughes,17516,75,No
+2026-05-18 15:13,Elmfield Dental,James Smith,17516,75,No
+2026-05-18 13:15,Bramley Homes,Priya Patel,17517,60,No
+2026-05-18 13:26,ABC Ltd,Priya Patel,17518,45,No
+2026-05-18 13:50,Dorset Legal,Priya Patel,17519,45,No
+2026-05-19 10:02,Castle Accountancy,Daniel Hughes,17520,75,No
+2026-05-19 13:32,Castle Accountancy,James Smith,17521,180,No
+2026-05-19 13:39,Castle Accountancy,James Smith,17522,90,No
+2026-05-19 15:39,Castle Accountancy,Priya Patel,17522,90,No
+2026-05-19 13:57,Pennine Engineering,Priya Patel,17523,90,No
+2026-05-20 09:08,Kingsbridge Architects,Daniel Hughes,17524,30,No
+2026-05-20 09:46,Riverside Care Group,James Smith,17525,30,No
+2026-05-20 10:06,Sterling Wealth Partners,Daniel Hughes,17526,20,No
+2026-05-20 11:25,Kingsbridge Architects,James Smith,17527,15,No
+2026-05-20 13:04,Riverside Care Group,Tom Walker,17528,45,No
+2026-05-20 13:22,ABC Ltd,Priya Patel,17529,30,No
+2026-05-20 13:22,Sterling Wealth Partners,Tom Walker,17530,45,No
+2026-05-20 15:22,Sterling Wealth Partners,Sophie Clarke,17530,45,No
+2026-05-21 10:55,Elmfield Dental,Tom Walker,17531,75,No
+2026-05-21 11:44,Castle Accountancy,Sophie Clarke,17532,45,No
+2026-05-21 13:44,Castle Accountancy,Daniel Hughes,17532,45,No
+2026-05-21 12:39,Bramley Homes,James Smith,17533,180,No
+2026-05-21 13:20,Dorset Legal,James Smith,17534,45,No
+2026-05-21 13:30,ABC Ltd,Daniel Hughes,17535,30,No
+2026-05-22 09:07,Willow & Hart Interiors,James Smith,17536,70,No
+2026-05-22 11:07,Willow & Hart Interiors,Priya Patel,17536,65,No
+2026-05-22 11:31,Dorset Legal,Tom Walker,17537,60,No
+2026-05-22 11:35,Bramley Homes,Daniel Hughes,17538,15,Yes
+2026-05-22 11:40,ABC Ltd,Tom Walker,17539,180,No
+2026-05-22 11:44,Elmfield Dental,Tom Walker,17540,90,No
+2026-05-22 13:44,Elmfield Dental,Sophie Clarke,17540,85,No
+2026-05-22 12:36,Kingsbridge Architects,Daniel Hughes,17541,90,No
+2026-05-22 13:01,ABC Ltd,Tom Walker,17542,75,No
+2026-05-22 15:01,ABC Ltd,Sophie Clarke,17542,75,No
+2026-05-22 13:02,Sterling Wealth Partners,Daniel Hughes,17543,45,No
+2026-05-22 13:32,Dorset Legal,Priya Patel,17544,15,No
+2026-05-22 13:41,Dorset Legal,James Smith,17545,30,No
+2026-05-22 13:57,Pennine Engineering,Priya Patel,17546,45,No
+2026-05-25 09:10,Thames Valley Recruitment,Daniel Hughes,17547,45,No
+2026-05-25 09:13,Kingsbridge Architects,James Smith,17548,75,No
+2026-05-25 11:13,Kingsbridge Architects,Priya Patel,17548,75,No
+2026-05-25 09:41,Harbour Physio,Sophie Clarke,17549,150,No
+2026-05-25 11:15,Sterling Wealth Partners,Daniel Hughes,17550,55,No
+2026-05-25 12:43,Willow & Hart Interiors,Tom Walker,17551,120,No
+2026-05-25 12:58,Meridian Logistics,Sophie Clarke,17552,60,No
+2026-05-25 14:58,Meridian Logistics,Daniel Hughes,17552,60,No
+2026-05-25 13:20,Pennine Engineering,Sophie Clarke,17553,30,No
+2026-05-26 09:36,Bramley Homes,Sophie Clarke,17554,100,No
+2026-05-26 11:36,Bramley Homes,Daniel Hughes,17554,95,No
+2026-05-26 10:15,Pennine Engineering,Daniel Hughes,17555,125,No
+2026-05-26 11:18,Pennine Engineering,Tom Walker,17556,45,No
+2026-05-26 13:18,Pennine Engineering,Sophie Clarke,17556,45,No
+2026-05-26 11:58,Meridian Logistics,Priya Patel,17557,90,No
+2026-05-26 13:15,Riverside Care Group,Priya Patel,17558,45,No
+2026-05-26 15:15,Riverside Care Group,Tom Walker,17558,45,No
+2026-05-27 09:41,Northgate Veterinary,Tom Walker,17559,120,Yes
+2026-05-27 10:02,ABC Ltd,Priya Patel,17560,75,No
+2026-05-27 10:34,ABC Ltd,Sophie Clarke,17561,90,No
+2026-05-27 10:40,ABC Ltd,Tom Walker,17562,30,No
+2026-05-27 11:55,Riverside Care Group,Sophie Clarke,17563,180,No
+2026-05-27 12:06,Elmfield Dental,Tom Walker,17564,30,No
+2026-05-27 12:40,Meridian Logistics,James Smith,17565,45,No
+2026-05-27 13:50,Elmfield Dental,Daniel Hughes,17566,60,No
+2026-05-27 15:50,Elmfield Dental,James Smith,17566,60,No
+2026-05-28 09:30,Thames Valley Recruitment,James Smith,17567,175,No
+2026-05-28 09:40,Kingsbridge Architects,Tom Walker,17568,30,No
+2026-05-28 10:05,Pennine Engineering,James Smith,17569,190,No
+2026-05-28 10:39,Harbour Physio,Tom Walker,17570,30,No
+2026-05-28 10:59,Smith & Co,Sophie Clarke,17571,30,No
+2026-05-28 11:45,Castle Accountancy,Daniel Hughes,17572,15,No
+2026-05-28 12:58,Sterling Wealth Partners,Tom Walker,17573,60,No
+2026-05-28 13:09,Smith & Co,Daniel Hughes,17574,45,No
+2026-05-28 15:09,Smith & Co,James Smith,17574,45,No
+2026-05-28 13:13,Castle Accountancy,Daniel Hughes,17575,90,No
+2026-05-28 13:39,Sterling Wealth Partners,Sophie Clarke,17576,90,No
+2026-05-28 15:39,Sterling Wealth Partners,Daniel Hughes,17576,90,No
+2026-05-28 13:46,Meridian Logistics,Tom Walker,17577,180,No
+2026-05-29 09:53,Thames Valley Recruitment,Priya Patel,17578,20,No
+2026-05-29 10:27,Thames Valley Recruitment,Sophie Clarke,17579,180,No
+2026-05-29 10:57,Willow & Hart Interiors,James Smith,17580,30,No
+2026-05-29 11:16,Elmfield Dental,James Smith,17581,20,No
+2026-05-29 11:23,ABC Ltd,Sophie Clarke,17582,30,No
+2026-05-29 12:11,Thames Valley Recruitment,Tom Walker,17583,90,No
+2026-05-29 12:34,Castle Accountancy,Sophie Clarke,17584,45,No
+2026-05-29 14:34,Castle Accountancy,Daniel Hughes,17584,45,No
+2026-05-29 13:07,Kingsbridge Architects,Sophie Clarke,17585,90,No
+2026-05-29 13:38,Meridian Logistics,James Smith,17586,80,Yes
+2026-05-29 15:38,Meridian Logistics,Priya Patel,17586,80,Yes
+2026-06-01 09:46,Willow & Hart Interiors,Sophie Clarke,17587,120,No
+2026-06-01 11:19,Bramley Homes,Tom Walker,17588,60,No
+2026-06-01 11:51,Thames Valley Recruitment,Tom Walker,17589,120,No
+2026-06-01 11:58,Sterling Wealth Partners,James Smith,17590,45,No
+2026-06-01 12:07,Harbour Physio,James Smith,17591,75,No
+2026-06-01 12:16,ABC Ltd,Priya Patel,17592,60,No
+2026-06-01 12:26,Elmfield Dental,Priya Patel,17593,30,No
+2026-06-01 12:40,Dorset Legal,Priya Patel,17594,90,No
+2026-06-01 14:40,Dorset Legal,Tom Walker,17594,90,No
+2026-06-01 13:23,Kingsbridge Architects,Sophie Clarke,17595,15,No
+2026-06-01 13:56,Elmfield Dental,Priya Patel,17596,30,No
+2026-06-01 14:15,Dorset Legal,Sophie Clarke,17597,140,No
+2026-06-02 09:08,Willow & Hart Interiors,Tom Walker,17598,20,No
+2026-06-02 09:50,Meridian Logistics,Sophie Clarke,17599,45,No
+2026-06-02 11:04,Castle Accountancy,James Smith,17600,30,No
+2026-06-02 12:39,Elmfield Dental,Tom Walker,17601,30,No
+2026-06-02 13:00,Dorset Legal,James Smith,17602,75,No
+2026-06-03 09:15,ABC Ltd,Tom Walker,17603,60,No
+2026-06-03 09:22,Dorset Legal,Sophie Clarke,17604,15,No
+2026-06-03 09:37,Thames Valley Recruitment,Priya Patel,17605,195,No
+2026-06-03 10:43,Castle Accountancy,James Smith,17606,75,No
+2026-06-03 11:43,Willow & Hart Interiors,James Smith,17607,160,No
+2026-06-03 11:47,Meridian Logistics,Sophie Clarke,17608,30,No
+2026-06-03 13:06,Pennine Engineering,Sophie Clarke,17609,60,No
+2026-06-03 13:24,Pennine Engineering,Daniel Hughes,17610,90,No
+2026-06-03 15:24,Pennine Engineering,James Smith,17610,90,No
+2026-06-03 13:54,ABC Ltd,Daniel Hughes,17611,90,No
+2026-06-04 09:05,Dorset Legal,Tom Walker,17612,60,No
+2026-06-04 11:05,Dorset Legal,Sophie Clarke,17612,60,No
+2026-06-04 09:29,Northgate Veterinary,Priya Patel,17613,135,No
+2026-06-04 09:29,Willow & Hart Interiors,James Smith,17614,30,No
+2026-06-04 10:07,Smith & Co,James Smith,17615,45,No
+2026-06-04 10:07,Kingsbridge Architects,Daniel Hughes,17616,45,No
+2026-06-04 12:07,Kingsbridge Architects,James Smith,17616,45,No
+2026-06-04 10:11,Kingsbridge Architects,Sophie Clarke,17617,150,No
+2026-06-04 10:19,Sterling Wealth Partners,James Smith,17618,75,No
+2026-06-04 10:49,Castle Accountancy,James Smith,17619,150,No
+2026-06-04 12:25,Elmfield Dental,James Smith,17620,20,No
+2026-06-04 12:34,Meridian Logistics,Priya Patel,17621,60,No
+2026-06-04 13:00,Riverside Care Group,Sophie Clarke,17622,75,No
+2026-06-05 09:05,Castle Accountancy,Tom Walker,17623,90,No
+2026-06-05 12:16,Elmfield Dental,Tom Walker,17624,45,No
+2026-06-05 14:16,Elmfield Dental,Sophie Clarke,17624,45,No
+2026-06-05 13:23,Meridian Logistics,Daniel Hughes,17625,75,No
+2026-06-05 13:50,Pennine Engineering,Tom Walker,17626,45,No
+2026-06-08 09:23,ABC Ltd,Priya Patel,17627,60,No
+2026-06-08 10:19,Meridian Logistics,Sophie Clarke,17628,45,No
+2026-06-08 12:19,Meridian Logistics,Daniel Hughes,17628,45,No
+2026-06-08 10:27,ABC Ltd,Priya Patel,17629,150,No
+2026-06-08 12:00,ABC Ltd,Sophie Clarke,17630,45,No
+2026-06-08 14:00,ABC Ltd,Daniel Hughes,17630,45,No
+2026-06-08 12:49,Pennine Engineering,Tom Walker,17631,90,No
+2026-06-08 13:02,Northgate Veterinary,Priya Patel,17632,60,No
+2026-06-08 15:02,Northgate Veterinary,Tom Walker,17632,60,No
+2026-06-08 13:34,Riverside Care Group,Tom Walker,17633,180,No
+2026-06-08 13:38,Willow & Hart Interiors,Tom Walker,17634,90,No
+2026-06-08 15:38,Willow & Hart Interiors,Sophie Clarke,17634,90,No
+2026-06-09 09:31,ABC Ltd,Tom Walker,17635,60,No
+2026-06-09 10:28,Dorset Legal,Daniel Hughes,17636,30,No
+2026-06-09 10:51,Kingsbridge Architects,Daniel Hughes,17637,15,No
+2026-06-09 11:33,Riverside Care Group,Tom Walker,17638,30,No
+2026-06-09 12:51,Sterling Wealth Partners,Tom Walker,17639,120,No
+2026-06-09 13:07,Harbour Physio,Tom Walker,17640,60,No
+2026-06-09 13:39,Bramley Homes,Daniel Hughes,17641,180,No
+2026-06-09 13:58,Castle Accountancy,Sophie Clarke,17642,75,No
+2026-06-10 09:33,Elmfield Dental,Priya Patel,17643,15,No
+2026-06-10 09:50,ABC Ltd,James Smith,17644,60,No
+2026-06-10 10:01,Willow & Hart Interiors,James Smith,17645,30,No
+2026-06-10 10:41,Dorset Legal,James Smith,17646,20,No
+2026-06-10 11:33,Kingsbridge Architects,Sophie Clarke,17647,15,No
+2026-06-10 12:36,ABC Ltd,James Smith,17648,15,No
+2026-06-10 13:05,Riverside Care Group,James Smith,17649,120,No
+2026-06-10 13:11,Castle Accountancy,James Smith,17650,60,No
+2026-06-11 11:16,ABC Ltd,Sophie Clarke,17651,20,No
+2026-06-11 12:10,Pennine Engineering,Daniel Hughes,17652,30,No
+2026-06-11 12:11,Kingsbridge Architects,Daniel Hughes,17653,90,No
+2026-06-11 12:42,Sterling Wealth Partners,James Smith,17654,60,No
+2026-06-11 14:42,Sterling Wealth Partners,Priya Patel,17654,60,No
+2026-06-11 13:05,Smith & Co,Daniel Hughes,17655,45,No
+2026-06-12 09:03,Willow & Hart Interiors,Tom Walker,17656,15,No
+2026-06-12 09:45,ABC Ltd,James Smith,17657,90,No
+2026-06-12 10:25,Castle Accountancy,Tom Walker,17658,45,No
+2026-06-12 12:25,Castle Accountancy,Sophie Clarke,17658,45,No
+2026-06-12 13:15,ABC Ltd,Tom Walker,17659,60,No
+2026-06-12 13:17,ABC Ltd,Sophie Clarke,17660,15,No
+2026-06-15 09:26,Riverside Care Group,Priya Patel,17661,60,No
+2026-06-15 10:12,Thames Valley Recruitment,Priya Patel,17662,90,No
+2026-06-15 12:12,Thames Valley Recruitment,Tom Walker,17662,90,No
+2026-06-15 10:37,Bramley Homes,James Smith,17663,90,No
+2026-06-15 11:09,Elmfield Dental,Priya Patel,17664,45,No
+2026-06-15 13:09,Elmfield Dental,Tom Walker,17664,45,No
+2026-06-15 11:58,Castle Accountancy,Daniel Hughes,17665,60,No
+2026-06-15 12:00,Kingsbridge Architects,James Smith,17666,90,No
+2026-06-15 14:00,Kingsbridge Architects,Priya Patel,17666,90,No
+2026-06-15 12:51,Kingsbridge Architects,Daniel Hughes,17667,120,No
+2026-06-15 13:20,Smith & Co,Tom Walker,17668,100,No
+2026-06-15 15:20,Smith & Co,Sophie Clarke,17668,95,No
+2026-06-15 13:45,Dorset Legal,Priya Patel,17669,60,No
+2026-06-16 09:02,Northgate Veterinary,Priya Patel,17670,45,No
+2026-06-16 11:02,Northgate Veterinary,Tom Walker,17670,45,No
+2026-06-16 09:54,Harbour Physio,Sophie Clarke,17671,45,No
+2026-06-16 10:15,Castle Accountancy,Priya Patel,17672,45,No
+2026-06-16 10:32,Elmfield Dental,Priya Patel,17673,90,No
+2026-06-16 12:07,Riverside Care Group,James Smith,17674,45,No
+2026-06-16 14:07,Riverside Care Group,Priya Patel,17674,45,No
+2026-06-16 12:14,Sterling Wealth Partners,Priya Patel,17675,60,No
+2026-06-16 13:03,Castle Accountancy,Sophie Clarke,17676,80,No
+2026-06-16 15:03,Castle Accountancy,Daniel Hughes,17676,79,No
+2026-06-16 13:42,Meridian Logistics,Priya Patel,17677,30,No
+2026-06-17 09:30,Harbour Physio,James Smith,17678,35,No
+2026-06-17 09:36,Thames Valley Recruitment,Tom Walker,17679,45,No
+2026-06-17 11:09,Elmfield Dental,Daniel Hughes,17680,45,Yes
+2026-06-17 13:09,Elmfield Dental,James Smith,17680,45,Yes
+2026-06-17 11:27,Meridian Logistics,Sophie Clarke,17681,45,No
+2026-06-17 11:33,Smith & Co,Daniel Hughes,17682,75,No
+2026-06-17 11:41,Elmfield Dental,Priya Patel,17683,15,No
+2026-06-17 12:14,Kingsbridge Architects,Daniel Hughes,17684,60,No
+2026-06-17 12:54,Northgate Veterinary,Priya Patel,17685,60,No
+2026-06-17 12:55,Pennine Engineering,Sophie Clarke,17686,75,No
+2026-06-17 14:55,Pennine Engineering,Daniel Hughes,17686,75,No
+2026-06-17 13:19,Castle Accountancy,Daniel Hughes,17687,90,No
+2026-06-17 13:42,Bramley Homes,Tom Walker,17688,20,No
+2026-06-18 10:21,Castle Accountancy,Sophie Clarke,17689,90,No
+2026-06-18 11:38,Dorset Legal,Sophie Clarke,17690,45,No
+2026-06-18 12:13,Castle Accountancy,Daniel Hughes,17691,30,No
+2026-06-18 12:28,Pennine Engineering,James Smith,17692,75,No
+2026-06-18 12:47,Smith & Co,Sophie Clarke,17693,15,No
+2026-06-19 09:44,Pennine Engineering,Priya Patel,17694,45,No
+2026-06-19 10:02,ABC Ltd,Priya Patel,17695,60,No
+2026-06-19 10:24,ABC Ltd,Sophie Clarke,17696,20,No
+2026-06-19 10:55,ABC Ltd,Priya Patel,17697,15,No
+2026-06-19 10:59,ABC Ltd,Sophie Clarke,17698,45,No
+2026-06-19 11:12,Riverside Care Group,James Smith,17699,90,No
+2026-06-19 12:22,Willow & Hart Interiors,Daniel Hughes,17700,30,No
+2026-06-19 13:15,Elmfield Dental,Daniel Hughes,17701,50,No
+2026-06-19 13:40,Dorset Legal,Daniel Hughes,17702,60,No
+2026-06-22 09:21,Kingsbridge Architects,Sophie Clarke,17703,15,No
+2026-06-22 09:42,Castle Accountancy,Daniel Hughes,17704,45,No
+2026-06-22 11:42,Castle Accountancy,James Smith,17704,45,No
+2026-06-22 09:49,Riverside Care Group,Priya Patel,17705,45,No
+2026-06-22 10:04,Northgate Veterinary,Sophie Clarke,17706,45,No
+2026-06-22 12:04,Northgate Veterinary,Daniel Hughes,17706,45,No
+2026-06-22 10:07,Bramley Homes,Daniel Hughes,17707,120,No
+2026-06-22 10:45,Meridian Logistics,James Smith,17708,90,No
+2026-06-22 12:45,Meridian Logistics,Priya Patel,17708,90,No
+2026-06-22 11:19,Thames Valley Recruitment,Tom Walker,17709,30,No
+2026-06-22 11:44,Thames Valley Recruitment,Priya Patel,17710,30,No
+2026-06-22 11:48,Dorset Legal,Sophie Clarke,17711,90,No
+2026-06-22 12:03,Sterling Wealth Partners,Sophie Clarke,17712,20,No
+2026-06-22 12:09,Meridian Logistics,James Smith,17713,75,No
+2026-06-22 12:33,Meridian Logistics,Sophie Clarke,17714,60,No
+2026-06-22 13:05,ABC Ltd,Priya Patel,17715,120,No
+2026-06-23 09:26,Willow & Hart Interiors,Daniel Hughes,17716,60,No
+2026-06-23 11:33,Harbour Physio,James Smith,17717,20,No
+2026-06-23 11:45,Elmfield Dental,Tom Walker,17718,100,No
+2026-06-23 13:45,Elmfield Dental,Sophie Clarke,17718,100,No
+2026-06-23 13:42,Dorset Legal,Priya Patel,17719,30,No
+2026-06-24 09:06,Castle Accountancy,James Smith,17720,30,No
+2026-06-24 11:37,Pennine Engineering,Daniel Hughes,17721,90,No
+2026-06-24 12:45,Bramley Homes,Daniel Hughes,17722,45,No
+2026-06-24 13:14,Dorset Legal,Sophie Clarke,17723,20,No
+2026-06-24 13:40,Pennine Engineering,James Smith,17724,45,No
+2026-06-24 13:45,Harbour Physio,James Smith,17725,45,No
+2026-06-24 13:57,Bramley Homes,James Smith,17726,65,No
+2026-06-24 15:57,Bramley Homes,Priya Patel,17726,65,No
+2026-06-24 13:59,Castle Accountancy,James Smith,17727,150,No
+2026-06-25 09:03,ABC Ltd,James Smith,17728,45,No
+2026-06-25 09:22,ABC Ltd,Tom Walker,17729,150,No
+2026-06-25 10:17,Northgate Veterinary,Daniel Hughes,17730,15,No
+2026-06-25 10:54,Harbour Physio,James Smith,17731,170,No
+2026-06-25 11:11,Castle Accountancy,Tom Walker,17732,60,No
+2026-06-25 11:15,Sterling Wealth Partners,Daniel Hughes,17733,190,No
+2026-06-25 11:45,ABC Ltd,Tom Walker,17734,30,No
+2026-06-25 12:19,Sterling Wealth Partners,Daniel Hughes,17735,60,No
+2026-06-25 13:50,Riverside Care Group,Tom Walker,17736,75,No
+2026-06-25 15:50,Riverside Care Group,Sophie Clarke,17736,75,No
+2026-06-26 09:01,Harbour Physio,Daniel Hughes,17737,150,No
+2026-06-26 09:04,Elmfield Dental,Sophie Clarke,17738,60,No
+2026-06-26 09:08,Sterling Wealth Partners,James Smith,17739,60,No
+2026-06-26 09:10,Dorset Legal,Daniel Hughes,17740,60,No
+2026-06-26 11:10,Dorset Legal,James Smith,17740,60,No
+2026-06-26 09:17,Castle Accountancy,James Smith,17741,180,No
+2026-06-26 09:35,Northgate Veterinary,Sophie Clarke,17742,45,No
+2026-06-26 11:35,Northgate Veterinary,Daniel Hughes,17742,45,No
+2026-06-26 09:39,Elmfield Dental,Sophie Clarke,17743,30,No
+2026-06-26 10:44,Meridian Logistics,Priya Patel,17744,45,Yes
+2026-06-26 12:44,Meridian Logistics,Tom Walker,17744,45,Yes
+2026-06-26 10:56,Pennine Engineering,Tom Walker,17745,90,No
+2026-06-26 11:00,Riverside Care Group,James Smith,17746,20,No
+2026-06-26 11:25,Willow & Hart Interiors,Daniel Hughes,17747,15,No
+2026-06-26 12:31,ABC Ltd,James Smith,17748,45,No
+2026-06-26 14:31,ABC Ltd,Priya Patel,17748,45,No
+2026-06-26 12:42,Bramley Homes,Priya Patel,17749,45,No
+2026-06-26 13:58,Meridian Logistics,James Smith,17750,75,No
+2026-06-26 15:58,Meridian Logistics,Priya Patel,17750,75,No
+2026-06-29 09:02,Elmfield Dental,Sophie Clarke,17751,60,No
+2026-06-29 09:10,Riverside Care Group,Sophie Clarke,17752,20,No
+2026-06-29 09:26,Riverside Care Group,Tom Walker,17753,90,No
+2026-06-29 12:05,Kingsbridge Architects,Priya Patel,17754,45,No
+2026-06-29 14:05,Kingsbridge Architects,Tom Walker,17754,45,No
+2026-06-29 12:47,Smith & Co,Priya Patel,17755,45,No
+2026-06-30 09:05,Meridian Logistics,James Smith,17756,75,No
+2026-06-30 11:05,Meridian Logistics,Priya Patel,17756,75,No
+2026-06-30 09:18,Riverside Care Group,Sophie Clarke,17757,30,Yes
+2026-06-30 09:22,Smith & Co,Priya Patel,17758,60,No
+2026-06-30 10:05,Castle Accountancy,Priya Patel,17759,30,No
+2026-06-30 10:14,Kingsbridge Architects,Daniel Hughes,17760,45,No
+2026-06-30 12:14,Kingsbridge Architects,James Smith,17760,45,No
+2026-06-30 10:32,Dorset Legal,James Smith,17761,135,No
+2026-06-30 10:33,Northgate Veterinary,James Smith,17762,60,No
+2026-06-30 10:40,Riverside Care Group,Tom Walker,17763,30,No
+2026-06-30 10:49,Sterling Wealth Partners,James Smith,17764,60,No
+2026-06-30 11:51,Kingsbridge Architects,Sophie Clarke,17765,30,No
+2026-06-30 11:51,Pennine Engineering,James Smith,17766,60,No
+2026-06-30 12:26,Bramley Homes,Daniel Hughes,17767,90,No
+2026-06-30 12:43,Riverside Care Group,James Smith,17768,75,No
+2026-06-30 13:15,ABC Ltd,Priya Patel,17769,155,No
+2026-06-30 13:21,Sterling Wealth Partners,Sophie Clarke,17770,30,No
+2026-06-30 13:54,Riverside Care Group,Daniel Hughes,17771,185,No
+2026-06-30 13:57,Riverside Care Group,Sophie Clarke,17772,30,No
+2026-07-01 09:25,Castle Accountancy,Daniel Hughes,17773,90,No
+2026-07-01 10:48,Riverside Care Group,Daniel Hughes,17774,85,No
+2026-07-01 12:48,Riverside Care Group,James Smith,17774,85,No
+2026-07-01 12:24,Riverside Care Group,Priya Patel,17775,30,No
+2026-07-01 12:42,Dorset Legal,Sophie Clarke,17776,30,No
+2026-07-01 13:50,Sterling Wealth Partners,Sophie Clarke,17777,15,No
+2026-07-01 13:59,Smith & Co,Priya Patel,17778,45,No
+2026-07-01 15:59,Smith & Co,Tom Walker,17778,45,No
+2026-07-02 09:09,Thames Valley Recruitment,Daniel Hughes,17779,155,No
+2026-07-02 09:10,Smith & Co,Tom Walker,17780,30,No
+2026-07-02 09:50,Meridian Logistics,Daniel Hughes,17781,75,No
+2026-07-02 11:49,Willow & Hart Interiors,Priya Patel,17782,30,No
+2026-07-02 12:06,Dorset Legal,Daniel Hughes,17783,45,No
+2026-07-02 12:17,ABC Ltd,James Smith,17784,90,No
+2026-07-02 14:17,ABC Ltd,Priya Patel,17784,90,No
+2026-07-02 12:31,ABC Ltd,James Smith,17785,30,No
+2026-07-02 12:37,Castle Accountancy,James Smith,17786,90,No
+2026-07-02 14:37,Castle Accountancy,Priya Patel,17786,90,No
+2026-07-02 12:42,Bramley Homes,Daniel Hughes,17787,60,No
+2026-07-02 13:06,Elmfield Dental,James Smith,17788,45,No
+2026-07-02 13:33,Thames Valley Recruitment,Daniel Hughes,17789,60,No
+2026-07-02 13:43,Riverside Care Group,Sophie Clarke,17790,45,No
+2026-07-03 09:56,Castle Accountancy,Priya Patel,17791,150,No
+2026-07-03 10:42,Willow & Hart Interiors,James Smith,17792,85,No
+2026-07-03 12:42,Willow & Hart Interiors,Priya Patel,17792,80,No
+2026-07-03 10:50,Castle Accountancy,Daniel Hughes,17793,30,No
+2026-07-03 12:08,Northgate Veterinary,Tom Walker,17794,90,No
+2026-07-03 14:08,Northgate Veterinary,Sophie Clarke,17794,90,No
+2026-07-03 12:29,Riverside Care Group,Daniel Hughes,17795,150,No
+2026-07-03 13:00,Pennine Engineering,James Smith,17796,60,No
+2026-07-03 15:00,Pennine Engineering,Priya Patel,17796,60,No
+2026-07-06 09:11,Elmfield Dental,Priya Patel,17797,90,No
+2026-07-06 10:00,Bramley Homes,Daniel Hughes,17798,45,Yes
+2026-07-06 11:10,ABC Ltd,Sophie Clarke,17799,90,No
+2026-07-06 11:58,Sterling Wealth Partners,Tom Walker,17800,45,No
+2026-07-06 13:58,Sterling Wealth Partners,Sophie Clarke,17800,45,No
+2026-07-06 12:09,Pennine Engineering,Tom Walker,17801,120,No
+2026-07-06 12:47,Castle Accountancy,Sophie Clarke,17802,20,No
+2026-07-06 12:49,Kingsbridge Architects,Daniel Hughes,17803,120,No
+2026-07-06 13:38,Dorset Legal,Daniel Hughes,17804,45,No
+2026-07-06 15:38,Dorset Legal,James Smith,17804,45,No
+2026-07-07 10:02,Northgate Veterinary,Priya Patel,17805,45,No
+2026-07-07 11:22,Willow & Hart Interiors,Tom Walker,17806,45,No
+2026-07-07 11:23,ABC Ltd,James Smith,17807,30,No
+2026-07-07 12:42,Castle Accountancy,James Smith,17808,75,No
+2026-07-07 14:42,Castle Accountancy,Priya Patel,17808,75,No
+2026-07-07 13:36,Bramley Homes,Daniel Hughes,17809,60,No
+2026-07-07 13:40,ABC Ltd,Daniel Hughes,17810,15,No
+2026-07-08 10:05,Kingsbridge Architects,Tom Walker,17811,180,No
+2026-07-09 09:26,Elmfield Dental,Priya Patel,17812,75,No
+2026-07-09 11:26,Elmfield Dental,Tom Walker,17812,75,No
+2026-07-09 09:59,Pennine Engineering,Daniel Hughes,17813,45,No
+2026-07-09 10:01,ABC Ltd,Tom Walker,17814,15,No
+2026-07-09 10:44,Meridian Logistics,Tom Walker,17815,75,No
+2026-07-09 10:48,Kingsbridge Architects,James Smith,17816,90,No
+2026-07-09 12:48,Kingsbridge Architects,Priya Patel,17816,90,No
+2026-07-09 10:49,Castle Accountancy,Tom Walker,17817,150,No
+2026-07-09 10:50,Smith & Co,Sophie Clarke,17818,45,No
+2026-07-09 11:27,Elmfield Dental,Sophie Clarke,17819,15,No
+2026-07-09 11:32,Bramley Homes,Daniel Hughes,17820,75,No
+2026-07-09 13:32,Bramley Homes,James Smith,17820,75,No
+2026-07-09 11:32,Bramley Homes,Daniel Hughes,17821,20,No
+2026-07-09 13:45,Riverside Care Group,Priya Patel,17822,30,No
+2026-07-10 09:41,Pennine Engineering,Sophie Clarke,17823,150,No
+2026-07-10 12:21,Smith & Co,Tom Walker,17824,45,No
+2026-07-10 14:21,Smith & Co,Sophie Clarke,17824,45,No
+2026-07-10 12:25,Castle Accountancy,Priya Patel,17825,45,No
+2026-07-10 12:53,ABC Ltd,Daniel Hughes,17826,75,No
+2026-07-10 13:30,Northgate Veterinary,Priya Patel,17827,60,No
+2026-07-13 09:45,Thames Valley Recruitment,Daniel Hughes,17828,60,No
+2026-07-13 11:45,Thames Valley Recruitment,James Smith,17828,60,No
+2026-07-13 10:18,ABC Ltd,Sophie Clarke,17829,30,No
+2026-07-13 10:45,Kingsbridge Architects,James Smith,17830,110,No
+2026-07-13 11:26,Northgate Veterinary,Daniel Hughes,17831,60,No
+2026-07-13 11:30,Meridian Logistics,Priya Patel,17832,30,No
+2026-07-13 11:45,Castle Accountancy,Sophie Clarke,17833,60,No
+2026-07-13 12:14,Castle Accountancy,Tom Walker,17834,30,No
+2026-07-13 12:39,ABC Ltd,Priya Patel,17835,60,No
+2026-07-13 12:44,Castle Accountancy,Sophie Clarke,17836,60,No
+2026-07-13 13:01,ABC Ltd,James Smith,17837,90,No
+2026-07-13 13:02,Riverside Care Group,Tom Walker,17838,30,No
+2026-07-14 09:29,Castle Accountancy,Priya Patel,17839,180,No
+2026-07-14 09:34,Riverside Care Group,Sophie Clarke,17840,45,No
+2026-07-14 11:34,Riverside Care Group,Daniel Hughes,17840,45,No
+2026-07-14 10:17,Harbour Physio,Sophie Clarke,17841,15,No
+2026-07-14 11:00,Dorset Legal,Daniel Hughes,17842,100,No
+2026-07-14 13:00,Dorset Legal,James Smith,17842,95,No
+2026-07-14 13:18,Kingsbridge Architects,Daniel Hughes,17843,150,No
+2026-07-14 13:52,Dorset Legal,Tom Walker,17844,45,No
+2026-07-14 15:52,Dorset Legal,Sophie Clarke,17844,45,No
+2026-07-15 09:58,ABC Ltd,Daniel Hughes,17845,15,No
+2026-07-15 10:14,Castle Accountancy,Daniel Hughes,17846,60,No
+2026-07-15 10:16,Harbour Physio,James Smith,17847,180,Yes
+2026-07-15 10:19,Riverside Care Group,Daniel Hughes,17848,20,No
+2026-07-15 10:20,Sterling Wealth Partners,James Smith,17849,120,No
+2026-07-15 12:21,Castle Accountancy,Priya Patel,17850,60,No
+2026-07-15 12:47,Thames Valley Recruitment,Daniel Hughes,17851,75,No
+2026-07-15 12:50,Sterling Wealth Partners,James Smith,17852,75,No
+2026-07-15 14:50,Sterling Wealth Partners,Priya Patel,17852,75,No
+2026-07-15 13:02,Castle Accountancy,James Smith,17853,45,No
+2026-07-16 10:45,Willow & Hart Interiors,James Smith,17854,90,No
+2026-07-16 12:45,Willow & Hart Interiors,Priya Patel,17854,90,No
+2026-07-16 10:52,Willow & Hart Interiors,James Smith,17855,75,No
+2026-07-16 11:21,Meridian Logistics,Daniel Hughes,17856,60,No
+2026-07-16 11:24,Riverside Care Group,James Smith,17857,15,No
+2026-07-16 11:56,Dorset Legal,Daniel Hughes,17858,45,No
+2026-07-17 10:05,Meridian Logistics,James Smith,17859,60,No
+2026-07-17 10:31,Dorset Legal,Sophie Clarke,17860,75,No
+2026-07-17 10:44,Smith & Co,Tom Walker,17861,20,No
+2026-07-17 11:02,ABC Ltd,Daniel Hughes,17862,45,No
+2026-07-17 11:27,Elmfield Dental,Daniel Hughes,17863,75,No
+2026-07-17 11:32,ABC Ltd,Sophie Clarke,17864,90,No
+2026-07-17 13:32,ABC Ltd,Daniel Hughes,17864,90,No
+2026-07-17 11:59,Riverside Care Group,James Smith,17865,15,No
+2026-07-17 12:08,Elmfield Dental,Priya Patel,17866,75,No
+2026-07-17 14:08,Elmfield Dental,Tom Walker,17866,75,No
+2026-07-17 12:13,Dorset Legal,Tom Walker,17867,120,No
+2026-07-17 12:28,Harbour Physio,Daniel Hughes,17868,45,No
+2026-07-17 12:32,Smith & Co,Priya Patel,17869,180,No
+2026-07-17 13:07,Riverside Care Group,James Smith,17870,75,No
+2026-07-17 15:07,Riverside Care Group,Priya Patel,17870,75,No
+2026-07-17 13:14,Willow & Hart Interiors,Sophie Clarke,17871,30,No
+2026-07-18 10:05,Meridian Logistics,Daniel Hughes,17872,60,No
+2026-07-20 09:01,Castle Accountancy,James Smith,17873,30,No
+2026-07-20 09:19,Bramley Homes,Tom Walker,17874,60,No
+2026-07-20 11:19,Bramley Homes,Sophie Clarke,17874,60,No
+2026-07-20 09:33,Castle Accountancy,Sophie Clarke,17875,15,No
+2026-07-20 09:38,Northgate Veterinary,James Smith,17876,60,No
+2026-07-20 11:38,Northgate Veterinary,Priya Patel,17876,60,No
+2026-07-20 09:49,Meridian Logistics,James Smith,17877,45,No
+2026-07-20 10:48,Northgate Veterinary,Tom Walker,17878,75,No
+2026-07-20 12:48,Northgate Veterinary,Sophie Clarke,17878,75,No
+2026-07-20 10:58,Willow & Hart Interiors,Priya Patel,17879,30,No
+2026-07-20 11:12,Willow & Hart Interiors,Priya Patel,17880,15,No
+2026-07-20 11:13,Riverside Care Group,Tom Walker,17881,60,No
+2026-07-20 11:46,Sterling Wealth Partners,Daniel Hughes,17882,60,No
+2026-07-20 13:13,Thames Valley Recruitment,Sophie Clarke,17883,60,No
+2026-07-21 09:21,ABC Ltd,Priya Patel,17884,15,No
+2026-07-21 10:10,ABC Ltd,Daniel Hughes,17885,15,No
+2026-07-21 10:10,Harbour Physio,Daniel Hughes,17886,60,No
+2026-07-21 10:14,Castle Accountancy,James Smith,17887,200,No
+2026-07-21 11:00,Meridian Logistics,Daniel Hughes,17888,60,No
+2026-07-21 11:32,Sterling Wealth Partners,Daniel Hughes,17889,75,No
+2026-07-21 12:57,Meridian Logistics,Tom Walker,17890,30,Yes
+2026-07-21 13:01,Elmfield Dental,James Smith,17891,120,No
+2026-07-22 09:47,Meridian Logistics,Priya Patel,17892,60,No
+2026-07-22 10:01,Meridian Logistics,Daniel Hughes,17893,30,No
+2026-07-22 10:10,ABC Ltd,Sophie Clarke,17894,90,No
+2026-07-22 12:10,ABC Ltd,Daniel Hughes,17894,90,No
+2026-07-22 10:34,Dorset Legal,Tom Walker,17895,180,No
+2026-07-22 10:52,Sterling Wealth Partners,Priya Patel,17896,100,No
+2026-07-22 12:52,Sterling Wealth Partners,Tom Walker,17896,95,No
+2026-07-22 11:13,Thames Valley Recruitment,Sophie Clarke,17897,60,No
+2026-07-22 11:16,Bramley Homes,Sophie Clarke,17898,95,No
+2026-07-22 13:16,Bramley Homes,Daniel Hughes,17898,90,No
+2026-07-22 12:01,Harbour Physio,James Smith,17899,60,No
+2026-07-22 12:23,Pennine Engineering,Tom Walker,17900,45,No
+2026-07-22 14:23,Pennine Engineering,Sophie Clarke,17900,45,No
+2026-07-22 12:52,Meridian Logistics,Tom Walker,17901,130,No
+2026-07-22 13:21,Kingsbridge Architects,Priya Patel,17902,60,No
+2026-07-22 15:21,Kingsbridge Architects,Tom Walker,17902,55,No
+2026-07-22 13:54,Riverside Care Group,James Smith,17903,150,No
+2026-07-23 09:07,Meridian Logistics,Daniel Hughes,17904,60,No
+2026-07-23 10:05,Dorset Legal,Priya Patel,17905,45,No
+2026-07-23 10:52,Riverside Care Group,Priya Patel,17906,75,Yes
+2026-07-23 12:52,Riverside Care Group,Tom Walker,17906,75,Yes
+2026-07-23 11:09,Pennine Engineering,Priya Patel,17907,120,No
+2026-07-23 13:01,Riverside Care Group,Daniel Hughes,17908,75,No
+2026-07-23 13:04,Castle Accountancy,Daniel Hughes,17909,20,No
+2026-07-24 09:08,Harbour Physio,Sophie Clarke,17910,60,No
+2026-07-24 09:10,Meridian Logistics,James Smith,17911,20,No
+2026-07-24 09:12,Bramley Homes,Priya Patel,17912,45,No
+2026-07-24 09:32,Meridian Logistics,Priya Patel,17913,120,No
+2026-07-24 09:55,Dorset Legal,Tom Walker,17914,75,Yes
+2026-07-24 11:55,Dorset Legal,Sophie Clarke,17914,75,Yes
+2026-07-24 10:58,Pennine Engineering,Priya Patel,17915,180,No
+2026-07-24 11:02,Sterling Wealth Partners,Daniel Hughes,17916,60,No
+2026-07-24 11:11,Harbour Physio,Sophie Clarke,17917,90,No
+2026-07-24 12:52,Riverside Care Group,Sophie Clarke,17918,45,No
+2026-07-24 13:24,Riverside Care Group,Daniel Hughes,17919,90,No
+2026-07-24 13:24,Riverside Care Group,Daniel Hughes,17920,20,No
+2026-07-27 11:12,Northgate Veterinary,Tom Walker,17921,60,No
+2026-07-27 11:53,Pennine Engineering,Daniel Hughes,17922,45,No
+2026-07-27 13:03,ABC Ltd,Sophie Clarke,17923,190,No
+2026-07-27 13:06,Sterling Wealth Partners,Tom Walker,17924,15,No
+2026-07-27 13:59,Kingsbridge Architects,Tom Walker,17925,45,No
+2026-07-28 09:26,Sterling Wealth Partners,Tom Walker,17926,45,No
+2026-07-28 11:26,Sterling Wealth Partners,Sophie Clarke,17926,45,No
+2026-07-28 10:08,ABC Ltd,Tom Walker,17927,45,No
+2026-07-28 10:26,Elmfield Dental,James Smith,17928,45,No
+2026-07-28 12:26,Elmfield Dental,Priya Patel,17928,45,No
+2026-07-28 10:30,Thames Valley Recruitment,James Smith,17929,40,No
+2026-07-28 12:07,ABC Ltd,Sophie Clarke,17930,15,No
+2026-07-28 12:37,Meridian Logistics,Priya Patel,17931,45,No
+2026-07-28 12:43,Meridian Logistics,James Smith,17932,90,No
+2026-07-28 14:43,Meridian Logistics,Priya Patel,17932,90,No
+2026-07-28 13:11,Sterling Wealth Partners,Priya Patel,17933,30,No
+2026-07-28 13:54,Dorset Legal,James Smith,17934,45,No
+2026-07-29 09:12,Northgate Veterinary,Daniel Hughes,17935,45,No
+2026-07-29 10:48,Elmfield Dental,Priya Patel,17936,60,No
+2026-07-29 11:34,ABC Ltd,James Smith,17937,20,No
+2026-07-30 09:47,ABC Ltd,Sophie Clarke,17938,45,No
+2026-07-30 11:47,ABC Ltd,Daniel Hughes,17938,45,No
+2026-07-30 10:08,Willow & Hart Interiors,James Smith,17939,90,Yes
+2026-07-30 11:51,Pennine Engineering,James Smith,17940,75,No
+2026-07-30 13:51,Pennine Engineering,Priya Patel,17940,75,No
+2026-07-30 12:26,Castle Accountancy,Tom Walker,17941,45,No
+2026-07-30 12:45,Thames Valley Recruitment,Daniel Hughes,17942,45,Yes
+2026-07-30 14:45,Thames Valley Recruitment,James Smith,17942,45,Yes
+2026-07-30 12:52,Smith & Co,Daniel Hughes,17943,60,No
+2026-07-30 13:33,Bramley Homes,Sophie Clarke,17944,20,No
+2026-07-31 09:43,ABC Ltd,Priya Patel,17945,120,No
+2026-07-31 10:47,Dorset Legal,James Smith,17946,45,No
+2026-07-31 12:47,Dorset Legal,Priya Patel,17946,45,No
+2026-07-31 11:01,Riverside Care Group,Tom Walker,17947,45,No
+2026-07-31 11:26,ABC Ltd,Tom Walker,17948,60,Yes
+2026-07-31 12:08,Harbour Physio,Priya Patel,17949,60,No
+2026-07-31 12:26,ABC Ltd,James Smith,17950,15,No
+2026-07-31 12:30,Elmfield Dental,Priya Patel,17951,45,No
+2026-07-31 12:45,Smith & Co,Sophie Clarke,17952,25,No
+2026-07-31 13:13,Bramley Homes,James Smith,17953,15,No
+2026-08-03 09:32,ABC Ltd,Priya Patel,17954,20,No
+2026-08-03 10:16,ABC Ltd,James Smith,17955,200,No
+2026-08-03 10:26,Willow & Hart Interiors,Tom Walker,17956,45,No
+2026-08-03 12:26,Willow & Hart Interiors,Sophie Clarke,17956,45,No
+2026-08-03 11:37,Elmfield Dental,Priya Patel,17957,75,No
+2026-08-03 12:29,Elmfield Dental,Tom Walker,17958,30,No
+2026-08-03 13:02,Bramley Homes,Tom Walker,17959,90,No
+2026-08-03 13:42,Thames Valley Recruitment,Tom Walker,17960,15,No
+2026-08-04 10:39,Castle Accountancy,Tom Walker,17961,150,No
+2026-08-04 10:39,Elmfield Dental,Tom Walker,17962,45,No
+2026-08-04 12:39,Elmfield Dental,Sophie Clarke,17962,45,No
+2026-08-04 11:13,Kingsbridge Architects,Tom Walker,17963,60,No
+2026-08-04 11:40,Sterling Wealth Partners,Tom Walker,17964,60,No
+2026-08-04 12:30,Pennine Engineering,Tom Walker,17965,120,No
+2026-08-04 13:05,Bramley Homes,Sophie Clarke,17966,45,No
+2026-08-04 13:59,Northgate Veterinary,Sophie Clarke,17967,75,No
+2026-08-05 09:46,Castle Accountancy,Daniel Hughes,17968,30,No
+2026-08-05 10:09,Kingsbridge Architects,Priya Patel,17969,150,No
+2026-08-05 11:59,Castle Accountancy,Tom Walker,17970,60,No
+2026-08-05 12:38,Elmfield Dental,Priya Patel,17971,90,No
+2026-08-05 13:18,Harbour Physio,James Smith,17972,15,No
+2026-08-06 09:04,Castle Accountancy,James Smith,17973,60,No
+2026-08-06 09:19,Pennine Engineering,Priya Patel,17974,45,No
+2026-08-06 11:19,Pennine Engineering,Tom Walker,17974,45,No
+2026-08-06 09:28,Pennine Engineering,Daniel Hughes,17975,20,No
+2026-08-06 11:06,Northgate Veterinary,James Smith,17976,60,No
+2026-08-06 13:06,Northgate Veterinary,Priya Patel,17976,60,No
+2026-08-06 12:24,ABC Ltd,James Smith,17977,150,Yes
+2026-08-06 12:31,Castle Accountancy,James Smith,17978,60,No
+2026-08-06 12:44,ABC Ltd,Sophie Clarke,17979,90,No
+2026-08-07 09:11,Sterling Wealth Partners,Sophie Clarke,17980,55,No
+2026-08-07 11:11,Sterling Wealth Partners,Daniel Hughes,17980,50,No
+2026-08-07 09:54,Thames Valley Recruitment,Tom Walker,17981,45,No
+2026-08-07 10:31,Harbour Physio,Tom Walker,17982,60,No
+2026-08-07 11:44,Smith & Co,Priya Patel,17983,45,No
+2026-08-07 12:31,Riverside Care Group,Tom Walker,17984,60,No
+2026-08-07 14:31,Riverside Care Group,Sophie Clarke,17984,60,No
+2026-08-07 13:20,Castle Accountancy,Daniel Hughes,17985,170,No
+2026-08-07 13:22,Elmfield Dental,Priya Patel,17986,45,No
+2026-08-07 15:22,Elmfield Dental,Tom Walker,17986,45,No
+2026-08-07 13:48,ABC Ltd,James Smith,17987,30,No
+2026-08-10 09:07,Castle Accountancy,Sophie Clarke,17988,60,No
+2026-08-10 11:07,Castle Accountancy,Daniel Hughes,17988,60,No
+2026-08-10 09:47,Pennine Engineering,James Smith,17989,45,No
+2026-08-10 09:55,Northgate Veterinary,Daniel Hughes,17990,85,No
+2026-08-10 11:55,Northgate Veterinary,James Smith,17990,80,No
+2026-08-11 09:03,Riverside Care Group,Tom Walker,17991,120,No
+2026-08-11 09:57,Riverside Care Group,Daniel Hughes,17992,90,No
+2026-08-11 11:57,Riverside Care Group,James Smith,17992,90,No
+2026-08-11 10:26,Elmfield Dental,Daniel Hughes,17993,75,No
+2026-08-11 12:00,Meridian Logistics,Sophie Clarke,17994,15,No
+2026-08-11 12:01,Meridian Logistics,James Smith,17995,15,No
+2026-08-11 12:20,ABC Ltd,Priya Patel,17996,60,No
+2026-08-11 14:20,ABC Ltd,Tom Walker,17996,60,No
+2026-08-11 13:01,ABC Ltd,Tom Walker,17997,60,No
+2026-08-11 13:26,Pennine Engineering,Daniel Hughes,17998,60,No
+2026-08-11 15:26,Pennine Engineering,James Smith,17998,60,No
+2026-08-11 13:31,Northgate Veterinary,Tom Walker,17999,15,No
+2026-08-11 13:39,Smith & Co,Sophie Clarke,18000,75,No
+2026-08-11 15:39,Smith & Co,Daniel Hughes,18000,75,No
+2026-08-11 13:48,Elmfield Dental,Priya Patel,18001,195,No
+2026-08-12 09:16,ABC Ltd,James Smith,18002,45,No
+2026-08-12 11:16,ABC Ltd,Priya Patel,18002,45,No
+2026-08-12 09:23,Pennine Engineering,James Smith,18003,150,No
+2026-08-12 11:44,Kingsbridge Architects,Priya Patel,18004,90,No
+2026-08-12 13:44,Kingsbridge Architects,Tom Walker,18004,90,No
+2026-08-12 12:08,ABC Ltd,James Smith,18005,60,No
+2026-08-12 13:19,Willow & Hart Interiors,James Smith,18006,60,No
+2026-08-12 15:19,Willow & Hart Interiors,Priya Patel,18006,60,No
+2026-08-12 13:23,Smith & Co,Tom Walker,18007,90,No
+2026-08-13 09:43,Elmfield Dental,Daniel Hughes,18008,20,No
+2026-08-13 09:59,Pennine Engineering,Sophie Clarke,18009,60,No
+2026-08-13 10:07,Dorset Legal,Tom Walker,18010,90,No
+2026-08-13 12:07,Dorset Legal,Sophie Clarke,18010,90,No
+2026-08-13 10:54,Willow & Hart Interiors,James Smith,18011,102,No
+2026-08-13 10:56,Bramley Homes,Sophie Clarke,18012,30,No
+2026-08-13 12:21,Castle Accountancy,James Smith,18013,45,No
+2026-08-13 13:13,Sterling Wealth Partners,Tom Walker,18014,45,No
+2026-08-13 15:13,Sterling Wealth Partners,Sophie Clarke,18014,45,No
+2026-08-13 13:29,Thames Valley Recruitment,James Smith,18015,45,No
+2026-08-13 13:51,Bramley Homes,James Smith,18016,65,No
+2026-08-13 15:51,Bramley Homes,Priya Patel,18016,65,No
+2026-08-13 14:15,Castle Accountancy,Priya Patel,18017,75,No
+2026-08-14 09:08,Dorset Legal,Tom Walker,18018,90,No
+2026-08-14 11:08,Dorset Legal,Sophie Clarke,18018,90,No
+2026-08-14 10:34,ABC Ltd,Sophie Clarke,18019,180,No
+2026-08-14 11:12,Willow & Hart Interiors,Sophie Clarke,18020,60,No
+2026-08-14 13:12,Willow & Hart Interiors,Daniel Hughes,18020,60,No
+2026-08-14 12:13,Meridian Logistics,Daniel Hughes,18021,90,No
+2026-08-14 12:15,Pennine Engineering,Sophie Clarke,18022,45,No
+2026-08-14 12:18,Meridian Logistics,Priya Patel,18023,60,No
+2026-08-14 12:58,Meridian Logistics,Daniel Hughes,18024,15,No
+2026-08-14 13:17,Castle Accountancy,James Smith,18025,15,No
+2026-08-14 13:58,Pennine Engineering,Daniel Hughes,18026,30,No
+2026-08-17 09:08,Sterling Wealth Partners,James Smith,18027,180,No
+2026-08-17 09:15,Riverside Care Group,Daniel Hughes,18028,90,No
+2026-08-17 11:15,Riverside Care Group,James Smith,18028,90,No
+2026-08-17 09:41,Sterling Wealth Partners,James Smith,18029,120,No
+2026-08-17 10:03,ABC Ltd,Tom Walker,18030,45,No
+2026-08-17 10:18,Dorset Legal,Priya Patel,18031,45,Yes
+2026-08-17 10:29,Castle Accountancy,James Smith,18032,45,No
+2026-08-17 12:29,Castle Accountancy,Priya Patel,18032,45,No
+2026-08-17 11:53,Pennine Engineering,Sophie Clarke,18033,45,No
+2026-08-18 09:18,Dorset Legal,Sophie Clarke,18034,75,No
+2026-08-18 11:18,Dorset Legal,Daniel Hughes,18034,75,No
+2026-08-18 09:45,Pennine Engineering,James Smith,18035,45,No
+2026-08-18 09:48,Bramley Homes,Tom Walker,18036,45,No
+2026-08-18 11:48,Bramley Homes,Sophie Clarke,18036,45,No
+2026-08-18 11:20,Dorset Legal,Daniel Hughes,18037,180,No
+2026-08-18 13:05,Riverside Care Group,Priya Patel,18038,45,No
+2026-08-18 13:55,ABC Ltd,Sophie Clarke,18039,45,No
+2026-08-19 09:20,Riverside Care Group,Priya Patel,18040,60,No
+2026-08-19 09:27,Meridian Logistics,Daniel Hughes,18041,60,No
+2026-08-19 09:44,Castle Accountancy,James Smith,18042,45,No
+2026-08-19 11:44,Castle Accountancy,Priya Patel,18042,45,No
+2026-08-19 10:07,Kingsbridge Architects,Tom Walker,18043,15,No
+2026-08-19 10:08,Kingsbridge Architects,Daniel Hughes,18044,85,No
+2026-08-19 12:08,Kingsbridge Architects,James Smith,18044,80,No
+2026-08-19 10:29,Dorset Legal,Sophie Clarke,18045,45,No
+2026-08-19 10:44,Harbour Physio,Priya Patel,18046,60,No
+2026-08-19 11:03,Bramley Homes,Priya Patel,18047,30,No
+2026-08-19 11:10,Riverside Care Group,Tom Walker,18048,30,No
+2026-08-19 11:30,Bramley Homes,Priya Patel,18049,95,No
+2026-08-19 12:16,Northgate Veterinary,Priya Patel,18050,75,No
+2026-08-19 14:16,Northgate Veterinary,Tom Walker,18050,75,No
+2026-08-19 12:23,Riverside Care Group,Sophie Clarke,18051,45,No
+2026-08-19 12:28,ABC Ltd,Daniel Hughes,18052,45,No
+2026-08-19 14:28,ABC Ltd,James Smith,18052,45,No
+2026-08-19 12:51,Castle Accountancy,Daniel Hughes,18053,60,No
+2026-08-19 13:25,Thames Valley Recruitment,James Smith,18054,90,No
+2026-08-19 15:25,Thames Valley Recruitment,Priya Patel,18054,90,No
+2026-08-20 10:33,Castle Accountancy,Tom Walker,18055,20,No
+2026-08-20 11:34,Harbour Physio,James Smith,18056,90,No
+2026-08-20 13:34,Harbour Physio,Priya Patel,18056,90,No
+2026-08-20 12:33,Castle Accountancy,Tom Walker,18057,180,No
+2026-08-20 13:16,Riverside Care Group,James Smith,18058,80,No
+2026-08-20 13:45,Harbour Physio,Tom Walker,18059,90,No
+2026-08-21 09:24,Meridian Logistics,Daniel Hughes,18060,75,No
+2026-08-21 11:24,Meridian Logistics,James Smith,18060,75,No
+2026-08-21 09:46,Northgate Veterinary,Daniel Hughes,18061,30,No
+2026-08-21 10:24,Castle Accountancy,Tom Walker,18062,45,No
+2026-08-21 11:21,ABC Ltd,Tom Walker,18063,30,No
+2026-08-21 12:34,Castle Accountancy,Daniel Hughes,18064,20,No
+2026-08-21 12:39,Harbour Physio,Tom Walker,18065,120,No
+2026-08-24 09:02,Kingsbridge Architects,James Smith,18066,45,No
+2026-08-24 11:02,Kingsbridge Architects,Priya Patel,18066,45,No
+2026-08-24 10:56,Meridian Logistics,Priya Patel,18067,45,No
+2026-08-24 11:19,Harbour Physio,Daniel Hughes,18068,55,No
+2026-08-24 11:42,Elmfield Dental,Daniel Hughes,18069,30,No
+2026-08-24 11:50,Pennine Engineering,Tom Walker,18070,80,No
+2026-08-24 13:50,Pennine Engineering,Sophie Clarke,18070,80,No
+2026-08-24 12:52,Castle Accountancy,Sophie Clarke,18071,60,No
+2026-08-24 13:02,Riverside Care Group,Daniel Hughes,18072,75,No
+2026-08-24 15:02,Riverside Care Group,James Smith,18072,75,No
+2026-08-24 13:26,Willow & Hart Interiors,James Smith,18073,60,No
+2026-08-24 13:27,Bramley Homes,James Smith,18074,30,No
+2026-08-24 13:28,Bramley Homes,Daniel Hughes,18075,75,No
+2026-08-25 09:16,Willow & Hart Interiors,James Smith,18076,45,No
+2026-08-25 09:17,Northgate Veterinary,Priya Patel,18077,90,No
+2026-08-25 09:19,Castle Accountancy,Tom Walker,18078,45,No
+2026-08-25 09:46,Sterling Wealth Partners,James Smith,18079,60,No
+2026-08-25 10:51,Dorset Legal,Tom Walker,18080,60,No
+2026-08-25 10:54,Thames Valley Recruitment,Priya Patel,18081,180,No
+2026-08-25 11:41,Pennine Engineering,Sophie Clarke,18082,30,No
+2026-08-25 11:44,Kingsbridge Architects,Sophie Clarke,18083,75,No
+2026-08-25 12:11,Sterling Wealth Partners,Sophie Clarke,18084,75,No
+2026-08-25 14:11,Sterling Wealth Partners,Daniel Hughes,18084,75,No
+2026-08-25 12:54,Kingsbridge Architects,Daniel Hughes,18085,120,No
+2026-08-25 12:55,Riverside Care Group,James Smith,18086,75,No
+2026-08-25 14:55,Riverside Care Group,Priya Patel,18086,75,No
+2026-08-25 13:07,ABC Ltd,James Smith,18087,150,No
+2026-08-25 13:15,ABC Ltd,James Smith,18088,60,No
+2026-08-25 13:22,Meridian Logistics,Priya Patel,18089,120,No
+2026-08-25 13:41,Harbour Physio,James Smith,18090,30,No
+2026-08-25 13:44,Riverside Care Group,Tom Walker,18091,120,No
+2026-08-25 13:49,Bramley Homes,Tom Walker,18092,45,No
+2026-08-25 13:57,Elmfield Dental,James Smith,18093,45,No
+2026-08-26 09:15,Elmfield Dental,Priya Patel,18094,70,No
+2026-08-26 09:18,Thames Valley Recruitment,Tom Walker,18095,75,No
+2026-08-26 10:10,Harbour Physio,Priya Patel,18096,20,No
+2026-08-26 10:35,Castle Accountancy,Tom Walker,18097,45,No
+2026-08-26 10:51,Meridian Logistics,Sophie Clarke,18098,90,No
+2026-08-26 12:51,Meridian Logistics,Daniel Hughes,18098,90,No
+2026-08-26 11:10,Harbour Physio,Daniel Hughes,18099,90,No
+2026-08-26 12:02,Dorset Legal,James Smith,18100,45,No
+2026-08-26 14:02,Dorset Legal,Priya Patel,18100,45,No
+2026-08-26 12:59,Dorset Legal,Tom Walker,18101,90,No
+2026-08-26 13:09,Smith & Co,Tom Walker,18102,45,No
+2026-08-26 13:32,Elmfield Dental,Tom Walker,18103,30,No
+2026-08-26 13:47,ABC Ltd,Sophie Clarke,18104,30,No
+2026-08-26 13:54,Dorset Legal,James Smith,18105,60,No
+2026-08-27 10:10,Harbour Physio,James Smith,18106,60,No
+2026-08-27 10:42,Meridian Logistics,Tom Walker,18107,150,No
+2026-08-27 11:07,Thames Valley Recruitment,James Smith,18108,60,No
+2026-08-27 11:27,Castle Accountancy,Sophie Clarke,18109,30,No
+2026-08-27 13:30,ABC Ltd,Tom Walker,18110,80,No
+2026-08-27 13:31,Castle Accountancy,Sophie Clarke,18111,75,No
+2026-08-28 09:10,Meridian Logistics,Sophie Clarke,18112,90,No
+2026-08-28 11:10,Meridian Logistics,Daniel Hughes,18112,90,No
+2026-08-28 09:53,Smith & Co,Tom Walker,18113,150,No
+2026-08-28 10:31,Castle Accountancy,James Smith,18114,45,No
+2026-08-28 10:44,Castle Accountancy,James Smith,18115,90,No
+2026-08-28 11:19,Kingsbridge Architects,Tom Walker,18116,45,No
+2026-08-31 09:02,ABC Ltd,Priya Patel,18117,60,No
+2026-08-31 09:08,Dorset Legal,James Smith,18118,60,No
+2026-08-31 09:17,ABC Ltd,Daniel Hughes,18119,90,No
+2026-08-31 10:22,Northgate Veterinary,Sophie Clarke,18120,15,No
+2026-08-31 10:39,Bramley Homes,Tom Walker,18121,60,No
+2026-08-31 12:10,Sterling Wealth Partners,Sophie Clarke,18122,75,No
+2026-08-31 12:33,Willow & Hart Interiors,Daniel Hughes,18123,150,No
+2026-08-31 13:00,Riverside Care Group,Priya Patel,18124,40,No
+2026-09-01 09:22,Thames Valley Recruitment,Daniel Hughes,18125,30,Yes
+2026-09-01 10:00,Elmfield Dental,Priya Patel,18126,50,No
+2026-09-01 11:06,Harbour Physio,Daniel Hughes,18127,60,No
+2026-09-01 11:54,ABC Ltd,Tom Walker,18128,60,No
+2026-09-01 12:23,Willow & Hart Interiors,James Smith,18129,180,No
+2026-09-01 12:26,ABC Ltd,Priya Patel,18130,60,No
+2026-09-01 12:27,Sterling Wealth Partners,Tom Walker,18131,120,No
+2026-09-01 12:50,Pennine Engineering,Priya Patel,18132,20,No
+2026-09-01 13:10,Dorset Legal,Sophie Clarke,18133,15,No
+2026-09-02 09:28,Elmfield Dental,Daniel Hughes,18134,60,No
+2026-09-02 10:10,Bramley Homes,Tom Walker,18135,90,No
+2026-09-02 10:11,Smith & Co,Priya Patel,18136,80,No
+2026-09-02 12:11,Smith & Co,Tom Walker,18136,80,No
+2026-09-02 10:59,Meridian Logistics,James Smith,18137,20,No
+2026-09-02 11:36,Smith & Co,Tom Walker,18138,75,No
+2026-09-02 13:36,Smith & Co,Sophie Clarke,18138,75,No
+2026-09-02 11:45,Dorset Legal,Daniel Hughes,18139,90,No
+2026-09-02 13:39,Castle Accountancy,James Smith,18140,60,No
+2026-09-02 13:53,Castle Accountancy,Daniel Hughes,18141,180,No
+2026-09-03 09:58,ABC Ltd,James Smith,18142,75,No
+2026-09-03 11:58,ABC Ltd,Priya Patel,18142,75,No
+2026-09-03 10:04,Willow & Hart Interiors,Tom Walker,18143,120,No
+2026-09-03 10:38,Thames Valley Recruitment,Tom Walker,18144,30,No
+2026-09-03 12:23,Harbour Physio,James Smith,18145,75,No
+2026-09-03 12:38,Riverside Care Group,James Smith,18146,75,No
+2026-09-03 14:38,Riverside Care Group,Priya Patel,18146,75,No
+2026-09-04 10:42,Castle Accountancy,James Smith,18147,60,No
+2026-09-04 11:04,Castle Accountancy,Sophie Clarke,18148,90,Yes
+2026-09-04 13:04,Castle Accountancy,Daniel Hughes,18148,90,Yes
+2026-09-04 11:22,Kingsbridge Architects,James Smith,18149,75,No
+2026-09-04 11:24,ABC Ltd,Daniel Hughes,18150,45,No
+2026-09-04 12:19,ABC Ltd,Daniel Hughes,18151,150,No
+2026-09-04 12:29,Harbour Physio,James Smith,18152,30,No
+2026-09-04 13:35,Pennine Engineering,Tom Walker,18153,45,No
+2026-09-04 13:48,Kingsbridge Architects,Priya Patel,18154,30,No
+2026-09-07 09:32,Riverside Care Group,Priya Patel,18155,45,No
+2026-09-07 09:40,Willow & Hart Interiors,Priya Patel,18156,90,No
+2026-09-07 11:40,Willow & Hart Interiors,Tom Walker,18156,90,No
+2026-09-07 12:02,Bramley Homes,Tom Walker,18157,15,No
+2026-09-07 12:11,ABC Ltd,Priya Patel,18158,75,No
+2026-09-07 12:20,Kingsbridge Architects,Tom Walker,18159,60,No
+2026-09-07 13:04,Elmfield Dental,Tom Walker,18160,45,No
+2026-09-07 15:04,Elmfield Dental,Sophie Clarke,18160,45,No
+2026-09-08 10:11,Dorset Legal,Tom Walker,18161,15,No
+2026-09-08 11:06,Castle Accountancy,James Smith,18162,45,No
+2026-09-08 11:32,Smith & Co,James Smith,18163,20,No
+2026-09-09 09:11,Elmfield Dental,James Smith,18164,45,No
+2026-09-09 11:11,Elmfield Dental,Priya Patel,18164,45,No
+2026-09-09 09:27,ABC Ltd,Tom Walker,18165,15,No
+2026-09-09 09:57,Pennine Engineering,Sophie Clarke,18166,30,No
+2026-09-09 09:59,Sterling Wealth Partners,Daniel Hughes,18167,195,No
+2026-09-09 10:35,Harbour Physio,Daniel Hughes,18168,60,No
+2026-09-09 10:39,Thames Valley Recruitment,Priya Patel,18169,150,No
+2026-09-09 11:09,Thames Valley Recruitment,Daniel Hughes,18170,45,No
+2026-09-09 13:09,Thames Valley Recruitment,James Smith,18170,45,No
+2026-09-09 11:45,Dorset Legal,Tom Walker,18171,15,No
+2026-09-09 12:06,Castle Accountancy,Sophie Clarke,18172,75,No
+2026-09-09 14:06,Castle Accountancy,Daniel Hughes,18172,75,No
+2026-09-09 13:10,Elmfield Dental,James Smith,18173,30,No
+2026-09-09 13:17,Sterling Wealth Partners,Sophie Clarke,18174,60,No
+2026-09-09 13:31,Northgate Veterinary,Tom Walker,18175,150,No
+2026-09-09 13:39,Meridian Logistics,Sophie Clarke,18176,75,No
+2026-09-09 15:39,Meridian Logistics,Daniel Hughes,18176,75,No
+2026-09-09 21:40,Meridian Logistics,Tom Walker,18177,100,No
+2026-09-10 09:10,Kingsbridge Architects,Priya Patel,18178,45,No
+2026-09-10 11:10,Kingsbridge Architects,Tom Walker,18178,45,No
+2026-09-10 10:38,ABC Ltd,Priya Patel,18179,60,No
+2026-09-10 10:41,ABC Ltd,Tom Walker,18180,20,No
+2026-09-10 11:14,Dorset Legal,Daniel Hughes,18181,30,No
+2026-09-10 11:27,Sterling Wealth Partners,Priya Patel,18182,60,No
+2026-09-10 11:40,Riverside Care Group,Sophie Clarke,18183,150,No
+2026-09-10 12:50,Riverside Care Group,Daniel Hughes,18184,70,No
+2026-09-10 14:50,Riverside Care Group,James Smith,18184,65,No
+2026-09-10 13:03,Meridian Logistics,Daniel Hughes,18185,75,No
+2026-09-10 13:46,ABC Ltd,James Smith,18186,75,No
+2026-09-10 13:55,Pennine Engineering,Priya Patel,18187,20,No
+2026-09-10 14:45,Thames Valley Recruitment,Sophie Clarke,18188,30,No
+2026-09-11 09:30,Kingsbridge Architects,Daniel Hughes,18189,150,No
+2026-09-11 10:19,Castle Accountancy,James Smith,18190,30,No
+2026-09-11 10:46,Riverside Care Group,James Smith,18191,120,No
+2026-09-11 10:48,Pennine Engineering,Sophie Clarke,18192,45,No
+2026-09-11 12:48,Pennine Engineering,Daniel Hughes,18192,45,No
+2026-09-11 11:28,ABC Ltd,Priya Patel,18193,156,No
+2026-09-11 12:41,Castle Accountancy,Tom Walker,18194,75,No
+2026-09-11 14:41,Castle Accountancy,Sophie Clarke,18194,75,No
+2026-09-14 10:13,Elmfield Dental,Priya Patel,18195,45,No
+2026-09-14 10:30,Dorset Legal,Sophie Clarke,18196,30,No
+2026-09-14 11:29,Elmfield Dental,James Smith,18197,120,No
+2026-09-14 12:40,Castle Accountancy,Sophie Clarke,18198,90,No
+2026-09-14 14:40,Castle Accountancy,Daniel Hughes,18198,90,No
+2026-09-15 09:17,Harbour Physio,James Smith,18199,150,No
+2026-09-15 10:20,Bramley Homes,James Smith,18492,80,No
+2026-09-15 10:34,Bramley Homes,Priya Patel,18200,45,No
+2026-09-15 11:47,Pennine Engineering,Priya Patel,18201,90,No
+2026-09-15 11:47,Willow & Hart Interiors,James Smith,18202,30,No
+2026-09-15 12:17,ABC Ltd,James Smith,18203,15,No
+2026-09-15 13:08,Castle Accountancy,Tom Walker,18204,45,No
+2026-09-15 15:08,Castle Accountancy,Sophie Clarke,18204,45,No
+2026-09-15 13:15,Northgate Veterinary,Priya Patel,18205,90,No
+2026-09-15 13:19,Thames Valley Recruitment,James Smith,18206,75,No
+2026-09-16 09:04,Riverside Care Group,Priya Patel,18207,60,No
+2026-09-16 09:54,Riverside Care Group,James Smith,18208,30,No
+2026-09-16 10:12,Dorset Legal,Tom Walker,18209,75,No
+2026-09-16 11:11,Meridian Logistics,Priya Patel,18210,30,No
+2026-09-16 12:36,Pennine Engineering,Tom Walker,18211,90,No
+2026-09-16 13:47,Dorset Legal,Daniel Hughes,18212,15,No
+2026-09-16 13:56,Thames Valley Recruitment,Daniel Hughes,18213,75,No
+2026-09-17 09:00,Pennine Engineering,James Smith,18214,30,No
+2026-09-17 09:32,Meridian Logistics,James Smith,18215,45,No
+2026-09-17 09:35,ABC Ltd,Tom Walker,18216,60,No
+2026-09-17 09:50,Kingsbridge Architects,Sophie Clarke,18217,120,No
+2026-09-17 10:12,Smith & Co,Tom Walker,18218,75,No
+2026-09-17 12:12,Smith & Co,Sophie Clarke,18218,75,No
+2026-09-17 11:29,Pennine Engineering,Daniel Hughes,18219,170,No
+2026-09-17 11:54,Bramley Homes,James Smith,18220,45,Yes
+2026-09-17 13:54,Bramley Homes,Priya Patel,18220,45,Yes
+2026-09-18 09:27,Riverside Care Group,Daniel Hughes,18221,30,No
+2026-09-18 09:51,Meridian Logistics,Tom Walker,18222,30,No
+2026-09-18 09:58,ABC Ltd,Tom Walker,18223,20,No
+2026-09-18 10:56,Meridian Logistics,Tom Walker,18224,45,No
+2026-09-18 11:14,Meridian Logistics,Tom Walker,18225,90,No
+2026-09-18 11:45,Elmfield Dental,James Smith,18226,15,No
+2026-09-18 11:52,Dorset Legal,Tom Walker,18227,20,No
+2026-09-18 11:52,Dorset Legal,James Smith,18228,55,No
+2026-09-18 13:52,Dorset Legal,Priya Patel,18228,50,No
+2026-09-18 12:07,Willow & Hart Interiors,James Smith,18229,90,No
+2026-09-18 12:44,ABC Ltd,Sophie Clarke,18230,45,No
+2026-09-18 13:33,Harbour Physio,Priya Patel,18231,45,No
+2026-09-18 13:38,Dorset Legal,Tom Walker,18232,60,No
+2026-09-18 13:41,Elmfield Dental,Priya Patel,18233,70,No
+2026-09-18 13:41,Meridian Logistics,Priya Patel,18234,45,No
+2026-09-18 15:41,Meridian Logistics,Tom Walker,18234,45,No
+2026-09-21 09:21,Harbour Physio,Priya Patel,18235,90,No
+2026-09-21 10:17,Pennine Engineering,Daniel Hughes,18236,45,Yes
+2026-09-21 12:17,Pennine Engineering,James Smith,18236,45,Yes
+2026-09-21 10:58,ABC Ltd,Tom Walker,18237,120,No
+2026-09-21 10:58,Pennine Engineering,Priya Patel,18238,60,No
+2026-09-21 11:18,Riverside Care Group,Daniel Hughes,18239,90,No
+2026-09-21 12:51,Castle Accountancy,Daniel Hughes,18240,60,No
+2026-09-21 14:51,Castle Accountancy,James Smith,18240,60,No
+2026-09-21 13:08,Meridian Logistics,James Smith,18241,160,No
+2026-09-21 13:30,Elmfield Dental,Tom Walker,18242,75,Yes
+2026-09-21 15:30,Elmfield Dental,Sophie Clarke,18242,75,Yes
+2026-09-22 09:08,Riverside Care Group,Priya Patel,18243,180,No
+2026-09-22 09:24,Dorset Legal,James Smith,18244,75,No
+2026-09-22 12:14,Bramley Homes,Tom Walker,18245,30,Yes
+2026-09-22 12:19,Castle Accountancy,Priya Patel,18246,45,No
+2026-09-22 14:19,Castle Accountancy,Tom Walker,18246,45,No
+2026-09-22 12:50,Sterling Wealth Partners,Priya Patel,18247,90,No
+2026-09-22 13:16,ABC Ltd,James Smith,18248,30,No
+2026-09-22 13:23,Northgate Veterinary,Priya Patel,18249,150,No
+2026-09-22 13:44,Elmfield Dental,Tom Walker,18250,45,No
+2026-09-23 09:25,ABC Ltd,Sophie Clarke,18251,90,No
+2026-09-23 10:34,Bramley Homes,Tom Walker,18252,45,No
+2026-09-23 11:32,Northgate Veterinary,Daniel Hughes,18253,120,No
+2026-09-23 12:07,ABC Ltd,Sophie Clarke,18254,20,No
+2026-09-23 12:08,Bramley Homes,James Smith,18255,190,No
+2026-09-23 12:16,Dorset Legal,Tom Walker,18256,75,Yes
+2026-09-23 14:16,Dorset Legal,Sophie Clarke,18256,75,Yes
+2026-09-23 12:23,Dorset Legal,Sophie Clarke,18257,75,Yes
+2026-09-23 12:23,Riverside Care Group,Priya Patel,18258,90,No
+2026-09-23 14:23,Riverside Care Group,Tom Walker,18258,90,No
+2026-09-24 09:04,Bramley Homes,James Smith,18259,30,No
+2026-09-24 09:38,Bramley Homes,Daniel Hughes,18260,60,No
+2026-09-24 09:56,Riverside Care Group,James Smith,18261,150,No
+2026-09-24 10:03,Northgate Veterinary,Priya Patel,18262,75,No
+2026-09-24 12:03,Northgate Veterinary,Tom Walker,18262,75,No
+2026-09-24 11:24,Sterling Wealth Partners,Priya Patel,18263,45,No
+2026-09-24 11:41,Dorset Legal,James Smith,18264,60,No
+2026-09-24 11:59,Castle Accountancy,James Smith,18265,30,No
+2026-09-24 12:55,Meridian Logistics,Tom Walker,18266,75,No
+2026-09-24 12:59,Pennine Engineering,Daniel Hughes,18267,60,No
+2026-09-24 13:51,Kingsbridge Architects,Daniel Hughes,18268,90,No
+2026-09-24 15:51,Kingsbridge Architects,James Smith,18268,90,No
+2026-09-24 13:58,Castle Accountancy,Tom Walker,18269,90,No
+2026-09-25 10:15,Kingsbridge Architects,Tom Walker,18270,45,No
+2026-09-25 12:15,Kingsbridge Architects,Sophie Clarke,18270,45,No
+2026-09-25 11:07,Kingsbridge Architects,Sophie Clarke,18271,15,No
+2026-09-25 11:13,Dorset Legal,Daniel Hughes,18272,60,No
+2026-09-25 13:13,Dorset Legal,James Smith,18272,60,No
+2026-09-25 11:17,Bramley Homes,Sophie Clarke,18273,75,No
+2026-09-25 11:34,Harbour Physio,Sophie Clarke,18274,45,No
+2026-09-25 13:34,Harbour Physio,Daniel Hughes,18274,45,No
+2026-09-25 11:53,Pennine Engineering,Daniel Hughes,18275,90,No
+2026-09-25 13:16,Dorset Legal,Tom Walker,18276,20,No
+2026-09-25 13:36,Sterling Wealth Partners,Tom Walker,18277,60,Yes
+2026-09-28 09:25,ABC Ltd,Daniel Hughes,18278,75,No
+2026-09-28 11:25,ABC Ltd,James Smith,18278,75,No
+2026-09-28 09:32,Meridian Logistics,Daniel Hughes,18279,150,No
+2026-09-28 10:07,Harbour Physio,James Smith,18280,90,No
+2026-09-28 12:07,Harbour Physio,Priya Patel,18280,85,No
+2026-09-28 10:17,Meridian Logistics,Priya Patel,18281,20,No
+2026-09-28 10:35,Castle Accountancy,Priya Patel,18282,60,No
+2026-09-28 10:55,Kingsbridge Architects,Tom Walker,18283,150,No
+2026-09-28 11:20,Elmfield Dental,Tom Walker,18284,45,No
+2026-09-28 11:30,Willow & Hart Interiors,Priya Patel,18285,60,No
+2026-09-28 11:51,ABC Ltd,James Smith,18286,75,No
+2026-09-28 13:51,ABC Ltd,Priya Patel,18286,75,No
+2026-09-28 12:28,ABC Ltd,Priya Patel,18287,30,No
+2026-09-29 10:12,Sterling Wealth Partners,Tom Walker,18288,60,No
+2026-09-29 10:33,Dorset Legal,James Smith,18289,20,No
+2026-09-29 12:55,Dorset Legal,Sophie Clarke,18290,75,No
+2026-09-29 14:55,Dorset Legal,Daniel Hughes,18290,75,No
+2026-09-30 09:34,Castle Accountancy,Priya Patel,18291,120,No
+2026-09-30 09:48,ABC Ltd,Tom Walker,18292,30,No
+2026-09-30 10:01,Thames Valley Recruitment,James Smith,18293,120,No
+2026-09-30 10:15,ABC Ltd,Daniel Hughes,18294,45,No
+2026-09-30 12:15,ABC Ltd,James Smith,18294,45,No
+2026-09-30 10:29,Pennine Engineering,Tom Walker,18295,75,No
+2026-09-30 11:32,Elmfield Dental,Tom Walker,18296,45,No
+2026-09-30 13:32,Elmfield Dental,Sophie Clarke,18296,45,No
+2026-09-30 12:30,Sterling Wealth Partners,Daniel Hughes,18297,150,No
+2026-09-30 12:41,Bramley Homes,Tom Walker,18298,30,No
+2026-09-30 13:37,Castle Accountancy,Tom Walker,18299,45,No

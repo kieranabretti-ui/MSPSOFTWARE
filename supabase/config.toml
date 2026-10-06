@@ -1,0 +1,9 @@
+# Local Supabase settings (`supabase start`). Hosted projects take these from the dashboard.
+project_id = "msp-leak"
+
+[auth]
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:5173/app"]
+
+[functions.ai-review]
+verify_jwt = true
