@@ -191,6 +191,7 @@ export function buildLandingSnapshot(): LandingSnapshot {
       contractedUsers: ex.contracted_users,
       devices: ex.devices,
       contractedDevices: ex.contracted_devices,
+      health: ex.health,
       leakage: ex.leakage,
       findings: exFindings.map(lite),
       recommended,

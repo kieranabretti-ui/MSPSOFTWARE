@@ -410,6 +410,7 @@ export const DEMO: LandingSnapshot = {
     "contractedUsers": 35,
     "devices": 42,
     "contractedDevices": 42,
+    "health": "at_risk",
     "leakage": 740,
     "findings": [
       {

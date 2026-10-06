@@ -1,4 +1,4 @@
-import type { Category, Severity } from '../../engine/types'
+import type { Category, Health, Severity } from '../../engine/types'
 
 // The shape of the landing page's demo snapshot. The figures are produced by
 // running the real engine on the demo dataset (see buildSnapshot.ts), written
@@ -83,6 +83,7 @@ export interface LandingSnapshot {
     contractedUsers: number | null
     devices: number
     contractedDevices: number | null
+    health: Health
     leakage: number
     findings: SnapshotFinding[]
     recommended: number
