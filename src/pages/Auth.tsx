@@ -1,27 +1,14 @@
-import { useState, type FormEvent, type ReactNode } from 'react'
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { useState, type FormEvent } from 'react'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Mail } from 'lucide-react'
-import { useStore, supabaseConfigured } from '../data/store'
-import { Button, Field, inputCls, Logo } from '../components/ui'
+import { useStore } from '../data/store'
+import { Button, Field, TextLink, inputCls } from '../components/ui'
+import { AuthShell, DemoProof, FormError } from './auth/AuthShell'
 
-function Shell({ title, subtitle, children, footer }: { title: string; subtitle: string; children: ReactNode; footer: ReactNode }) {
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-sunken px-4 py-12">
-      <Link to="/" className="mb-8">
-        <Logo />
-      </Link>
-      <div className="w-full max-w-sm rounded-xl border border-line bg-surface p-6 sm:p-8">
-        <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
-        <p className="mt-1 text-body text-ink-3">{subtitle}</p>
-        <div className="mt-6">{children}</div>
-      </div>
-      <div className="mt-6 text-body text-ink-3">{footer}</div>
-      {!supabaseConfigured && (
-        <p className="mt-6 max-w-sm text-center text-caption text-ink-3">Running in local mode: accounts and data are stored in this browser only.</p>
-      )}
-    </div>
-  )
-}
+const EMAIL = /^\S+@\S+\.\S+$/
+
+const WHAT_IT_DOES =
+  'Headroom reads the exports your PSA, RMM and billing system already produce, then shows the out-of-scope work, unbilled time and agreement drift behind every pound.'
 
 export function Login() {
   const { signIn, sendMagicLink, backend, user, workspace, ready } = useStore()
@@ -37,7 +24,7 @@ export function Login() {
   const submit = async (e: FormEvent) => {
     e.preventDefault()
     setError(null)
-    if (!/^\S+@\S+\.\S+$/.test(email)) return setError('Enter a valid email address.')
+    if (!EMAIL.test(email)) return setError('Enter a valid email address.')
     if (!password) return setError('Enter your password.')
     setLoading(true)
     try {
@@ -52,7 +39,7 @@ export function Login() {
 
   const magic = async () => {
     setError(null)
-    if (!/^\S+@\S+\.\S+$/.test(email)) return setError('Enter your email address first.')
+    if (!EMAIL.test(email)) return setError('Enter your email address first.')
     setLoading(true)
     try {
       await sendMagicLink(email)
@@ -66,27 +53,37 @@ export function Login() {
 
   if (magicSent)
     return (
-      <Shell title="Check your email" subtitle={`We sent a sign-in link to ${email}.`} footer={<button className="underline" onClick={() => setMagicSent(false)}>Use a different email</button>}>
-        <div className="flex items-center gap-3 rounded-md bg-sunken p-4 text-body text-ink-2">
-          <Mail className="size-5 text-ink-3" /> Open the link on this device to sign in.
-        </div>
-      </Shell>
+      <AuthShell
+        title="Check your email"
+        subtitle={`We sent a sign-in link to ${email}.`}
+        asideBody={WHAT_IT_DOES}
+        aside={<DemoProof />}
+        footer={
+          <button
+            type="button"
+            className="text-small font-medium text-ink-2 underline-offset-4 transition-colors hover:text-ink hover:underline"
+            onClick={() => setMagicSent(false)}
+          >
+            Use a different email
+          </button>
+        }
+      >
+        <p className="flex items-start gap-2.5 rounded-md border border-line bg-sunken px-3.5 py-3 text-small text-ink-2">
+          <Mail className="mt-0.5 size-4 shrink-0 text-ink-3" aria-hidden />
+          Open the link on this device to sign in. It expires in an hour.
+        </p>
+      </AuthShell>
     )
 
   return (
-    <Shell
+    <AuthShell
       title="Sign in"
-      subtitle="Welcome back to Headroom."
+      subtitle="Your workspace, findings and reports are where you left them."
+      asideBody={WHAT_IT_DOES}
+      aside={<DemoProof />}
       footer={
         <>
-          New here?{' '}
-          <Link to="/signup" className="font-medium text-ink underline-offset-2 hover:underline">
-            Create an account
-          </Link>{' '}
-          or{' '}
-          <Link to="/demo" className="font-medium text-ink underline-offset-2 hover:underline">
-            view the demo
-          </Link>
+          New here? <TextLink to="/signup">Create an account</TextLink> or <TextLink to="/demo">view the demo</TextLink>
         </>
       }
     >
@@ -97,17 +94,17 @@ export function Login() {
         <Field label="Password">
           <input className={inputCls} type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </Field>
-        {error && <p className="rounded-md bg-danger-soft px-3 py-2 text-body text-danger">{error}</p>}
+        {error && <FormError>{error}</FormError>}
         <Button type="submit" className="w-full" loading={loading}>
           Sign in
         </Button>
         {backend.supportsMagicLink && (
           <Button type="button" variant="secondary" className="w-full" onClick={magic} disabled={loading}>
-            <Mail className="size-4" /> Email me a sign-in link
+            <Mail className="size-4" aria-hidden /> Email me a sign-in link
           </Button>
         )}
       </form>
-    </Shell>
+    </AuthShell>
   )
 }
 
@@ -126,7 +123,7 @@ export function Signup() {
     e.preventDefault()
     setError(null)
     if (!name.trim()) return setError('Enter your name.')
-    if (!/^\S+@\S+\.\S+$/.test(email)) return setError('Enter a valid email address.')
+    if (!EMAIL.test(email)) return setError('Enter a valid email address.')
     if (password.length < 8) return setError('Use at least 8 characters for your password.')
     setLoading(true)
     try {
@@ -142,21 +139,29 @@ export function Signup() {
 
   if (confirm)
     return (
-      <Shell title="Confirm your email" subtitle={`We sent a confirmation link to ${email}.`} footer={<Link to="/login" className="underline">Back to sign in</Link>}>
-        <p className="text-body text-ink-2">Click the link in the email, then sign in to set up your workspace.</p>
-      </Shell>
+      <AuthShell
+        title="Confirm your email"
+        subtitle={`We sent a confirmation link to ${email}.`}
+        asideBody={WHAT_IT_DOES}
+        aside={<DemoProof />}
+        footer={<TextLink to="/login">Back to sign in</TextLink>}
+      >
+        <p className="flex items-start gap-2.5 rounded-md border border-line bg-sunken px-3.5 py-3 text-small text-ink-2">
+          <Mail className="mt-0.5 size-4 shrink-0 text-ink-3" aria-hidden />
+          Open the link in that email, then sign in to set up your workspace.
+        </p>
+      </AuthShell>
     )
 
   return (
-    <Shell
+    <AuthShell
       title="Run a free revenue audit"
-      subtitle="Create your account. No PSA integration or card needed."
+      subtitle="Upload a ticket export and a contract. No PSA integration or card needed."
+      asideBody="Upload the exports you already have. Headroom checks every ticket, device and billing line against the agreement, then shows what you could be charging for."
+      aside={<DemoProof />}
       footer={
         <>
-          Already have an account?{' '}
-          <Link to="/login" className="font-medium text-ink underline-offset-2 hover:underline">
-            Sign in
-          </Link>
+          Already have an account? <TextLink to="/login">Sign in</TextLink>
         </>
       }
     >
@@ -170,11 +175,11 @@ export function Signup() {
         <Field label="Password" hint="At least 8 characters.">
           <input className={inputCls} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </Field>
-        {error && <p className="rounded-md bg-danger-soft px-3 py-2 text-body text-danger">{error}</p>}
+        {error && <FormError>{error}</FormError>}
         <Button type="submit" className="w-full" loading={loading}>
           Create account
         </Button>
       </form>
-    </Shell>
+    </AuthShell>
   )
 }

@@ -1,8 +1,9 @@
 // One report model, rendered both on screen and as a PDF.
-import type { Analysis, ClientMetrics, Finding, Workspace } from '../engine/types'
+import type { Analysis, ClientMetrics, Finding, Health, Workspace } from '../engine/types'
 import type { WorkspaceData } from '../data/backend'
 import { CATEGORY_META, HEALTH } from './labels'
 import { money, pct, hours, plural } from './format'
+import { color, paper, rgb, viz } from '../brand/tokens'
 
 export interface ReportModel {
   title: string
@@ -13,11 +14,14 @@ export interface ReportModel {
   total: number
   monthly: number
   annual: number
+  /** Agreement revenue over the analysed period: the billed side of the gap. */
+  billed: number
+  months: number
   findingCount: number
   executiveSummary: string[]
   breakdown: { label: string; count: number; value: number; share: number }[]
-  riskClients: { name: string; leakage: number; margin: number; health: string; reason: string }[]
-  sections: { key: 'OUT_OF_SCOPE' | 'AGREEMENT_DRIFT' | 'UNBILLED_TIME'; title: string; intro: string; rows: { client: string; title: string; detail: string; confidence: number; value: number }[] }[]
+  riskClients: { name: string; leakage: number; margin: number; health: string; status: Health; reason: string }[]
+  sections: { key: 'OUT_OF_SCOPE' | 'AGREEMENT_DRIFT' | 'UNBILLED_TIME'; title: string; intro: string; value: number; rows: { client: string; title: string; detail: string; confidence: number; value: number }[] }[]
   profitability: (ClientMetrics & { leakage: number })[]
   actions: { client: string; action: string; value: number }[]
   clientName: (id: string) => string
@@ -48,18 +52,20 @@ export function buildReport(ws: Workspace, analysis: Analysis, data: WorkspaceDa
     .filter((c) => c.leakage > 0 || c.health === 'at_risk')
     .sort((a, b) => b.leakage - a.leakage)
     .slice(0, 6)
-    .map((c) => ({ name: c.name, leakage: c.leakage, margin: c.margin, health: HEALTH[c.health].label, reason: c.reasons[0] ?? '' }))
+    .map((c) => ({ name: c.name, leakage: c.leakage, margin: c.margin, health: HEALTH[c.health].label, status: c.health, reason: c.reasons[0] ?? '' }))
 
   const section = (key: ReportModel['sections'][number]['key'], title: string, intro: string) => {
     const fs = live.filter((f) => f.category === key).sort((a, b) => b.estimated_value - a.estimated_value)
+    const value = fs.reduce((a, f) => a + f.estimated_value, 0)
     return {
       key,
       title,
-      intro: fs.length ? `${intro} ${plural(fs.length, 'finding')} worth ${money(fs.reduce((a, f) => a + f.estimated_value, 0))}.` : 'Nothing found in this period.',
+      intro: fs.length ? `${intro} ${plural(fs.length, 'finding')} worth ${money(value)}.` : 'Nothing found in this period.',
+      value,
       rows: fs.slice(0, 10).map((f) => ({
         client: clientName(f.client_id),
         title: f.title,
-        detail: f.meta.ticket_ref ? `Ticket #${f.meta.ticket_ref}` : f.monthly_value ? `${money(f.monthly_value)}/month` : '',
+        detail: f.meta.ticket_ref ? `Ticket #${f.meta.ticket_ref}` : f.monthly_value ? `${money(f.monthly_value)} a month` : '',
         confidence: f.confidence,
         value: f.estimated_value,
       })),
@@ -90,6 +96,8 @@ export function buildReport(ws: Workspace, analysis: Analysis, data: WorkspaceDa
     total,
     monthly,
     annual: monthly * 12,
+    billed: s.client_metrics.reduce((a, c) => a + c.mrr, 0) * s.months.length,
+    months: s.months.length,
     findingCount: live.length,
     executiveSummary,
     breakdown,
@@ -108,120 +116,318 @@ export function buildReport(ws: Workspace, analysis: Analysis, data: WorkspaceDa
 export const DISCLAIMER =
   'All figures are estimates of potential revenue based on the data provided and the assumptions configured in Headroom. They are not guaranteed to be recoverable. Review each finding against the client agreement before taking action.'
 
+
+type RGB = [number, number, number]
+type Weight = 'normal' | 'bold'
+
+// The PDF: an ink cover band in the product's own colours, then the report on
+// paper. Lime only ever sits on ink; on white, money found takes the deep
+// accent. Figures are tabular in Host Grotesk by default.
 export async function reportPdf(r: ReportModel): Promise<Blob> {
-  const { jsPDF } = await import('jspdf')
-  const { default: autoTable } = await import('jspdf-autotable')
+  const [{ jsPDF }, { default: autoTable }, brand] = await Promise.all([import('jspdf'), import('jspdf-autotable'), import('./pdfBrand')])
   const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+  const F = brand.registerFonts(doc)
+  doc.setProperties({ title: `${r.title}, ${r.workspace}, ${r.period}`, subject: 'Potential revenue leakage', author: 'Headroom', creator: 'Headroom' })
+
   const W = doc.internal.pageSize.getWidth()
+  const H = doc.internal.pageSize.getHeight()
   const M = 48
+  const CW = W - M * 2
+  const FOOT = 64 // kept clear for the footer
+  const MEASURE = 432 // prose line length, about 80 characters
+
+  // Paper
+  const ink = rgb(paper.text)
+  const ink2 = rgb(paper.textSecondary)
+  const muted = rgb(paper.muted)
+  const rule = rgb(paper.border)
+  const track = rgb(paper.borderMuted)
+  const sunken = rgb(paper.surfaceSunken)
+  const found = rgb(color.accentDeep)
+  const HEALTH_INK: Record<Health, RGB> = { healthy: rgb(paper.success), watch: rgb(paper.warning), at_risk: rgb(paper.danger) }
+  // Ink band
+  const band = rgb(color.ink)
+  const bone = rgb(color.bone)
+  const bone2 = rgb(color.textSecondary)
+  const boneMuted = rgb(color.muted)
+  const hairline = rgb(color.border)
+  const lime = rgb(color.accent)
+
+  // y is the top of the next block.
   let y = M
-  const ink: [number, number, number] = [24, 24, 27]
-  const muted: [number, number, number] = [113, 113, 122]
+  const type = (size: number, weight: Weight, c: RGB) => doc.setFont(F, weight).setFontSize(size).setTextColor(...c)
+  const width = (t: string, size: number, weight: Weight = 'normal') => doc.setFont(F, weight).setFontSize(size).getTextWidth(t)
+  const fit = (t: string, maxW: number, size: number, min: number, weight: Weight = 'bold') => {
+    while (size > min && width(t, size, weight) > maxW) size -= 1
+    return size
+  }
   const after = () => (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY
   const ensure = (h: number) => {
-    if (y + h > doc.internal.pageSize.getHeight() - M) {
+    if (y + h > H - FOOT) {
       doc.addPage()
       y = M
     }
   }
-  const h2 = (t: string) => {
-    ensure(60)
-    y += 14
-    doc.setFont('helvetica', 'bold').setFontSize(13).setTextColor(...ink).text(t, M, y)
-    y += 16
-  }
-  const para = (t: string, size = 10) => {
-    doc.setFont('helvetica', 'normal').setFontSize(size).setTextColor(...ink)
-    for (const line of doc.splitTextToSize(t, W - M * 2) as string[]) {
-      ensure(14)
-      doc.text(line, M, y)
-      y += size + 4
+  // Runs of differently styled text on one baseline, left or right aligned.
+  const runs = (parts: { t: string; size: number; weight?: Weight; c: RGB }[], x: number, base: number, align: 'left' | 'right' = 'left') => {
+    let cx = align === 'right' ? x - parts.reduce((a, p) => a + width(p.t, p.size, p.weight), 0) : x
+    for (const p of parts) {
+      const w = width(p.t, p.size, p.weight)
+      doc.setTextColor(...p.c).text(p.t, cx, base)
+      cx += w
     }
-    y += 4
   }
-  const table = (head: string[], body: (string | number)[][], right: number[] = []) => {
+  const para = (t: string, o: { size?: number; c?: RGB; w?: number; lead?: number; space?: number } = {}) => {
+    const size = o.size ?? 10
+    const lead = o.lead ?? size * 1.5
+    type(size, 'normal', o.c ?? ink2)
+    for (const ln of doc.splitTextToSize(t, o.w ?? MEASURE) as string[]) {
+      ensure(lead)
+      doc.text(ln, M, y + size * 0.78)
+      y += lead
+    }
+    y += o.space ?? 5
+  }
+  // A sentence whose figures carry their own weight and colour, wrapped by word.
+  const statement = (segs: { t: string; bold?: boolean; c?: RGB }[], size: number, lead: number, maxW: number) => {
+    const words = segs.flatMap((s) => s.t.split(/(\s+)/).filter(Boolean).map((t) => ({ t, weight: (s.bold ? 'bold' : 'normal') as Weight, c: s.c ?? ink })))
+    let x = M
+    ensure(lead)
+    for (const w of words) {
+      const ww = width(w.t, size, w.weight)
+      if (/^\s+$/.test(w.t)) {
+        if (x > M) x += ww
+        continue
+      }
+      if (x + ww > M + maxW && x > M) {
+        y += lead
+        ensure(lead)
+        x = M
+      }
+      doc.setTextColor(...w.c).text(w.t, x, y + size * 0.78)
+      x += ww
+    }
+    y += lead
+  }
+  // keep: the height to hold with the heading, so short tables never split.
+  const h2 = (t: string, right?: string, keep = 0) => {
+    if (y > M) y += 24
+    ensure(Math.max(104, Math.min(keep, 380)))
+    type(13, 'bold', ink).text(t, M, y + 10)
+    if (right) type(10, 'bold', found).text(right, W - M, y + 10, { align: 'right' })
+    y += 24
+  }
+
+  type Col = { head: string; right?: boolean; width?: number; c?: RGB; bold?: boolean; dot?: (row: number) => RGB }
+  const PAD = { top: 5.5, bottom: 5.5, left: 0, right: 10 }
+  const HEAD_PAD = { top: 0, bottom: 6, left: 0, right: 10 }
+  const table = (cols: Col[], body: string[][], o: { foot?: string[]; size?: number; bar?: { col: number; share: (row: number) => number } } = {}) => {
+    const size = o.size ?? 8.5
     autoTable(doc, {
       startY: y,
-      head: [head],
-      body: body.map((r) => r.map(String)),
-      margin: { left: M, right: M },
-      styles: { font: 'helvetica', fontSize: 8.5, cellPadding: 5, textColor: ink, lineColor: [228, 228, 231], lineWidth: 0 },
-      headStyles: { fillColor: [244, 244, 245], textColor: muted, fontStyle: 'bold' },
-      columnStyles: Object.fromEntries(right.map((i) => [i, { halign: 'right' }])),
+      margin: { left: M, right: M, top: M, bottom: FOOT },
+      head: [cols.map((c) => c.head.toUpperCase())],
+      body,
+      foot: o.foot ? [o.foot] : undefined,
+      showFoot: 'lastPage',
       theme: 'plain',
+      rowPageBreak: 'avoid',
+      styles: { font: F, fontStyle: 'normal', fontSize: size, textColor: ink2, cellPadding: PAD, valign: 'top', overflow: 'linebreak', lineColor: rule, lineWidth: 0 },
+      headStyles: { fontStyle: 'bold', fontSize: 6.5, textColor: muted, cellPadding: HEAD_PAD, valign: 'bottom', lineColor: ink, lineWidth: { bottom: 0.75 } },
+      bodyStyles: { lineColor: rule, lineWidth: { bottom: 0.4 } },
+      footStyles: { fontStyle: 'bold', textColor: ink, lineColor: ink, lineWidth: { top: 0.75 } },
+      columnStyles: Object.fromEntries(cols.map((c, i) => [i, { cellWidth: c.width ?? (c.right ? 'wrap' : 'auto') }])),
+      didParseCell: (d) => {
+        const i = d.column.index
+        const c = cols[i]
+        const s = d.cell.styles
+        if (c.right) s.halign = 'right'
+        const pad = { ...(d.section === 'head' ? HEAD_PAD : PAD) }
+        if (i === cols.length - 1) pad.right = 0
+        if (c.dot && d.section === 'body') pad.left = 9
+        s.cellPadding = pad
+        if (c.width) s.cellWidth = c.width
+        if (d.section === 'body') {
+          s.textColor = c.dot ? c.dot(d.row.index) : (c.c ?? (i === 0 || c.right ? ink : ink2))
+          if (c.bold) s.fontStyle = 'bold'
+        }
+      },
       didDrawCell: (d) => {
-        if (d.section === 'body') doc.setDrawColor(228, 228, 231).line(d.cell.x, d.cell.y + d.cell.height, d.cell.x + d.cell.width, d.cell.y + d.cell.height)
+        if (d.section !== 'body') return
+        const c = cols[d.column.index]
+        const mid = d.cell.y + PAD.top + size * 0.5
+        if (c.dot) doc.setFillColor(...c.dot(d.row.index)).circle(d.cell.x + 2.5, mid, 2, 'F')
+        if (o.bar && d.column.index === o.bar.col) {
+          const x0 = d.cell.x + 4
+          const tw = d.cell.width - 4 - 34
+          doc.setFillColor(...track).roundedRect(x0, mid - 1.5, tw, 3, 1.5, 1.5, 'F')
+          const f = Math.max(0, Math.min(1, o.bar.share(d.row.index)))
+          if (f > 0) doc.setFillColor(...muted).roundedRect(x0, mid - 1.5, Math.max(3, tw * f), 3, 1.5, 1.5, 'F')
+        }
       },
     })
-    y = after() + 12
+    y = after() + 4
   }
 
-  // header band
-  doc.setFillColor(...ink).rect(0, 0, W, 6, 'F')
-  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...muted).text(`${r.workspace.toUpperCase()}${r.isDemo ? '  ·  DEMO DATA' : ''}`, M, y)
-  y += 24
-  doc.setFontSize(22).setTextColor(...ink).text(r.title, M, y)
-  y += 20
-  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...muted).text(`Period: ${r.period}   ·   Generated ${r.generated}`, M, y)
-  y += 28
+  // Measured: heading 24, label row 18, a one-line row 21.
+  const ROW = 21
+  const tableH = (rows: number, foot = false) => 24 + 18 + rows * ROW + (foot ? ROW : 0) + 4
 
-  // headline numbers
-  const boxW = (W - M * 2 - 16) / 3
-  ;[
-    [money(r.total), 'Identified potential leakage'],
-    [`${money(r.monthly)}/mo`, 'Monthly recurring opportunity'],
-    [money(r.annual), 'Annualised opportunity'],
-  ].forEach(([v, l], i) => {
-    const x = M + i * (boxW + 8)
-    doc.setDrawColor(228, 228, 231).setFillColor(250, 250, 250).roundedRect(x, y, boxW, 58, 6, 6, 'FD')
-    doc.setFont('helvetica', 'bold').setFontSize(16).setTextColor(...ink).text(v, x + 12, y + 26)
-    doc.setFont('helvetica', 'normal').setFontSize(8.5).setTextColor(...muted).text(l, x + 12, y + 44)
-  })
-  y += 76
-  para(`We identified ${money(r.total)} of potential revenue leakage across your MSP.`, 11)
+  // Cover band
+  const BAND = 326
+  doc.setFillColor(...band).rect(0, 0, W, BAND, 'F')
+  brand.drawMark(doc, M, 40, 22)
+  type(14, 'bold', bone).text('Headroom', M + 31, 56)
+  if (r.isDemo) {
+    const label = 'Demo data'
+    const pw = width(label, 8, 'bold') + 16
+    doc.setDrawColor(...hairline).setLineWidth(0.75).roundedRect(W - M - pw, 42, pw, 18, 3, 3, 'S')
+    type(8, 'bold', bone2).text(label, W - M - pw / 2, 53.8, { align: 'center' })
+  }
+  const titleSize = fit(r.title, CW, 28, 20)
+  type(titleSize, 'bold', bone).text(r.title, M, 118, { charSpace: -titleSize * 0.02 })
+  type(10, 'normal', bone2).text(`${r.workspace}  ·  ${r.period}  ·  Generated ${r.generated}`, M, 140)
+  doc.setDrawColor(...hairline).setLineWidth(0.5).line(M, 166, W - M, 166)
+
+  const LABEL = 192
+  const BASE = 240
+  const NOTE = 258
+  const COL1 = M + CW * 0.54
+  const COL2 = M + CW * 0.78
+  type(9, 'normal', boneMuted).text('Potential revenue leakage identified', M, LABEL)
+  const bigSize = fit(money(r.total), COL1 - M - 24, 48, 28)
+  type(bigSize, 'bold', bone).text(money(r.total), M, BASE, { charSpace: -bigSize * 0.03 })
+  type(9, 'normal', bone2).text(`${plural(r.findingCount, 'finding')} in ${r.period}`, M, NOTE)
+
+  const stat = (x: number, maxW: number, label: string, value: string, c: RGB, unit: string | null, note: string) => {
+    type(9, 'normal', boneMuted).text(label, x, LABEL)
+    const size = fit(value, maxW, 22, 14)
+    const vw = width(value, size, 'bold')
+    const unitFits = !!unit && vw + 4 + width(unit, 9) <= maxW
+    type(size, 'bold', c).text(value, x, BASE)
+    if (unit && unitFits) type(9, 'normal', bone2).text(unit, x + vw + 4, BASE)
+    type(8, 'normal', boneMuted).text(unit && !unitFits ? `${unit}, ${note.toLowerCase()}` : note, x, NOTE)
+  }
+  stat(COL1, COL2 - COL1 - 12, 'Recurring leakage', money(r.monthly), r.monthly > 0 ? lime : bone2, 'a month', 'Potential MRR to recover')
+  stat(COL2, W - M - COL2, 'Annualised', money(r.annual), bone, null, 'If left uncorrected')
+
+  // The gap: what the agreements billed, and the leakage on top.
+  if (r.billed > 0) {
+    const gy = 282
+    const gh = 8
+    const share = r.total / (r.billed + r.total)
+    const gw = r.total > 0 ? Math.max(CW * share, CW * 0.015) : 0
+    const bw = CW - (gw ? gw + 2 : 0)
+    doc.setFillColor(...rgb(viz.series)).roundedRect(M, gy, bw, gh, 2, 2, 'F')
+    if (gw) {
+      doc.rect(M + bw - 2, gy, 2, gh, 'F')
+      doc.setFillColor(...lime).roundedRect(W - M - gw, gy, gw, gh, 2, 2, 'F').rect(W - M - gw, gy, Math.min(2, gw), gh, 'F')
+    }
+    runs(
+      [
+        { t: 'Billed ', size: 8, c: boneMuted },
+        { t: money(r.billed), size: 8, c: bone2 },
+      ],
+      M,
+      gy + gh + 16,
+    )
+    runs(
+      [
+        { t: 'Unbilled ', size: 8, c: boneMuted },
+        { t: money(r.total), size: 8, weight: 'bold', c: lime },
+        { t: `   ${(share * 100).toFixed(1)}%`, size: 8, c: boneMuted },
+      ],
+      W - M,
+      gy + gh + 16,
+      'right',
+    )
+  }
+
+  // The report, on paper
+  y = BAND + 34
+  statement(
+    [{ t: 'We identified ' }, { t: money(r.total), bold: true, c: found }, { t: ' of potential revenue leakage across your MSP.' }],
+    15,
+    22,
+    CW,
+  )
 
   h2('Executive summary')
   r.executiveSummary.forEach((p) => para(p))
 
-  h2('Revenue leakage breakdown')
-  table(['Category', 'Findings', 'Potential value', 'Share'], r.breakdown.map((b) => [b.label, b.count, money(b.value), pct(b.share)]), [1, 2, 3])
+  h2('Revenue leakage breakdown', money(r.total), tableH(r.breakdown.length, true))
+  const maxShare = Math.max(0.0001, ...r.breakdown.map((b) => b.share))
+  table(
+    [{ head: 'Category' }, { head: 'Findings', right: true, width: 56 }, { head: 'Potential value', right: true, width: 86 }, { head: 'Share', right: true, width: 120 }],
+    r.breakdown.map((b) => [b.label, String(b.count), money(b.value), pct(b.share)]),
+    { foot: ['Total', String(r.findingCount), money(r.total), r.total ? '100%' : '0%'], bar: { col: 3, share: (i) => r.breakdown[i].share / maxShare } },
+  )
 
-  h2('Highest risk clients')
-  table(['Client', 'Leakage', 'Margin', 'Risk', 'Main reason'], r.riskClients.map((c) => [c.name, money(c.leakage), pct(c.margin), c.health, c.reason]), [1, 2])
+  h2('Highest risk clients', undefined, tableH(r.riskClients.length))
+  table(
+    [{ head: 'Client', width: 128 }, { head: 'Leakage', right: true }, { head: 'Margin', right: true }, { head: 'Status', width: 64, dot: (i) => HEALTH_INK[r.riskClients[i].status] }, { head: 'Main reason' }],
+    r.riskClients.map((c) => [c.name, money(c.leakage), pct(c.margin), c.health, c.reason]),
+  )
 
   for (const s of r.sections) {
-    h2(s.title)
-    para(s.intro)
-    if (s.rows.length) table(['Client', 'Finding', 'Reference', 'Confidence', 'Value'], s.rows.map((x) => [x.client, x.title, x.detail, `${x.confidence}%`, money(x.value)]), [3, 4])
+    h2(s.title, s.value > 0 ? money(s.value) : undefined, tableH(s.rows.length) + 40)
+    para(s.intro, { size: 9.5, space: 8 })
+    if (s.rows.length)
+      table(
+        [{ head: 'Client', width: 128 }, { head: 'Finding' }, { head: 'Reference', width: 80, c: muted }, { head: 'Confidence', right: true }, { head: 'Value', right: true }],
+        s.rows.map((x) => [x.client, x.title, x.detail, `${x.confidence}%`, money(x.value)]),
+      )
   }
 
   h2('Client profitability')
   table(
-    ['Client', 'MRR', 'Labour', 'Software', 'Contribution', 'Margin', 'Hours/mo'],
-    r.profitability.map((c) => [c.name, money(c.mrr), money(c.labour_cost), money(c.software_cost), money(c.contribution), pct(c.margin), hours(c.avg_monthly_hours)]),
-    [1, 2, 3, 4, 5, 6],
+    [
+      { head: 'Client' },
+      { head: 'MRR', right: true },
+      { head: 'Labour', right: true },
+      { head: 'Software', right: true },
+      { head: 'Contribution', right: true },
+      { head: 'Margin', right: true },
+      { head: 'Hours/mo', right: true },
+      { head: 'Status', width: 58, dot: (i) => HEALTH_INK[r.profitability[i].health] },
+    ],
+    r.profitability.map((c) => [c.name, money(c.mrr), money(c.labour_cost), money(c.software_cost), money(c.contribution), pct(c.margin), hours(c.avg_monthly_hours), HEALTH[c.health].label]),
+    { size: 8 },
   )
 
   h2('Recommended actions')
-  table(['Client', 'Action', 'Value'], r.actions.map((a) => [a.client, a.action, money(a.value)]), [2])
+  table(
+    [{ head: '#', width: 18, c: muted }, { head: 'Client', width: 110 }, { head: 'Action' }, { head: 'Value', right: true }],
+    r.actions.map((a, i) => [String(i + 1), a.client, a.action, money(a.value)]),
+  )
 
-  h2('Estimated annual opportunity')
-  para(`If the recurring items in this report are corrected, the estimated annual opportunity is ${money(r.annual)} (${money(r.monthly)} a month), in addition to the ${money(r.total)} identified in ${r.period}.`)
+  // Closing: the annual opportunity, set apart on a sunken panel.
+  const sentence = `If the recurring items in this report are corrected, the estimated annual opportunity is ${money(r.annual)} (${money(r.monthly)} a month), in addition to the ${money(r.total)} identified in ${r.period}.`
+  const PANEL = 20
+  const LEFT = 168
+  type(9.5, 'normal', ink2)
+  const lines = doc.splitTextToSize(sentence, CW - PANEL * 2 - LEFT) as string[]
+  const panelH = Math.max(84, PANEL * 2 + lines.length * 14.5)
+  y += 30
+  ensure(panelH + 60)
+  doc.setFillColor(...sunken).roundedRect(M, y, CW, panelH, 6, 6, 'F')
+  type(8.5, 'normal', muted).text('Estimated annual opportunity', M + PANEL, y + PANEL + 7)
+  const annualSize = fit(money(r.annual), LEFT - 16, 24, 16)
+  type(annualSize, 'bold', found).text(money(r.annual), M + PANEL, y + PANEL + 36, { charSpace: -annualSize * 0.02 })
+  type(9.5, 'normal', ink2).text(lines, M + PANEL + LEFT, y + PANEL + 8, { lineHeightFactor: 1.53 })
+  y += panelH + 18
 
-  y += 6
-  doc.setFont('helvetica', 'italic').setFontSize(8).setTextColor(...muted)
-  for (const line of doc.splitTextToSize(DISCLAIMER, W - M * 2) as string[]) {
-    ensure(12)
-    doc.text(line, M, y)
-    y += 11
-  }
+  para(DISCLAIMER, { size: 7.5, c: muted, w: CW, lead: 11 })
 
+  // Footer on every page
   const pages = doc.getNumberOfPages()
   for (let i = 1; i <= pages; i++) {
     doc.setPage(i)
-    doc.setFont('helvetica', 'normal').setFontSize(8).setTextColor(...muted)
-    doc.text(`Headroom · ${r.workspace} · ${r.period}`, M, doc.internal.pageSize.getHeight() - 24)
-    doc.text(`${i} / ${pages}`, W - M, doc.internal.pageSize.getHeight() - 24, { align: 'right' })
+    const fy = H - 30
+    doc.setDrawColor(...rule).setLineWidth(0.4).line(M, fy - 14, W - M, fy - 14)
+    brand.drawMark(doc, M, fy - 7.4, 9, 'paper')
+    type(7.5, 'normal', muted).text(`Headroom  ·  ${r.workspace}  ·  ${r.period}`, M + 15, fy)
+    doc.text(`Page ${i} of ${pages}`, W - M, fy, { align: 'right' })
   }
   return doc.output('blob')
 }

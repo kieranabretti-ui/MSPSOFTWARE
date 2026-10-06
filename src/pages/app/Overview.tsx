@@ -1,58 +1,20 @@
-import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, ArrowUpRight, Database, FileText, Play, Sparkles, Upload } from 'lucide-react'
 import { useMetrics, useStore, openish } from '../../data/store'
-import { Button, ButtonLink, Card, CardHeader, Disclaimer, EmptyState, HealthDot, PageHeader, SeverityBadge } from '../../components/ui'
-import { TrendChart } from '../../components/charts'
-import { useToast } from '../../components/toast'
-import { money, plural, relative } from '../../lib/format'
-import { CATEGORY_META, PRIMARY_CATEGORIES, ALL_CATEGORIES } from '../../lib/labels'
+import { ButtonLink, PageHeader } from '../../components/ui'
+import { ICONS } from '../../brand/icons'
+import { plural, relative } from '../../lib/format'
+import { ALL_CATEGORIES, PRIMARY_CATEGORIES, SEVERITY_ORDER } from '../../lib/labels'
+import type { Health } from '../../engine/types'
+import { GetStarted } from './overview/FirstRun'
+import { Hero } from './overview/Hero'
+import { ActionsPanel, CategoryBreakdown, ClientRisk, LeakageTrend, PriorityFindings, type RiskClient } from './overview/sections'
 
-export function GetStarted() {
-  const { loadDemoData, data } = useStore()
-  const toast = useToast()
-  const nav = useNavigate()
-  const hasData = data.tickets.length + data.clients.length > 0
-  return (
-    <Card>
-      <EmptyState
-        icon={<Sparkles className="size-5" />}
-        title={hasData ? 'Your data is ready to analyse' : 'Find out where your MSP is losing money'}
-        body={
-          hasData
-            ? 'Run the analysis to check your tickets, time, agreements and billing for revenue leakage.'
-            : 'Upload exports from your PSA and billing system, or load a realistic demo MSP to see a full analysis in seconds.'
-        }
-        action={
-          hasData ? (
-            <ButtonLink to="/app/data">
-              <Play className="size-4" /> Go to data and run analysis
-            </ButtonLink>
-          ) : (
-            <>
-              <Button
-                onClick={async () => {
-                  try {
-                    await loadDemoData()
-                    toast('Demo MSP loaded and analysed.')
-                    nav('/app')
-                  } catch (e) {
-                    toast(e instanceof Error ? e.message : 'Could not load demo data.', 'error')
-                  }
-                }}
-              >
-                <Database className="size-4" /> Load demo data
-              </Button>
-              <ButtonLink to="/app/data" variant="secondary">
-                <Upload className="size-4" /> Upload your data
-              </ButtonLink>
-            </>
-          )
-        }
-      />
-    </Card>
-  )
-}
+// Imported by the Findings and Reports pages for their own first-run state.
+export { GetStarted }
 
+const HEALTH_RANK: Record<Health, number> = { at_risk: 0, watch: 1, healthy: 2 }
+
+// Revenue Protection, in the order an owner reads it: the money, what to act
+// on first, which clients, where recovery stands, then the supporting data.
 export default function Overview() {
   const { analysis, data, workspace } = useStore()
   const m = useMetrics()
@@ -66,190 +28,71 @@ export default function Overview() {
     )
 
   const s = analysis.summary
-  const top = data.findings.filter((f) => f.status !== 'dismissed').sort((a, b) => b.estimated_value - a.estimated_value).slice(0, 5)
-  const risky = s.client_metrics
-    .map((c) => ({ ...c, leakage: m.leakageByClient.get(c.client_id) ?? 0 }))
+  const months = s.months.length
+  const billed = s.client_metrics.reduce((a, c) => a + c.mrr, 0) * months
+
+  const open = data.findings.filter(openish)
+  const criticalCount = open.filter((f) => f.severity === 'CRITICAL').length
+  const priority = [...open]
+    .sort((a, b) => SEVERITY_ORDER.indexOf(a.severity) - SEVERITY_ORDER.indexOf(b.severity) || b.estimated_value - a.estimated_value)
+    .slice(0, 5)
+
+  const risky: RiskClient[] = s.client_metrics
+    .map((c) => ({ ...c, leakage: m.leakageByClient.get(c.client_id) ?? 0, billed: c.mrr * months }))
     .filter((c) => c.health !== 'healthy' || c.leakage > 0)
-    .sort((a, b) => (a.health === b.health ? b.leakage - a.leakage : a.health === 'at_risk' ? -1 : b.health === 'at_risk' ? 1 : a.health === 'watch' ? -1 : 1))
-    .slice(0, 6)
-  const others = ALL_CATEGORIES.filter((c) => !PRIMARY_CATEGORIES.includes(c) && m.byCategory[c])
-  const activeActions = data.actions.filter((a) => a.status === 'open' || a.status === 'in_progress')
+    .sort((a, b) => HEALTH_RANK[a.health] - HEALTH_RANK[b.health] || b.leakage - a.leakage)
+    .slice(0, 5)
+
+  const categories = ALL_CATEGORIES.filter((c) => PRIMARY_CATEGORIES.includes(c) || m.byCategory[c])
+    .map((c) => {
+      const v = m.byCategory[c]
+      const sub = c === 'UNDERPRICED_CLIENT' ? plural(v?.clients.size ?? 0, 'client') : plural(v?.count ?? 0, 'finding')
+      return { category: c, value: v?.value ?? 0, sub }
+    })
+    .sort((a, b) => b.value - a.value)
+
+  const active = data.actions.filter((a) => a.status === 'open' || a.status === 'in_progress')
 
   return (
     <>
       <PageHeader
         title="Revenue Protection"
         subtitle={
-          <>
+          <span className="tnum">
             {s.period_label} · {plural(s.data_counts.tickets, 'ticket')} and {plural(s.data_counts.clients, 'client')} analysed {relative(analysis.created_at)}
-          </>
+          </span>
         }
         actions={
           <>
-            <ButtonLink to="/app/data" variant="secondary" size="sm">
-              <Upload className="size-3.5" /> Data
+            <ButtonLink to="/app/data" variant="ghost" size="sm">
+              <ICONS.data className="size-4" /> Data
             </ButtonLink>
-            <ButtonLink to="/app/reports" size="sm">
-              <FileText className="size-3.5" /> View report
+            <ButtonLink to="/app/reports" variant="secondary" size="sm">
+              <ICONS.reports className="size-4" /> View report
             </ButtonLink>
           </>
         }
       />
 
-      {/* hero */}
-      <Card className="overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr]">
-          <div className="p-6 sm:p-8">
-            <p className="text-body font-medium text-ink-3">Potential revenue leakage identified</p>
-            <p className="tnum mt-2 text-5xl font-semibold tracking-tight text-ink sm:text-6xl" data-testid="hero-total">
-              {money(m.total)}
-            </p>
-            <p className="mt-3 text-body text-ink-3">
-              Across {plural(m.count, 'finding')} in {s.period_label}.{' '}
-              <Link to="/app/findings" className="font-medium text-ink underline-offset-2 hover:underline">
-                Review findings
-              </Link>
-            </p>
-          </div>
-          <div className="grid grid-cols-2 border-t border-line-soft lg:grid-cols-1 lg:border-l lg:border-t-0">
-            <div className="border-r border-line-soft p-6 lg:border-b lg:border-r-0">
-              <p className="tnum text-2xl font-semibold tracking-tight">
-                {money(m.monthly)}
-                <span className="text-base font-medium text-ink-3">/month</span>
-              </p>
-              <p className="mt-1 text-small text-ink-3">Recurring leakage, if left uncorrected</p>
-            </div>
-            <div className="p-6">
-              <p className="tnum text-2xl font-semibold tracking-tight">{money(m.annual)}</p>
-              <p className="mt-1 text-small text-ink-3">Annualised recurring opportunity</p>
-            </div>
-          </div>
-        </div>
-        <div className="border-t border-line-soft bg-sunken px-6 py-3 sm:px-8">
-          <Disclaimer />
-        </div>
-      </Card>
+      <Hero total={m.total} monthly={m.monthly} annual={m.annual} findingCount={m.count} openCount={m.openCount} periodLabel={s.period_label} billed={billed} months={months} />
 
-      {/* categories */}
-      <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {PRIMARY_CATEGORIES.map((c) => {
-          const v = m.byCategory[c]
-          const isClients = c === 'UNDERPRICED_CLIENT'
-          return (
-            <Link key={c} to={`/app/findings?category=${c}`} className="group rounded-lg border border-line bg-surface p-4 transition hover:border-line-strong sm:p-5">
-              <div className="flex items-start justify-between">
-                <p className="text-small font-medium text-ink-2">{CATEGORY_META[c].label}</p>
-                <ArrowUpRight className="size-4 text-ink-4 transition group-hover:text-ink-2" />
-              </div>
-              <p className="tnum mt-3 text-2xl font-semibold tracking-tight">{money(v?.value ?? 0)}</p>
-              <p className="mt-1 text-caption text-ink-3">{isClients ? plural(v?.clients.size ?? 0, 'client') : plural(v?.count ?? 0, 'finding')}</p>
-            </Link>
-          )
-        })}
-      </div>
-      {others.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {others.map((c) => (
-            <Link key={c} to={`/app/findings?category=${c}`} className="inline-flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-1.5 text-small text-ink-2 hover:border-line-strong">
-              {CATEGORY_META[c].label}
-              <span className="tnum font-semibold text-ink">{money(m.byCategory[c].value)}</span>
-              <span className="text-ink-3">· {m.byCategory[c].count}</span>
-            </Link>
-          ))}
-        </div>
-      )}
-
-      {/* opportunities strip */}
-      <div className="mt-6 flex flex-col gap-3 rounded-lg border border-line bg-surface p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-        <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
-          <p className="text-body">
-            <span className="tnum text-lg font-semibold">{m.openCount}</span> <span className="text-ink-2">open revenue opportunities</span>
-          </p>
-          <p className="text-body">
-            <span className="tnum text-lg font-semibold">{money(m.openValue)}</span> <span className="text-ink-2">potential value</span>
-          </p>
-          {activeActions.length > 0 && (
-            <p className="text-body">
-              <span className="tnum text-lg font-semibold">{activeActions.length}</span> <span className="text-ink-2">actions in progress</span>
-            </p>
-          )}
-          {m.resolvedValue > 0 && (
-            <p className="text-body">
-              <span className="tnum text-lg font-semibold text-success">{money(m.resolvedValue)}</span> <span className="text-ink-2">resolved</span>
-            </p>
-          )}
-        </div>
-        <ButtonLink to="/app/actions" variant="secondary" size="sm">
-          Open actions <ArrowRight className="size-3.5" />
-        </ButtonLink>
+      <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-6">
+        <PriorityFindings findings={priority} clientName={m.clientName} criticalCount={criticalCount} />
+        <ClientRisk clients={risky} />
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-5">
-        <Card className="lg:col-span-3">
-          <CardHeader title="Revenue leakage trend" subtitle="Potential leakage attributed to each month" />
-          <div className="px-3 pb-4 pt-4 sm:px-5">
-            <TrendChart data={m.trend} />
-          </div>
-        </Card>
-        <Card className="lg:col-span-2">
-          <CardHeader title="Top 5 leakage sources" right={<Link to="/app/findings" className="text-small font-medium text-ink-2 hover:text-ink">All findings</Link>} />
-          <ol className="divide-y divide-line-soft">
-            {top.map((f, i) => (
-              <li key={f.id}>
-                <Link to={`/app/findings/${f.id}`} className="flex items-start gap-3 px-5 py-3 hover:bg-hover">
-                  <span className="tnum mt-0.5 w-4 text-caption font-medium text-ink-3">{i + 1}</span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-body font-medium text-ink">{f.title}</p>
-                    <p className="truncate text-caption text-ink-3">
-                      {m.clientName(f.client_id)} · {CATEGORY_META[f.category].short}
-                    </p>
-                  </div>
-                  <span className="tnum text-body font-semibold">{money(f.estimated_value)}</span>
-                </Link>
-              </li>
-            ))}
-            {!top.length && <li className="px-5 py-8 text-center text-body text-ink-3">No leakage found.</li>}
-          </ol>
-        </Card>
+      <div className="mt-10">
+        <ActionsPanel openCount={m.openCount} openValue={m.openValue} active={active} resolvedValue={m.resolvedValue} clientName={m.clientName} topFindingId={priority[0]?.id} />
       </div>
 
-      <Card className="mt-6">
-        <CardHeader title="Highest risk clients" subtitle="Clients with the most potential leakage or weakest margins" right={<Link to="/app/clients" className="text-small font-medium text-ink-2 hover:text-ink">All clients</Link>} />
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[640px] text-body">
-            <thead>
-              <tr className="border-b border-line-soft text-left text-caption text-ink-3">
-                <th className="px-5 py-2.5 font-medium">Client</th>
-                <th className="px-3 py-2.5 text-right font-medium">Leakage</th>
-                <th className="px-3 py-2.5 font-medium">Risk</th>
-                <th className="px-5 py-2.5 font-medium">Main reason</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-line-soft">
-              {risky.map((c) => (
-                <tr key={c.client_id} className="hover:bg-hover">
-                  <td className="px-5 py-3 font-medium">
-                    <Link to={`/app/clients/${c.client_id}`} className="hover:underline">
-                      {c.name}
-                    </Link>
-                  </td>
-                  <td className="tnum px-3 py-3 text-right font-semibold">{money(c.leakage)}</td>
-                  <td className="px-3 py-3">
-                    <HealthDot health={c.health} />
-                  </td>
-                  <td className="max-w-[360px] truncate px-5 py-3 text-ink-2">{c.reasons[0] ?? 'Potentially billable work found'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-5 lg:gap-6">
+        <div className="lg:col-span-2">
+          <CategoryBreakdown rows={categories} />
         </div>
-      </Card>
-
-      {data.findings.some((f) => openish(f) && f.severity === 'CRITICAL') && (
-        <div className="mt-6 flex items-center gap-2 text-body text-ink-2">
-          <SeverityBadge severity="CRITICAL" /> findings need attention first.
+        <div className="lg:col-span-3">
+          <LeakageTrend data={m.trend} />
         </div>
-      )}
+      </div>
     </>
   )
 }

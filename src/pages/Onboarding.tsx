@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useStore } from '../data/store'
-import { Button, Field, inputCls, Logo, Spinner } from '../components/ui'
+import { Button, Field, inputCls, Spinner } from '../components/ui'
+import { AuthShell, NextSteps } from './auth/AuthShell'
 
 export default function Onboarding() {
   const { ready, user, workspace, createWorkspace } = useStore()
@@ -27,22 +28,29 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-sunken px-4">
-      <Logo className="mb-8" />
-      <div className="w-full max-w-md rounded-xl border border-line bg-surface p-6 sm:p-8">
-        <p className="text-caption font-medium uppercase tracking-wider text-ink-3">Step 1 of 2</p>
-        <h1 className="mt-2 text-xl font-semibold tracking-tight">Create your MSP workspace</h1>
-        <p className="mt-1 text-body text-ink-3">Your clients, uploads and findings live here, isolated from every other workspace.</p>
-        <form onSubmit={submit} className="mt-6 space-y-4" noValidate>
-          <Field label="MSP name" error={error}>
-            <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Northlight IT" autoFocus />
-          </Field>
-          <Button type="submit" className="w-full" loading={loading}>
-            Create workspace
-          </Button>
-        </form>
-        <p className="mt-4 text-caption text-ink-3">Next you’ll upload data or load the demo MSP.</p>
-      </div>
-    </div>
+    <AuthShell
+      title="Create your MSP workspace"
+      subtitle="Your clients, uploads and findings live here, isolated from every other workspace."
+      asideBody="One workspace per MSP. Name it, then load the demo or your own exports and see where the money is going."
+      aside={<NextSteps />}
+      footer={
+        <div className="flex items-center gap-3 border-t border-line-soft pt-5">
+          <span className="flex shrink-0 gap-1" aria-hidden>
+            <span className="h-1 w-6 rounded-full bg-ink" />
+            <span className="h-1 w-6 rounded-full bg-line" />
+          </span>
+          <span className="text-caption text-ink-3">Step 1 of 2. Next: upload your exports or load the demo MSP.</span>
+        </div>
+      }
+    >
+      <form onSubmit={submit} className="space-y-4" noValidate>
+        <Field label="MSP name" error={error} hint="Shown on your reports.">
+          <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Northlight IT" autoFocus />
+        </Field>
+        <Button type="submit" className="w-full" loading={loading}>
+          Create workspace
+        </Button>
+      </form>
+    </AuthShell>
   )
 }
