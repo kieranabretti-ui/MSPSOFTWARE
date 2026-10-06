@@ -13,9 +13,18 @@ interface StoredUser extends SessionUser {
   hash: string
 }
 
+// When the browser blocks storage (private windows, embedded previews) data is
+// kept in memory for this tab instead, so the demo still works.
+const memory = new Map<string, string>()
+
 const read = <T,>(key: string, fallback: T): T => {
+  let raw: string | null | undefined
   try {
-    const raw = localStorage.getItem(key)
+    raw = localStorage.getItem(key)
+  } catch {
+    raw = memory.get(key)
+  }
+  try {
     return raw ? (JSON.parse(raw) as T) : fallback
   } catch {
     return fallback
@@ -23,10 +32,21 @@ const read = <T,>(key: string, fallback: T): T => {
 }
 
 const write = (key: string, value: unknown) => {
+  const raw = JSON.stringify(value)
   try {
-    localStorage.setItem(key, JSON.stringify(value))
+    localStorage.setItem(key, raw)
   } catch (e) {
-    throw new Error(e instanceof DOMException && e.name === 'QuotaExceededError' ? 'This browser has run out of local storage. Clear demo data in Settings or connect Supabase.' : 'Could not save to browser storage.')
+    if (e instanceof DOMException && e.name === 'QuotaExceededError') throw new Error('This browser has run out of local storage. Clear demo data in Settings or connect Supabase.')
+    memory.set(key, raw)
+  }
+}
+
+const remove = (key: string) => {
+  memory.delete(key)
+  try {
+    localStorage.removeItem(key)
+  } catch {
+    /* storage blocked */
   }
 }
 
@@ -79,7 +99,7 @@ export class LocalBackend implements Backend {
   }
 
   async signOut() {
-    localStorage.removeItem(SESSION)
+    remove(SESSION)
     this.emit(null)
   }
 

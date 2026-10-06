@@ -113,6 +113,7 @@ Assumptions such as the billable rate (£60/h), labour cost (£35/h), out-of-hou
 | `npm run dev` | Start the app on port 5173 |
 | `npm run build` | Type-check and build to `dist/` |
 | `npm run preview` | Serve the production build |
+| `npm run build:preview` | Build a self-contained preview to `dist-preview/`: it opens straight into the demo, keeps routes in memory so any static host works without rewrites, and turns off file downloads |
 | `npm run typecheck` | TypeScript only |
 | `npm test` | Engine tests: the demo must produce exactly the headline figures above |
 | `npm run e2e` | Browser smoke test of the demo, findings, actions, reports, sign-up, CSV mapping, PDF contract upload and mobile layout (needs `dev` or `preview` running; set `BASE_URL` if not on 5173) |

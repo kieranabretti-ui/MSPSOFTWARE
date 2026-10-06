@@ -7,6 +7,7 @@ import { GetStarted } from './Overview'
 import { findingsCsv } from './Findings'
 import { buildReport, reportPdf, DISCLAIMER } from '../../lib/report'
 import { downloadFile, hours, money, pct, relative } from '../../lib/format'
+import { IS_PREVIEW } from '../../lib/env'
 
 function H2({ children }: { children: ReactNode }) {
   return <h2 className="mb-3 mt-10 text-lg font-semibold tracking-tight text-zinc-900 print:break-after-avoid">{children}</h2>
@@ -60,9 +61,10 @@ export default function Reports() {
   const pdf = async () => {
     setPdfBusy(true)
     try {
-      downloadFile(`msp-leak-report-${slug}.pdf`, await reportPdf(r), 'application/pdf')
-      await recordReport()
-      toast('Report downloaded.')
+      if (downloadFile(`msp-leak-report-${slug}.pdf`, await reportPdf(r), 'application/pdf')) {
+        await recordReport()
+        toast('Report downloaded.')
+      }
     } catch (e) {
       toast(e instanceof Error ? e.message : 'Could not generate the PDF.', 'error')
     } finally {
@@ -70,8 +72,7 @@ export default function Reports() {
     }
   }
   const csv = () => {
-    downloadFile(`msp-leak-findings-${slug}.csv`, findingsCsv(data.findings.filter((f) => f.status !== 'dismissed'), m.clientName), 'text/csv')
-    toast('Findings CSV downloaded.')
+    if (downloadFile(`msp-leak-findings-${slug}.csv`, findingsCsv(data.findings.filter((f) => f.status !== 'dismissed'), m.clientName), 'text/csv')) toast('Findings CSV downloaded.')
   }
 
   return (
@@ -82,9 +83,11 @@ export default function Reports() {
           subtitle={data.reports[0] ? `Last downloaded ${relative(data.reports[0].created_at)}` : 'A management-ready summary of this analysis'}
           actions={
             <>
-              <Button variant="secondary" size="sm" onClick={() => window.print()}>
-                <Printer className="size-3.5" /> Print
-              </Button>
+              {!IS_PREVIEW && (
+                <Button variant="secondary" size="sm" onClick={() => window.print()}>
+                  <Printer className="size-3.5" /> Print
+                </Button>
+              )}
               <Button variant="secondary" size="sm" onClick={csv}>
                 <FileSpreadsheet className="size-3.5" /> Download CSV
               </Button>

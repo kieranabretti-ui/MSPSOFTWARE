@@ -1,3 +1,5 @@
+import { IS_PREVIEW } from './env'
+
 export const money = (n: number, opts: { decimals?: boolean } = {}) =>
   new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: opts.decimals ? 2 : 0, minimumFractionDigits: opts.decimals ? 2 : 0 }).format(n)
 
@@ -24,7 +26,14 @@ export function relative(iso: string) {
   return dateTime(iso)
 }
 
-export function downloadFile(name: string, content: BlobPart, type: string) {
+export const DOWNLOAD_BLOCKED = 'mspleak:download-blocked'
+
+// Returns false when downloads aren't possible (the hosted preview).
+export function downloadFile(name: string, content: BlobPart, type: string): boolean {
+  if (IS_PREVIEW) {
+    window.dispatchEvent(new Event(DOWNLOAD_BLOCKED))
+    return false
+  }
   const url = URL.createObjectURL(new Blob([content], { type }))
   const a = document.createElement('a')
   a.href = url
@@ -33,6 +42,7 @@ export function downloadFile(name: string, content: BlobPart, type: string) {
   a.click()
   a.remove()
   setTimeout(() => URL.revokeObjectURL(url), 1000)
+  return true
 }
 
 export function toCsv(rows: Record<string, unknown>[]): string {

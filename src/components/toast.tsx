@@ -1,5 +1,6 @@
-import { createContext, useCallback, useContext, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import { CheckCircle2, AlertCircle } from 'lucide-react'
+import { DOWNLOAD_BLOCKED } from '../lib/format'
 
 interface Toast {
   id: number
@@ -16,6 +17,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToasts((t) => [...t, { id, text, tone }])
     setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), tone === 'error' ? 6000 : 3500)
   }, [])
+  useEffect(() => {
+    const blocked = () => push('Downloads are turned off in this hosted preview. Run MSP Leak locally to download files.', 'error')
+    window.addEventListener(DOWNLOAD_BLOCKED, blocked)
+    return () => window.removeEventListener(DOWNLOAD_BLOCKED, blocked)
+  }, [push])
   return (
     <Ctx.Provider value={push}>
       {children}
