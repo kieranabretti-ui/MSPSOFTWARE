@@ -23,6 +23,7 @@ import { applyDemoStages } from '../demo/stages'
 import { confidenceOf } from '../lib/confidence'
 import { mapError } from '../lib/errors'
 import { recurringKind } from '../lib/labels'
+import { overlapOf } from '../lib/overlap'
 import { setTrackContext, track, type AnalysisSource } from '../lib/track'
 import type { Backend, SessionUser, WorkspaceData } from './backend'
 import { emptyData } from './backend'
@@ -64,7 +65,7 @@ interface Store {
   loadError: string | null
   reload(): Promise<void>
   signIn(email: string, password: string): Promise<void>
-  signUp(email: string, password: string, name: string, opts?: { intent?: string }): Promise<{ needsConfirmation: boolean }>
+  signUp(email: string, password: string, name: string, opts?: { intent?: string; plan?: string }): Promise<{ needsConfirmation: boolean }>
   sendMagicLink(email: string): Promise<void>
   signOut(): Promise<void>
   startDemo(opts?: { onStage?: (s: DemoStage) => void }): Promise<void>
@@ -275,7 +276,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       await loadFor(backend, u)
     },
     async signUp(email, password, name, opts) {
-      const r = await backend.signUp(email, password, name)
+      const r = await backend.signUp(email, password, name, opts?.plan)
       if (r.user) await loadFor(backend, r.user)
       let intent = opts?.intent
       try {
@@ -581,6 +582,8 @@ export function useMetrics() {
       atRisk,
       byLevel,
       byStage,
+      // counted twice and disclosed, not netted (see lib/overlap)
+      overlap: overlapOf(data.findings),
       history: data.analyses,
     }
   }, [data, analysis, workspace])

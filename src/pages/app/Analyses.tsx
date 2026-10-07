@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Download, FileText, Play, Upload as UploadIcon } from 'lucide-react'
-import type { AnalysisSummary } from '../../engine/types'
+import type { Analysis, AnalysisSummary } from '../../engine/types'
 import { useStore } from '../../data/store'
 import { Button, Card, CardHeader, Modal, PageHeader, cx } from '../../components/ui'
 import { useToast } from '../../components/toast'
@@ -49,6 +49,14 @@ export default function AnalysesPage() {
   const [clearing, setClearing] = useState(false)
   // The run replaces the status panel: its progress, then its result.
   const [run, setRun] = useState<'running' | AnalysisSummary | null>(null)
+  // While a run is in progress the history shows what it was before the run,
+  // so the new row arrives with the result, not under the first step.
+  const [held, setHeld] = useState<Analysis[] | null>(null)
+  const history = run === 'running' && held ? held : data.analyses
+  const startRun = () => {
+    setHeld(data.analyses)
+    setRun('running')
+  }
   const hasData = data.clients.length > 0 || data.tickets.length > 0
   const stale = analysis && data.uploads.some((u) => u.created_at > analysis.created_at)
 
@@ -151,7 +159,7 @@ export default function AnalysesPage() {
             </div>
             <div className="flex shrink-0 items-center gap-4 pl-5 sm:pl-0">
               {!data.clients.length && <span className="text-caption text-ink-3">Upload clients first</span>}
-              <Button variant={state === 'ready' || state === 'stale' ? 'accent' : 'secondary'} onClick={() => setRun('running')} disabled={!data.clients.length} data-testid="run-analysis">
+              <Button variant={state === 'ready' || state === 'stale' ? 'accent' : 'secondary'} onClick={startRun} disabled={!data.clients.length} data-testid="run-analysis">
                 <Play className="size-4 shrink-0" aria-hidden /> {analysis ? 'Run analysis again' : 'Run analysis'}
               </Button>
             </div>
@@ -161,7 +169,7 @@ export default function AnalysesPage() {
 
       {/* Once there are runs, the history sits with the run; before then the
           sources come first, since uploading is the next step. */}
-      {data.analyses.length > 0 && <AnalysisHistory analyses={data.analyses} className="mb-6" />}
+      {history.length > 0 && <AnalysisHistory analyses={history} className="mb-6" />}
 
       <Card className="mb-6">
         <CardHeader
@@ -228,7 +236,7 @@ export default function AnalysesPage() {
         </ul>
       </Card>
 
-      {!data.analyses.length && <AnalysisHistory analyses={data.analyses} className="mb-6" />}
+      {!history.length && <AnalysisHistory analyses={history} className="mb-6" />}
 
       <UploadHistory uploads={data.uploads} onClear={hasData ? () => setConfirmReset(true) : undefined} />
 

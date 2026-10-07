@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Figure, HealthDot, cx } from '../../components/ui'
 import { money, pct } from '../../lib/format'
+import { signed } from '../../engine/format'
 import { CATEGORY_META } from '../../lib/labels'
 import { DEMO } from './demoSnapshot'
 import { Section, inWords, sectionTitleCls } from './primitives'
@@ -105,12 +106,12 @@ export function ClientExample() {
                     <Figure>{money(c.recommended)}</Figure>
                     <span className="ml-1.5 text-small text-ink-3">a month</span>
                   </p>
-                  <p className="text-small font-semibold text-accent">+{money(c.uplift)} a month</p>
+                  <p className="text-small font-semibold text-accent">{signed(money(c.uplift))} a month</p>
                 </div>
               </div>
               <p className="tnum mt-2 max-w-[62ch] text-caption text-ink-3">
                 {margin
-                  ? `The margin opportunity's ${money(margin.monthly)} a month is the average shortfall across the ${months} months; repricing to ${money(c.recommended)} (+${money(c.uplift)}) restores ${pct(targetMargin)} at average cost.`
+                  ? `The margin opportunity's ${money(margin.monthly)} a month is the average shortfall across the ${months} months; repricing to ${money(c.recommended)} (${signed(money(c.uplift))}) restores ${pct(targetMargin)} at average cost.`
                   : `The monthly price at which its labour and software cost leave a ${pct(targetMargin)} margin.`}
               </p>
             </div>
@@ -145,7 +146,7 @@ export function ClientExample() {
           </div>
           {c.driftMonthly > 0 && (
             <p className="tnum mt-4 max-w-[68ch] text-small text-ink-2">
-              Billing the {extraUsers} extra users alone (+{money(c.driftMonthly)} a month) takes {c.name} to {money(c.mrrAfterDrift)}, a {(c.marginAfterDrift * 100).toFixed(1)}% margin, before any
+              Billing the {extraUsers} extra users alone ({signed(money(c.driftMonthly))} a month) takes {c.name} to {money(c.mrrAfterDrift)}, a {(c.marginAfterDrift * 100).toFixed(1)}% margin, before any
               price conversation.
             </p>
           )}

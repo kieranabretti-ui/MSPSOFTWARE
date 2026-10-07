@@ -45,11 +45,13 @@ export default function Landing() {
           <div
             className={`${wrap} grid grid-cols-1 gap-x-12 gap-y-12 pb-20 pt-12 [--hero-size:clamp(2.75rem,1.15rem_+_5.4vw,5rem)] sm:pt-16 lg:grid-cols-12 lg:pb-28 lg:pt-14 lg:[--hero-size:clamp(3.5rem,0.75rem_+_4.4vw,4.75rem)] xl:pt-20`}
           >
-            <div className="lg:col-span-6 xl:col-span-5">
-              <h1 id="hero-title" className="max-w-[15ch] text-balance text-[length:var(--hero-size)] font-semibold leading-[0.98] tracking-(--type-display-tracking) text-ink">
+            {/* Measures in em, not ch, so the lines break the same before and
+                after the web font arrives (Host Grotesk's figures are wide). */}
+            <div className="lg:col-span-6">
+              <h1 id="hero-title" className="max-w-[9.75em] text-balance text-[length:var(--hero-size)] font-semibold leading-[0.98] tracking-(--type-display-tracking) text-ink">
                 {BRAND.tagline}
               </h1>
-              <p className="mt-6 max-w-[48ch] text-lead text-ink-2 lg:mt-8">
+              <p className="mt-6 max-w-[31em] text-lead text-ink-2 lg:mt-8">
                 Upload your PSA exports and contracts. Headroom finds unbilled work, agreement drift, scope creep and underpriced clients, with the ticket, time entry or clause behind every pound.
               </p>
               <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:mt-8">
@@ -66,7 +68,7 @@ export default function Landing() {
                 </TextLink>
               </p>
             </div>
-            <div className="lg:col-span-6 lg:mt-[calc(var(--hero-size)*0.98)] xl:col-span-7">
+            <div className="lg:col-span-6 lg:mt-[calc(var(--hero-size)*0.98)]">
               <AuditPanel />
             </div>
           </div>

@@ -32,7 +32,10 @@ export function ShareBars({ rows }: { rows: { label: string; value: number; sub?
 // The signature: what you billed, and the potential leakage beside it. The
 // billed part is neutral; the gap is the accent, set off by a hairline tick at
 // the junction so the eye lands on the found money even when the gap is small.
-export function GapBar({ billed, gap, height = 14, label = true, className }: { billed: number; gap: number; height?: number; label?: boolean; className?: string }) {
+// The percentage is the gap's share of the whole bar (billed plus potential
+// leakage), which is what the bar draws; its label says so to anyone asking.
+export const GAP_SHARE_NOTE = 'Share of billed plus potential leakage'
+export function GapBar({ billed, gap, height = 14, label = true, billedLabel = 'Billed', className }: { billed: number; gap: number; height?: number; label?: boolean; billedLabel?: string; className?: string }) {
   const total = billed + gap
   const share = total > 0 ? gap / total : 0
   const pct = (share * 100).toFixed(1)
@@ -41,7 +44,7 @@ export function GapBar({ billed, gap, height = 14, label = true, className }: { 
   const tick = gap > 0 && height >= 12
   return (
     <div className={className}>
-      <div className="relative" role="img" aria-label={`${money(gap)} potential leakage against ${money(billed)} billed (${pct}%)`}>
+      <div className="relative" role="img" aria-label={`${money(gap)} potential leakage beside ${money(billed)} billed: ${pct}% of the two together`}>
         <div className="flex w-full gap-[3px]" style={{ height }}>
           <div className="h-full min-w-0 rounded-l-[3px] bg-viz-series" style={{ width: `${100 - gapPct}%` }} />
           {gap > 0 && <div className="h-full min-w-[4px] rounded-r-[3px] bg-accent" style={{ width: `${gapPct}%` }} />}
@@ -51,11 +54,13 @@ export function GapBar({ billed, gap, height = 14, label = true, className }: { 
       {label && (
         <div className="mt-2.5 flex items-baseline justify-between gap-3 text-caption">
           <span className="text-ink-3">
-            Billed <span className="tnum text-ink-2">{money(billed)}</span>
+            {billedLabel} <span className="tnum text-ink-2">{money(billed)}</span>
           </span>
           <span className="text-right text-ink-3">
-            Potential leakage <span className="tnum text-small font-semibold text-accent">{money(gap)}</span>
-            <span className="tnum ml-1.5 text-ink-3">· {pct}%</span>
+            Potential leakage <span className="tnum whitespace-nowrap text-small font-semibold text-accent">{money(gap)}</span>
+            <span className="tnum ml-1.5 whitespace-nowrap text-ink-3" title={GAP_SHARE_NOTE}>
+              · {pct}%<span className="sr-only"> of billed plus potential leakage</span>
+            </span>
           </span>
         </div>
       )}

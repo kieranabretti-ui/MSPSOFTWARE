@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { DEMO } from './demoSnapshot'
 import { buildLandingSnapshot } from './buildSnapshot'
+import { analyse } from '../../engine/analyse'
+import { buildDemoDataset } from '../../demo/dataset'
 
 // The landing page shows real demo figures from a precomputed snapshot. If this
 // fails, the engine or the demo dataset changed: regenerate the snapshot with
@@ -29,8 +31,11 @@ describe('landing demo snapshot', () => {
     expect(sum(DEMO.stages)).toEqual({ count: 40, value: DEMO.totals.identified })
   })
 
-  it('never shows an overlapping finding in the hero ledger', () => {
-    expect(DEMO.topFindings.some((f) => f.overlaps)).toBe(false)
+  it('lists the same highest-value opportunities as the app, flagging any overlap', () => {
+    const { findings } = analyse(buildDemoDataset('landing'))
+    const appOrder = [...findings].sort((a, b) => b.estimated_value - a.estimated_value).slice(0, DEMO.topFindings.length)
+    expect(DEMO.topFindings.map((f) => [f.title, f.value])).toEqual(appOrder.map((f) => [f.title, f.estimated_value]))
+    expect(DEMO.topFindings.map((f) => f.overlaps)).toEqual(appOrder.map((f) => !!f.meta.overlaps?.length))
     expect(DEMO.recurring.rows.reduce((a, f) => a + f.monthly, 0) + DEMO.recurring.restMonthly).toBe(DEMO.totals.monthly)
   })
 })

@@ -44,8 +44,8 @@ export class SupabaseBackend implements Backend {
     return data.session?.user ? toSession(data.session.user) : null
   }
 
-  async signUp(email: string, password: string, name: string) {
-    const data = check(await this.sb.auth.signUp({ email, password, options: { data: { name }, emailRedirectTo: `${location.origin}/app` } }))
+  async signUp(email: string, password: string, name: string, planInterest?: string) {
+    const data = check(await this.sb.auth.signUp({ email, password, options: { data: { name, ...(planInterest ? { plan_interest: planInterest } : {}) }, emailRedirectTo: `${location.origin}/app` } }))
     return { user: data.session?.user ? toSession(data.session.user) : null, needsConfirmation: !data.session }
   }
 

@@ -1,3 +1,4 @@
+import { signed } from './format'
 import type { ClientMetrics, FindingDraft, Health, WorkspaceSettings } from './types'
 
 const r1 = (n: number) => Math.round(n * 10) / 10
@@ -8,7 +9,7 @@ const r1 = (n: number) => Math.round(n * 10) / 10
 // from analyse.ts so the store can use it without loading the rules engine.
 export function liveClientHealth(
   mt: ClientMetrics,
-  findings: Pick<FindingDraft, 'category' | 'title' | 'estimated_value'>[],
+  findings: Pick<FindingDraft, 'finding_key' | 'category' | 'title' | 'estimated_value' | 'monthly_value' | 'meta'>[],
   settings: Pick<WorkspaceSettings, 'target_margin'>,
   avgAllHours: number,
   months: number,
@@ -27,6 +28,11 @@ export function liveClientHealth(
   if (over) reasons.push(over.title)
   const oos = findings.filter((f) => f.category === 'OUT_OF_SCOPE' || f.category === 'UNBILLED_TIME').length
   if (oos) reasons.push(`${oos} ticket${oos === 1 ? '' : 's'} with potentially billable work done for free`)
+  // The margin opportunity's agreement gaps (meta.overlaps) that still count.
+  // If billing them alone restores the target margin, they come first.
+  const overlaps = new Set(findings.find((f) => f.category === 'UNDERPRICED_CLIENT')?.meta.overlaps ?? [])
+  const gapMonthly = findings.filter((f) => overlaps.has(f.finding_key)).reduce((a, f) => a + f.monthly_value, 0)
+  const gapsRestore = below && gapMonthly > 0 && (mt.margin * mt.mrr + gapMonthly) / (mt.mrr + gapMonthly) >= target
   const periodRevenue = mt.mrr * months
   const leakShare = periodRevenue > 0 ? leakage / periodRevenue : 0
   const health: Health = !marginKnown
@@ -36,16 +42,19 @@ export function liveClientHealth(
       : mt.margin < target + 0.12 || leakShare > 0.02
         ? 'watch'
         : 'healthy'
+  const gaps = signed(`£${Math.round(gapMonthly).toLocaleString('en-GB')}`)
   const recommendation = !marginKnown
     ? "Add this client's monthly recurring revenue to measure margin."
-    : below
-      ? 'Review pricing or move this client to a higher support tier.'
-      : over
-        ? 'Bill overage hours or move the client to a tier with more included hours.'
-        : drift.length
-          ? 'Update the recurring charge to match users and devices actually supported.'
-          : oos
-            ? 'Agree how out-of-scope requests are billed and brief the service desk.'
-            : 'No action needed. Keep monitoring.'
+    : gapsRestore
+      ? `Bill the agreement gaps first (${gaps} a month). That restores the ${Math.round(target * 100)}% target margin on its own, so repricing can wait.`
+      : below
+        ? 'Review pricing or move this client to a higher support tier.'
+        : over
+          ? 'Bill overage hours or move the client to a tier with more included hours.'
+          : drift.length
+            ? 'Update the recurring charge to match users and devices actually supported.'
+            : oos
+              ? 'Agree how out-of-scope requests are billed and brief the service desk.'
+              : 'No action needed. Keep monitoring.'
   return { health, reasons, recommendation, leakage }
 }

@@ -4,7 +4,7 @@ import { Check, CheckCircle2, Download, FileSpreadsheet, Minus } from 'lucide-re
 import { useStore } from '../../../data/store'
 import { Button, Modal, cx } from '../../../components/ui'
 import { useToast } from '../../../components/toast'
-import { applyMapping, autoMap, KIND_ORDER, SCHEMAS, validateRows, type CsvKind, type ImportResult } from '../../../data/importers'
+import { applyMapping, autoMap, SCHEMAS, suggestKind, validateRows, type CsvKind, type ImportResult } from '../../../data/importers'
 import { mapError } from '../../../lib/errors'
 import { num, plural } from '../../../lib/format'
 import { ICONS } from '../../../brand/icons'
@@ -31,8 +31,6 @@ function looksBinary(head: Uint8Array) {
 }
 
 const day = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-
-const requiredMapped = (k: CsvKind, m: Record<string, string>) => SCHEMAS[k].fields.filter((f) => f.required && m[f.key]).length
 
 export function CsvImportModal({
   kind,
@@ -97,23 +95,13 @@ export function CsvImportModal({
           if (next[field] !== col) reused = true
           next[field] = col
         }
-        // A file in the wrong slot: another export's required columns match
-        // better than this one's, and this one is missing some.
-        const own = requiredMapped(kind, auto)
-        const short = own < schema.fields.filter((x) => x.required).length
-        let better: { k: CsvKind; n: number } | null = null
-        if (short)
-          for (const k of KIND_ORDER) {
-            if (k === kind) continue
-            const n = requiredMapped(k, autoMap(hs, k))
-            if (n > own && (!better || n > better.n)) better = { k, n }
-          }
         setFile(f)
         setHeaders(hs)
         setRows(res.data)
         setMapping(next)
         setRemembered(reused)
-        setSuggest(better?.k ?? null)
+        // A file in the wrong slot: another export's columns match it better.
+        setSuggest(suggestKind(hs, kind))
       },
       error: (err) => setParseError(mapError(err, 'import')),
     })

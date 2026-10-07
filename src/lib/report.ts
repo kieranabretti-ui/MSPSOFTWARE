@@ -3,9 +3,11 @@ import type { Analysis, ClientMetrics, ConfidenceLevel, Finding, Health, Workspa
 import { DEFAULT_SETTINGS } from '../engine/types'
 import { liveClientHealth } from '../engine/health'
 import type { WorkspaceData } from '../data/backend'
-import { CATEGORY_META, CONFIDENCE, HEALTH, LEVEL_ORDER, recurringKind } from './labels'
+import { CATEGORY_META, CONFIDENCE, FINDING_STATUS, HEALTH, LEVEL_ORDER, recurringKind } from './labels'
 import { confidenceOf } from './confidence'
 import { money, pct, hours, plural } from './format'
+import { overlapOf } from './overlap'
+import { stripJoiners } from '../engine/format'
 import { color, paper, rgb, viz } from '../brand/tokens'
 
 const opportunities = (n: number) => plural(n, 'opportunity', 'opportunities')
@@ -34,9 +36,20 @@ export interface ReportModel {
   levels: { level: ConfidenceLevel; count: number; value: number }[]
   /** health and status are live: they follow the opportunities still counted. known is false without MRR. */
   riskClients: { name: string; leakage: number; margin: number; known: boolean; health: string; status: Health; reason: string }[]
-  sections: { key: 'OUT_OF_SCOPE' | 'AGREEMENT_DRIFT' | 'UNBILLED_TIME'; title: string; intro: string; value: number; rows: { client: string; title: string; detail: string; level: ConfidenceLevel; value: number }[] }[]
+  sections: {
+    key: 'OUT_OF_SCOPE' | 'AGREEMENT_DRIFT' | 'UNBILLED_TIME'
+    title: string
+    intro: string
+    value: number
+    rows: { client: string; title: string; detail: string; level: ConfidenceLevel; value: number }[]
+    /** the opportunities past the listed rows, so the table still adds up to its heading */
+    more: { count: number; value: number } | null
+  }[]
   profitability: (ClientMetrics & { leakage: number; known: boolean })[]
-  actions: { client: string; action: string; value: number }[]
+  /** largest value first; note says when an action covers the same money as another */
+  actions: { client: string; action: string; value: number; note?: string }[]
+  /** money counted under two opportunities at once, disclosed and not netted */
+  overlap: { value: number; monthly: number; clients: string[] }
   clientName: (id: string) => string
 }
 
@@ -106,7 +119,8 @@ export function buildReport(ws: Workspace, analysis: Analysis, data: WorkspaceDa
       title,
       intro: fs.length ? `${intro} ${opportunities(fs.length)} worth ${money(value)}.` : 'Nothing found in this period.',
       value,
-      rows: fs.slice(0, 10).map((f) => ({
+      more: fs.length > SECTION_ROWS ? { count: fs.length - SECTION_ROWS, value: fs.slice(SECTION_ROWS).reduce((a, f) => a + f.estimated_value, 0) } : null,
+      rows: fs.slice(0, SECTION_ROWS).map((f) => ({
         client: clientName(f.client_id),
         title: f.title,
         detail: f.meta.ticket_ref ? `Ticket #${f.meta.ticket_ref}` : f.monthly_value ? `${money(f.monthly_value)} a month` : '',
@@ -124,18 +138,42 @@ export function buildReport(ws: Workspace, analysis: Analysis, data: WorkspaceDa
     recurringAgreement > 0 ? `${money(recurringAgreement)} a month from agreement and billing gaps that will continue until agreements or billing are updated` : '',
     recurringPricing > 0 ? `${money(recurringPricing)} a month from ${plural(pricedBelow.size, 'client')} priced below your target margin` : '',
   ].filter(Boolean)
+  // Overlaps are disclosed, never netted: say where the same money is counted twice.
+  const ov = overlapOf(data.findings)
+  const overlap = { value: ov.value, monthly: ov.monthly, clients: ov.clients.map(clientName) }
+  const overlapNames = overlap.clients.join(' and ')
+  // Out-of-scope checks need a contract: say how many clients had one.
+  const withContract = s.coverage?.clients_with_contract
+  const agreements =
+    withContract != null && withContract < s.data_counts.clients
+      ? `${plural(s.data_counts.clients, 'client')} (contracts uploaded for ${withContract})`
+      : plural(s.data_counts.clients, 'client agreement')
   const executiveSummary = [
-    `We analysed ${plural(s.data_counts.tickets, 'ticket')}, ${plural(s.data_counts.time_entries, 'time entry', 'time entries')} and ${plural(s.data_counts.clients, 'client agreement')} for ${s.period_label}, and identified ${money(total)} of potential revenue leakage across ${opportunities(live.length)}.`,
+    `We analysed ${plural(s.data_counts.tickets, 'ticket')}, ${plural(s.data_counts.time_entries, 'time entry', 'time entries')} and ${agreements} for ${s.period_label}, and identified ${money(total)} of potential revenue leakage across ${opportunities(live.length)}.`,
     top ? `The largest source is ${top.label.toLowerCase()} (${money(top.value)}, ${pct(top.share)} of the total).` : '',
     monthly > 0 ? `${money(monthly)} a month recurs: ${recurs.join(', and ')}. That is ${money(monthly * 12)} a year.` : '',
     worst && worst.margin < target ? `${worst.name} has the weakest margin at ${pct(worst.margin)}, below the ${pct(target)} target, with ${hours(worst.avg_monthly_hours)} of support a month.` : '',
+    overlap.value > 0
+      ? `These totals include ${money(overlap.value)} at ${overlapNames} (${money(overlap.monthly)} a month) that overlaps with ${overlap.clients.length === 1 ? 'its' : 'their'} agreement gaps: billing those would restore the target margin on its own, so don't count both.`
+      : '',
   ].filter(Boolean)
 
-  const actions = [...live]
-    .filter((f) => f.status !== 'resolved')
-    .sort((a, b) => b.estimated_value + b.annual_value - (a.estimated_value + a.annual_value))
-    .slice(0, 8)
-    .map((f) => ({ client: clientName(f.client_id), action: f.recommended_action, value: f.estimated_value }))
+  // Largest value in the period first, as each row shows it.
+  const open = [...live].filter((f) => f.status !== 'resolved').sort((a, b) => b.estimated_value - a.estimated_value)
+  const listed = open.slice(0, 8)
+  const actions = listed.map((f) => {
+    const covered = live.filter((o) => o.id !== f.id && f.meta.overlaps?.includes(o.finding_key))
+    const settled = covered.find((o) => o.status === 'resolved' || o.status === 'valid')
+    const at = covered.map((o) => listed.indexOf(o)).find((i) => i >= 0)
+    const note = !covered.length
+      ? undefined
+      : settled
+        ? `Overlaps with its agreement gaps, already ${FINDING_STATUS[settled.status].toLowerCase()}. Billing those should restore the target margin, so check this again after the next analysis.`
+        : at != null
+          ? `Overlaps with action ${at + 1}: billing that alone restores the ${pct(target)} target margin, so don't count both.`
+          : `Overlaps with its agreement gaps: billing those alone restores the ${pct(target)} target margin, so don't count both.`
+    return { client: clientName(f.client_id), action: f.recommended_action, value: f.estimated_value, note }
+  })
 
   return {
     title: 'MSP Revenue Leakage Report',
@@ -164,8 +202,18 @@ export function buildReport(ws: Workspace, analysis: Analysis, data: WorkspaceDa
     // Weakest margin first; clients without MRR go last.
     profitability: metrics.sort((a, b) => Number(b.known) - Number(a.known) || a.margin - b.margin),
     actions,
+    overlap,
     clientName,
   }
+}
+
+// Each category table lists its largest opportunities, then one line for the rest.
+const SECTION_ROWS = 10
+
+// The closing line, on screen and in the PDF.
+export function annualSentence(r: ReportModel): string {
+  const base = `If the recurring items in this report are corrected, the estimated annual opportunity is ${money(r.annual)} (${money(r.monthly)} a month), in addition to the ${money(r.total)} identified in ${r.period}.`
+  return r.overlap.monthly > 0 ? `${base} Up to ${money(r.overlap.monthly * 12)} a year of it overlaps at ${r.overlap.clients.join(' and ')}.` : base
 }
 
 export const DISCLAIMER =
@@ -347,8 +395,31 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
   const ROW = 21
   const tableH = (rows: number, foot = false) => 24 + 18 + rows * ROW + (foot ? ROW : 0) + 4
 
-  // Cover band
-  const BAND = 326
+  // Cover band. The notes under its figures wrap inside their own columns, so
+  // they are measured before anything is drawn: the gap bar and the foot of
+  // the band move down to clear the longest.
+  const LABEL = 192
+  const BASE = 240
+  const NOTE = 258
+  const COL1 = M + CW * 0.54
+  const COL2 = M + CW * 0.78
+  const wrap = (t: string, size: number, maxW: number) => doc.setFont(F, 'normal').setFontSize(size).splitTextToSize(t, maxW) as string[]
+  const leadNote = wrap(`${opportunities(r.findingCount)} in ${r.period}`, 9, COL1 - M - 24)
+  const recurringNote =
+    r.recurringAgreement > 0 && r.recurringPricing > 0 ? `${money(r.recurringAgreement)} agreement and billing, ${money(r.recurringPricing)} pricing` : r.recurringPricing > 0 ? 'Pricing below target margin' : 'Agreement and billing gaps'
+  const stats = [
+    { x: COL1, maxW: COL2 - COL1 - 12, label: 'Recurring leakage', value: money(r.monthly), c: r.monthly > 0 ? lime : bone2, unit: 'a month', note: recurringNote },
+    { x: COL2, maxW: W - M - COL2, label: 'Annualised', value: money(r.annual), c: bone, unit: null, note: 'If left uncorrected' },
+  ].map((st) => {
+    const size = fit(st.value, st.maxW, 22, 14)
+    const vw = width(st.value, size, 'bold')
+    const unitFits = !!st.unit && vw + 4 + width(st.unit, 9) <= st.maxW
+    return { ...st, size, vw, unitFits, lines: wrap(st.unit && !unitFits ? `${st.unit}, ${st.note.toLowerCase()}` : st.note, 8, st.maxW) }
+  })
+  // Line heights: 11 for the 9pt note, 10 for the 8pt ones.
+  const noteFoot = Math.max(NOTE + (leadNote.length - 1) * 11, ...stats.map((st) => NOTE + (st.lines.length - 1) * 10))
+  const GAP = Math.max(280, noteFoot + 16) // top of the gap bar
+  const BAND = GAP + 46
   doc.setFillColor(...band).rect(0, 0, W, BAND, 'F')
   brand.drawMark(doc, M, 56 - 15, 15)
   type(15, 'bold', bone).text('Headroom', M + brand.markAdvance(15), 56, { charSpace: -0.3 })
@@ -363,32 +434,21 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
   type(10, 'normal', bone2).text(`${r.workspace}  ·  ${r.period}  ·  Generated ${r.generated}`, M, 140)
   doc.setDrawColor(...hairline).setLineWidth(0.5).line(M, 166, W - M, 166)
 
-  const LABEL = 192
-  const BASE = 240
-  const NOTE = 258
-  const COL1 = M + CW * 0.54
-  const COL2 = M + CW * 0.78
   type(9, 'normal', boneMuted).text('Potential revenue leakage identified', M, LABEL)
   const bigSize = fit(money(r.total), COL1 - M - 24, 48, 28)
   type(bigSize, 'bold', bone).text(money(r.total), M, BASE, { charSpace: -bigSize * 0.03 })
-  type(9, 'normal', bone2).text(`${opportunities(r.findingCount)} in ${r.period}`, M, NOTE)
-
-  const stat = (x: number, maxW: number, label: string, value: string, c: RGB, unit: string | null, note: string) => {
-    type(9, 'normal', boneMuted).text(label, x, LABEL)
-    const size = fit(value, maxW, 22, 14)
-    const vw = width(value, size, 'bold')
-    const unitFits = !!unit && vw + 4 + width(unit, 9) <= maxW
-    type(size, 'bold', c).text(value, x, BASE)
-    if (unit && unitFits) type(9, 'normal', bone2).text(unit, x + vw + 4, BASE)
-    type(8, 'normal', boneMuted).text(unit && !unitFits ? `${unit}, ${note.toLowerCase()}` : note, x, NOTE)
+  type(9, 'normal', bone2).text(leadNote, M, NOTE, { lineHeightFactor: 11 / 9 })
+  for (const st of stats) {
+    type(9, 'normal', boneMuted).text(st.label, st.x, LABEL)
+    type(st.size, 'bold', st.c).text(st.value, st.x, BASE)
+    if (st.unit && st.unitFits) type(9, 'normal', bone2).text(st.unit, st.x + st.vw + 4, BASE)
+    type(8, 'normal', boneMuted).text(st.lines, st.x, NOTE, { lineHeightFactor: 10 / 8 })
   }
-  stat(COL1, COL2 - COL1 - 12, 'Recurring leakage', money(r.monthly), r.monthly > 0 ? lime : bone2, 'a month', 'Potential MRR to recover')
-  stat(COL2, W - M - COL2, 'Annualised', money(r.annual), bone, null, 'If left uncorrected')
 
   // The gap: what the agreements billed, and the leakage on top, with a
   // hairline tick at the junction as on screen.
   if (r.billed > 0) {
-    const gy = 280
+    const gy = GAP
     const gh = 12
     const share = r.total / (r.billed + r.total)
     const gw = r.total > 0 ? Math.max(CW * share, CW * 0.015) : 0
@@ -479,7 +539,10 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
     if (s.rows.length)
       table(
         [{ head: 'Client', width: 128 }, { head: 'Opportunity' }, { head: 'Reference', width: 80, c: muted }, { head: 'Confidence', right: true }, { head: 'Value', right: true }],
-        s.rows.map((x) => [x.client, x.title, x.detail, CONFIDENCE[x.level].short, money(x.value)]),
+        [
+          ...s.rows.map((x) => [x.client, x.title, x.detail, CONFIDENCE[x.level].short, money(x.value)]),
+          ...(s.more ? [['', `+ ${s.more.count} more ${s.more.count === 1 ? 'opportunity' : 'opportunities'}`, '', '', money(s.more.value)]] : []),
+        ],
       )
   }
 
@@ -511,11 +574,11 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
   h2('Recommended actions')
   table(
     [{ head: '#', width: 18, c: muted }, { head: 'Client', width: 110 }, { head: 'Action' }, { head: 'Value', right: true }],
-    r.actions.map((a, i) => [String(i + 1), a.client, a.action, money(a.value)]),
+    r.actions.map((a, i) => [String(i + 1), a.client, stripJoiners(a.note ? `${a.action} ${a.note}` : a.action), money(a.value)]),
   )
 
   // Closing: the annual opportunity, set apart on a sunken panel.
-  const sentence = `If the recurring items in this report are corrected, the estimated annual opportunity is ${money(r.annual)} (${money(r.monthly)} a month), in addition to the ${money(r.total)} identified in ${r.period}.`
+  const sentence = `${annualSentence(r)}`
   const PANEL = 20
   const LEFT = 168
   type(9.5, 'normal', ink2)

@@ -3,6 +3,7 @@ import { Badge, Figure, cx } from '../../components/ui'
 import { ShareBars } from '../../components/bars'
 import { ConfidenceLevel } from '../../components/ConfidenceLevel'
 import { money, num, plural } from '../../lib/format'
+import { signed } from '../../engine/format'
 import { CATEGORY_META, CONFIDENCE, FINDING_STATUS } from '../../lib/labels'
 import { DEMO } from './demoSnapshot'
 import { Section, SectionIntro } from './primitives'
@@ -163,7 +164,7 @@ export function Flow() {
                   <span className="block truncate text-caption text-ink-3">{f.title}</span>
                 </span>
                 <span className="tnum shrink-0 text-small font-semibold text-ink">
-                  +{money(f.monthly)}
+                  {signed(money(f.monthly))}
                   <span className="font-normal text-ink-3"> a month</span>
                 </span>
               </li>

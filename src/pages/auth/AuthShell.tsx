@@ -93,7 +93,7 @@ export function DemoProof() {
 // The landing page's four steps, so the promise and the product use the same words.
 const NEXT = [
   { icon: ICONS.data, title: 'Upload your PSA exports', body: 'CSV exports from your PSA, RMM and billing system, plus contract PDFs.' },
-  { icon: ICONS.findings, title: 'We analyse it', body: 'Every ticket, time entry, device and billing line is checked against the agreement.' },
+  { icon: ICONS.findings, title: 'We analyse it', body: "Every ticket, time entry, device and billing line is checked against each client's agreement figures and, where you upload them, its contract." },
   { icon: ICONS.leakage, title: 'Find the leakage', body: 'Each opportunity carries its evidence, its calculation and a confidence level.' },
   { icon: ICONS.actions, title: 'Take action', body: 'Work through each one from New to Actioned: correct the agreement, bill the work or reprice the client.' },
 ]

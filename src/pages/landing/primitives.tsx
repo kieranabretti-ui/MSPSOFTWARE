@@ -28,7 +28,8 @@ export function SectionIntro({ id, title, children, className, stacked }: { id: 
         <h2 id={id} className={cx(sectionTitleCls, 'max-w-[24ch]')}>
           {title}
         </h2>
-        {children && <div className="mt-6 max-w-[68ch] text-lead text-ink-2">{children}</div>}
+        {/* em, not ch: Host Grotesk's wide figures make 1ch far wider than an average letter. About 70 characters a line. */}
+        {children && <div className="mt-6 max-w-[34em] text-lead text-ink-2">{children}</div>}
       </div>
     )
   return (

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Plus } from 'lucide-react'
 import { TextLink } from '../../components/ui'
 import { money } from '../../lib/format'
+import { ENTITLEMENTS, PLANS, READ_ONLY_DAYS_AFTER_END, formatLimit } from '../../billing/plans'
 import { DEMO } from './demoSnapshot'
 import { Section, inWords, sectionTitleCls } from './primitives'
 
@@ -12,7 +13,7 @@ import { Section, inWords, sectionTitleCls } from './primitives'
 const QUESTIONS: { q: string; a: ReactNode }[] = [
   {
     q: 'Does this work with my PSA?',
-    a: "Yes, through exports. Headroom works from CSV exports that any PSA, RMM or billing system can produce, plus contract PDFs. You map the columns when you upload, so the file layout doesn't matter. Direct integrations are planned; until then, exports cover everything the analysis needs.",
+    a: `Yes, through exports. Headroom works from CSV exports that any PSA, RMM or billing system can produce, plus contract PDFs. You map the columns when you upload, so the file layout doesn't matter. Direct PSA connection is planned, and when it launches it will be included in ${PLANS.growth.name}. Until then, exports cover everything the analysis needs.`,
   },
   {
     q: 'Do I need to change my PSA?',
@@ -50,6 +51,22 @@ const QUESTIONS: { q: string; a: ReactNode }[] = [
   {
     q: 'How much could I recover?',
     a: `It depends on your data, your agreements and how you price, and we don't promise a figure. As an example, the fictional demo MSP (${DEMO.totals.clients} clients) shows ${money(DEMO.totals.identified)} of potential leakage over ${inWords(DEMO.period.months)} months, ${money(DEMO.totals.monthly)} a month of it recurring. Your first audit is free, so you can see your own figure.`,
+  },
+  {
+    q: 'What if my audit finds very little?',
+    a: `We'll say so. If it finds less than ${PLANS.growth.name} costs, ${PLANS.growth.name} probably isn't worth it for you yet.`,
+  },
+  {
+    q: "Why don't you charge per endpoint or per user?",
+    a: `The value is the commercial opportunity, not your device count. Each plan has one price. ${PLANS.growth.name} covers ${formatLimit(ENTITLEMENTS.growth.maxClients).toLowerCase()} clients; ${PLANS.pro.name} has no limit.`,
+  },
+  {
+    q: 'Can I change plan or cancel?',
+    a: `You can upgrade at any time, and the cost is prorated. Downgrades and cancellations take effect at the end of the period you've paid for, and you keep read-only access to past reports for ${READ_ONLY_DAYS_AFTER_END} days after that.`,
+  },
+  {
+    q: `Why does ${PLANS.pro.name} start with a call?`,
+    a: `Part of ${PLANS.pro.name} is delivered by people: the quarterly review and priority support. A short call confirms it fits and shows which planned items matter to you.`,
   },
 ]
 

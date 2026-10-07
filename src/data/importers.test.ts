@@ -1,5 +1,7 @@
+import { readFileSync } from 'node:fs'
+import Papa from 'papaparse'
 import { describe, expect, it } from 'vitest'
-import { importRows, type MappedRow } from './importers'
+import { importRows, KIND_ORDER, suggestKind, type CsvKind, type MappedRow } from './importers'
 
 const ticketRows: MappedRow[] = [
   { ticket_id: '#501', client: 'ABC Ltd', date: '2026-09-01 10:00', subject: 'Laptop setup for new starter', time_spent_minutes: '60', billable: 'no' },
@@ -45,5 +47,35 @@ describe('importRows natural keys', () => {
     const b1 = importRows('billing', billing, { workspaceId: 'ws', clients: [] })
     const b2 = importRows('billing', [{ ...billing[0], quantity: '39' }], { workspaceId: 'ws', clients: b1.clients, existing: { tickets: [], time_entries: [], assets: [], billing_items: b1.billing_items } })
     expect(b2.billing_items[0]).toMatchObject({ id: b1.billing_items[0].id, quantity: 39 })
+  })
+})
+
+describe('suggestKind', () => {
+  // The sample exports in samples/, as the import modal reads their headers.
+  const SAMPLES: Record<CsvKind, string> = {
+    clients: 'clients.csv',
+    tickets: 'tickets.csv',
+    time_entries: 'time-entries.csv',
+    assets: 'users-and-devices.csv',
+    billing: 'billing.csv',
+  }
+  const headersOf = (file: string) => {
+    const text = readFileSync(new URL(`../../samples/${file}`, import.meta.url), 'utf8')
+    return (Papa.parse<Record<string, string>>(text, { header: true, preview: 1, transformHeader: (h) => h.trim() }).meta.fields ?? []).filter(Boolean)
+  }
+
+  for (const kind of KIND_ORDER) {
+    const headers = headersOf(SAMPLES[kind])
+    it(`suggests nothing for the ${kind} sample in its own slot`, () => {
+      expect(suggestKind(headers, kind)).toBeNull()
+    })
+    for (const slot of KIND_ORDER.filter((k) => k !== kind))
+      it(`suggests ${kind} for the ${kind} sample in the ${slot} slot`, () => {
+        expect(suggestKind(headers, slot)).toBe(kind)
+      })
+  }
+
+  it('suggests nothing when only shared columns match', () => {
+    expect(suggestKind(['client', 'date', 'notes'], 'clients')).toBeNull()
   })
 })

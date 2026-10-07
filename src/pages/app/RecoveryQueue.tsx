@@ -228,10 +228,10 @@ export default function RecoveryQueue() {
           {rows.length ? (
             groups.map((g) => (
               <section key={g.level} aria-labelledby={`queue-level-${g.level}`} className="border-t border-line-soft first:border-t-0">
-                <h3 id={`queue-level-${g.level}`} className="flex items-baseline gap-2 border-b border-line-soft bg-sunken px-4 py-2 text-label uppercase text-ink-3 sm:px-5">
+                <h2 id={`queue-level-${g.level}`} className="flex items-baseline gap-2 border-b border-line-soft bg-sunken px-4 py-2 text-label uppercase text-ink-3 sm:px-5">
                   {CONFIDENCE[g.level].label}
                   <span className="tnum font-normal tracking-normal">{g.count}</span>
-                </h3>
+                </h2>
                 <ul className="divide-y divide-line-soft">
                   {g.rows.map(({ f, level, i }) => {
                     const step = rowStep(f.status)

@@ -36,7 +36,7 @@ function titleFromFileName(name: string) {
 }
 
 export function ContractModal({ onClose }: { onClose: () => void }) {
-  const { data, addContract, backend } = useStore()
+  const { data, analysis, addContract, backend } = useStore()
   const toast = useToast()
   const [clientId, setClientId] = useState('')
   const [title, setTitle] = useState('')
@@ -75,7 +75,7 @@ export function ContractModal({ onClose }: { onClose: () => void }) {
     setSaving(true)
     try {
       await addContract(clientId, title.trim() || 'Contract', text, file)
-      toast('Contract saved. Re-run the analysis to check tickets against it.')
+      toast(analysis ? 'Contract saved. Re-run the analysis to check tickets against it.' : 'Contract saved. Run the analysis to check tickets against it.')
       onClose()
     } catch (e) {
       setError(mapError(e, 'save'))

@@ -151,6 +151,7 @@ export default function Overview() {
           periodLabel: s.period_label,
           billed: s.client_metrics.reduce((a, c) => a + c.mrr, 0) * months,
           months,
+          overlap: { value: m.overlap.value, monthly: m.overlap.monthly, clients: m.overlap.clients.map(m.clientName) },
         }}
       />
 

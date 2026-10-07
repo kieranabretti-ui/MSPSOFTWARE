@@ -32,9 +32,18 @@ describe('confidenceOf', () => {
     const f = findings.find((x) => x.meta.rule === 'margin.below_target')!
     expect(confidenceOf(f)).toEqual({
       level: 'MEDIUM',
-      basis: 'An estimate from logged support hours and the labour cost (£35/h), software cost and target margin (30%) in Settings.',
+      basis: 'An estimate from logged support hours, the labour cost (£35/h) and target margin (30%) in Settings, and the software cost (£420 a month) from your clients export.',
       estimate: true,
     })
+  })
+
+  it('names the Settings default when a client has no software cost of its own', () => {
+    const f = findings.find((x) => x.meta.rule === 'margin.below_target')!
+    const calc = f.meta.calc as Extract<NonNullable<FindingDraft['meta']['calc']>, { kind: 'margin' }>
+    const fallback = { ...f, meta: { ...f.meta, calc: { ...calc, software_source: 'default' as const } } }
+    expect(confidenceOf(fallback).basis).toBe(
+      'An estimate from logged support hours and the labour cost (£35/h), default software cost per user and target margin (30%) in Settings.',
+    )
   })
 
   it('reads the drift basis from its calculation', () => {

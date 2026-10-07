@@ -125,9 +125,11 @@ export default function Clients() {
         title="Clients"
         subtitle={subtitle}
         actions={
-          <Button size="sm" onClick={() => setAdding(true)}>
-            <Plus className="size-4" /> Add client
-          </Button>
+          data.clients.length > 0 ? (
+            <Button size="sm" onClick={() => setAdding(true)}>
+              <Plus className="size-4" /> Add client
+            </Button>
+          ) : undefined
         }
       />
       {data.clients.length === 0 ? (
@@ -197,32 +199,33 @@ export default function Clients() {
           <Card className="overflow-hidden">
             <div className="overflow-x-auto" id="clients-panel" role="tabpanel" aria-labelledby={`clients-tab-${view}`}>
               <table className="w-full text-small">
+                <caption className="sr-only">Clients with MRR, support, margin, potential leakage and health</caption>
                 <thead>
                   <tr className="border-b border-line-soft bg-sunken">
-                    <th className={cx(thBase, 'pl-4 text-left sm:pl-5')}>Client</th>
-                    <th className={cx(th, COL.mrr)}>MRR</th>
+                    <th scope="col" className={cx(thBase, 'pl-4 text-left sm:pl-5')}>Client</th>
+                    <th scope="col" className={cx(th, COL.mrr)}>MRR</th>
                     {view === 'overview' ? (
                       <>
-                        <th className={cx(th, COL.users)} title="Supported / contracted">
+                        <th scope="col" className={cx(th, COL.users)} title="Supported / contracted">
                           Users
                         </th>
-                        <th className={cx(th, COL.devices)} title="Supported / contracted">
+                        <th scope="col" className={cx(th, COL.devices)} title="Supported / contracted">
                           Devices
                         </th>
-                        <th className={cx(th, COL.support)}>Support / mo</th>
-                        <th className={cx(th, COL.margin)}>Margin</th>
-                        <th className={cx(th, 'pr-4 sm:pr-3')}>Potential leakage</th>
+                        <th scope="col" className={cx(th, COL.support)}>Support / mo</th>
+                        <th scope="col" className={cx(th, COL.margin)}>Margin</th>
+                        <th scope="col" className={cx(th, 'pr-4 sm:pr-3')}>Potential leakage</th>
                       </>
                     ) : (
                       <>
-                        <th className={cx(th, COL.labour)}>Labour</th>
-                        <th className={cx(th, COL.software)}>Software</th>
-                        <th className={th}>Contribution</th>
-                        <th className={cx(th, COL.perHour)}>£ / tech hour</th>
-                        <th className={cx(th, 'pr-4 sm:pr-3')}>Margin</th>
+                        <th scope="col" className={cx(th, COL.labour)}>Labour</th>
+                        <th scope="col" className={cx(th, COL.software)}>Software</th>
+                        <th scope="col" className={th}>Contribution</th>
+                        <th scope="col" className={cx(th, COL.perHour)}>£ / tech hour</th>
+                        <th scope="col" className={cx(th, 'pr-4 sm:pr-3')}>Margin</th>
                       </>
                     )}
-                    <th className={cx(thBase, COL.health, 'pr-5 text-left')}>Health</th>
+                    <th scope="col" className={cx(thBase, COL.health, 'pr-5 text-left')}>Health</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-line-soft">

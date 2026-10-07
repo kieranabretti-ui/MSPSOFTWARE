@@ -1,5 +1,28 @@
 @import "tailwindcss";
 @import "@fontsource-variable/host-grotesk";
+
+/* A fallback sized to Host Grotesk's average letter width and line metrics,
+   so text set before the web font arrives breaks onto the same lines and
+   nothing jumps when it swaps in. Arial and its metric twins, regular and
+   bold (Host Grotesk keeps one width across weights; Arial Bold is wider). */
+@font-face {
+  font-family: "Host Grotesk Fallback";
+  src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("LiberationSans"), local("Helvetica");
+  font-weight: 300 500;
+  size-adjust: 105.7%;
+  ascent-override: 96%;
+  descent-override: 29.8%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Host Grotesk Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("LiberationSans-Bold"), local("Helvetica Bold");
+  font-weight: 600 800;
+  size-adjust: 97.6%;
+  ascent-override: 104%;
+  descent-override: 32.3%;
+  line-gap-override: 0%;
+}
 @import "../brand/brand-tokens.css";
 @import "./styles/theme.css";
 

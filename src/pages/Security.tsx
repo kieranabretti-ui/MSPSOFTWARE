@@ -1,12 +1,12 @@
 import { useEffect, type ReactNode } from 'react'
 import { COMPANY } from '../brand/brand'
-import { Close, Footer, TopBar } from './landing/chrome'
+import { Close, Footer, TopBar, companyLine } from './landing/chrome'
 import { Section, wrap } from './landing/primitives'
 
-// How Headroom handles an MSP's data, in sentences the code backs. Nothing
-// here claims a hosting region, retention period, certification, encryption
-// scheme or uptime: those are the owner's to state, and the contact lines
-// appear only once COMPANY has the addresses.
+// How Headroom handles an MSP's data, in sentences the code and its deploy
+// config back. Nothing here claims a hosting region (beyond COMPANY.hostingRegion), retention period,
+// certification, encryption at rest or uptime: those are the owner's to
+// state, and the contact lines appear only once COMPANY has the addresses.
 
 const GROUPS: { id: string; title: string; lines: ReactNode[] }[] = [
   {
@@ -22,7 +22,7 @@ const GROUPS: { id: string; title: string; lines: ReactNode[] }[] = [
     id: 'processing',
     title: "Where it's processed",
     lines: [
-      "CSV files are read in your browser. Only the rows you map are saved; the original CSV file isn't uploaded.",
+      "CSV files are read in your browser. Only the columns you map are saved; the original CSV file isn't uploaded.",
       'Text is extracted from contract PDFs in your browser.',
       "The analysis is a deterministic rules engine that runs in your browser. The same data always gives the same opportunities, and no AI model decides what is an opportunity or what it's worth.",
     ],
@@ -31,7 +31,10 @@ const GROUPS: { id: string; title: string; lines: ReactNode[] }[] = [
     id: 'storage',
     title: 'Accounts, storage and isolation',
     lines: [
-      'Sign-in uses Supabase Auth: email and password (at least 8 characters) or a one-time email link.',
+      ...(COMPANY.hostingRegion ? [`Your workspace data, including contract files, is hosted in ${COMPANY.hostingRegion}.`] : []),
+      'Sign-in uses Supabase Auth: email and password, or a one-time email link.',
+      'Supabase provides the sign-in, the database and the file storage. Anthropic is used only for the optional AI explanation described below.',
+      'The site is served over HTTPS only, and tells browsers never to fall back to plain HTTP (HSTS).',
       'Your data is stored in Postgres with row-level security on every table. Every row carries your workspace ID, and the database returns rows only to signed-in members of that workspace.',
       'Workspaces are created only through a database function that makes you the owner. Nobody can add themselves to another workspace.',
       'Contract PDFs are kept in a private storage bucket, in a folder for your workspace that only its members can read.',
@@ -41,8 +44,17 @@ const GROUPS: { id: string; title: string; lines: ReactNode[] }[] = [
     id: 'demo',
     title: 'The demo and evaluation mode',
     lines: [
-      'The demo runs entirely in your browser on fictional data. Nothing you do in it is sent to a server.',
+      'The demo runs entirely in your browser on fictional data. Nothing you change in it is saved to a server.',
       'If Headroom runs without its server (evaluation mode), accounts and data are stored only in that browser, without a server-side login. Use it to evaluate the product, not for client data.',
+    ],
+  },
+  {
+    id: 'analytics',
+    title: 'Product analytics',
+    lines: [
+      'Where analytics are switched on, Headroom sends anonymous product events: which page was open, which button was clicked, and counts such as how many rows were imported or how many opportunities an analysis found.',
+      'Events never carry names, email addresses, file contents, opportunity titles or £ values. Events from the demo are marked as demo.',
+      'Analytics use no cookies and store nothing in your browser.',
     ],
   },
   {
@@ -50,9 +62,9 @@ const GROUPS: { id: string; title: string; lines: ReactNode[] }[] = [
     title: 'AI, only when you ask',
     lines: [
       'AI runs only when you click Explain this opportunity on a single opportunity.',
-      "That sends one opportunity to Anthropic's Claude API: the client name, the opportunity's title, description, value, confidence and recommended action, and its evidence, including ticket text, time entries with technician names, and quoted contract sentences.",
+      "That sends one opportunity to Anthropic's Claude API: the client name, the opportunity's title, description, value and recommended action, and its evidence, including ticket text, time entries with technician names, and quoted contract sentences.",
       'The API key is held on the server and never reaches your browser. The request runs with your own sign-in, so the same access rules apply.',
-      "Any quote that doesn't appear word for word in your evidence is removed before you see it.",
+      "Quotes listed under the explanation are checked word for word against your evidence, and any that don't match are removed before you see them.",
       'The explanation is saved with the opportunity.',
       <>
         How Anthropic handles API requests is set out in{' '}
@@ -81,7 +93,7 @@ const GROUPS: { id: string; title: string; lines: ReactNode[] }[] = [
     lines: [
       "Headroom isn't SOC 2 or ISO 27001 certified and hasn't had an independent penetration test.",
       "There's no single sign-on or multi-factor authentication in the app yet, and each workspace has one user.",
-      "There's no automatic retention schedule: data stays until you clear it.",
+      "There's no automatic retention schedule: workspace data stays until you clear it, and your name and email stay with your sign-in until the account is deleted.",
       "There's no audit log of who changed what.",
     ],
   },
@@ -131,6 +143,7 @@ export default function Security() {
           <p className="mt-6 max-w-[60ch] text-lead text-ink-2">
             Headroom is early-stage software. This page sets out exactly what it does with your data today, and what it doesn't do yet.
           </p>
+          {COMPANY.legalName && <p className="mt-4 max-w-[60ch] text-small text-ink-3">{companyLine()}</p>}
           <nav aria-label="On this page" className="mt-10 flex flex-wrap gap-x-5 gap-y-2">
             {GROUPS.map((g) => (
               <a key={g.id} href={`#${g.id}`} className="rounded-sm text-small text-ink-3 underline-offset-4 transition-colors hover:text-ink hover:underline">
@@ -154,7 +167,7 @@ export default function Security() {
                 </h2>
                 <ul className="space-y-3 lg:col-span-8">
                   {g.lines.map((line, i) => (
-                    <li key={i} className="max-w-[68ch] text-body text-ink-2 sm:text-lead">
+                    <li key={i} className="max-w-[34em] text-body text-ink-2 sm:text-lead">
                       {line}
                     </li>
                   ))}

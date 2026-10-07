@@ -194,6 +194,8 @@ export type FindingCalc =
       mrr: number
       labour_rate: number
       software: number
+      // where the software cost came from: the client record, or the per-user default in Settings
+      software_source?: 'client' | 'default'
       target_margin: number
       avg_hours: number
       avg_contribution: number

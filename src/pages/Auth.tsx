@@ -1,19 +1,34 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type RefObject } from 'react'
 import { Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { Mail } from 'lucide-react'
 import { useStore } from '../data/store'
-import { Button, Field, TextLink, inputCls } from '../components/ui'
+import { Button, Field, TextLink, cx, inputCls } from '../components/ui'
 import { mapError } from '../lib/errors'
 import { track } from '../lib/track'
+import { PLANS, formatAnnual, formatMonthly, parsePlanId } from '../billing/plans'
 import { AuthShell, DemoProof, FormError } from './auth/AuthShell'
 
 const EMAIL = /^\S+@\S+\.\S+$/
 
+// Field checks sit under the field they refer to (Field wires aria-invalid and
+// aria-describedby); the form-level alert is kept for what the server says.
+type FieldErrors = Partial<Record<'name' | 'email' | 'password', string>>
+function focusFirst(errors: FieldErrors, refs: Partial<Record<keyof FieldErrors, RefObject<HTMLInputElement | null>>>) {
+  const first = (['name', 'email', 'password'] as const).find((k) => errors[k])
+  if (first) refs[first]?.current?.focus()
+  return !!first
+}
+
 const WHAT_IT_DOES =
   'Headroom reads the exports your PSA, RMM and billing system already produce, then shows the out-of-scope work, unbilled work and agreement drift behind every pound.'
 
-// The planned tiers a pricing button can carry through to sign-up.
-const PLAN_NAMES: Record<string, string> = { starter: 'Starter', growth: 'Growth', pro: 'Pro' }
+// What a pricing button carried to sign-up, in a sentence. Prices come from the pricing config.
+function planNote(plan: 'growth' | 'pro', annual: boolean) {
+  const p = PLANS[plan]
+  const price = annual ? formatAnnual(plan) : formatMonthly(plan)
+  const next = p.salesLed ? `${p.name} is set up on a short call, and we'll use this email to arrange it.` : 'Online checkout isn\'t live yet, so nothing is charged.'
+  return `You picked ${p.name}, ${price}. Start with your free audit. ${next}`
+}
 
 function useTitle(title: string) {
   useEffect(() => {
@@ -32,6 +47,9 @@ export function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
+  const emailRef = useRef<HTMLInputElement>(null)
+  const passwordRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
   const [magicSent, setMagicSent] = useState(false)
   useTitle('Sign in')
@@ -40,8 +58,11 @@ export function Login() {
   const submit = async (e: FormEvent) => {
     e.preventDefault()
     setError(null)
-    if (!EMAIL.test(email)) return setError('Enter a valid email address.')
-    if (!password) return setError('Enter your password.')
+    const errs: FieldErrors = {}
+    if (!EMAIL.test(email)) errs.email = 'Enter a valid email address.'
+    if (!password) errs.password = 'Enter your password.'
+    setFieldErrors(errs)
+    if (focusFirst(errs, { email: emailRef, password: passwordRef })) return
     setLoading(true)
     try {
       await signIn(email, password)
@@ -55,7 +76,12 @@ export function Login() {
 
   const magic = async () => {
     setError(null)
-    if (!EMAIL.test(email)) return setError('Enter your email address first.')
+    if (!EMAIL.test(email)) {
+      setFieldErrors({ email: 'Enter your email address first.' })
+      emailRef.current?.focus()
+      return
+    }
+    setFieldErrors({})
     setLoading(true)
     try {
       await sendMagicLink(email)
@@ -104,11 +130,32 @@ export function Login() {
       }
     >
       <form onSubmit={submit} className="space-y-4" noValidate>
-        <Field label="Work email">
-          <input className={inputCls} type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@yourmsp.co.uk" />
+        <Field label="Work email" error={fieldErrors.email}>
+          <input
+            ref={emailRef}
+            className={cx(inputCls, fieldErrors.email && 'border-danger-line')}
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value)
+              setFieldErrors((x) => ({ ...x, email: undefined }))
+            }}
+            placeholder="you@yourmsp.co.uk"
+          />
         </Field>
-        <Field label="Password">
-          <input className={inputCls} type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Field label="Password" error={fieldErrors.password}>
+          <input
+            ref={passwordRef}
+            className={cx(inputCls, fieldErrors.password && 'border-danger-line')}
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              setFieldErrors((x) => ({ ...x, password: undefined }))
+            }}
+          />
         </Field>
         {error && <FormError>{error}</FormError>}
         <Button type="submit" className="w-full" loading={loading}>
@@ -129,12 +176,17 @@ export function Signup() {
   const nav = useNavigate()
   const [params] = useSearchParams()
   const intent = params.get('intent') ?? undefined
-  const plan = params.get('plan') ?? undefined
-  const planName = plan ? PLAN_NAMES[plan] : undefined
+  const picked = parsePlanId(params.get('plan'))
+  const plan = picked && picked !== 'audit' ? picked : undefined
+  const annual = params.get('interval') === 'year'
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
+  const nameRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
+  const passwordRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
   const [leaving, setLeaving] = useState(false)
   const [confirm, setConfirm] = useState(false)
@@ -157,13 +209,16 @@ export function Signup() {
   const submit = async (e: FormEvent) => {
     e.preventDefault()
     setError(null)
-    if (!name.trim()) return setError('Enter your name.')
-    if (!EMAIL.test(email)) return setError('Enter a valid email address.')
-    if (password.length < 8) return setError('Use at least 8 characters for your password.')
+    const errs: FieldErrors = {}
+    if (!name.trim()) errs.name = 'Enter your name.'
+    if (!EMAIL.test(email)) errs.email = 'Enter a valid email address.'
+    if (password.length < 8) errs.password = 'Use at least 8 characters for your password.'
+    setFieldErrors(errs)
+    if (focusFirst(errs, { name: nameRef, email: emailRef, password: passwordRef })) return
     setLoading(true)
     try {
-      const r = await signUp(email, password, name, intent ? { intent } : undefined)
-      if (intent === 'audit') track('audit_request', planName ? { plan: plan! } : {})
+      const r = await signUp(email, password, name, intent || plan ? { intent, plan } : undefined)
+      if (intent === 'audit') track('audit_request', plan ? { plan } : {})
       if (r.needsConfirmation) setConfirm(true)
       else nav('/onboarding')
     } catch (err) {
@@ -193,7 +248,7 @@ export function Signup() {
     <AuthShell
       title="Get your free revenue leakage audit"
       subtitle="Start with your client list (MRR, users and devices) and a ticket export. No PSA integration or card needed."
-      asideBody="Upload the exports you already have. Headroom checks every ticket, device and billing line against the agreement, then shows what you could be charging for."
+      asideBody="Upload the exports you already have. Headroom checks every ticket, device and billing line against each client's agreement figures and, where you upload them, its contract, then shows what you could be charging for."
       aside={<DemoProof />}
       footer={
         isDemoSession ? undefined : (
@@ -216,15 +271,45 @@ export function Signup() {
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-4" noValidate>
-          {planName && <p className="text-small text-ink-3">You picked {planName}. Pricing isn't live yet, so nothing is charged.</p>}
-          <Field label="Your name">
-            <input className={inputCls} autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
+          {plan && <p className="tnum text-small text-ink-3">{planNote(plan, annual)}</p>}
+          <Field label="Your name" error={fieldErrors.name}>
+            <input
+              ref={nameRef}
+              className={cx(inputCls, fieldErrors.name && 'border-danger-line')}
+              autoComplete="name"
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value)
+                setFieldErrors((x) => ({ ...x, name: undefined }))
+              }}
+            />
           </Field>
-          <Field label="Work email">
-            <input className={inputCls} type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@yourmsp.co.uk" />
+          <Field label="Work email" error={fieldErrors.email}>
+            <input
+              ref={emailRef}
+              className={cx(inputCls, fieldErrors.email && 'border-danger-line')}
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                setFieldErrors((x) => ({ ...x, email: undefined }))
+              }}
+              placeholder="you@yourmsp.co.uk"
+            />
           </Field>
-          <Field label="Password" hint="At least 8 characters.">
-            <input className={inputCls} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Field label="Password" hint="At least 8 characters." error={fieldErrors.password}>
+            <input
+              ref={passwordRef}
+              className={cx(inputCls, fieldErrors.password && 'border-danger-line')}
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                setFieldErrors((x) => ({ ...x, password: undefined }))
+              }}
+            />
           </Field>
           {error && <FormError>{error}</FormError>}
           <Button type="submit" className="w-full" loading={loading}>

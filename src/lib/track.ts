@@ -1,3 +1,4 @@
+import type { Interval, PlanId } from '../billing/plans'
 import type { Category, ConfidenceLevel, FindingStatus } from '../engine/types'
 
 // Product analytics, provider-agnostic and cookieless. Events carry counts and
@@ -19,6 +20,10 @@ export interface TrackEvents {
   finding_stage_changed: { from: FindingStatus; to: FindingStatus; category: Category; via: 'detail' | 'queue' }
   report_downloaded: { format: 'pdf' | 'csv' | 'print' }
   pricing_viewed: Record<never, never>
+  pricing_interval_changed: { interval: Interval }
+  // Interest in a paid plan, recorded while checkout isn't built.
+  plan_selected: { plan: PlanId; interval: Interval; location: string }
+  upgrade_clicked: { plan: PlanId; from: PlanId; interval: Interval; location: string }
 }
 
 export type AnalysisSource = 'manual' | 'first_run' | 'settings' | 'demo'
