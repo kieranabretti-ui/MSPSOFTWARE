@@ -1,3 +1,4 @@
+import { COMPANY } from '../../brand/brand'
 import { ArrowRight } from 'lucide-react'
 import { TextLink, cx } from '../../components/ui'
 import { Section, sectionTitleCls } from './primitives'
@@ -12,7 +13,7 @@ const FACTS: { title: string; body: string }[] = [
   },
   {
     title: 'Your workspace only',
-    body: 'On the hosted service, data is stored in Postgres with row-level security on every table, so only signed-in members of your workspace can read it. Contract PDFs sit in private storage.',
+    body: `On the hosted service, data is stored${COMPANY.hostingRegion ? ` in ${COMPANY.hostingRegion}` : ''} in Postgres with row-level security on every table, so only signed-in members of your workspace can read it. Contract PDFs sit in private storage.`,
   },
   {
     title: 'Rules, not guesswork',

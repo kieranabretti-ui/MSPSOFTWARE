@@ -12,6 +12,8 @@ export const COMPANY = {
   companyNumber: '17473234' as string | null,
   registeredIn: 'England and Wales' as string | null,
   registeredAddress: '26 Balston Road, Poole, BH14 0QH' as string | null,
+  // Where workspace data (database and files) is hosted. Confirmed by the owner, 7 October 2026.
+  hostingRegion: 'the United Kingdom' as string | null,
   contactEmail: null as string | null,
   securityEmail: null as string | null,
   privacyUrl: null as string | null,

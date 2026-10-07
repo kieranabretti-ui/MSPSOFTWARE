@@ -4,7 +4,7 @@ import { Close, Footer, TopBar, companyLine } from './landing/chrome'
 import { Section, wrap } from './landing/primitives'
 
 // How Headroom handles an MSP's data, in sentences the code and its deploy
-// config back. Nothing here claims a hosting region, retention period,
+// config back. Nothing here claims a hosting region (beyond COMPANY.hostingRegion), retention period,
 // certification, encryption at rest or uptime: those are the owner's to
 // state, and the contact lines appear only once COMPANY has the addresses.
 
@@ -31,6 +31,7 @@ const GROUPS: { id: string; title: string; lines: ReactNode[] }[] = [
     id: 'storage',
     title: 'Accounts, storage and isolation',
     lines: [
+      ...(COMPANY.hostingRegion ? [`Your workspace data, including contract files, is hosted in ${COMPANY.hostingRegion}.`] : []),
       'Sign-in uses Supabase Auth: email and password, or a one-time email link.',
       'Supabase provides the sign-in, the database and the file storage. Anthropic is used only for the optional AI explanation described below.',
       'The site is served over HTTPS only, and tells browsers never to fall back to plain HTTP (HSTS).',
