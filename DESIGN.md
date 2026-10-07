@@ -220,7 +220,7 @@ A near-monochrome dark scale with one energetic accent and four restrained signa
 ### Named Rules
 **The Lime Means Money Rule.** Lime appears only on money found or recoverable, the one money action per screen, and the system accents listed above. A lime heading, lime body text, a lime card border or lime on a download button is a bug. The full allowed inventory is §8.4 of the brand guidelines.
 
-**The One Lime Button Rule.** At most one accent button per viewport. The landing top bar's "Get free audit" is bone primary so the hero's lime "Get a Free Revenue Leakage Audit" stays the only one; in the pricing section only Growth's button is lime, and the close's "Get My Free Audit" sits a section away from it. Stage totals, download buttons and Actioned values stay ink.
+**The One Lime Button Rule.** At most one accent button per viewport. The landing top bar's "Get free audit" is bone primary so the hero's lime "Get a Free Revenue Leakage Audit" stays the only one; in the pricing section only Growth's "Start Monitoring" is lime (every price there is read from `src/billing/plans.ts`), and the close's "Get My Free Audit" sits a section away from it. Stage totals, download buttons and Actioned values stay ink.
 
 **The Calm Problems Rule.** Danger is a mark, not a field: three small bars, a 6px dot, a caption-size error. No row, card or banner is filled with a signal colour at full strength.
 
@@ -254,7 +254,7 @@ The Overview reads in one fixed order: the money hero, then critical findings be
 
 Spacing runs on a 4px base. Card internals are 20px horizontal, 12 to 16px vertical per row; card headers 20px by 16px; gaps between related controls 8px, between panels 16 to 24px. Rows are divided by hairlines, not gaps.
 
-The landing page uses a 1240px wrap (16/24/32px gutters), sections divided by a soft hairline with 80 to 112px vertical padding, and a 12-column intro grid where the heading spans seven columns and the lead sits at columns 9 to 12. Its order is fixed: hero, the problem, how it works (four numbered steps), the product, the client example, built for MSPs, how your data is handled, planned pricing, FAQ, the close and the footer. The security page shares its top bar, section frame and footer.
+The landing page uses a 1240px wrap (16/24/32px gutters), sections divided by a soft hairline with 80 to 112px vertical padding, and a 12-column intro grid where the heading spans seven columns and the lead sits at columns 9 to 12. Its order is fixed: hero, the problem, how it works (four numbered steps), the product, the client example, built for MSPs, how your data is handled, pricing, FAQ, the close and the footer. The security page shares its top bar, section frame and footer.
 
 ## Elevation & Depth
 

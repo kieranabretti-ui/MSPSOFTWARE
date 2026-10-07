@@ -7,6 +7,7 @@ import { BRAND, COMPANY } from '../../brand/brand'
 import { useStore } from '../../data/store'
 import { money } from '../../lib/format'
 import { track } from '../../lib/track'
+import { parsePlanId, pricingSummary, type Interval } from '../../billing/plans'
 import { DEMO } from './demoSnapshot'
 import { MobileMenu, type MenuLink } from './MobileMenu'
 import { Section, displayCls, sectionTitleCls, wrap } from './primitives'
@@ -25,6 +26,7 @@ export function AuditCta({
   variant = 'accent',
   size = 'lg',
   plan,
+  interval = 'month',
   arrow = size === 'lg',
   className,
 }: {
@@ -33,6 +35,7 @@ export function AuditCta({
   variant?: 'accent' | 'primary' | 'secondary'
   size?: 'sm' | 'md' | 'lg'
   plan?: string
+  interval?: Interval
   arrow?: boolean
   className?: string
 }) {
@@ -40,8 +43,14 @@ export function AuditCta({
   const nav = useNavigate()
   const toast = useToast()
   const [leaving, setLeaving] = useState(false)
-  const to = `/signup?intent=audit${plan ? `&plan=${plan}` : ''}`
-  const clicked = () => track('cta_click', { location, label, to })
+  // A paid plan carries through to sign-up, with its interval when annual.
+  const paid = parsePlanId(plan)
+  const paidPlan = paid && paid !== 'audit' ? paid : null
+  const to = `/signup?intent=audit${paidPlan ? `&plan=${paidPlan}${interval === 'year' ? '&interval=year' : ''}` : ''}`
+  const clicked = () => {
+    track('cta_click', { location, label, to })
+    if (paidPlan) track('plan_selected', { plan: paidPlan, interval, location })
+  }
   const body = (
     <>
       {label}
@@ -295,8 +304,8 @@ export function Footer() {
           </ul>
         </nav>
         <div className="lg:col-span-4">
-          <p className="text-small font-medium text-ink">Planned pricing</p>
-          <p className="tnum mt-1.5 max-w-[44ch] text-small text-ink-3">Starter £99, Growth £249 and Pro £499 a month. Not live yet; your first audit is free.</p>
+          <p className="text-small font-medium text-ink">Pricing</p>
+          <p className="tnum mt-1.5 max-w-[44ch] text-small text-ink-3">{pricingSummary()}</p>
           {COMPANY.legalName && <p className="mt-5 max-w-[48ch] text-caption text-ink-3">{companyLine()}</p>}
         </div>
       </div>

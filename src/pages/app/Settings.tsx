@@ -7,6 +7,7 @@ import { DEFAULT_SETTINGS, type WorkspaceSettings } from '../../engine/types'
 import { mapError } from '../../lib/errors'
 import { money } from '../../lib/format'
 import { Callout } from './data/kit'
+import { PlanBody } from './settings/PlanSection'
 
 type NumKey = Exclude<keyof WorkspaceSettings, 'currency' | 'business_hours_start' | 'business_hours_end'>
 type FieldDef = { key: NumKey; label: string; hint: string; pct?: boolean; prefix?: string; suffix?: string }
@@ -212,6 +213,12 @@ export default function Settings() {
               </div>
             </div>
           </form>
+        </Card>
+
+        <Card>
+          <Section title="Plan" body="What this workspace is on, and the plans it can move to." last>
+            <PlanBody isDemo={isDemoSession} />
+          </Section>
         </Card>
 
         <Card>

@@ -56,8 +56,8 @@ export class LazySupabaseBackend implements Backend {
     if (!this.real && !browserMightHaveSession()) return Promise.resolve(null)
     return this.load().then((b) => b.getSession())
   }
-  signUp(email: string, password: string, name: string) {
-    return this.load().then((b) => b.signUp(email, password, name))
+  signUp(email: string, password: string, name: string, planInterest?: string) {
+    return this.load().then((b) => b.signUp(email, password, name, planInterest))
   }
   signIn(email: string, password: string) {
     return this.load().then((b) => b.signIn(email, password))

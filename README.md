@@ -43,7 +43,10 @@ the report as PDF or CSV.
 
 The landing page's **Get a Free Revenue Leakage Audit** opens sign-up (`/signup?intent=audit`). The free
 audit is a self-serve account plus its first analysis; from inside the demo the button ends the demo
-first. Pricing (Starter £99, Growth £249, Pro £499 a month) is shown as planned, not live.
+first. Pricing is Free audit (£0), Growth (£240 a month or £2,592 a year) and Pro (£500 a month or
+£5,400 a year, sales-led), all ex VAT. `src/billing/plans.ts` is the source of truth for every plan,
+price, limit and term; no component writes a price of its own, and `npm test` fails if one does.
+Checkout isn't built, so paid-plan buttons record interest and every account has the whole product.
 
 ## Running modes
 
@@ -202,6 +205,7 @@ src/
   brand/        logo, icon set, brand constants, token mirror
   styles/       brand tokens mapped to Tailwind
   lib/          formatting, PDF extraction, report builder
+  billing/      pricing config (plans.ts), entitlements and billing state rules
 brand/          tokens, guidelines, naming, logo and exported assets
 supabase/
   migrations/   schema, RLS and storage policies
@@ -213,5 +217,6 @@ scripts/        e2e smoke test, sample generator
 ## Not in this MVP
 
 PSA, RMM, accounting and Microsoft 365 integrations; invoicing and payments; SSO; mobile apps;
-multiple users per workspace in the UI (the schema already supports members). Pricing on the landing
-page (£99 / £249 / £499 a month) is marked as planned.
+multiple users per workspace in the UI (the schema already supports members). Online checkout and plan
+enforcement: prices are set in `src/billing/plans.ts` and the billing rules in
+`src/billing/entitlements.ts`, but no payment processor is connected and `BILLING_LIVE` is false.

@@ -62,7 +62,8 @@ export interface Backend {
   supportsMagicLink: boolean
 
   getSession(): Promise<SessionUser | null>
-  signUp(email: string, password: string, name: string): Promise<SignUpResult>
+  // planInterest: the paid plan a pricing button carried to sign-up, kept with the account so it can be followed up.
+  signUp(email: string, password: string, name: string, planInterest?: string): Promise<SignUpResult>
   signIn(email: string, password: string): Promise<SessionUser>
   sendMagicLink(email: string): Promise<void>
   signOut(): Promise<void>

@@ -5,6 +5,7 @@ import { useStore } from '../data/store'
 import { Button, Field, TextLink, cx, inputCls } from '../components/ui'
 import { mapError } from '../lib/errors'
 import { track } from '../lib/track'
+import { PLANS, formatAnnual, formatMonthly, parsePlanId } from '../billing/plans'
 import { AuthShell, DemoProof, FormError } from './auth/AuthShell'
 
 const EMAIL = /^\S+@\S+\.\S+$/
@@ -21,8 +22,13 @@ function focusFirst(errors: FieldErrors, refs: Partial<Record<keyof FieldErrors,
 const WHAT_IT_DOES =
   'Headroom reads the exports your PSA, RMM and billing system already produce, then shows the out-of-scope work, unbilled work and agreement drift behind every pound.'
 
-// The planned tiers a pricing button can carry through to sign-up.
-const PLAN_NAMES: Record<string, string> = { starter: 'Starter', growth: 'Growth', pro: 'Pro' }
+// What a pricing button carried to sign-up, in a sentence. Prices come from the pricing config.
+function planNote(plan: 'growth' | 'pro', annual: boolean) {
+  const p = PLANS[plan]
+  const price = annual ? formatAnnual(plan) : formatMonthly(plan)
+  const next = p.salesLed ? `${p.name} is set up on a short call, and we'll use this email to arrange it.` : 'Online checkout isn\'t live yet, so nothing is charged.'
+  return `You picked ${p.name}, ${price}. Start with your free audit. ${next}`
+}
 
 function useTitle(title: string) {
   useEffect(() => {
@@ -170,8 +176,9 @@ export function Signup() {
   const nav = useNavigate()
   const [params] = useSearchParams()
   const intent = params.get('intent') ?? undefined
-  const plan = params.get('plan') ?? undefined
-  const planName = plan ? PLAN_NAMES[plan] : undefined
+  const picked = parsePlanId(params.get('plan'))
+  const plan = picked && picked !== 'audit' ? picked : undefined
+  const annual = params.get('interval') === 'year'
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -210,8 +217,8 @@ export function Signup() {
     if (focusFirst(errs, { name: nameRef, email: emailRef, password: passwordRef })) return
     setLoading(true)
     try {
-      const r = await signUp(email, password, name, intent ? { intent } : undefined)
-      if (intent === 'audit') track('audit_request', planName ? { plan: plan! } : {})
+      const r = await signUp(email, password, name, intent || plan ? { intent, plan } : undefined)
+      if (intent === 'audit') track('audit_request', plan ? { plan } : {})
       if (r.needsConfirmation) setConfirm(true)
       else nav('/onboarding')
     } catch (err) {
@@ -264,7 +271,7 @@ export function Signup() {
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-4" noValidate>
-          {planName && <p className="text-small text-ink-3">You picked {planName}. Pricing isn't live yet, so nothing is charged.</p>}
+          {plan && <p className="tnum text-small text-ink-3">{planNote(plan, annual)}</p>}
           <Field label="Your name" error={fieldErrors.name}>
             <input
               ref={nameRef}

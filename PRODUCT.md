@@ -29,7 +29,7 @@ Data arrives as CSV exports from a PSA, RMM and billing system, plus contract PD
 - Local mode (browser storage) when Supabase keys are absent; Supabase Auth, Postgres with Row Level Security, and private storage when present. An optional AI explanation covers one opportunity at a time, only when asked.
 - Figures are always presented as potential leakage to review, never as money definitely recoverable.
 - Demo headline figures are pinned by tests: £4,281 identified, £356 a month recurring, £4,272 annualised.
-- Pricing (Starter £99, Growth £249, Pro £499 a month) is planned, not live; the tier limits shown on the landing page are proposals. The free audit is a self-serve account plus its first analysis.
+- Pricing, decided 7 October 2026: Free audit £0 (one analysis, no card), Growth £240 a month or £2,592 a year (up to 100 clients), Pro £500 a month or £5,400 a year (sales-led, no client limit), all ex VAT; the first 50 paying MSPs get 30 days free and a price lock. `src/billing/plans.ts` is the source of truth. Checkout and plan gating are not built: every account has the whole product, and unbuilt plan items are marked Planned. The free audit is a self-serve account plus its first analysis.
 
 ## Brand Commitments
 

@@ -843,13 +843,13 @@ only the snapshot, never the engine or `lib/calculation`.
 | 6 | **Client example** | "Client profitability. Which clients are worth keeping?" One client over six months: users and devices supported against contracted, support hours by month, cost to serve, recommended contract value and uplift, with the overlap between its margin and drift opportunities disclosed, not netted. |
 | 7 | **Built for MSPs** | What works today (CSV exports, contract PDFs, evidence, reports) and what is planned (PSA and accounting integrations), with a `Planned` badge. **No vendor is named.** |
 | 8 | **How your data is handled** | Five code-backed facts (exports not access, workspace isolation, rules not guesswork, AI only when asked, not certified yet) and a link to `/security`. |
-| 9 | **Planned pricing** | Starter £99, Growth £249 (Recommended, the one lime button) and Pro £499 a month, with who each is for, proposed limits and inclusions, an illustrative ROI line labelled as such, and "Limits are proposals and will be confirmed before pricing goes live." |
-| 10 | **FAQ** | Eight questions owners ask first, as native `details`, answered with what the product does today. |
+| 9 | **Pricing** | "Find the work your MSP is doing for free." Free audit £0 ("Get My Free Audit", with the data-handling line under it), Growth £240 a month (Recommended, "Start Monitoring", the one lime button) and Pro £500 a month ("Talk to Sales" once `COMPANY.contactEmail` exists, "Talk to us" until then), all + VAT, with a Monthly / Annual toggle (annual saves 10%: £2,592 and £5,400 a year), an illustrative ROI panel labelled as such, the founding-MSP band and footnotes on VAT, cancellation and Planned items. Every figure comes from `src/billing/plans.ts`. |
+| 10 | **FAQ** | Twelve questions owners ask first, as native `details`, answered with what the product does today. |
 | 11 | **Who builds Headroom** | Renders only when `COMPANY.founder` is set in `src/brand/brand.ts`. Nothing is invented. |
 | 12 | **Close** | "Find out what your MSP is leaving on the table." / "Run a free revenue leakage audit using your existing PSA data." "Get My Free Audit" (lime) and "See the demo", plus the demo figure in one line. |
-| 13 | **Footer** | Logo, "Commercial intelligence for MSPs." and the tagline; links; "Planned pricing" with Starter £99, Growth £249 and Pro £499 a month marked not live; legal name, address, Privacy, Terms and Contact only once `COMPANY` has them; the demo-data note and the disclaimer. |
+| 13 | **Footer** | Logo, "Commercial intelligence for MSPs." and the tagline; links; "Pricing" with the one-line summary from `src/billing/plans.ts`; legal name, address, Privacy, Terms and Contact only once `COMPANY` has them; the demo-data note and the disclaimer. |
 
-Every audit button goes to `/signup?intent=audit` (with `&plan=` from pricing). The free audit is the
+Every audit button goes to `/signup?intent=audit` (with `&plan=growth` or `&plan=pro`, and `&interval=year` when annual, from pricing). The free audit is the
 self-serve account plus its first analysis. From inside the demo, the button signs out of the demo
 first, so it never loops back into it.
 
@@ -928,7 +928,7 @@ Every decision below was taken before or during this build, on 6 October 2026.
 | 14 | Tokens are **plain CSS custom properties**, mirrored as hex in `tokens.ts` with a test | The same file can drive the app, marketing, email and slides; charts and the PDF need hex | Tailwind config as the source of truth |
 | 15 | **Paper is a token set, not a second design**: deep lime `#4d6b00` for text, `#5a8700` for the mark | Lime is 1.3:1 on white; the report must still be the same product | A separate light theme |
 | 16 | **No invented customers, logos, testimonials, integrations, benchmarks or statistics**; demo figures labelled everywhere | We have one honest asset — the working product on the demo MSP — and credibility is the whole sale | "Trusted by" bars; made-up industry averages |
-| 17 | **Pricing stays marked "planned"** (£99 / £249 / £499 a month) | It is not live | Showing a pricing page as if it were |
+| 17 | **Prices come from one file**, `src/billing/plans.ts` (Free £0, Growth £240, Pro £500 a month ex VAT); every unbuilt item is marked Planned and the page says checkout isn't live | One change updates every surface; owners see only what the product does today | A price typed into a component; selling a Planned feature as available |
 
 ---
 
