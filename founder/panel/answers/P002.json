@@ -1,0 +1,13 @@
+{
+  "id": "P002",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "convenience",
+  "reason": "Pulling CSVs out of the PSA and billing, dragging out user and device lists and digging up every contract PDF is exactly the afternoon of setup I never get round to, and with our messy ticket categories I'd expect a pile of false positives to wade through afterwards. I might bookmark the free audit, but I wouldn't pay for this in a normal month.",
+  "objection": "Our ticket categories and time entries are a mess, so I reckon half the 'leakage' it flags would be noise, and I'd burn more hours checking its numbers than it saves me.",
+  "would_change_my_mind": "A direct PSA integration, or them doing the first audit for me from a single export, and it turning up real, chargeable money on one of my actual clients with the tickets to prove it.",
+  "price_too_cheap": 25,
+  "price_cheap": 79,
+  "price_expensive": 249,
+  "price_too_expensive": 450
+}

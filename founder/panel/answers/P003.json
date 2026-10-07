@@ -1,0 +1,13 @@
+{
+  "id": "P003",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "need",
+  "reason": "HaloPSA already tells me which agreements are underwater, and I'm not paying a monthly fee for something I can mostly see myself. I might run the free audit out of curiosity, but nobody in my peer group has mentioned Headroom and I won't be the first to pay for an unknown UK startup.",
+  "objection": "It's uploads only, so it's a one-off health check rather than something I'd keep paying for every month. Plus I'd be handing contract PDFs and client lists to a company nobody I know has vetted. And £4,281 over six months on a 15-client demo is a made-up number.",
+  "would_change_my_mind": "A couple of owners in my peer group showing me real money they recovered from it, ideally with a direct HaloPSA and Xero integration so it runs without me exporting CSVs.",
+  "price_too_cheap": 20,
+  "price_cheap": 49,
+  "price_expensive": 150,
+  "price_too_expensive": 300
+}

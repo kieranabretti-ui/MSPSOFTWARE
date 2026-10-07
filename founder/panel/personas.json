@@ -1,0 +1,222 @@
+[
+ {
+  "id": "P001",
+  "name": "Omar",
+  "age": 30,
+  "segment": "Owner or commercial director of a larger UK MSP (31 to 50 staff, roughly £3m to £5m revenue)",
+  "income": 148000,
+  "behaviour": "Numbers-driven owner",
+  "behaviour_how": "Has an accountant or finance person, watches margin per client, will pay for anything that shows a clear return.",
+  "objection": "My PSA reports already show me which agreements lose money",
+  "habit": "you run quarterly business reviews with your bigger clients"
+ },
+ {
+  "id": "P002",
+  "name": "Raj",
+  "age": 39,
+  "segment": "Owner of a mid-sized UK MSP (11 to 30 staff, roughly £1m to £3m revenue)",
+  "income": 70000,
+  "behaviour": "Time-poor and growing",
+  "behaviour_how": "Hiring and onboarding clients, buys things that save time, ignores anything that needs an afternoon of setup.",
+  "objection": "The numbers will be wrong because our ticket categories are messy",
+  "habit": "you read r/msp and a couple of MSP LinkedIn groups"
+ },
+ {
+  "id": "P003",
+  "name": "Emil",
+  "age": 49,
+  "segment": "Owner of a mid-sized UK MSP (11 to 30 staff, roughly £1m to £3m revenue)",
+  "income": 110000,
+  "behaviour": "Peer-group member",
+  "behaviour_how": "Belongs to an MSP peer group, acts on benchmarks and what other owners recommend.",
+  "objection": "My PSA reports already show me which agreements lose money",
+  "habit": "you use HaloPSA and Xero"
+ },
+ {
+  "id": "P004",
+  "name": "Owen",
+  "age": 44,
+  "segment": "Owner or commercial director of a larger UK MSP (31 to 50 staff, roughly £3m to £5m revenue)",
+  "income": 190000,
+  "behaviour": "Burned by dashboards",
+  "behaviour_how": "Has bought a BI or reporting tool before that took weeks to set up and then nobody looked at it.",
+  "objection": "The numbers will be wrong because our ticket categories are messy",
+  "habit": "you have two clients who you suspect are underpaying for how much they use you"
+ },
+ {
+  "id": "P005",
+  "name": "Sana",
+  "age": 42,
+  "segment": "Owner of a small UK MSP (5 to 10 staff, roughly £400k to £1m revenue)",
+  "income": 61000,
+  "behaviour": "Ex-technician owner",
+  "behaviour_how": "Still on the tools some days, does month-end billing personally in the PSA and a spreadsheet, rarely buys new software.",
+  "objection": "No integrations, no reviews, no customers yet",
+  "habit": "you have two clients who you suspect are underpaying for how much they use you"
+ },
+ {
+  "id": "P006",
+  "name": "Maya",
+  "age": 31,
+  "segment": "Owner of a small UK MSP (5 to 10 staff, roughly £400k to £1m revenue)",
+  "income": 53000,
+  "behaviour": "Numbers-driven owner",
+  "behaviour_how": "Has an accountant or finance person, watches margin per client, will pay for anything that shows a clear return.",
+  "objection": "I already know we do some free work; that's how we keep clients",
+  "habit": "your contracts are a mix of old PDFs and a newer template"
+ },
+ {
+  "id": "P007",
+  "name": "Selin",
+  "age": 35,
+  "segment": "Owner or commercial director of a larger UK MSP (31 to 50 staff, roughly £3m to £5m revenue)",
+  "income": 111000,
+  "behaviour": "Relationship-first",
+  "behaviour_how": "Long-standing clients, hates awkward money conversations, often does small extra jobs for free to keep goodwill.",
+  "objection": "Exporting all that data from my PSA and billing system is an afternoon I don't have",
+  "habit": "you use ConnectWise PSA and QuickBooks"
+ },
+ {
+  "id": "P008",
+  "name": "Ruby",
+  "age": 30,
+  "segment": "Owner of a small UK MSP (5 to 10 staff, roughly £400k to £1m revenue)",
+  "income": 68000,
+  "behaviour": "Already has a billing or BI tool",
+  "behaviour_how": "Pays for a billing reconciliation or BI product (e.g. Gradient, MSPbots, BrightGauge) and sees new tools as overlap.",
+  "objection": "I'm not uploading my clients' ticket data to a company I've never heard of",
+  "habit": "you read r/msp and a couple of MSP LinkedIn groups"
+ },
+ {
+  "id": "P009",
+  "name": "Nora",
+  "age": 49,
+  "segment": "Owner of a mid-sized UK MSP (11 to 30 staff, roughly £1m to £3m revenue)",
+  "income": 72000,
+  "behaviour": "Numbers-driven owner",
+  "behaviour_how": "Has an accountant or finance person, watches margin per client, will pay for anything that shows a clear return.",
+  "objection": "I already know we do some free work; that's how we keep clients",
+  "habit": "you have two clients who you suspect are underpaying for how much they use you"
+ },
+ {
+  "id": "P010",
+  "name": "Fatima",
+  "age": 34,
+  "segment": "Owner of a small UK MSP (5 to 10 staff, roughly £400k to £1m revenue)",
+  "income": 70000,
+  "behaviour": "Already has a billing or BI tool",
+  "behaviour_how": "Pays for a billing reconciliation or BI product (e.g. Gradient, MSPbots, BrightGauge) and sees new tools as overlap.",
+  "objection": "Potential leakage isn't money in the bank; I'd have to chase every client",
+  "habit": "you read r/msp and a couple of MSP LinkedIn groups"
+ },
+ {
+  "id": "P011",
+  "name": "Tariq",
+  "age": 45,
+  "segment": "Owner of a mid-sized UK MSP (11 to 30 staff, roughly £1m to £3m revenue)",
+  "income": 79000,
+  "behaviour": "Ex-technician owner",
+  "behaviour_how": "Still on the tools some days, does month-end billing personally in the PSA and a spreadsheet, rarely buys new software.",
+  "objection": "No integrations, no reviews, no customers yet",
+  "habit": "your contracts are a mix of old PDFs and a newer template"
+ },
+ {
+  "id": "P012",
+  "name": "Felix",
+  "age": 45,
+  "segment": "Owner of a small UK MSP (5 to 10 staff, roughly £400k to £1m revenue)",
+  "income": 64000,
+  "behaviour": "Burned by dashboards",
+  "behaviour_how": "Has bought a BI or reporting tool before that took weeks to set up and then nobody looked at it.",
+  "objection": "I'm not uploading my clients' ticket data to a company I've never heard of",
+  "habit": "you use Autotask and Xero"
+ },
+ {
+  "id": "P013",
+  "name": "Zoe",
+  "age": 33,
+  "segment": "Owner or commercial director of a larger UK MSP (31 to 50 staff, roughly £3m to £5m revenue)",
+  "income": 175000,
+  "behaviour": "Time-poor and growing",
+  "behaviour_how": "Hiring and onboarding clients, buys things that save time, ignores anything that needs an afternoon of setup.",
+  "objection": "It will find money once, then what am I paying for every month?",
+  "habit": "your contracts are a mix of old PDFs and a newer template"
+ },
+ {
+  "id": "P014",
+  "name": "Dev",
+  "age": 56,
+  "segment": "Owner of a mid-sized UK MSP (11 to 30 staff, roughly £1m to £3m revenue)",
+  "income": 118000,
+  "behaviour": "Burned by dashboards",
+  "behaviour_how": "Has bought a BI or reporting tool before that took weeks to set up and then nobody looked at it.",
+  "objection": "Exporting all that data from my PSA and billing system is an afternoon I don't have",
+  "habit": "you raise invoices at month end and it always takes longer than it should"
+ },
+ {
+  "id": "P015",
+  "name": "Yusuf",
+  "age": 60,
+  "segment": "Owner of a mid-sized UK MSP (11 to 30 staff, roughly £1m to £3m revenue)",
+  "income": 137000,
+  "behaviour": "Relationship-first",
+  "behaviour_how": "Long-standing clients, hates awkward money conversations, often does small extra jobs for free to keep goodwill.",
+  "objection": "Potential leakage isn't money in the bank; I'd have to chase every client",
+  "habit": "you use Autotask and Xero"
+ },
+ {
+  "id": "P016",
+  "name": "Theo",
+  "age": 52,
+  "segment": "Owner of a small UK MSP (5 to 10 staff, roughly £400k to £1m revenue)",
+  "income": 67000,
+  "behaviour": "Ex-technician owner",
+  "behaviour_how": "Still on the tools some days, does month-end billing personally in the PSA and a spreadsheet, rarely buys new software.",
+  "objection": "Exporting all that data from my PSA and billing system is an afternoon I don't have",
+  "habit": "you run quarterly business reviews with your bigger clients"
+ },
+ {
+  "id": "P017",
+  "name": "Alma",
+  "age": 50,
+  "segment": "Owner of a small UK MSP (5 to 10 staff, roughly £400k to £1m revenue)",
+  "income": 80000,
+  "behaviour": "Ex-technician owner",
+  "behaviour_how": "Still on the tools some days, does month-end billing personally in the PSA and a spreadsheet, rarely buys new software.",
+  "objection": "It will find money once, then what am I paying for every month?",
+  "habit": "you read r/msp and a couple of MSP LinkedIn groups"
+ },
+ {
+  "id": "P018",
+  "name": "Freya",
+  "age": 59,
+  "segment": "Owner of a mid-sized UK MSP (11 to 30 staff, roughly £1m to £3m revenue)",
+  "income": 82000,
+  "behaviour": "Peer-group member",
+  "behaviour_how": "Belongs to an MSP peer group, acts on benchmarks and what other owners recommend.",
+  "objection": "I already know we do some free work; that's how we keep clients",
+  "habit": "you read r/msp and a couple of MSP LinkedIn groups"
+ },
+ {
+  "id": "P019",
+  "name": "Harper",
+  "age": 50,
+  "segment": "Owner of a small UK MSP (5 to 10 staff, roughly £400k to £1m revenue)",
+  "income": 54000,
+  "behaviour": "Relationship-first",
+  "behaviour_how": "Long-standing clients, hates awkward money conversations, often does small extra jobs for free to keep goodwill.",
+  "objection": "I already know we do some free work; that's how we keep clients",
+  "habit": "you raise invoices at month end and it always takes longer than it should"
+ },
+ {
+  "id": "P020",
+  "name": "Emma",
+  "age": 56,
+  "segment": "Owner of a mid-sized UK MSP (11 to 30 staff, roughly £1m to £3m revenue)",
+  "income": 98000,
+  "behaviour": "Ex-technician owner",
+  "behaviour_how": "Still on the tools some days, does month-end billing personally in the PSA and a spreadsheet, rarely buys new software.",
+  "objection": "I already know we do some free work; that's how we keep clients",
+  "habit": "you raise invoices at month end and it always takes longer than it should"
+ }
+]

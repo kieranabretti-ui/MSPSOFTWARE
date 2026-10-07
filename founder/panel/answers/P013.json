@@ -1,0 +1,13 @@
+{
+  "id": "P013",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "convenience",
+  "reason": "I might get someone to run the free audit, but pulling CSVs out of the PSA and billing, plus digging out a pile of old contract PDFs, is exactly the afternoon of faff I don't have this month. And even if it finds money, I can't see why I'd keep paying £249 a month once we've fixed what it found.",
+  "objection": "It finds leakage once, we fix the contracts and billing, then what am I paying for every month? With manual uploads only, keeping it current is another job for my team, not a time saver.",
+  "would_change_my_mind": "A direct PSA and billing integration so it keeps watching every month without anyone exporting files, plus a free audit on our own data that turns up a figure well into five digits.",
+  "price_too_cheap": 29,
+  "price_cheap": 99,
+  "price_expensive": 249,
+  "price_too_expensive": 500
+}

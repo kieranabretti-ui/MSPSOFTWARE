@@ -1,0 +1,13 @@
+{
+  "id": "P011",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "trust",
+  "reason": "I do month-end billing myself, so I reckon I'd already spot most of this. And I'm not uploading every client contract and device list to a company with no customers and no reviews just to see a number off made-up demo data.",
+  "objection": "No integrations, no reviews, no customers yet. That's my client data and contracts going to an unknown outfit, and half my contracts are old PDFs it'll probably misread anyway.",
+  "would_change_my_mind": "Another UK MSP owner I know telling me it found real money in their books that they'd actually missed, plus clear answers on where the data goes and how long it's kept.",
+  "price_too_cheap": 20,
+  "price_cheap": 49,
+  "price_expensive": 149,
+  "price_too_expensive": 300
+}

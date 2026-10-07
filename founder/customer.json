@@ -1,0 +1,40 @@
+{
+  "business": "Headroom (UK software that finds revenue leakage for MSPs)",
+  "target": "Owners and commercial leads of UK managed service providers (IT support businesses, 5 to 50 staff) that run clients' IT on monthly agreements",
+  "where": "United Kingdom",
+  "age": [30, 60],
+  "segments": [
+    {"name": "Owner of a small UK MSP (5 to 10 staff, roughly £400k to £1m revenue)", "share": 0.40, "income": [45000, 85000]},
+    {"name": "Owner of a mid-sized UK MSP (11 to 30 staff, roughly £1m to £3m revenue)", "share": 0.40, "income": [70000, 140000]},
+    {"name": "Owner or commercial director of a larger UK MSP (31 to 50 staff, roughly £3m to £5m revenue)", "share": 0.20, "income": [100000, 200000]}
+  ],
+  "behaviours": [
+    {"name": "Ex-technician owner", "share": 0.25, "how": "Still on the tools some days, does month-end billing personally in the PSA and a spreadsheet, rarely buys new software."},
+    {"name": "Numbers-driven owner", "share": 0.15, "how": "Has an accountant or finance person, watches margin per client, will pay for anything that shows a clear return."},
+    {"name": "Burned by dashboards", "share": 0.15, "how": "Has bought a BI or reporting tool before that took weeks to set up and then nobody looked at it."},
+    {"name": "Already has a billing or BI tool", "share": 0.10, "how": "Pays for a billing reconciliation or BI product (e.g. Gradient, MSPbots, BrightGauge) and sees new tools as overlap."},
+    {"name": "Peer-group member", "share": 0.10, "how": "Belongs to an MSP peer group, acts on benchmarks and what other owners recommend."},
+    {"name": "Relationship-first", "share": 0.15, "how": "Long-standing clients, hates awkward money conversations, often does small extra jobs for free to keep goodwill."},
+    {"name": "Time-poor and growing", "share": 0.10, "how": "Hiring and onboarding clients, buys things that save time, ignores anything that needs an afternoon of setup."}
+  ],
+  "objections": [
+    "Exporting all that data from my PSA and billing system is an afternoon I don't have",
+    "I'm not uploading my clients' ticket data to a company I've never heard of",
+    "My PSA reports already show me which agreements lose money",
+    "I already know we do some free work; that's how we keep clients",
+    "It will find money once, then what am I paying for every month?",
+    "Potential leakage isn't money in the bank; I'd have to chase every client",
+    "The numbers will be wrong because our ticket categories are messy",
+    "No integrations, no reviews, no customers yet"
+  ],
+  "habits": [
+    "you use HaloPSA and Xero",
+    "you use ConnectWise PSA and QuickBooks",
+    "you use Autotask and Xero",
+    "you raise invoices at month end and it always takes longer than it should",
+    "you run quarterly business reviews with your bigger clients",
+    "you read r/msp and a couple of MSP LinkedIn groups",
+    "you have two clients who you suspect are underpaying for how much they use you",
+    "your contracts are a mix of old PDFs and a newer template"
+  ]
+}

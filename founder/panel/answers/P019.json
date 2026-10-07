@@ -1,0 +1,13 @@
+{
+  "id": "P019",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "need",
+  "reason": "I already know we do some free work. That's how we keep clients, and a report listing it doesn't change the fact that I'm not going to send long-standing clients bills for little jobs. I might run the free audit out of curiosity, but I wouldn't pay £99 a month to be told something I chose to do.",
+  "objection": "Even if it finds money, I'd have to go and have awkward conversations with clients I've had for years to get it, and I'd risk the goodwill that keeps them with us. On top of that, exporting CSVs and digging out contract PDFs is another month-end chore when invoicing already takes too long.",
+  "would_change_my_mind": "If the free audit on my own data turned up a big amount of plain billable time or licences we simply forgot to invoice, things clients already expect to pay for, so I could recover it without arguing about scope.",
+  "price_too_cheap": 15,
+  "price_cheap": 39,
+  "price_expensive": 99,
+  "price_too_expensive": 199
+}

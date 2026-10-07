@@ -1,0 +1,13 @@
+{
+  "id": "P015",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "habit",
+  "reason": "Most of the free work it would find is free on purpose. That's how I keep clients who've been with me fifteen years, and I'm not paying £99 a month to be told what I already know and won't go and chase.",
+  "objection": "Potential leakage isn't money in the bank. Every figure means an awkward call to a client I like, so the most likely result is a list of uncomfortable numbers and no extra revenue.",
+  "would_change_my_mind": "If the free audit turned up real unbilled licences or a client clearly past their agreement, the kind of thing I can put on an invoice or into a renewal without a row, and enough of it to cover the fee several times over.",
+  "price_too_cheap": 20,
+  "price_cheap": 49,
+  "price_expensive": 149,
+  "price_too_expensive": 300
+}

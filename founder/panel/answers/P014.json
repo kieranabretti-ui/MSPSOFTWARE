@@ -1,0 +1,13 @@
+{
+  "id": "P014",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "convenience",
+  "reason": "I've paid for a reporting tool before that ate weeks of setup and then nobody opened it. Pulling CSVs out of the PSA and billing system and digging out contract PDFs is an afternoon I don't have, especially with month-end invoicing already running long.",
+  "objection": "No integration means I'm doing the donkey work of exporting and uploading, and £4,281 on made-up demo data tells me nothing about whether it'll find anything real in my book or just give me another dashboard full of 'potential' I have to chase down myself.",
+  "would_change_my_mind": "A direct PSA and billing integration, or them doing the exports and first audit for me, so I see real money found on my own clients without giving up an afternoon.",
+  "price_too_cheap": 30,
+  "price_cheap": 79,
+  "price_expensive": 249,
+  "price_too_expensive": 499
+}

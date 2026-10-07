@@ -1,0 +1,13 @@
+{
+  "id": "P009",
+  "buys": true,
+  "purchases_first_month": 1,
+  "reason_code": "need",
+  "reason": "I've got two clients I'm fairly sure are underpaying, and a free audit costs me an afternoon of exports, not money. If it puts ticket-level numbers in front of me that I can take into a price review, a hundred or two a month pays for itself many times over. If it doesn't, I cancel.",
+  "objection": "Some of that free work is deliberate. It's how we keep clients. If the tool just flags every goodwill fix as 'leakage' I'll be left with a big scary number I was never going to bill, and then I'm paying monthly for something I only needed once.",
+  "would_change_my_mind": "If the free audit on my own data mostly flags goodwill work I already knew about and gives me nothing I can actually take to those two clients, I won't pay for it.",
+  "price_too_cheap": 25,
+  "price_cheap": 79,
+  "price_expensive": 249,
+  "price_too_expensive": 600
+}
