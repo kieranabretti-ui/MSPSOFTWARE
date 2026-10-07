@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode }
 import { Link } from 'react-router-dom'
 import { ArrowRight, Check, Loader2 } from 'lucide-react'
 import { Badge, Figure, SeverityBadge, cx } from '../../components/ui'
-import { GapBar } from '../../components/charts'
+import { GapBar } from '../../components/bars'
 import { money, num, plural } from '../../lib/format'
 import { CATEGORY_META } from '../../lib/labels'
 import { DEMO } from './demoSnapshot'

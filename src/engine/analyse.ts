@@ -8,16 +8,20 @@ import type {
   ClientMetrics,
   Dataset,
   Evidence,
+  FindingCalc,
   FindingDraft,
+  Health,
   Severity,
   Ticket,
   TimeEntry,
+  WorkspaceSettings,
 } from './types'
 
 // ---------------------------------------------------------------- helpers
 
 const round = (n: number) => Math.round(n)
 const r1 = (n: number) => Math.round(n * 10) / 10
+const r2 = (n: number) => Math.round(n * 100) / 100
 const monthOf = (iso: string) => iso.slice(0, 7)
 const gbp = (n: number) => `£${n.toLocaleString('en-GB', { maximumFractionDigits: 2 })}`
 const poss = (name: string) => (/s$/i.test(name) ? `${name}'` : `${name}'s`)
@@ -55,6 +59,13 @@ function monthsBetween(first: string, last: string): string[] {
     }
   }
   return out
+}
+
+// Does a contract sentence state this time of day? Accepts 08:30, 8:30 and 8.30.
+function statesTime(sentence: string, hhmm: string): boolean {
+  const [h, m] = hhmm.split(':')
+  if (!h || !m) return false
+  return new RegExp(`(?<!\\d)0?${Number(h)}[:.]${m}(?!\\d)`).test(sentence)
 }
 
 function severityFor(value: number, confidence: number, category: Category): Severity {
@@ -153,7 +164,11 @@ export interface AnalysisOutput {
   findings: FindingDraft[]
 }
 
-export function analyse(ds: Dataset): AnalysisOutput {
+export function analyse(input: Dataset): AnalysisOutput {
+  // Guard against the same ticket arriving twice (a re-import before natural
+  // keys, or two rows in one file): keep the last row per client and ticket number.
+  const lastTicket = new Map(input.tickets.map((t) => [`${t.client_id}|${t.external_id}`, t]))
+  const ds: Dataset = lastTicket.size === input.tickets.length ? input : { ...input, tickets: [...lastTicket.values()] }
   const s = ds.settings
   const dated = [...ds.tickets.map((t) => t.date), ...ds.time_entries.map((e) => e.date)].filter(Boolean).sort()
   const firstMonth = dated.length ? monthOf(dated[0]) : monthOf(new Date().toISOString())
@@ -216,16 +231,31 @@ export function analyse(ds: Dataset): AnalysisOutput {
       ...item.entries.map((e) => ({ table: 'time_entries' as const, id: e.id, label: `Time entry ${e.date.slice(0, 10)}` })),
     ]
     if (item.nonBillableMinutes <= 0) continue
-    const rate = s.billable_rate_per_hour * (item.afterHours ? s.after_hours_multiplier : 1)
+    const multiplier = item.afterHours ? s.after_hours_multiplier : 1
+    const rate = s.billable_rate_per_hour * multiplier
     const value = round((item.nonBillableMinutes / 60) * rate)
     if (value < 10) continue
     const month = monthOf(item.workDate)
+    // After-hours work is judged against a support window: the contract's,
+    // when its clause states the same hours as Settings, otherwise Settings alone.
+    const statedHours = !!contract?.clauses.some((cl) => cl.type === 'business_hours' && statesTime(cl.sentence, s.business_hours_start) && statesTime(cl.sentence, s.business_hours_end))
+    const calc: FindingCalc = {
+      kind: 'time',
+      minutes: item.nonBillableMinutes,
+      rate,
+      base_rate: s.billable_rate_per_hour,
+      multiplier,
+      after_hours: item.afterHours,
+      hours_source: item.afterHours ? (statedHours ? 'contract' : 'settings') : null,
+      contract_checked: !!contract,
+    }
     const meta = {
       ticket_ref: t.external_id,
       technician: item.entries[0]?.technician ?? t.technician,
       minutes: item.nonBillableMinutes,
       work_date: item.workDate,
       period_values: { [month]: value },
+      calc,
     }
 
     // Out of scope: an explicit contract exclusion matches the work.
@@ -341,7 +371,7 @@ export function analyse(ds: Dataset): AnalysisOutput {
             { table: 'clients', id: client.id, label: client.name },
             { table: 'billing_items', id: line.id, label: line.service },
           ],
-          meta: { rule: `mismatch.${kind}`, period_values: pv },
+          meta: { rule: `mismatch.${kind}`, period_values: pv, calc: { kind: 'mismatch', unit: kind, contracted, billed: line.quantity, unit_price: price, price_label: line.service } },
         })
       }
 
@@ -361,16 +391,22 @@ export function analyse(ds: Dataset): AnalysisOutput {
       const identified = Object.values(pv).reduce((a, b) => a + b, 0)
       const monthsAffected = Object.keys(pv).length
       const newest = [...list].filter((a) => a.first_seen).sort((a, b) => (b.first_seen! > a.first_seen! ? 1 : -1)).slice(0, extraNow)
+      // With no contracted figure the comparison is with what's billed, and the
+      // wording says so rather than claiming a contract.
+      const byContract = contracted != null
+      const gapNote = `${monthsAffected > 1 ? `, and the gap has existed for ${monthsAffected} months of the period analysed` : ''}.`
       findings.push({
         finding_key: `AGREEMENT_DRIFT:${client.id}:${kind}`,
         client_id: client.id,
         category: 'AGREEMENT_DRIFT',
         severity: severityFor(identified, 95, 'AGREEMENT_DRIFT'),
         confidence: 95,
-        title: `${extraNow} more ${kind}${extraNow === 1 ? '' : 's'} than contracted`,
-        description: `${client.name} is contracted for ${baseline} ${kind}s but ${list.length} active ${kind}s are being supported. At ${gbp(price)} per ${kind} that's ${gbp(monthly)}/month not on the agreement${monthsAffected > 1 ? `, and the gap has existed for ${monthsAffected} months of the period analysed` : ''}.`,
+        title: `${extraNow} more ${kind}${extraNow === 1 ? '' : 's'} than ${byContract ? 'contracted' : 'billed'}`,
+        description: `${client.name} is ${byContract ? 'contracted' : 'billed'} for ${baseline} ${kind}s but ${list.length} active ${kind}s are being supported. At ${gbp(price)} per ${kind} that's ${gbp(monthly)}/month not on the agreement${gapNote}`,
         evidence: [
-          { kind: 'client', label: 'Agreement', text: `Contracted ${kind}s: ${baseline}${client.package ? ` (${client.package})` : ''}` },
+          byContract
+            ? { kind: 'client', label: 'Agreement', text: `Contracted ${kind}s: ${baseline}${client.package ? ` (${client.package})` : ''}` }
+            : { kind: 'billing', label: 'Billing line', text: `Billed ${kind}s: ${baseline} (no contracted figure in your clients file)` },
           {
             kind: 'asset',
             label: `${kind === 'user' ? 'Users' : 'Devices'} list`,
@@ -391,7 +427,20 @@ export function analyse(ds: Dataset): AnalysisOutput {
           ...newest.map((a) => ({ table: 'assets' as const, id: a.id, label: a.name })),
           ...(line ? [{ table: 'billing_items' as const, id: line.id, label: line.service }] : []),
         ],
-        meta: { rule: `drift.${kind}`, period_values: pv },
+        meta: {
+          rule: `drift.${kind}`,
+          period_values: pv,
+          calc: {
+            kind: 'seats',
+            unit: kind,
+            baseline,
+            baseline_source: byContract ? 'contract' : 'billing',
+            actual: list.length,
+            unit_price: price,
+            price_source: line ? 'billing_line' : 'default',
+            price_label: line?.service ?? null,
+          },
+        },
       })
     }
 
@@ -425,7 +474,7 @@ export function analyse(ds: Dataset): AnalysisOutput {
         annual_value: monthly * 12,
         recommended_action: `Increase the "${line.service}" quantity to ${holders.length} (+${gbp(monthly)}/month), or remove unused licence assignments.`,
         source_data: [{ table: 'billing_items', id: line.id, label: line.service }],
-        meta: { rule: 'license.unbilled', period_values: pv },
+        meta: { rule: 'license.unbilled', period_values: pv, calc: { kind: 'licence', licence: license, assigned: holders.length, billed: line.quantity, unit_price: line.unit_price, price_label: line.service } },
       })
     }
 
@@ -435,11 +484,13 @@ export function analyse(ds: Dataset): AnalysisOutput {
     if (included != null) {
       const pv: Record<string, number> = {}
       const over: string[] = []
+      const overByMonth: { month: string; used: number; over: number; value: number }[] = []
       for (const m of months) {
         const used = h[m] ?? 0
         if (used > included * (1 + s.excessive_usage_threshold)) {
           pv[m] = round((used - included) * s.billable_rate_per_hour)
           over.push(`${monthLabel(m, 'long')}: ${r1(used)}h used (${r1(used - included)}h over)`)
+          overByMonth.push({ month: m, used: r2(used), over: r2(used - included), value: pv[m] })
         }
       }
       const identified = Object.values(pv).reduce((a, b) => a + b, 0)
@@ -453,7 +504,7 @@ export function analyse(ds: Dataset): AnalysisOutput {
           severity: severityFor(identified, conf, 'EXCESSIVE_USAGE'),
           confidence: conf,
           title: `Support usage above the ${included}h monthly allowance`,
-          description: `${poss(client.name)} agreement includes ${included} hours of support a month. Usage went over that in ${overMonths} of the ${months.length} months analysed and the overage wasn't billed.`,
+          description: `${poss(client.name)} agreement includes ${included} hours of support a month. Usage went over that in ${overMonths} of the ${months.length} months analysed. No overage charge for those months was found in the data provided, so check whether it was invoiced.`,
           evidence: [
             { kind: 'client', label: 'Agreement', text: `Included support: ${included} hours/month` },
             { kind: 'metric', label: 'Monthly usage', text: over.join('\n') },
@@ -463,7 +514,11 @@ export function analyse(ds: Dataset): AnalysisOutput {
           annual_value: 0,
           recommended_action: `Bill the overage at ${gbp(s.billable_rate_per_hour)}/h as the agreement allows, or move ${client.name} to a tier with more included hours.`,
           source_data: [{ table: 'clients', id: client.id, label: client.name }],
-          meta: { rule: 'usage.over_allowance', period_values: pv },
+          meta: {
+            rule: 'usage.over_allowance',
+            period_values: pv,
+            calc: { kind: 'usage', included, included_source: client.included_hours != null ? 'client' : 'contract', rate: s.billable_rate_per_hour, months: overByMonth },
+          },
         })
       }
     } else if (client.monthly_recurring_revenue > 0) {
@@ -479,13 +534,24 @@ export function analyse(ds: Dataset): AnalysisOutput {
       const margin = totalContribution / (client.monthly_recurring_revenue * months.length)
       const identified = Object.values(pv).reduce((a, b) => a + b, 0)
       if (margin < s.target_margin && identified > 0) {
+        const mrr = client.monthly_recurring_revenue
         const avgHours = sumValues(h) / months.length
         const monthly = round(identified / months.length)
+        const avgContribution = totalContribution / months.length
+        const targetContribution = round(s.target_margin * mrr)
+        const pct = `${Math.round(s.target_margin * 100)}%`
+        const belowMonths = Object.keys(pv).length
         // The price that earns the target margin on average costs: raising the
         // price raises the margin owed on it, so this is more than the shortfall.
-        const avgCost = client.monthly_recurring_revenue - totalContribution / months.length
+        const avgCost = mrr - avgContribution
         const targetPrice = round(avgCost / (1 - s.target_margin))
         const conf = 82
+        // Agreement gaps already found for this client are extra revenue too. If
+        // billing them alone restores the target margin, the two overlap: say so
+        // rather than netting, so neither figure changes.
+        const gaps = findings.filter((f) => f.client_id === client.id && (f.category === 'AGREEMENT_DRIFT' || f.category === 'RECURRING_CHARGE_MISMATCH' || f.category === 'MISSING_LICENSE'))
+        const agreementMonthly = gaps.reduce((a, f) => a + f.monthly_value, 0)
+        const overlaps = agreementMonthly > 0 && (avgContribution + agreementMonthly) / (mrr + agreementMonthly) >= s.target_margin ? gaps.map((f) => f.finding_key) : []
         findings.push({
           finding_key: `UNDERPRICED_CLIENT:${client.id}`,
           client_id: client.id,
@@ -493,7 +559,9 @@ export function analyse(ds: Dataset): AnalysisOutput {
           severity: severityFor(identified, conf, 'UNDERPRICED_CLIENT'),
           confidence: conf,
           title: `Gross margin ${Math.round(margin * 100)}% against a ${Math.round(s.target_margin * 100)}% target`,
-          description: `${client.name} pays ${gbp(client.monthly_recurring_revenue)}/month but averaged ${r1(avgHours)} support hours a month. At ${gbp(s.labour_cost_per_hour)}/h labour plus ${gbp(sw)} software, the contract earns ${gbp(round(totalContribution / months.length))}/month, ${gbp(monthly)}/month short of your target margin.`,
+          description:
+            `${client.name} pays ${gbp(mrr)} a month and averaged ${r1(avgHours)} support hours a month. At ${gbp(s.labour_cost_per_hour)}/h labour plus ${gbp(sw)} software, it earns ${gbp(round(avgContribution))} a month on average against the ${gbp(targetContribution)} a ${pct} margin needs. In the ${belowMonths} month${belowMonths === 1 ? '' : 's'} it fell below target the shortfall totalled ${gbp(identified)}, an average of ${gbp(monthly)} a month across the ${months.length}-month period.` +
+            (overlaps.length ? ` Billing the agreement gaps found for ${client.name} (+${gbp(agreementMonthly)} a month) would restore the target margin on its own, so don't count both.` : ''),
           evidence: [
             { kind: 'client', label: 'Contract value', text: `MRR ${gbp(client.monthly_recurring_revenue)}${client.package ? ` · ${client.package}` : ''}` },
             { kind: 'metric', label: 'Support hours', text: months.map((m) => `${monthLabel(m, 'long')}: ${r1(h[m] ?? 0)}h`).join('\n') },
@@ -504,7 +572,24 @@ export function analyse(ds: Dataset): AnalysisOutput {
           annual_value: monthly * 12,
           recommended_action: `Review pricing with ${client.name}: at this period's average hours and costs, about ${gbp(targetPrice)}/month (+${gbp(targetPrice - client.monthly_recurring_revenue)}) would restore your ${Math.round(s.target_margin * 100)}% target margin. Alternatively, look at what's driving ticket volume or move them to a higher support tier.`,
           source_data: [{ table: 'clients', id: client.id, label: client.name }],
-          meta: { rule: 'margin.below_target', period_values: pv },
+          meta: {
+            rule: 'margin.below_target',
+            period_values: pv,
+            calc: {
+              kind: 'margin',
+              mrr,
+              labour_rate: s.labour_cost_per_hour,
+              software: sw,
+              target_margin: s.target_margin,
+              avg_hours: r2(avgHours),
+              avg_contribution: round(avgContribution),
+              target_contribution: targetContribution,
+              shortfall: months.filter((m) => pv[m] != null).map((m) => ({ month: m, value: pv[m] })),
+              months: months.length,
+              target_price: targetPrice,
+            },
+            ...(overlaps.length ? { overlaps } : {}),
+          },
         })
       }
     }
@@ -530,6 +615,18 @@ export function analyse(ds: Dataset): AnalysisOutput {
   const monthly_recurring = findings.reduce((a, f) => a + f.monthly_value, 0)
   const sortedFindings = findings.sort((a, b) => b.estimated_value - a.estimated_value)
 
+  // What the data could support, so the UI can say what wasn't checked.
+  const ticketKeys = new Set(ds.tickets.map((t) => `${t.client_id}|${t.external_id}`))
+  const withContract = new Set(ds.contracts.map((c) => c.client_id))
+  const withAssets = new Set(ds.assets.map((a) => a.client_id))
+  const coverage = {
+    clients: ds.clients.length,
+    clients_with_contract: ds.clients.filter((c) => withContract.has(c.id)).length,
+    clients_with_mrr: ds.clients.filter((c) => c.monthly_recurring_revenue > 0).length,
+    clients_with_assets: ds.clients.filter((c) => withAssets.has(c.id)).length,
+    time_entries_unmatched: ds.time_entries.filter((e) => e.ticket_external_id && !ticketKeys.has(`${e.client_id}|${e.ticket_external_id}`)).length,
+  }
+
   return {
     findings: sortedFindings,
     summary: {
@@ -553,6 +650,9 @@ export function analyse(ds: Dataset): AnalysisOutput {
         billing_items: ds.billing_items.length,
         contracts: ds.contracts.length,
       },
+      finding_keys: sortedFindings.map((f) => f.finding_key),
+      coverage,
+      settings: { ...s },
     },
   }
 }
@@ -582,6 +682,53 @@ function groupBy<T>(xs: T[], key: (x: T) => string): Map<string, T[]> {
   return m
 }
 
+// Health, reasons and a recommendation for one client from its metrics and the
+// findings that still count. Shared by the engine and the live views, so
+// dismissing a finding moves the client's health everywhere.
+export function liveClientHealth(
+  mt: ClientMetrics,
+  findings: Pick<FindingDraft, 'category' | 'title' | 'estimated_value'>[],
+  settings: Pick<WorkspaceSettings, 'target_margin'>,
+  avgAllHours: number,
+  months: number,
+): { health: Health; reasons: string[]; recommendation: string; leakage: number } {
+  const target = settings.target_margin
+  const marginKnown = mt.mrr > 0
+  const leakage = findings.reduce((a, f) => a + f.estimated_value, 0)
+  const below = marginKnown && mt.margin < target
+  const reasons: string[] = []
+  if (!marginKnown) reasons.push("No monthly recurring revenue recorded, so margin can't be measured")
+  if (below) reasons.push(`Margin ${Math.round(mt.margin * 100)}% is below your ${Math.round(target * 100)}% target`)
+  if (avgAllHours > 0 && mt.avg_monthly_hours > avgAllHours * 1.5) reasons.push(`${r1(mt.avg_monthly_hours)} support hours/month against a client average of ${r1(avgAllHours)}h`)
+  const drift = findings.filter((f) => f.category === 'AGREEMENT_DRIFT' || f.category === 'MISSING_LICENSE' || f.category === 'RECURRING_CHARGE_MISMATCH')
+  if (drift.length) reasons.push(drift.map((f) => f.title).join('; '))
+  const over = findings.find((f) => f.category === 'EXCESSIVE_USAGE')
+  if (over) reasons.push(over.title)
+  const oos = findings.filter((f) => f.category === 'OUT_OF_SCOPE' || f.category === 'UNBILLED_TIME').length
+  if (oos) reasons.push(`${oos} ticket${oos === 1 ? '' : 's'} with potentially billable work done for free`)
+  const periodRevenue = mt.mrr * months
+  const leakShare = periodRevenue > 0 ? leakage / periodRevenue : 0
+  const health: Health = !marginKnown
+    ? 'watch'
+    : below || leakShare > 0.08
+      ? 'at_risk'
+      : mt.margin < target + 0.12 || leakShare > 0.02
+        ? 'watch'
+        : 'healthy'
+  const recommendation = !marginKnown
+    ? "Add this client's monthly recurring revenue to measure margin."
+    : below
+      ? 'Review pricing or move this client to a higher support tier.'
+      : over
+        ? 'Bill overage hours or move the client to a tier with more included hours.'
+        : drift.length
+          ? 'Update the recurring charge to match users and devices actually supported.'
+          : oos
+            ? 'Agree how out-of-scope requests are billed and brief the service desk.'
+            : 'No action needed. Keep monitoring.'
+  return { health, reasons, recommendation, leakage }
+}
+
 function computeClientMetrics(ds: Dataset, findings: FindingDraft[], hours: Map<string, Record<string, number>>, months: string[]): ClientMetrics[] {
   const s = ds.settings
   const assets = groupBy(ds.assets.filter((a: Asset) => a.status === 'active'), (a) => a.client_id)
@@ -596,54 +743,38 @@ function computeClientMetrics(ds: Dataset, findings: FindingDraft[], hours: Map<
       const latest = h[months[months.length - 1]] ?? 0
       const sw = softwareCost(c, users, s.default_software_cost_per_user)
       const labour = avgHours * s.labour_cost_per_hour
-      const contribution = c.monthly_recurring_revenue - labour - sw
-      const margin = c.monthly_recurring_revenue > 0 ? contribution / c.monthly_recurring_revenue : 0
+      const mrr = c.monthly_recurring_revenue
+      const contribution = mrr - labour - sw
+      const margin = mrr > 0 ? contribution / mrr : 0
       const fs = findings.filter((f) => f.client_id === c.id)
-      const leakage = fs.reduce((a, f) => a + f.estimated_value, 0)
-      const reasons: string[] = []
-      if (margin < s.target_margin) reasons.push(`Margin ${Math.round(margin * 100)}% is below your ${Math.round(s.target_margin * 100)}% target`)
-      if (avgAll > 0 && avgHours > avgAll * 1.5) reasons.push(`${r1(avgHours)} support hours/month against a client average of ${r1(avgAll)}h`)
-      const drift = fs.filter((f) => f.category === 'AGREEMENT_DRIFT' || f.category === 'MISSING_LICENSE' || f.category === 'RECURRING_CHARGE_MISMATCH')
-      if (drift.length) reasons.push(drift.map((f) => f.title).join('; '))
-      const over = fs.find((f) => f.category === 'EXCESSIVE_USAGE')
-      if (over) reasons.push(over.title)
-      const oos = fs.filter((f) => f.category === 'OUT_OF_SCOPE' || f.category === 'UNBILLED_TIME').length
-      if (oos) reasons.push(`${oos} ticket${oos === 1 ? '' : 's'} with potentially billable work done for free`)
-      const periodRevenue = c.monthly_recurring_revenue * months.length
-      const health: ClientMetrics['health'] =
-        margin < s.target_margin || (periodRevenue > 0 && leakage / periodRevenue > 0.08) ? 'at_risk' : margin < s.target_margin + 0.12 || (periodRevenue > 0 && leakage / periodRevenue > 0.02) ? 'watch' : 'healthy'
-      const recommendation =
-        margin < s.target_margin
-          ? 'Review pricing or move this client to a higher support tier.'
-          : over
-            ? 'Bill overage hours or move the client to a tier with more included hours.'
-            : drift.length
-              ? 'Update the recurring charge to match users and devices actually supported.'
-              : oos
-                ? 'Agree how out-of-scope requests are billed and brief the service desk.'
-                : 'No action needed. Keep monitoring.'
-      return {
+      const mt: ClientMetrics = {
         client_id: c.id,
         name: c.name,
         package: c.package,
-        mrr: c.monthly_recurring_revenue,
+        mrr,
         software_cost: sw,
         avg_monthly_hours: r1(avgHours),
         latest_month_hours: r1(latest),
         labour_cost: round(labour),
         contribution: round(contribution),
         margin,
-        revenue_per_hour: avgHours > 0 ? round(c.monthly_recurring_revenue / avgHours) : null,
+        revenue_per_hour: avgHours > 0 ? round(mrr / avgHours) : null,
         users,
         devices,
         contracted_users: c.contracted_users,
         contracted_devices: c.contracted_devices,
-        leakage,
+        leakage: 0,
         finding_count: fs.length,
-        health,
-        reasons,
-        recommendation,
+        health: 'healthy',
+        reasons: [],
+        recommendation: '',
+        margin_known: mrr > 0,
+        // Same formula as the margin rule's target price, so they always agree.
+        target_price: mrr > 0 ? round((labour + sw) / (1 - s.target_margin)) : null,
       }
+      // Unrounded hours here so the engine's own results don't move.
+      const live = liveClientHealth({ ...mt, avg_monthly_hours: avgHours }, fs, s, avgAll, months.length)
+      return { ...mt, leakage: live.leakage, health: live.health, reasons: live.reasons, recommendation: live.recommendation }
     })
     .sort((a, b) => b.leakage - a.leakage)
 }

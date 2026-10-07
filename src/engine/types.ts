@@ -12,7 +12,11 @@ export type Category =
   | 'OTHER'
 
 export type Severity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
-export type FindingStatus = 'open' | 'valid' | 'dismissed' | 'resolved'
+// Opportunity stages. The stored values predate the stage names, so they map
+// to labels in lib/labels: open = New, reviewing = Reviewing, valid =
+// Approved, resolved = Actioned, dismissed = Dismissed.
+export type FindingStatus = 'open' | 'reviewing' | 'valid' | 'dismissed' | 'resolved'
+export type ConfidenceLevel = 'HIGH' | 'MEDIUM' | 'LOW'
 export type ActionStatus = 'open' | 'in_progress' | 'resolved' | 'dismissed'
 
 export interface WorkspaceSettings {
@@ -151,6 +155,54 @@ export interface SourceRef {
   label: string
 }
 
+// The inputs behind a finding's value, so the UI can show the sum and the
+// confidence basis without re-running the engine. One shape per rule family.
+export type FindingCalc =
+  | {
+      kind: 'time'
+      minutes: number
+      rate: number
+      base_rate: number
+      multiplier: number
+      after_hours: boolean
+      // Where the support window came from; null unless the work was after hours.
+      hours_source: 'contract' | 'settings' | null
+      contract_checked: boolean
+    }
+  | {
+      kind: 'seats'
+      unit: 'user' | 'device'
+      baseline: number
+      baseline_source: 'contract' | 'billing'
+      actual: number
+      unit_price: number
+      price_source: 'billing_line' | 'default'
+      price_label: string | null
+    }
+  | { kind: 'mismatch'; unit: 'user' | 'device'; contracted: number; billed: number; unit_price: number; price_label: string }
+  | { kind: 'licence'; licence: string; assigned: number; billed: number; unit_price: number; price_label: string }
+  | {
+      kind: 'usage'
+      included: number
+      included_source: 'client' | 'contract'
+      rate: number
+      // used and over are rounded to 2dp; value matches period_values
+      months: { month: string; used: number; over: number; value: number }[]
+    }
+  | {
+      kind: 'margin'
+      mrr: number
+      labour_rate: number
+      software: number
+      target_margin: number
+      avg_hours: number
+      avg_contribution: number
+      target_contribution: number
+      shortfall: { month: string; value: number }[]
+      months: number
+      target_price: number
+    }
+
 export interface FindingMeta {
   ticket_ref?: string
   technician?: string | null
@@ -159,6 +211,10 @@ export interface FindingMeta {
   rule: string
   // value attributed to each month (YYYY-MM) of the analysis window
   period_values: Record<string, number>
+  // Optional so findings saved before these existed still load.
+  calc?: FindingCalc
+  // finding_keys of other findings this one overlaps with (not netted)
+  overlaps?: string[]
 }
 
 export interface FindingDraft {
@@ -224,6 +280,19 @@ export interface ClientMetrics {
   health: Health
   reasons: string[]
   recommendation: string
+  // false when the client has no MRR, so margin can't be measured
+  margin_known?: boolean
+  // monthly price that restores the target margin at average cost
+  target_price?: number | null
+}
+
+export interface AnalysisCoverage {
+  clients: number
+  clients_with_contract: number
+  clients_with_mrr: number
+  clients_with_assets: number
+  // time entries with a ticket number that matches no ticket for that client
+  time_entries_unmatched: number
 }
 
 export interface MonthPoint {
@@ -246,6 +315,10 @@ export interface AnalysisSummary {
   client_metrics: ClientMetrics[]
   average_monthly_hours: number
   data_counts: { clients: number; tickets: number; time_entries: number; assets: number; billing_items: number; contracts: number }
+  // Optional so analyses saved before these existed still render.
+  finding_keys?: string[]
+  coverage?: AnalysisCoverage
+  settings?: WorkspaceSettings
 }
 
 export interface Analysis {

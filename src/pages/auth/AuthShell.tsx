@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Disclaimer, Figure, Logo } from '../../components/ui'
-import { GapBar } from '../../components/charts'
+import { GapBar } from '../../components/bars'
 import { BRAND } from '../../brand/brand'
 import { ICONS } from '../../brand/icons'
 import { money } from '../../lib/format'

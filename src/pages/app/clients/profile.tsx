@@ -8,7 +8,7 @@ import { ICONS } from '../../../brand/icons'
 import { hours, money, num, pct, plural } from '../../../lib/format'
 import { CATEGORY_META } from '../../../lib/labels'
 import { CLAUSE_LABELS, extractClauses } from '../../../engine/contractTerms'
-import { StatusBadge } from '../Findings'
+import { StatusBadge } from '../Opportunities'
 import { MarginValue, isBelowTarget } from './parts'
 
 // The sections of a client's profile page, top to bottom: what is leaking,

@@ -1,4 +1,4 @@
-import { useEffect, type ButtonHTMLAttributes, type ReactNode } from 'react'
+import { Children, cloneElement, isValidElement, useEffect, useId, useRef, useState, type ButtonHTMLAttributes, type ReactElement, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Loader2, X } from 'lucide-react'
 import type { Health, Severity } from '../engine/types'
@@ -35,9 +35,9 @@ export function Button({ variant = 'primary', size = 'md', loading, className, c
   )
 }
 
-export function ButtonLink({ to, variant = 'primary', size = 'md', className, children }: { to: string; variant?: Variant; size?: Size; className?: string; children: ReactNode }) {
+export function ButtonLink({ to, variant = 'primary', size = 'md', className, onClick, children }: { to: string; variant?: Variant; size?: Size; className?: string; onClick?: () => void; children: ReactNode }) {
   return (
-    <Link to={to} className={cx(buttonBase, SIZES[size], VARIANTS[variant], className)}>
+    <Link to={to} onClick={onClick} className={cx(buttonBase, SIZES[size], VARIANTS[variant], className)}>
       {children}
     </Link>
   )
@@ -48,11 +48,13 @@ export function Card({ className, children }: { className?: string; children: Re
   return <div className={cx('rounded-lg border border-line bg-surface', className)}>{children}</div>
 }
 
-export function CardHeader({ title, subtitle, right }: { title: ReactNode; subtitle?: ReactNode; right?: ReactNode }) {
+// The heading level follows the page outline (h2 under the page's h1, h3 when
+// the card sits inside a section); the visual size stays the same.
+export function CardHeader({ title, subtitle, right, as: Heading = 'h2' }: { title: ReactNode; subtitle?: ReactNode; right?: ReactNode; as?: 'h2' | 'h3' }) {
   return (
     <div className="flex items-start justify-between gap-4 border-b border-line-soft px-5 py-4">
       <div className="min-w-0">
-        <h3 className="text-h3 text-ink">{title}</h3>
+        <Heading className="text-h3 text-ink">{title}</Heading>
         {subtitle && <p className="mt-0.5 text-small text-ink-3">{subtitle}</p>}
       </div>
       {right}
@@ -172,55 +174,149 @@ export function EmptyState({ title, body, action }: { title: string; body: React
   )
 }
 
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+export const focusables = (root: HTMLElement) => Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)).filter((el) => el.getClientRects().length > 0)
+
+// Keeps Tab and Shift+Tab cycling inside root, for modal surfaces.
+export function trapTab(e: KeyboardEvent, root: HTMLElement) {
+  if (e.key !== 'Tab') return
+  const els = focusables(root)
+  if (!els.length) return e.preventDefault()
+  const i = els.indexOf(document.activeElement as HTMLElement)
+  if (e.shiftKey && i <= 0) {
+    e.preventDefault()
+    els[els.length - 1].focus()
+  } else if (!e.shiftKey && (i === -1 || i === els.length - 1)) {
+    e.preventDefault()
+    els[0].focus()
+  }
+}
+
+// A modal dialog: focus moves in when it opens, Tab stays inside, Escape
+// closes, and focus goes back to whatever opened it.
 export function Modal({ open, onClose, title, children, footer, wide }: { open: boolean; onClose: () => void; title: string; children: ReactNode; footer?: ReactNode; wide?: boolean }) {
+  const titleId = useId()
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const bodyRef = useRef<HTMLDivElement>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const closeRef = useRef(onClose)
+  useEffect(() => {
+    closeRef.current = onClose
+  })
+  // Note the opener while rendering the open, before a field inside the dialog
+  // can take focus with autoFocus.
+  const [shown, setShown] = useState(false)
+  const [opener, setOpener] = useState<HTMLElement | null>(null)
+  if (open !== shown) {
+    setShown(open)
+    setOpener(open && document.activeElement instanceof HTMLElement ? document.activeElement : null)
+  }
+
   useEffect(() => {
     if (!open) return
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [open, onClose])
+    const dialog = dialogRef.current
+    if (dialog && !dialog.contains(document.activeElement)) ((bodyRef.current && focusables(bodyRef.current)[0]) || titleRef.current)?.focus()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation()
+        closeRef.current()
+        return
+      }
+      if (dialog) trapTab(e, dialog)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      if (opener?.isConnected) opener.focus({ preventScroll: true })
+    }
+  }, [open, opener])
+
   if (!open) return null
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-[var(--brand-overlay)] p-0 backdrop-blur-[3px] sm:items-center sm:p-6" onMouseDown={onClose}>
       <div
+        ref={dialogRef}
         role="dialog"
-        aria-modal
-        aria-label={title}
+        aria-modal="true"
+        aria-labelledby={titleId}
         className={cx('elevate-3 max-h-[92vh] w-full overflow-y-auto rounded-t-xl border border-line bg-surface sm:rounded-xl', wide ? 'sm:max-w-3xl' : 'sm:max-w-lg')}
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-line-soft px-5 py-4">
-          <h2 className="text-h3 text-ink">{title}</h2>
-          <button onClick={onClose} className="rounded-sm p-1 text-ink-3 transition-colors hover:bg-raised hover:text-ink" aria-label="Close">
+          <h2 ref={titleRef} id={titleId} tabIndex={-1} className="text-h3 text-ink focus:outline-none">
+            {title}
+          </h2>
+          <button onClick={onClose} className="-my-2.5 -mr-2.5 flex size-11 items-center justify-center rounded-sm text-ink-3 transition-colors hover:bg-raised hover:text-ink" aria-label="Close">
             <X className="size-4" />
           </button>
         </div>
-        <div className="px-5 py-5">{children}</div>
+        <div ref={bodyRef} className="px-5 py-5">
+          {children}
+        </div>
         {footer && <div className="flex justify-end gap-2 border-t border-line-soft px-5 py-4">{footer}</div>}
       </div>
     </div>
   )
 }
 
+// A labelled control. The label wraps the control so it names it; the hint or
+// error sits outside the label and is tied to a single input, select or
+// textarea with aria-describedby, so it is read as a description, not the name.
 export function Field({ label, hint, children, error }: { label: string; hint?: string; error?: string | null; children: ReactNode }) {
+  const id = useId()
+  const hintId = `${id}-hint`
+  const errorId = `${id}-error`
+  const describedBy = error ? errorId : hint ? hintId : undefined
+  let control = children
+  if (Children.count(children) === 1 && isValidElement(children) && (children.type === 'input' || children.type === 'select' || children.type === 'textarea')) {
+    const el = children as ReactElement<{ 'aria-describedby'?: string; 'aria-invalid'?: boolean | 'true' | 'false' }>
+    control = cloneElement(el, {
+      'aria-describedby': [el.props['aria-describedby'], describedBy].filter(Boolean).join(' ') || undefined,
+      'aria-invalid': error ? true : el.props['aria-invalid'],
+    })
+  }
   return (
-    <label className="block">
-      <span className="mb-1.5 block text-small font-medium text-ink-2">{label}</span>
-      {children}
-      {hint && !error && <span className="mt-1.5 block text-caption text-ink-3">{hint}</span>}
-      {error && <span className="mt-1.5 block text-caption text-danger">{error}</span>}
-    </label>
+    <div>
+      <label className="block">
+        <span className="mb-1.5 block text-small font-medium text-ink-2">{label}</span>
+        {control}
+      </label>
+      {hint && !error && (
+        <span id={hintId} className="mt-1.5 block text-caption text-ink-3">
+          {hint}
+        </span>
+      )}
+      {error && (
+        <span id={errorId} className="mt-1.5 block text-caption text-danger">
+          {error}
+        </span>
+      )}
+    </div>
   )
 }
 
 export const inputCls =
-  'block w-full h-9 rounded-md border border-line-strong bg-sunken px-3 text-body text-ink placeholder:text-ink-3 transition-[border-color,box-shadow] duration-150 hover:border-ink-4 focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent-soft disabled:opacity-50'
+  'block w-full h-9 rounded-md border border-line-strong bg-sunken px-3 text-body text-ink placeholder:text-ink-3 transition-[border-color,box-shadow] duration-150 hover:border-ink-4 focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-line disabled:opacity-50'
 
 export function Spinner({ label }: { label?: string }) {
   return (
     <div className="flex items-center justify-center gap-2.5 py-20 text-body text-ink-3" role="status">
       <Loader2 className="size-4 animate-spin text-accent" />
       {label ?? 'Loading…'}
+    </div>
+  )
+}
+
+// The loading state for a whole page: the shape of a page, no words on screen.
+export function PageSkeleton() {
+  return (
+    <div className="min-h-dvh bg-canvas px-4 py-7 sm:px-8 sm:py-10" role="status" aria-busy="true">
+      <span className="sr-only">Loading Headroom</span>
+      <div className="mx-auto max-w-[1200px] space-y-4" aria-hidden>
+        <div className="h-8 w-56 max-w-full rounded-md bg-raised motion-safe:animate-pulse" />
+        <div className="h-40 rounded-lg bg-raised motion-safe:animate-pulse" />
+        <div className="h-64 rounded-lg bg-raised motion-safe:animate-pulse" />
+      </div>
     </div>
   )
 }

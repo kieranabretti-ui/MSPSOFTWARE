@@ -16,13 +16,22 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const MODEL = 'claude-opus-5-5'
 
+// SITE_URL (a function secret) limits browser calls to the app's own origin.
 const cors = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': Deno.env.get('SITE_URL') ?? '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { ...cors, 'Content-Type': 'application/json' } })
+
+// What the browser sees when something unexpected fails. The raw error goes
+// to the function logs only.
+const FAILED = "The AI explanation couldn't be generated. Try again."
+const failed = (raw: unknown) => {
+  console.error(raw)
+  return json({ error: FAILED }, 500)
+}
 
 interface Evidence {
   kind: string
@@ -69,11 +78,19 @@ Every quote must be copied exactly from one evidence item's text.`
 const normalise = (s: string) => s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, ' ').trim().toLowerCase()
 
 Deno.serve(async (req) => {
+  try {
+    return await handle(req)
+  } catch (e) {
+    return failed(e)
+  }
+})
+
+async function handle(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
 
   const apiKey = Deno.env.get('ANTHROPIC_API_KEY')
-  if (!apiKey) return json({ error: 'AI review is not configured on the server.' }, 503)
+  if (!apiKey) return json({ error: "AI explanations aren't set up on this server." }, 503)
 
   const authorization = req.headers.get('Authorization')
   if (!authorization) return json({ error: 'Not signed in.' }, 401)
@@ -94,8 +111,8 @@ Deno.serve(async (req) => {
     .select('id, category, severity, confidence, title, description, evidence, estimated_value, monthly_value, recommended_action, client:clients(name)')
     .eq('id', findingId)
     .maybeSingle()
-  if (error) return json({ error: error.message }, 500)
-  if (!finding) return json({ error: 'Finding not found.' }, 404)
+  if (error) return failed(error)
+  if (!finding) return json({ error: "We couldn't find that opportunity. It may have been removed when the analysis was re-run." }, 404)
 
   const evidence = (finding.evidence ?? []) as Evidence[]
   const client = (finding.client as { name?: string } | null)?.name ?? 'Unknown client'
@@ -127,20 +144,19 @@ Deno.serve(async (req) => {
       messages: [{ role: 'user', content: prompt }],
     })
   } catch (e) {
-    if (e instanceof Anthropic.RateLimitError) return json({ error: 'AI review is busy. Try again in a minute.' }, 429)
-    if (e instanceof Anthropic.APIError) return json({ error: `AI review failed (${e.status ?? 'network'}).` }, 502)
-    throw e
+    if (e instanceof Anthropic.RateLimitError) return json({ error: 'The AI explanation service is busy. Try again in a minute.' }, 429)
+    return failed(e)
   }
 
-  if (response.stop_reason === 'refusal') return json({ error: 'The AI declined to review this finding.' }, 422)
-  if (response.stop_reason === 'max_tokens') return json({ error: 'The AI review was cut short. Try again.' }, 502)
+  if (response.stop_reason === 'refusal') return json({ error: 'The AI declined to explain this opportunity.' }, 422)
+  if (response.stop_reason === 'max_tokens') return json({ error: 'The AI explanation was cut short. Try again.' }, 502)
 
   const text = response.content.flatMap((b) => (b.type === 'text' ? [b.text] : [])).join('')
   let parsed: { explanation: string; quotes: { label: string; text: string }[]; caveat: string }
   try {
     parsed = JSON.parse(text)
-  } catch {
-    return json({ error: 'The AI review could not be read. Try again.' }, 502)
+  } catch (e) {
+    return failed(e)
   }
 
   // Keep only quotes that really appear in the attached evidence.
@@ -153,4 +169,4 @@ Deno.serve(async (req) => {
   if (parsed.caveat?.trim()) parts.push(`Before raising it: ${parsed.caveat.trim()}`)
 
   return json({ explanation: parts.join('\n\n'), quotes, dropped_quotes: dropped, model: response.model })
-})
+}

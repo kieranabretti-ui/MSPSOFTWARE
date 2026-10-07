@@ -5,7 +5,7 @@ import type { Action, Category, ClientMetrics, Finding } from '../../../engine/t
 import { Card, HealthDot, SeverityBadge, TextLink, cx } from '../../../components/ui'
 import { LeakBar, TrendChart } from '../../../components/charts'
 import { money, plural, relative } from '../../../lib/format'
-import { ACTION_STATUS, CATEGORY_META } from '../../../lib/labels'
+import { ACTION_STATUS, CATEGORY_META, FINDING_STATUS } from '../../../lib/labels'
 
 // Full-width rows inside a card: the focus ring sits inside the row so the
 // card's rounded clip never cuts it off.
@@ -61,7 +61,7 @@ export function PriorityFindings({ findings, clientName, criticalCount }: { find
                     <span className="block text-body font-medium text-ink sm:truncate">{f.title}</span>
                     <span className="mt-0.5 block truncate text-caption text-ink-3">
                       {clientName(f.client_id)} · {CATEGORY_META[f.category].short} · <span className="tnum">{f.confidence}%</span> confidence
-                      {f.status === 'valid' && <span className="text-ink-2"> · Confirmed</span>}
+                      {f.status === 'valid' && <span className="text-ink-2"> · {FINDING_STATUS.valid}</span>}
                     </span>
                   </span>
                   <span className="shrink-0 text-right">

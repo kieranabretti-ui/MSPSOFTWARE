@@ -9,6 +9,7 @@ import type { FindingStatus } from '../../../engine/types'
 // carries its word, never colour alone.
 const STYLE: Record<FindingStatus, { cls: string; mark: 'ring' | 'dot' | 'tick' }> = {
   open: { cls: 'text-ink-2 ring-line', mark: 'ring' },
+  reviewing: { cls: 'bg-raised text-ink-2 ring-line', mark: 'ring' },
   valid: { cls: 'bg-raised text-ink-2 ring-line', mark: 'dot' },
   resolved: { cls: 'bg-raised text-ink-2 ring-line', mark: 'tick' },
   dismissed: { cls: 'text-ink-3 ring-line-soft', mark: 'dot' },

@@ -85,4 +85,6 @@ export interface Backend {
   // Stores an original file privately. Returns a storage path, or null when
   // the backend keeps only extracted content (local mode).
   storeFile(workspaceId: string, file: File): Promise<string | null>
+  // Server-side AI explanation of one finding. Only the hosted backend has it.
+  aiReview?(findingId: string): Promise<string>
 }

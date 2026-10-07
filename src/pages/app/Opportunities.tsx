@@ -239,7 +239,7 @@ export default function Findings() {
                       <Confidence value={f.confidence} />
                     </td>
                     <td className={cx('whitespace-nowrap px-3 py-3', COL.status)}>
-                      {f.status === 'open' ? <span className="sr-only">Open</span> : <StatusBadge status={f.status} />}
+                      {f.status === 'open' ? <span className="sr-only">{FINDING_STATUS.open}</span> : <StatusBadge status={f.status} />}
                     </td>
                     <td className="whitespace-nowrap py-3 pl-3 pr-4 text-right align-top sm:pr-5 sm:align-middle">
                       <span className="tnum block text-body font-semibold text-ink">{money(f.estimated_value)}</span>

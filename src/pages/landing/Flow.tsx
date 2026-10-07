@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { Badge, Figure, cx } from '../../components/ui'
-import { ShareBars } from '../../components/charts'
+import { ShareBars } from '../../components/bars'
 import { money, num, plural } from '../../lib/format'
 import { CATEGORY_META } from '../../lib/labels'
 import { DEMO } from './demoSnapshot'

@@ -5,7 +5,7 @@ import { Badge, Button, Figure, HealthDot, Logo, LogoMark, PageHeader, cx } from
 import { GapBar } from '../../components/charts'
 import { useToast } from '../../components/toast'
 import { GetStarted } from './Overview'
-import { findingsCsv } from './Findings'
+import { findingsCsv } from './Opportunities'
 import { buildReport, reportPdf, DISCLAIMER } from '../../lib/report'
 import { downloadFile, hours, money, pct, plural, relative } from '../../lib/format'
 import { IS_PREVIEW } from '../../lib/env'

@@ -1,6 +1,7 @@
 // Browser-only backend used when Supabase isn't configured, and for the
 // one-click demo. Everything lives in localStorage on this device.
 import { DEFAULT_SETTINGS, type Workspace } from '../engine/types'
+import { AppError } from '../lib/errors'
 import { emptyData, type Backend, type DataPatch, type SessionUser, type WorkspaceData } from './backend'
 
 const USERS = 'headroom:users'
@@ -36,7 +37,8 @@ const write = (key: string, value: unknown) => {
   try {
     localStorage.setItem(key, raw)
   } catch (e) {
-    if (e instanceof DOMException && e.name === 'QuotaExceededError') throw new Error('This browser has run out of local storage. Clear demo data in Settings or connect Supabase.')
+    if (e instanceof DOMException && e.name === 'QuotaExceededError')
+      throw new AppError('This browser has run out of local storage. Clear data on the Analyses page or use an account.', { code: 'quota_exceeded', detail: e.message })
     memory.set(key, raw)
   }
 }
@@ -75,7 +77,7 @@ export class LocalBackend implements Backend {
   async signUp(email: string, password: string, name: string) {
     const users = read<StoredUser[]>(USERS, [])
     const e = email.trim().toLowerCase()
-    if (users.some((u) => u.email === e)) throw new Error('An account with this email already exists on this device. Sign in instead.')
+    if (users.some((u) => u.email === e)) throw new AppError('An account with this email already exists on this device. Sign in instead.', { code: 'user_already_exists' })
     const salt = crypto.randomUUID()
     const user: StoredUser = { id: crypto.randomUUID(), email: e, name: name.trim() || e.split('@')[0], salt, hash: await hashPassword(password, salt) }
     write(USERS, [...users, user])
@@ -87,7 +89,7 @@ export class LocalBackend implements Backend {
 
   async signIn(email: string, password: string) {
     const u = read<StoredUser[]>(USERS, []).find((x) => x.email === email.trim().toLowerCase())
-    if (!u || (await hashPassword(password, u.salt)) !== u.hash) throw new Error('Email or password is incorrect.')
+    if (!u || (await hashPassword(password, u.salt)) !== u.hash) throw new AppError('Email or password is incorrect.', { code: 'invalid_credentials' })
     write(SESSION, u.id)
     const session = { id: u.id, email: u.email, name: u.name }
     this.emit(session)
@@ -95,7 +97,7 @@ export class LocalBackend implements Backend {
   }
 
   async sendMagicLink() {
-    throw new Error('Magic links need Supabase to be configured.')
+    throw new AppError('Magic links need Supabase to be configured.', { code: 'magic_link_unavailable' })
   }
 
   async signOut() {
@@ -164,7 +166,7 @@ export class LocalBackend implements Backend {
 
   async saveAnalysis(id: string, analysis: WorkspaceData['analyses'][number], findings: WorkspaceData['findings']) {
     const d = this.get(id)
-    d.analyses = [analysis] // only the latest is kept
+    d.analyses = [analysis, ...d.analyses].slice(0, 12) // newest first; older runs drop off to save space
     d.findings = findings
     const live = new Set(findings.map((f) => f.id))
     d.actions = d.actions.map((a) => (a.finding_id && !live.has(a.finding_id) ? { ...a, finding_id: null } : a))

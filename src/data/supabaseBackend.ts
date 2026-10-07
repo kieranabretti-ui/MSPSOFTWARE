@@ -1,7 +1,10 @@
 // Supabase backend. Tables and RLS policies live in supabase/migrations; every
 // row carries workspace_id and policies restrict access to workspace members.
+// Loaded on demand through lazySupabase.ts, so supabase-js stays out of the
+// entry chunk.
 import { createClient, type SupabaseClient, type User } from '@supabase/supabase-js'
 import { DEFAULT_SETTINGS, type Workspace } from '../engine/types'
+import { AppError, GENERIC_ERROR, knownError } from '../lib/errors'
 import { emptyData, type Backend, type DataPatch, type SessionUser, type WorkspaceData } from './backend'
 
 const TABLES: (keyof WorkspaceData)[] = ['clients', 'contracts', 'tickets', 'time_entries', 'billing_items', 'assets', 'uploads', 'analyses', 'findings', 'actions', 'reports']
@@ -10,10 +13,20 @@ const PAGE = 1000
 
 const toSession = (u: User): SessionUser => ({ id: u.id, email: u.email ?? '', name: (u.user_metadata?.name as string) || (u.email ?? '').split('@')[0] })
 
-const friendly = (message: string) => (/failed to fetch|networkerror|load failed/i.test(message) ? 'Could not reach the server. Check your connection and try again.' : message)
+const FILE_PAGE = 100
 
-function check<T>(res: { data: T; error: { message: string } | null }): T {
-  if (res.error) throw new Error(friendly(res.error.message))
+type RawError = { message: string; code?: string | number; status?: number }
+
+// Every failure leaves as an AppError: a message that's safe to show, with the
+// raw code and text kept aside for mapError and the console.
+function fail(error: RawError, status?: number): AppError {
+  const code = error.code == null ? undefined : String(error.code)
+  const st = error.status ?? status
+  return new AppError(knownError({ code, status: st, message: error.message }) ?? GENERIC_ERROR, { code, status: st, detail: error.message })
+}
+
+function check<T>(res: { data: T; error: RawError | null; status?: number }): T {
+  if (res.error) throw fail(res.error, res.status)
   return res.data
 }
 
@@ -38,7 +51,7 @@ export class SupabaseBackend implements Backend {
 
   async signIn(email: string, password: string) {
     const { data, error } = await this.sb.auth.signInWithPassword({ email, password })
-    if (error) throw new Error(friendly(error.message))
+    if (error) throw fail(error)
     return toSession(data.user)
   }
 
@@ -72,10 +85,10 @@ export class SupabaseBackend implements Backend {
     check(await this.sb.from('workspaces').update({ name: ws.name, settings: ws.settings }).eq('id', ws.id))
   }
 
-  private async selectAll(table: string, workspaceId: string) {
+  private async selectAll(table: string, workspaceId: string, columns = '*') {
     const out: unknown[] = []
     for (let from = 0; ; from += PAGE) {
-      const rows = check(await this.sb.from(table).select('*').eq('workspace_id', workspaceId).range(from, from + PAGE - 1))
+      const rows = check(await this.sb.from(table).select(columns).eq('workspace_id', workspaceId).range(from, from + PAGE - 1))
       out.push(...(rows ?? []))
       if (!rows || rows.length < PAGE) break
     }
@@ -101,6 +114,16 @@ export class SupabaseBackend implements Backend {
   }
 
   async clearAll(workspaceId: string) {
+    // Stored contract files first, while the rows that point at them still
+    // exist, so nothing is left behind in storage if this fails part way.
+    const bucket = this.sb.storage.from('uploads')
+    const paths: string[] = []
+    for (let offset = 0; ; offset += FILE_PAGE) {
+      const files = check(await bucket.list(workspaceId, { limit: FILE_PAGE, offset })) ?? []
+      paths.push(...files.map((f) => `${workspaceId}/${f.name}`))
+      if (files.length < FILE_PAGE) break
+    }
+    for (let i = 0; i < paths.length; i += FILE_PAGE) check(await bucket.remove(paths.slice(i, i + FILE_PAGE)))
     // Children before parents.
     for (const t of ['actions', 'findings', 'reports', 'analyses', 'contracts', 'tickets', 'time_entries', 'billing_items', 'assets', 'uploads', 'clients'])
       check(await this.sb.from(t).delete().eq('workspace_id', workspaceId))
@@ -110,7 +133,7 @@ export class SupabaseBackend implements Backend {
     check(await this.sb.from('analyses').insert(analysis))
     await this.upsertRows('findings', findings)
     const keep = new Set(findings.map((f) => f.id))
-    const existing = check(await this.sb.from('findings').select('id').eq('workspace_id', workspaceId)) as { id: string }[]
+    const existing = (await this.selectAll('findings', workspaceId, 'id')) as { id: string }[]
     const stale = existing.filter((f) => !keep.has(f.id)).map((f) => f.id)
     for (let i = 0; i < stale.length; i += CHUNK) check(await this.sb.from('findings').delete().in('id', stale.slice(i, i + CHUNK)))
   }
@@ -138,8 +161,9 @@ export class SupabaseBackend implements Backend {
     const { data, error } = await this.sb.functions.invoke('ai-review', { body: { finding_id: findingId } })
     if (error) {
       // Edge Function errors carry the function's JSON body in error.context.
-      const body = await (error as { context?: Response }).context?.json?.().catch(() => null)
-      throw new Error(friendly(body?.error ?? error.message))
+      const context = (error as { context?: Response }).context
+      const body = await context?.json?.().catch(() => null)
+      throw fail({ message: body?.error ?? error.message, status: context?.status })
     }
     return (data as { explanation: string }).explanation
   }

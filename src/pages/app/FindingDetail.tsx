@@ -2,10 +2,9 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Check, CircleCheck, CircleX, ListPlus, RotateCcw, Sparkles } from 'lucide-react'
 import { useMetrics, useStore } from '../../data/store'
-import { SupabaseBackend } from '../../data/supabaseBackend'
 import { Badge, Button, Card, CardHeader, Disclaimer, EmptyState, Field, Figure, Modal, SeverityBadge, inputCls, cx, type Tone } from '../../components/ui'
 import { useToast } from '../../components/toast'
-import { StatusBadge } from './Findings'
+import { StatusBadge } from './Opportunities'
 import { EvidenceRow, ValueByMonth } from './findings/evidence'
 import { dateTime, money, plural } from '../../lib/format'
 import { fmtMinutes, monthLabel } from '../../engine/analyse'
@@ -132,7 +131,7 @@ export default function FindingDetail() {
   }
 
   const explain = async () => {
-    if (!(backend instanceof SupabaseBackend)) return
+    if (backend.mode !== 'supabase' || !backend.aiReview) return
     setAiLoading(true)
     try {
       const text = await backend.aiReview(f.id)
@@ -144,7 +143,7 @@ export default function FindingDetail() {
     }
   }
 
-  const aiReady = backend.mode === 'supabase'
+  const aiReady = backend.mode === 'supabase' && !!backend.aiReview
 
   return (
     <>

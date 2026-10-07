@@ -182,6 +182,9 @@ export interface RowError {
 export interface ImportContext {
   workspaceId: string
   clients: Client[]
+  // Rows already in the workspace. A row with the same natural key reuses the
+  // existing id, so the upsert replaces it instead of adding a duplicate.
+  existing?: { tickets: Ticket[]; time_entries: TimeEntry[]; assets: Asset[]; billing_items: BillingItem[] }
 }
 
 export interface ImportResult {
@@ -193,12 +196,25 @@ export interface ImportResult {
   billing_items: BillingItem[]
   errors: RowError[]
   warnings: string[]
-  imported: number
+  imported: number // added + updated
+  added: number
+  updated: number
 }
 
 export const uuid = () => crypto.randomUUID()
 const now = () => new Date().toISOString()
 export const clientKey = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '')
+
+// What makes two rows the same record, per table. Re-importing an export
+// matches on these rather than on ids, which a CSV doesn't carry.
+const lowerTrim = (s: string) => s.trim().toLowerCase()
+export const naturalKey = {
+  tickets: (t: Pick<Ticket, 'client_id' | 'external_id'>) => `${t.client_id}|${t.external_id}`,
+  time_entries: (e: Pick<TimeEntry, 'client_id' | 'ticket_external_id' | 'date' | 'technician' | 'minutes'>) => `${e.client_id}|${e.ticket_external_id ?? ''}|${e.date}|${e.technician ?? ''}|${e.minutes}`,
+  assets: (a: Pick<Asset, 'client_id' | 'asset_type' | 'name'>) => `${a.client_id}|${a.asset_type}|${lowerTrim(a.name)}`,
+  billing_items: (b: Pick<BillingItem, 'client_id' | 'service'>) => `${b.client_id}|${lowerTrim(b.service)}`,
+}
+type KeyedTable = keyof typeof naturalKey
 
 export function newClient(workspaceId: string, name: string, extra: Partial<Client> = {}): Client {
   return {
@@ -247,9 +263,33 @@ export function validateRows(kind: CsvKind, rows: MappedRow[]): RowError[] {
 }
 
 export function importRows(kind: CsvKind, rows: MappedRow[], ctx: ImportContext): ImportResult {
-  const res: ImportResult = { kind, clients: [], tickets: [], time_entries: [], assets: [], billing_items: [], errors: [], warnings: [], imported: 0 }
+  const res: ImportResult = { kind, clients: [], tickets: [], time_entries: [], assets: [], billing_items: [], errors: [], warnings: [], imported: 0, added: 0, updated: 0 }
   const byKey = new Map(ctx.clients.map((c) => [clientKey(c.name), c]))
   const created = new Set<string>()
+  // Ids by natural key: rows already in the workspace, then rows seen in this file.
+  const known: Record<KeyedTable, Map<string, string>> = {
+    tickets: new Map((ctx.existing?.tickets ?? []).map((r) => [naturalKey.tickets(r), r.id])),
+    time_entries: new Map((ctx.existing?.time_entries ?? []).map((r) => [naturalKey.time_entries(r), r.id])),
+    assets: new Map((ctx.existing?.assets ?? []).map((r) => [naturalKey.assets(r), r.id])),
+    billing_items: new Map((ctx.existing?.billing_items ?? []).map((r) => [naturalKey.billing_items(r), r.id])),
+  }
+  let repeated = 0 // rows that repeat an earlier row in this same file
+  const seenInFile = new Set<string>()
+  // Returns the id for a row: the existing one when the key matches, otherwise new.
+  const idFor = <T extends KeyedTable>(table: T, row: Parameters<(typeof naturalKey)[T]>[0]): string => {
+    const key = (naturalKey[table] as (r: typeof row) => string)(row)
+    const id = known[table].get(key)
+    if (seenInFile.has(`${table}:${key}`)) repeated++
+    seenInFile.add(`${table}:${key}`)
+    if (id) {
+      res.updated++
+      return id
+    }
+    const fresh = uuid()
+    known[table].set(key, fresh)
+    res.added++
+    return fresh
+  }
   const errors = validateRows(kind, rows)
   const badRows = new Set(errors.map((e) => e.row))
   res.errors = errors
@@ -287,21 +327,24 @@ export function importRows(kind: CsvKind, rows: MappedRow[], ctx: ImportContext)
           byKey.set(clientKey(r.client), updated)
           res.clients = res.clients.filter((c) => c.id !== existing.id)
           res.clients.push(updated)
+          res.updated++
         } else {
           const c = newClient(ws, r.client.trim(), fields)
           byKey.set(clientKey(r.client), c)
           res.clients.push(c)
+          res.added++
         }
         break
       }
       case 'tickets': {
         const c = resolve(r.client)
         const billable = parseBool(r.billable)
+        const external_id = r.ticket_id.trim().replace(/^#/, '')
         res.tickets.push({
-          id: uuid(),
+          id: idFor('tickets', { client_id: c.id, external_id }),
           workspace_id: ws,
           client_id: c.id,
-          external_id: r.ticket_id.trim().replace(/^#/, ''),
+          external_id,
           date: parseDate(r.date, true)!,
           technician: r.technician?.trim() || null,
           subject: r.subject.trim(),
@@ -318,8 +361,7 @@ export function importRows(kind: CsvKind, rows: MappedRow[], ctx: ImportContext)
         let minutes = parseNumber(raw) ?? 0
         // A bare decimal under 24 in an "hours" column is almost certainly hours.
         if (/^\d+\.\d+$/.test(raw.trim()) && minutes < 24) minutes = Math.round(minutes * 60)
-        res.time_entries.push({
-          id: uuid(),
+        const entry = {
           workspace_id: ws,
           client_id: c.id,
           ticket_external_id: r.ticket_id?.trim().replace(/^#/, '') || null,
@@ -327,7 +369,8 @@ export function importRows(kind: CsvKind, rows: MappedRow[], ctx: ImportContext)
           technician: r.technician?.trim() || null,
           minutes,
           billable: parseBool(r.billable) ?? false,
-        })
+        }
+        res.time_entries.push({ id: idFor('time_entries', entry), ...entry })
         break
       }
       case 'assets': {
@@ -335,12 +378,13 @@ export function importRows(kind: CsvKind, rows: MappedRow[], ctx: ImportContext)
         const type = /^(user|person|account)/i.test(r.type.trim()) ? 'user' : 'device'
         const status = r.status?.trim().toLowerCase()
         const own = r.ownership?.trim().toLowerCase()
+        const name = r.name.trim()
         res.assets.push({
-          id: uuid(),
+          id: idFor('assets', { client_id: c.id, asset_type: type, name }),
           workspace_id: ws,
           client_id: c.id,
           asset_type: type,
-          name: r.name.trim(),
+          name,
           ownership: own ? (/personal|byod|employee|private/.test(own) ? 'personal' : 'company') : null,
           license: r.license?.trim() || null,
           status: status && /^(inactive|disabled|retired|false|no|deleted|left)/.test(status) ? 'inactive' : 'active',
@@ -352,11 +396,12 @@ export function importRows(kind: CsvKind, rows: MappedRow[], ctx: ImportContext)
         const c = resolve(r.client)
         const quantity = parseNumber(r.quantity) ?? 0
         const unit = parseNumber(r.unit_price) ?? 0
+        const service = r.service.trim()
         res.billing_items.push({
-          id: uuid(),
+          id: idFor('billing_items', { client_id: c.id, service }),
           workspace_id: ws,
           client_id: c.id,
-          service: r.service.trim(),
+          service,
           quantity,
           unit_price: unit,
           monthly_value: parseNumber(r.monthly_value) ?? Math.round(quantity * unit * 100) / 100,
@@ -366,9 +411,24 @@ export function importRows(kind: CsvKind, rows: MappedRow[], ctx: ImportContext)
     }
     res.imported++
   })
+  // A row repeated within the file keeps only its last version, so one upsert
+  // never touches the same id twice.
+  res.tickets = lastById(res.tickets)
+  res.time_entries = lastById(res.time_entries)
+  res.assets = lastById(res.assets)
+  res.billing_items = lastById(res.billing_items)
+  const again = res.updated - repeated
+  if (again > 0) res.warnings.push(`${again} row${again === 1 ? '' : 's'} already imported ${again === 1 ? 'was' : 'were'} updated, not duplicated.`)
+  if (repeated > 0) res.warnings.push(`${repeated} row${repeated === 1 ? '' : 's'} repeated in this file ${repeated === 1 ? 'was' : 'were'} merged into one.`)
   if (created.size && kind !== 'clients')
     res.warnings.push(
       `${created.size} client${created.size === 1 ? '' : 's'} not found in your client list ${created.size === 1 ? 'was' : 'were'} added: ${[...created].slice(0, 5).join(', ')}${created.size > 5 ? '…' : ''}. Upload a Clients CSV to add contract details.`,
     )
   return res
+}
+
+function lastById<T extends { id: string }>(rows: T[]): T[] {
+  const byId = new Map<string, T>()
+  for (const r of rows) byId.set(r.id, r)
+  return byId.size === rows.length ? rows : [...byId.values()]
 }
