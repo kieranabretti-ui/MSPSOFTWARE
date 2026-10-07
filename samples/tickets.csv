@@ -1,0 +1,1062 @@
+ticket_id,client,date,technician,subject,description,status,time_spent_minutes,billable
+17240,Elmfield Dental,2026-04-01 12:00,Tom Walker,New starter: dental nurse accounts and email,"Created Microsoft 365 account, added to groups, set up practice software login.",Closed,60,No
+17241,Bramley Homes,2026-04-01 12:52,Tom Walker,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,90,No
+17242,Castle Accountancy,2026-04-01 13:24,Daniel Hughes,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,150,No
+17243,ABC Ltd,2026-04-01 13:42,Daniel Hughes,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,90,No
+17244,Northgate Veterinary,2026-04-02 09:20,Sophie Clarke,Cannot print to large format plotter,Reinstalled driver.,Closed,45,No
+17245,ABC Ltd,2026-04-02 09:31,Tom Walker,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,90,No
+17246,Pennine Engineering,2026-04-02 10:07,Sophie Clarke,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,45,No
+17247,Northgate Veterinary,2026-04-02 10:47,Daniel Hughes,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,120,No
+17248,Harbour Physio,2026-04-02 11:40,Sophie Clarke,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,60,No
+17249,Elmfield Dental,2026-04-02 12:18,Sophie Clarke,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,75,No
+17250,Castle Accountancy,2026-04-02 12:45,Priya Patel,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,60,No
+17251,Harbour Physio,2026-04-02 12:58,Daniel Hughes,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,150,No
+17252,Dorset Legal,2026-04-02 13:15,Daniel Hughes,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,75,No
+17253,Meridian Logistics,2026-04-02 14:00,Priya Patel,Label printer replacement,Chargeable replacement approved by ops director. Installed and configured.,Closed,35,Yes
+17254,Castle Accountancy,2026-04-03 10:10,James Smith,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,30,No
+17255,Dorset Legal,2026-04-03 11:42,James Smith,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,45,No
+17256,Dorset Legal,2026-04-03 13:26,Sophie Clarke,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,60,No
+17257,ABC Ltd,2026-04-06 09:10,Priya Patel,VPN not connecting,Reissued VPN profile.,Closed,45,No
+17258,Thames Valley Recruitment,2026-04-06 09:45,Tom Walker,Distribution list change request,Updated membership of distribution list.,Closed,45,No
+17259,Thames Valley Recruitment,2026-04-06 10:12,James Smith,SharePoint access request,Added user to site members.,Closed,165,No
+17260,Willow & Hart Interiors,2026-04-06 10:59,Tom Walker,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,90,No
+17261,Meridian Logistics,2026-04-06 11:27,Priya Patel,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,15,No
+17262,Elmfield Dental,2026-04-06 11:29,Sophie Clarke,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,30,No
+17263,Bramley Homes,2026-04-06 11:57,James Smith,Spam getting through filter,Tuned anti-spam policy.,Closed,30,No
+17264,Meridian Logistics,2026-04-06 12:30,Tom Walker,Spam getting through filter,Tuned anti-spam policy.,Closed,75,No
+17265,ABC Ltd,2026-04-07 09:58,Sophie Clarke,Spam getting through filter,Tuned anti-spam policy.,Closed,45,No
+17266,Harbour Physio,2026-04-07 10:56,Daniel Hughes,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,60,No
+17267,ABC Ltd,2026-04-07 12:06,Daniel Hughes,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,30,No
+17268,Kingsbridge Architects,2026-04-07 13:05,Daniel Hughes,Disk space low on file server,Cleared temp files and extended volume.,Closed,185,No
+17269,Willow & Hart Interiors,2026-04-07 13:47,Priya Patel,SharePoint access request,Added user to site members.,Closed,150,No
+17270,Sterling Wealth Partners,2026-04-08 10:36,Daniel Hughes,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,60,Yes
+17271,Pennine Engineering,2026-04-08 11:19,James Smith,Cannot print to large format plotter,Reinstalled driver.,Closed,30,No
+17272,Kingsbridge Architects,2026-04-08 12:23,Tom Walker,MFA prompt not received,Re-registered authenticator app.,Closed,15,No
+17273,Sterling Wealth Partners,2026-04-08 12:53,Tom Walker,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,30,No
+17274,Dorset Legal,2026-04-09 09:25,Priya Patel,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,60,No
+17275,Bramley Homes,2026-04-09 10:00,Sophie Clarke,Spam getting through filter,Tuned anti-spam policy.,Closed,180,No
+17276,Dorset Legal,2026-04-09 10:12,Tom Walker,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,30,No
+17277,ABC Ltd,2026-04-09 10:18,Tom Walker,MFA prompt not received,Re-registered authenticator app.,Closed,15,No
+17278,Smith & Co,2026-04-09 10:50,Sophie Clarke,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,75,No
+17279,ABC Ltd,2026-04-09 12:14,Sophie Clarke,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,60,No
+17280,Meridian Logistics,2026-04-09 12:46,Daniel Hughes,Unable to access shared drive,Permissions corrected on folder.,Closed,45,No
+17281,ABC Ltd,2026-04-09 13:01,Priya Patel,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,60,No
+17282,Pennine Engineering,2026-04-09 13:36,Tom Walker,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,60,No
+17283,Kingsbridge Architects,2026-04-10 09:05,Priya Patel,Locked out of account,Unlocked account and checked sign-in logs.,Closed,45,No
+17284,Elmfield Dental,2026-04-10 09:33,James Smith,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,120,No
+17285,Sterling Wealth Partners,2026-04-10 10:04,Tom Walker,Locked out of account,Unlocked account and checked sign-in logs.,Closed,120,No
+17286,Castle Accountancy,2026-04-10 10:40,Daniel Hughes,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,60,No
+17287,Dorset Legal,2026-04-10 11:12,Sophie Clarke,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,120,No
+17288,Riverside Care Group,2026-04-10 12:53,Sophie Clarke,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,45,No
+17289,Castle Accountancy,2026-04-10 13:16,Daniel Hughes,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,60,No
+17290,Castle Accountancy,2026-04-13 09:19,Tom Walker,Locked out of account,Unlocked account and checked sign-in logs.,Closed,45,No
+17291,Northgate Veterinary,2026-04-13 09:26,Priya Patel,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,135,No
+17292,Meridian Logistics,2026-04-13 09:44,Sophie Clarke,Shared calendar permissions,Granted editor access to team calendar.,Closed,75,No
+17293,Castle Accountancy,2026-04-13 10:17,James Smith,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,30,No
+17294,Castle Accountancy,2026-04-13 10:34,Sophie Clarke,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,90,No
+17295,Castle Accountancy,2026-04-13 11:00,James Smith,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,20,No
+17296,Riverside Care Group,2026-04-13 11:43,Tom Walker,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,30,No
+17297,ABC Ltd,2026-04-13 12:02,James Smith,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,150,No
+17298,Riverside Care Group,2026-04-13 12:45,Sophie Clarke,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,90,No
+17299,Meridian Logistics,2026-04-13 12:53,Sophie Clarke,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,90,No
+17300,ABC Ltd,2026-04-13 13:07,Priya Patel,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,90,No
+17301,Sterling Wealth Partners,2026-04-13 13:24,James Smith,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,45,No
+17302,Kingsbridge Architects,2026-04-13 13:27,James Smith,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,30,No
+17303,Harbour Physio,2026-04-14 09:54,Priya Patel,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,15,No
+17304,Northgate Veterinary,2026-04-14 09:55,Sophie Clarke,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,15,No
+17305,Pennine Engineering,2026-04-14 09:57,Daniel Hughes,Shared calendar permissions,Granted editor access to team calendar.,Closed,30,No
+17306,Riverside Care Group,2026-04-14 11:00,James Smith,MFA prompt not received,Re-registered authenticator app.,Closed,15,No
+17307,Castle Accountancy,2026-04-14 12:01,Tom Walker,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,20,No
+17308,Dorset Legal,2026-04-14 12:29,James Smith,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,20,No
+17309,Meridian Logistics,2026-04-14 12:45,James Smith,Locked out of account,Unlocked account and checked sign-in logs.,Closed,30,No
+17310,Meridian Logistics,2026-04-14 12:49,Priya Patel,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,90,No
+17311,Willow & Hart Interiors,2026-04-14 13:11,Priya Patel,Printer showing offline,Restarted print spooler and re-added queue.,Closed,150,No
+17312,Dorset Legal,2026-04-14 13:43,Sophie Clarke,Shared calendar permissions,Granted editor access to team calendar.,Closed,90,No
+17313,Pennine Engineering,2026-04-15 09:20,Sophie Clarke,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,30,No
+17314,Kingsbridge Architects,2026-04-15 10:28,Daniel Hughes,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,20,No
+17315,Elmfield Dental,2026-04-15 10:35,James Smith,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,30,No
+17316,Willow & Hart Interiors,2026-04-15 11:18,Tom Walker,VPN not connecting,Reissued VPN profile.,Closed,150,No
+17317,Riverside Care Group,2026-04-15 11:29,Daniel Hughes,Browser certificate warning,Updated root certificates via policy.,Closed,175,No
+17318,Riverside Care Group,2026-04-15 12:26,Sophie Clarke,Distribution list change request,Updated membership of distribution list.,Closed,75,No
+17319,Harbour Physio,2026-04-15 13:14,Daniel Hughes,Printer showing offline,Restarted print spooler and re-added queue.,Closed,120,No
+17320,Castle Accountancy,2026-04-16 09:29,James Smith,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,60,No
+17321,Riverside Care Group,2026-04-16 09:41,Daniel Hughes,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,45,No
+17322,Kingsbridge Architects,2026-04-16 09:59,Daniel Hughes,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,20,No
+17323,Riverside Care Group,2026-04-16 10:25,Tom Walker,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,60,No
+17324,Smith & Co,2026-04-16 12:02,Tom Walker,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,45,No
+17325,Thames Valley Recruitment,2026-04-16 12:59,Daniel Hughes,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,180,No
+17326,Smith & Co,2026-04-16 13:14,Sophie Clarke,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,180,No
+17327,Castle Accountancy,2026-04-16 13:19,Priya Patel,Distribution list change request,Updated membership of distribution list.,Closed,30,No
+17328,ABC Ltd,2026-04-16 13:59,Tom Walker,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,15,No
+17329,Northgate Veterinary,2026-04-17 09:50,James Smith,Shared calendar permissions,Granted editor access to team calendar.,Closed,15,No
+17330,Sterling Wealth Partners,2026-04-17 10:15,Tom Walker,Distribution list change request,Updated membership of distribution list.,Closed,120,No
+17331,Kingsbridge Architects,2026-04-17 11:18,Tom Walker,SharePoint access request,Added user to site members.,Closed,60,No
+17332,Kingsbridge Architects,2026-04-17 11:24,James Smith,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,75,No
+17333,Meridian Logistics,2026-04-17 11:41,Daniel Hughes,Chargeable: additional monitor install,Approved by office manager.,Closed,15,Yes
+17334,Riverside Care Group,2026-04-17 11:50,Tom Walker,MFA prompt not received,Re-registered authenticator app.,Closed,20,No
+17335,Sterling Wealth Partners,2026-04-17 13:19,James Smith,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,90,No
+17336,Harbour Physio,2026-04-17 13:27,James Smith,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,30,No
+17337,Pennine Engineering,2026-04-17 13:52,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,15,No
+17338,Dorset Legal,2026-04-17 13:55,James Smith,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,180,No
+17339,Bramley Homes,2026-04-20 09:04,James Smith,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,75,No
+17340,Elmfield Dental,2026-04-20 10:59,Tom Walker,Disk space low on file server,Cleared temp files and extended volume.,Closed,60,No
+17341,Sterling Wealth Partners,2026-04-20 11:31,Priya Patel,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,45,No
+17342,Kingsbridge Architects,2026-04-20 11:55,Tom Walker,VPN not connecting,Reissued VPN profile.,Closed,60,No
+17343,Pennine Engineering,2026-04-20 11:55,Sophie Clarke,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,90,No
+17344,ABC Ltd,2026-04-20 12:27,James Smith,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,180,Yes
+17345,Meridian Logistics,2026-04-20 12:34,Daniel Hughes,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,60,No
+17346,Elmfield Dental,2026-04-20 12:49,James Smith,Distribution list change request,Updated membership of distribution list.,Closed,45,No
+17347,Meridian Logistics,2026-04-20 12:53,James Smith,Browser certificate warning,Updated root certificates via policy.,Closed,120,No
+17348,Sterling Wealth Partners,2026-04-20 13:15,Priya Patel,Printer showing offline,Restarted print spooler and re-added queue.,Closed,120,No
+17349,Castle Accountancy,2026-04-20 13:17,Sophie Clarke,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,75,No
+17350,Sterling Wealth Partners,2026-04-20 13:30,Tom Walker,VPN not connecting,Reissued VPN profile.,Closed,30,No
+17351,Bramley Homes,2026-04-20 13:40,James Smith,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,45,No
+17352,Pennine Engineering,2026-04-21 10:08,James Smith,Printer showing offline,Restarted print spooler and re-added queue.,Closed,90,No
+17353,ABC Ltd,2026-04-21 12:21,Daniel Hughes,Unable to access shared drive,Permissions corrected on folder.,Closed,75,No
+17354,Kingsbridge Architects,2026-04-22 09:02,Priya Patel,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,15,No
+17355,Riverside Care Group,2026-04-22 09:05,Daniel Hughes,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,90,No
+17356,Pennine Engineering,2026-04-22 09:29,Daniel Hughes,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,120,No
+17357,ABC Ltd,2026-04-22 09:48,Tom Walker,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,120,No
+17358,Riverside Care Group,2026-04-22 10:02,Sophie Clarke,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,45,No
+17359,Castle Accountancy,2026-04-22 10:03,Priya Patel,Browser certificate warning,Updated root certificates via policy.,Closed,90,No
+17360,Pennine Engineering,2026-04-22 10:54,Sophie Clarke,Disk space low on file server,Cleared temp files and extended volume.,Closed,45,No
+17361,Dorset Legal,2026-04-22 12:09,Tom Walker,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,20,No
+17362,Castle Accountancy,2026-04-22 12:27,Daniel Hughes,Chargeable: additional monitor install,Approved by office manager.,Closed,165,Yes
+17363,Sterling Wealth Partners,2026-04-22 12:31,James Smith,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,45,No
+17364,Riverside Care Group,2026-04-23 10:20,Daniel Hughes,Shared calendar permissions,Granted editor access to team calendar.,Closed,90,No
+17365,ABC Ltd,2026-04-23 10:29,James Smith,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,60,No
+17366,Pennine Engineering,2026-04-23 10:46,Sophie Clarke,VPN not connecting,Reissued VPN profile.,Closed,120,No
+17367,Northgate Veterinary,2026-04-23 12:53,Sophie Clarke,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,90,No
+17368,Riverside Care Group,2026-04-23 13:25,Daniel Hughes,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,150,No
+17369,Kingsbridge Architects,2026-04-23 13:57,Tom Walker,Browser certificate warning,Updated root certificates via policy.,Closed,90,No
+17370,Bramley Homes,2026-04-24 09:19,Sophie Clarke,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,120,Yes
+17371,Sterling Wealth Partners,2026-04-24 09:35,James Smith,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,75,No
+17372,Dorset Legal,2026-04-24 09:41,James Smith,SharePoint access request,Added user to site members.,Closed,185,No
+17373,Castle Accountancy,2026-04-24 09:43,Priya Patel,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,60,Yes
+17374,Thames Valley Recruitment,2026-04-24 10:08,James Smith,Unable to access shared drive,Permissions corrected on folder.,Closed,150,No
+17375,Meridian Logistics,2026-04-24 10:14,Daniel Hughes,Disk space low on file server,Cleared temp files and extended volume.,Closed,180,No
+17376,Dorset Legal,2026-04-24 11:59,James Smith,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,60,No
+17377,ABC Ltd,2026-04-24 13:06,Sophie Clarke,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,30,No
+17378,ABC Ltd,2026-04-24 13:44,James Smith,Distribution list change request,Updated membership of distribution list.,Closed,60,No
+17379,Pennine Engineering,2026-04-27 09:13,Priya Patel,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,45,No
+17380,Elmfield Dental,2026-04-27 10:12,Sophie Clarke,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,180,No
+17381,Bramley Homes,2026-04-27 10:13,Tom Walker,Locked out of account,Unlocked account and checked sign-in logs.,Closed,120,No
+17382,Riverside Care Group,2026-04-27 10:54,Sophie Clarke,Printer showing offline,Restarted print spooler and re-added queue.,Closed,75,No
+17383,Pennine Engineering,2026-04-27 11:10,Priya Patel,Disk space low on file server,Cleared temp files and extended volume.,Closed,180,No
+17384,Castle Accountancy,2026-04-27 11:59,Priya Patel,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,30,No
+17385,Elmfield Dental,2026-04-27 12:09,Priya Patel,SharePoint access request,Added user to site members.,Closed,150,No
+17386,Kingsbridge Architects,2026-04-27 13:25,James Smith,Unable to access shared drive,Permissions corrected on folder.,Closed,120,No
+17387,Castle Accountancy,2026-04-27 13:31,Tom Walker,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,60,No
+17388,ABC Ltd,2026-04-28 09:40,Daniel Hughes,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,30,No
+17389,Kingsbridge Architects,2026-04-28 10:10,Sophie Clarke,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,60,Yes
+17390,Dorset Legal,2026-04-28 10:30,Tom Walker,Printer showing offline,Restarted print spooler and re-added queue.,Closed,45,No
+17391,Castle Accountancy,2026-04-28 10:33,Tom Walker,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,20,No
+17392,Meridian Logistics,2026-04-28 10:35,Sophie Clarke,Locked out of account,Unlocked account and checked sign-in logs.,Closed,30,No
+17393,Harbour Physio,2026-04-28 11:13,Tom Walker,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,15,No
+17394,Castle Accountancy,2026-04-28 11:34,Daniel Hughes,SharePoint access request,Added user to site members.,Closed,90,No
+17395,Dorset Legal,2026-04-28 13:28,Tom Walker,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,15,No
+17396,Riverside Care Group,2026-04-28 13:36,Priya Patel,Browser certificate warning,Updated root certificates via policy.,Closed,45,No
+17397,Castle Accountancy,2026-04-29 09:51,James Smith,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,60,No
+17398,Castle Accountancy,2026-04-29 10:09,Priya Patel,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,30,No
+17399,Meridian Logistics,2026-04-29 10:54,Daniel Hughes,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,145,No
+17400,Castle Accountancy,2026-04-29 12:20,James Smith,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,15,Yes
+17401,Castle Accountancy,2026-04-29 13:17,Tom Walker,Unable to access shared drive,Permissions corrected on folder.,Closed,90,No
+17402,Northgate Veterinary,2026-04-30 09:01,James Smith,Unable to access shared drive,Permissions corrected on folder.,Closed,90,No
+17403,Elmfield Dental,2026-04-30 09:06,Tom Walker,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,30,No
+17404,Meridian Logistics,2026-04-30 09:06,James Smith,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,15,No
+17405,Harbour Physio,2026-04-30 10:03,James Smith,Unable to access shared drive,Permissions corrected on folder.,Closed,90,No
+17406,Riverside Care Group,2026-04-30 10:09,Tom Walker,Distribution list change request,Updated membership of distribution list.,Closed,30,No
+17407,Riverside Care Group,2026-04-30 11:28,Daniel Hughes,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,180,No
+17408,ABC Ltd,2026-04-30 11:49,Priya Patel,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,75,No
+17409,Kingsbridge Architects,2026-04-30 12:24,Sophie Clarke,Locked out of account,Unlocked account and checked sign-in logs.,Closed,45,No
+17410,Dorset Legal,2026-04-30 12:44,Tom Walker,Browser certificate warning,Updated root certificates via policy.,Closed,15,No
+17411,Northgate Veterinary,2026-04-30 13:30,Tom Walker,MFA prompt not received,Re-registered authenticator app.,Closed,90,No
+17412,Smith & Co,2026-04-30 13:56,Daniel Hughes,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,120,No
+17413,Castle Accountancy,2026-05-01 09:34,James Smith,Browser certificate warning,Updated root certificates via policy.,Closed,15,No
+17414,Sterling Wealth Partners,2026-05-01 09:36,Tom Walker,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,20,No
+17415,ABC Ltd,2026-05-01 09:53,James Smith,Shared calendar permissions,Granted editor access to team calendar.,Closed,90,No
+17416,Dorset Legal,2026-05-01 10:08,Daniel Hughes,VPN not connecting,Reissued VPN profile.,Closed,90,No
+17417,ABC Ltd,2026-05-01 10:17,James Smith,Locked out of account,Unlocked account and checked sign-in logs.,Closed,90,No
+17418,Riverside Care Group,2026-05-01 10:31,Sophie Clarke,Unable to access shared drive,Permissions corrected on folder.,Closed,60,No
+17419,Elmfield Dental,2026-05-01 12:10,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,30,No
+17420,Northgate Veterinary,2026-05-01 12:16,Daniel Hughes,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,30,No
+17421,Dorset Legal,2026-05-01 12:19,Priya Patel,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,30,No
+17422,ABC Ltd,2026-05-01 12:22,Tom Walker,Disk space low on file server,Cleared temp files and extended volume.,Closed,60,No
+17423,Meridian Logistics,2026-05-01 13:28,James Smith,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,15,No
+17424,Riverside Care Group,2026-05-01 13:54,Priya Patel,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,45,No
+17425,Thames Valley Recruitment,2026-05-04 09:04,Priya Patel,Cannot print to large format plotter,Reinstalled driver.,Closed,45,No
+17426,Castle Accountancy,2026-05-04 09:11,Sophie Clarke,Disk space low on file server,Cleared temp files and extended volume.,Closed,30,No
+17427,Meridian Logistics,2026-05-04 09:21,Tom Walker,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,20,No
+17428,Riverside Care Group,2026-05-04 09:41,Tom Walker,Spam getting through filter,Tuned anti-spam policy.,Closed,130,No
+17429,Pennine Engineering,2026-05-04 10:19,Priya Patel,Spam getting through filter,Tuned anti-spam policy.,Closed,30,No
+17430,Sterling Wealth Partners,2026-05-04 10:19,Daniel Hughes,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,90,No
+17431,Harbour Physio,2026-05-04 10:34,Daniel Hughes,Disk space low on file server,Cleared temp files and extended volume.,Closed,45,No
+17432,Kingsbridge Architects,2026-05-04 10:51,Tom Walker,Shared calendar permissions,Granted editor access to team calendar.,Closed,120,No
+17433,Pennine Engineering,2026-05-04 11:27,Tom Walker,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,90,No
+17434,Smith & Co,2026-05-04 12:04,Tom Walker,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,120,No
+17435,Meridian Logistics,2026-05-04 12:05,Daniel Hughes,Browser certificate warning,Updated root certificates via policy.,Closed,150,No
+17436,ABC Ltd,2026-05-04 13:18,James Smith,Unable to access shared drive,Permissions corrected on folder.,Closed,150,No
+17437,Riverside Care Group,2026-05-04 13:24,James Smith,Disk space low on file server,Cleared temp files and extended volume.,Closed,20,No
+17438,Dorset Legal,2026-05-05 09:23,Tom Walker,Unable to access shared drive,Permissions corrected on folder.,Closed,180,No
+17439,Riverside Care Group,2026-05-05 09:28,Tom Walker,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,180,No
+17440,Pennine Engineering,2026-05-05 10:06,Daniel Hughes,Cannot print to large format plotter,Reinstalled driver.,Closed,30,No
+17441,Dorset Legal,2026-05-05 10:18,James Smith,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,150,No
+17442,Northgate Veterinary,2026-05-05 10:32,James Smith,Disk space low on file server,Cleared temp files and extended volume.,Closed,90,No
+17443,Kingsbridge Architects,2026-05-05 11:40,Daniel Hughes,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,45,No
+17444,Northgate Veterinary,2026-05-05 11:59,Sophie Clarke,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,20,No
+17445,Riverside Care Group,2026-05-06 09:31,Sophie Clarke,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,45,No
+17446,Willow & Hart Interiors,2026-05-06 10:04,James Smith,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,15,No
+17447,Northgate Veterinary,2026-05-06 11:04,Daniel Hughes,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,15,No
+17448,Bramley Homes,2026-05-06 11:16,Daniel Hughes,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,45,No
+17449,Riverside Care Group,2026-05-06 11:45,James Smith,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,75,No
+17450,Willow & Hart Interiors,2026-05-06 11:46,Daniel Hughes,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,15,No
+17451,Bramley Homes,2026-05-06 13:10,Daniel Hughes,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,75,No
+17452,ABC Ltd,2026-05-06 13:38,Sophie Clarke,MFA prompt not received,Re-registered authenticator app.,Closed,90,No
+17453,Harbour Physio,2026-05-06 13:38,Priya Patel,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,75,No
+17454,Harbour Physio,2026-05-07 09:26,James Smith,Browser certificate warning,Updated root certificates via policy.,Closed,55,No
+17455,Dorset Legal,2026-05-07 09:48,Sophie Clarke,Cannot print to large format plotter,Reinstalled driver.,Closed,150,No
+17456,Northgate Veterinary,2026-05-07 10:53,Tom Walker,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,180,No
+17457,Dorset Legal,2026-05-07 11:00,Priya Patel,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,45,No
+17458,ABC Ltd,2026-05-07 11:08,Sophie Clarke,MFA prompt not received,Re-registered authenticator app.,Closed,15,No
+17459,Northgate Veterinary,2026-05-07 12:05,Daniel Hughes,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,40,No
+17460,Northgate Veterinary,2026-05-07 12:14,Tom Walker,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,30,No
+17461,Riverside Care Group,2026-05-07 12:23,Priya Patel,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,90,No
+17462,Castle Accountancy,2026-05-07 12:30,Tom Walker,Unable to access shared drive,Permissions corrected on folder.,Closed,150,No
+17463,Meridian Logistics,2026-05-07 12:48,Tom Walker,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,60,No
+17464,Sterling Wealth Partners,2026-05-08 09:03,Sophie Clarke,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,20,No
+17465,Pennine Engineering,2026-05-08 09:28,Sophie Clarke,Spam getting through filter,Tuned anti-spam policy.,Closed,120,No
+17466,Pennine Engineering,2026-05-08 09:55,Priya Patel,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,60,No
+17467,Kingsbridge Architects,2026-05-08 09:58,Daniel Hughes,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,120,No
+17468,Smith & Co,2026-05-08 10:57,James Smith,Browser certificate warning,Updated root certificates via policy.,Closed,120,No
+17469,Bramley Homes,2026-05-08 12:13,Daniel Hughes,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,90,No
+17470,Dorset Legal,2026-05-08 12:41,Tom Walker,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,90,No
+17471,Castle Accountancy,2026-05-08 12:47,Daniel Hughes,Spam getting through filter,Tuned anti-spam policy.,Closed,75,No
+17472,Meridian Logistics,2026-05-08 13:44,Sophie Clarke,Browser certificate warning,Updated root certificates via policy.,Closed,45,No
+17473,Castle Accountancy,2026-05-08 13:48,Priya Patel,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,60,No
+17474,ABC Ltd,2026-05-11 09:41,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,90,No
+17475,Thames Valley Recruitment,2026-05-11 11:45,Daniel Hughes,New joiner: consultant laptop and accounts,Laptop handover and account creation for consultant.,Closed,45,No
+17476,Castle Accountancy,2026-05-11 11:52,Daniel Hughes,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,45,No
+17477,Smith & Co,2026-05-11 12:00,James Smith,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,120,No
+17478,Harbour Physio,2026-05-11 12:13,Tom Walker,VPN not connecting,Reissued VPN profile.,Closed,20,No
+17479,Elmfield Dental,2026-05-11 12:40,Priya Patel,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,45,No
+17480,Castle Accountancy,2026-05-11 12:59,Priya Patel,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,180,No
+17481,Pennine Engineering,2026-05-11 13:01,James Smith,Distribution list change request,Updated membership of distribution list.,Closed,60,No
+17482,Elmfield Dental,2026-05-11 13:12,Tom Walker,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,120,No
+17483,Dorset Legal,2026-05-11 13:39,Daniel Hughes,Locked out of account,Unlocked account and checked sign-in logs.,Closed,150,No
+17484,Kingsbridge Architects,2026-05-12 09:08,Sophie Clarke,MFA prompt not received,Re-registered authenticator app.,Closed,60,No
+17485,Sterling Wealth Partners,2026-05-12 10:32,James Smith,Unable to access shared drive,Permissions corrected on folder.,Closed,45,No
+17486,ABC Ltd,2026-05-12 10:55,James Smith,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,30,No
+17487,Northgate Veterinary,2026-05-12 12:08,Tom Walker,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,90,No
+17488,Sterling Wealth Partners,2026-05-12 12:11,Tom Walker,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,120,No
+17489,Castle Accountancy,2026-05-13 09:52,Sophie Clarke,Locked out of account,Unlocked account and checked sign-in logs.,Closed,180,No
+17490,Elmfield Dental,2026-05-13 10:10,Priya Patel,Disk space low on file server,Cleared temp files and extended volume.,Closed,45,No
+17491,Riverside Care Group,2026-05-13 10:40,Priya Patel,Printer showing offline,Restarted print spooler and re-added queue.,Closed,75,No
+17492,Sterling Wealth Partners,2026-05-13 11:00,Priya Patel,Cannot print to large format plotter,Reinstalled driver.,Closed,55,No
+17493,Harbour Physio,2026-05-13 11:57,Priya Patel,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,60,No
+17494,ABC Ltd,2026-05-13 12:12,James Smith,Shared calendar permissions,Granted editor access to team calendar.,Closed,60,No
+17495,Sterling Wealth Partners,2026-05-14 10:11,Sophie Clarke,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,20,No
+17496,Meridian Logistics,2026-05-14 10:15,Priya Patel,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,180,No
+17497,Meridian Logistics,2026-05-14 10:38,Priya Patel,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,15,No
+17498,Riverside Care Group,2026-05-14 11:24,Priya Patel,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,150,No
+17499,Willow & Hart Interiors,2026-05-14 12:07,Sophie Clarke,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,150,No
+17500,Riverside Care Group,2026-05-14 13:28,Tom Walker,Printer showing offline,Restarted print spooler and re-added queue.,Closed,45,No
+17501,Elmfield Dental,2026-05-15 09:02,James Smith,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,30,No
+17502,Castle Accountancy,2026-05-15 09:36,Sophie Clarke,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,45,No
+17503,Kingsbridge Architects,2026-05-15 09:37,James Smith,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,90,No
+17504,Kingsbridge Architects,2026-05-15 12:10,Daniel Hughes,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,45,No
+17505,Sterling Wealth Partners,2026-05-15 12:15,James Smith,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,20,No
+17506,Northgate Veterinary,2026-05-15 12:29,Daniel Hughes,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,45,No
+17507,Harbour Physio,2026-05-15 13:17,Sophie Clarke,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,75,No
+17508,Willow & Hart Interiors,2026-05-18 09:55,Daniel Hughes,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,30,No
+17509,Willow & Hart Interiors,2026-05-18 10:07,Tom Walker,Printer showing offline,Restarted print spooler and re-added queue.,Closed,60,No
+17510,Kingsbridge Architects,2026-05-18 10:51,Daniel Hughes,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,15,No
+17511,Riverside Care Group,2026-05-18 11:26,Sophie Clarke,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,60,No
+17512,Willow & Hart Interiors,2026-05-18 11:45,Tom Walker,Set up new MacBook for designer,"Enrolled in Intune, installed Adobe apps.",Closed,45,No
+17513,ABC Ltd,2026-05-18 12:05,James Smith,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,60,No
+17514,Bramley Homes,2026-05-18 12:08,James Smith,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,60,No
+17515,ABC Ltd,2026-05-18 13:02,Sophie Clarke,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,45,No
+17516,Elmfield Dental,2026-05-18 13:13,Daniel Hughes,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,150,No
+17517,Bramley Homes,2026-05-18 13:15,Priya Patel,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,60,No
+17518,ABC Ltd,2026-05-18 13:26,Priya Patel,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,45,No
+17519,Dorset Legal,2026-05-18 13:50,Priya Patel,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,45,No
+17520,Castle Accountancy,2026-05-19 10:02,Daniel Hughes,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,75,No
+17521,Castle Accountancy,2026-05-19 13:32,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,180,No
+17522,Castle Accountancy,2026-05-19 13:39,James Smith,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,180,No
+17523,Pennine Engineering,2026-05-19 13:57,Priya Patel,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,90,No
+17524,Kingsbridge Architects,2026-05-20 09:08,Daniel Hughes,Locked out of account,Unlocked account and checked sign-in logs.,Closed,30,No
+17525,Riverside Care Group,2026-05-20 09:46,James Smith,Cannot print to large format plotter,Reinstalled driver.,Closed,30,No
+17526,Sterling Wealth Partners,2026-05-20 10:06,Daniel Hughes,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,20,No
+17527,Kingsbridge Architects,2026-05-20 11:25,James Smith,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,15,No
+17528,Riverside Care Group,2026-05-20 13:04,Tom Walker,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,45,No
+17529,ABC Ltd,2026-05-20 13:22,Priya Patel,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,30,No
+17530,Sterling Wealth Partners,2026-05-20 13:22,Tom Walker,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,90,No
+17531,Elmfield Dental,2026-05-21 10:55,Tom Walker,Browser certificate warning,Updated root certificates via policy.,Closed,75,No
+17532,Castle Accountancy,2026-05-21 11:44,Sophie Clarke,Distribution list change request,Updated membership of distribution list.,Closed,90,No
+17533,Bramley Homes,2026-05-21 12:39,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,180,No
+17534,Dorset Legal,2026-05-21 13:20,James Smith,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,45,No
+17535,ABC Ltd,2026-05-21 13:30,Daniel Hughes,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,30,No
+17536,Willow & Hart Interiors,2026-05-22 09:07,James Smith,MFA prompt not received,Re-registered authenticator app.,Closed,135,No
+17537,Dorset Legal,2026-05-22 11:31,Tom Walker,SharePoint access request,Added user to site members.,Closed,60,No
+17538,Bramley Homes,2026-05-22 11:35,Daniel Hughes,Chargeable: additional monitor install,Approved by office manager.,Closed,15,Yes
+17539,ABC Ltd,2026-05-22 11:40,Tom Walker,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,180,No
+17540,Elmfield Dental,2026-05-22 11:44,Tom Walker,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,175,No
+17541,Kingsbridge Architects,2026-05-22 12:36,Daniel Hughes,SharePoint access request,Added user to site members.,Closed,90,No
+17542,ABC Ltd,2026-05-22 13:01,Tom Walker,Distribution list change request,Updated membership of distribution list.,Closed,150,No
+17543,Sterling Wealth Partners,2026-05-22 13:02,Daniel Hughes,Printer showing offline,Restarted print spooler and re-added queue.,Closed,45,No
+17544,Dorset Legal,2026-05-22 13:32,Priya Patel,Unable to access shared drive,Permissions corrected on folder.,Closed,15,No
+17545,Dorset Legal,2026-05-22 13:41,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,30,No
+17546,Pennine Engineering,2026-05-22 13:57,Priya Patel,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,45,No
+17547,Thames Valley Recruitment,2026-05-25 09:10,Daniel Hughes,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,45,No
+17548,Kingsbridge Architects,2026-05-25 09:13,James Smith,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,150,No
+17549,Harbour Physio,2026-05-25 09:41,Sophie Clarke,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,150,No
+17550,Sterling Wealth Partners,2026-05-25 11:15,Daniel Hughes,Move Bloomberg terminal to partner desk,Agreed as chargeable. Moved terminal and re-cabled.,Closed,55,Yes
+17551,Willow & Hart Interiors,2026-05-25 12:43,Tom Walker,Locked out of account,Unlocked account and checked sign-in logs.,Closed,120,No
+17552,Meridian Logistics,2026-05-25 12:58,Sophie Clarke,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,120,No
+17553,Pennine Engineering,2026-05-25 13:20,Sophie Clarke,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,30,No
+17554,Bramley Homes,2026-05-26 09:36,Sophie Clarke,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,195,No
+17555,Pennine Engineering,2026-05-26 10:15,Daniel Hughes,Engineer to attend site: server room UPS alarm,"UPS alarming in server room. Engineer attended site, replaced battery module and tested failover.",Closed,125,No
+17556,Pennine Engineering,2026-05-26 11:18,Tom Walker,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,90,No
+17557,Meridian Logistics,2026-05-26 11:58,Priya Patel,Distribution list change request,Updated membership of distribution list.,Closed,90,No
+17558,Riverside Care Group,2026-05-26 13:15,Priya Patel,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,90,No
+17559,Northgate Veterinary,2026-05-27 09:41,Tom Walker,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,120,Yes
+17560,ABC Ltd,2026-05-27 10:02,Priya Patel,Shared calendar permissions,Granted editor access to team calendar.,Closed,75,No
+17561,ABC Ltd,2026-05-27 10:34,Sophie Clarke,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,90,No
+17562,ABC Ltd,2026-05-27 10:40,Tom Walker,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,30,No
+17563,Riverside Care Group,2026-05-27 11:55,Sophie Clarke,Printer showing offline,Restarted print spooler and re-added queue.,Closed,180,No
+17564,Elmfield Dental,2026-05-27 12:06,Tom Walker,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,30,No
+17565,Meridian Logistics,2026-05-27 12:40,James Smith,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,45,No
+17566,Elmfield Dental,2026-05-27 13:50,Daniel Hughes,VPN not connecting,Reissued VPN profile.,Closed,120,No
+17567,Thames Valley Recruitment,2026-05-28 09:30,James Smith,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,175,No
+17568,Kingsbridge Architects,2026-05-28 09:40,Tom Walker,MFA prompt not received,Re-registered authenticator app.,Closed,30,No
+17569,Pennine Engineering,2026-05-28 10:05,James Smith,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,190,No
+17570,Harbour Physio,2026-05-28 10:39,Tom Walker,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,30,No
+17571,Smith & Co,2026-05-28 10:59,Sophie Clarke,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,30,No
+17572,Castle Accountancy,2026-05-28 11:45,Daniel Hughes,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,15,No
+17573,Sterling Wealth Partners,2026-05-28 12:58,Tom Walker,Printer showing offline,Restarted print spooler and re-added queue.,Closed,60,No
+17574,Smith & Co,2026-05-28 13:09,Daniel Hughes,Cannot print to large format plotter,Reinstalled driver.,Closed,90,No
+17575,Castle Accountancy,2026-05-28 13:13,Daniel Hughes,Shared calendar permissions,Granted editor access to team calendar.,Closed,90,No
+17576,Sterling Wealth Partners,2026-05-28 13:39,Sophie Clarke,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,180,No
+17577,Meridian Logistics,2026-05-28 13:46,Tom Walker,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,180,No
+17578,Thames Valley Recruitment,2026-05-29 09:53,Priya Patel,Browser certificate warning,Updated root certificates via policy.,Closed,20,No
+17579,Thames Valley Recruitment,2026-05-29 10:27,Sophie Clarke,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,180,No
+17580,Willow & Hart Interiors,2026-05-29 10:57,James Smith,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,30,No
+17581,Elmfield Dental,2026-05-29 11:16,James Smith,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,20,No
+17582,ABC Ltd,2026-05-29 11:23,Sophie Clarke,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,30,No
+17583,Thames Valley Recruitment,2026-05-29 12:11,Tom Walker,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,90,No
+17584,Castle Accountancy,2026-05-29 12:34,Sophie Clarke,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,90,No
+17585,Kingsbridge Architects,2026-05-29 13:07,Sophie Clarke,Locked out of account,Unlocked account and checked sign-in logs.,Closed,90,No
+17586,Meridian Logistics,2026-05-29 13:38,James Smith,Chargeable: additional monitor install,Approved by office manager.,Closed,160,Yes
+17587,Willow & Hart Interiors,2026-06-01 09:46,Sophie Clarke,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,120,No
+17588,Bramley Homes,2026-06-01 11:19,Tom Walker,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,60,No
+17589,Thames Valley Recruitment,2026-06-01 11:51,Tom Walker,Distribution list change request,Updated membership of distribution list.,Closed,120,No
+17590,Sterling Wealth Partners,2026-06-01 11:58,James Smith,SharePoint access request,Added user to site members.,Closed,45,No
+17591,Harbour Physio,2026-06-01 12:07,James Smith,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,75,No
+17592,ABC Ltd,2026-06-01 12:16,Priya Patel,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,60,No
+17593,Elmfield Dental,2026-06-01 12:26,Priya Patel,Distribution list change request,Updated membership of distribution list.,Closed,30,No
+17594,Dorset Legal,2026-06-01 12:40,Priya Patel,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,180,No
+17595,Kingsbridge Architects,2026-06-01 13:23,Sophie Clarke,SharePoint access request,Added user to site members.,Closed,15,No
+17596,Elmfield Dental,2026-06-01 13:56,Priya Patel,Distribution list change request,Updated membership of distribution list.,Closed,30,No
+17597,Dorset Legal,2026-06-01 14:15,Sophie Clarke,Migrate case files to SharePoint,Migrate the archived case files share to the new SharePoint document library and set permissions.,Closed,140,No
+17598,Willow & Hart Interiors,2026-06-02 09:08,Tom Walker,Locked out of account,Unlocked account and checked sign-in logs.,Closed,20,No
+17599,Meridian Logistics,2026-06-02 09:50,Sophie Clarke,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,45,No
+17600,Castle Accountancy,2026-06-02 11:04,James Smith,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,30,No
+17601,Elmfield Dental,2026-06-02 12:39,Tom Walker,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,30,No
+17602,Dorset Legal,2026-06-02 13:00,James Smith,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,75,No
+17603,ABC Ltd,2026-06-03 09:15,Tom Walker,Cannot print to large format plotter,Reinstalled driver.,Closed,60,No
+17604,Dorset Legal,2026-06-03 09:22,Sophie Clarke,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,15,No
+17605,Thames Valley Recruitment,2026-06-03 09:37,Priya Patel,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,195,No
+17606,Castle Accountancy,2026-06-03 10:43,James Smith,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,75,No
+17607,Willow & Hart Interiors,2026-06-03 11:43,James Smith,Shared calendar permissions,Granted editor access to team calendar.,Closed,160,No
+17608,Meridian Logistics,2026-06-03 11:47,Sophie Clarke,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,30,No
+17609,Pennine Engineering,2026-06-03 13:06,Sophie Clarke,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,60,No
+17610,Pennine Engineering,2026-06-03 13:24,Daniel Hughes,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,180,No
+17611,ABC Ltd,2026-06-03 13:54,Daniel Hughes,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,90,No
+17612,Dorset Legal,2026-06-04 09:05,Tom Walker,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,120,No
+17613,Northgate Veterinary,2026-06-04 09:29,Priya Patel,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,135,No
+17614,Willow & Hart Interiors,2026-06-04 09:29,James Smith,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,30,No
+17615,Smith & Co,2026-06-04 10:07,James Smith,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,45,No
+17616,Kingsbridge Architects,2026-06-04 10:07,Daniel Hughes,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,90,No
+17617,Kingsbridge Architects,2026-06-04 10:11,Sophie Clarke,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,150,No
+17618,Sterling Wealth Partners,2026-06-04 10:19,James Smith,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,75,No
+17619,Castle Accountancy,2026-06-04 10:49,James Smith,Browser certificate warning,Updated root certificates via policy.,Closed,150,No
+17620,Elmfield Dental,2026-06-04 12:25,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,20,No
+17621,Meridian Logistics,2026-06-04 12:34,Priya Patel,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,60,No
+17622,Riverside Care Group,2026-06-04 13:00,Sophie Clarke,Implementation of rota software,Deployed rota client to all care home PCs and configured SSO.,Closed,75,No
+17623,Castle Accountancy,2026-06-05 09:05,Tom Walker,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,90,No
+17624,Elmfield Dental,2026-06-05 12:16,Tom Walker,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,90,No
+17625,Meridian Logistics,2026-06-05 13:23,Daniel Hughes,Shared calendar permissions,Granted editor access to team calendar.,Closed,75,No
+17626,Pennine Engineering,2026-06-05 13:50,Tom Walker,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,45,No
+17627,ABC Ltd,2026-06-08 09:23,Priya Patel,Spam getting through filter,Tuned anti-spam policy.,Closed,60,No
+17628,Meridian Logistics,2026-06-08 10:19,Sophie Clarke,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,90,No
+17629,ABC Ltd,2026-06-08 10:27,Priya Patel,VPN not connecting,Reissued VPN profile.,Closed,150,No
+17630,ABC Ltd,2026-06-08 12:00,Sophie Clarke,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,90,No
+17631,Pennine Engineering,2026-06-08 12:49,Tom Walker,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,90,No
+17632,Northgate Veterinary,2026-06-08 13:02,Priya Patel,Cannot print to large format plotter,Reinstalled driver.,Closed,120,No
+17633,Riverside Care Group,2026-06-08 13:34,Tom Walker,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,180,No
+17634,Willow & Hart Interiors,2026-06-08 13:38,Tom Walker,Cannot print to large format plotter,Reinstalled driver.,Closed,180,No
+17635,ABC Ltd,2026-06-09 09:31,Tom Walker,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,60,No
+17636,Dorset Legal,2026-06-09 10:28,Daniel Hughes,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,30,No
+17637,Kingsbridge Architects,2026-06-09 10:51,Daniel Hughes,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,15,No
+17638,Riverside Care Group,2026-06-09 11:33,Tom Walker,SharePoint access request,Added user to site members.,Closed,30,No
+17639,Sterling Wealth Partners,2026-06-09 12:51,Tom Walker,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,120,No
+17640,Harbour Physio,2026-06-09 13:07,Tom Walker,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,60,No
+17641,Bramley Homes,2026-06-09 13:39,Daniel Hughes,Browser certificate warning,Updated root certificates via policy.,Closed,180,No
+17642,Castle Accountancy,2026-06-09 13:58,Sophie Clarke,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,75,No
+17643,Elmfield Dental,2026-06-10 09:33,Priya Patel,Printer showing offline,Restarted print spooler and re-added queue.,Closed,15,No
+17644,ABC Ltd,2026-06-10 09:50,James Smith,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,60,No
+17645,Willow & Hart Interiors,2026-06-10 10:01,James Smith,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,30,No
+17646,Dorset Legal,2026-06-10 10:41,James Smith,Browser certificate warning,Updated root certificates via policy.,Closed,20,No
+17647,Kingsbridge Architects,2026-06-10 11:33,Sophie Clarke,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,15,No
+17648,ABC Ltd,2026-06-10 12:36,James Smith,Printer showing offline,Restarted print spooler and re-added queue.,Closed,15,No
+17649,Riverside Care Group,2026-06-10 13:05,James Smith,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,120,No
+17650,Castle Accountancy,2026-06-10 13:11,James Smith,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,60,No
+17651,ABC Ltd,2026-06-11 11:16,Sophie Clarke,Unable to access shared drive,Permissions corrected on folder.,Closed,20,No
+17652,Pennine Engineering,2026-06-11 12:10,Daniel Hughes,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,30,No
+17653,Kingsbridge Architects,2026-06-11 12:11,Daniel Hughes,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,90,No
+17654,Sterling Wealth Partners,2026-06-11 12:42,James Smith,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,120,No
+17655,Smith & Co,2026-06-11 13:05,Daniel Hughes,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,45,No
+17656,Willow & Hart Interiors,2026-06-12 09:03,Tom Walker,Spam getting through filter,Tuned anti-spam policy.,Closed,15,No
+17657,ABC Ltd,2026-06-12 09:45,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,90,No
+17658,Castle Accountancy,2026-06-12 10:25,Tom Walker,SharePoint access request,Added user to site members.,Closed,90,No
+17659,ABC Ltd,2026-06-12 13:15,Tom Walker,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,60,No
+17660,ABC Ltd,2026-06-12 13:17,Sophie Clarke,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,15,No
+17661,Riverside Care Group,2026-06-15 09:26,Priya Patel,Cannot print to large format plotter,Reinstalled driver.,Closed,60,No
+17662,Thames Valley Recruitment,2026-06-15 10:12,Priya Patel,Unable to access shared drive,Permissions corrected on folder.,Closed,180,No
+17663,Bramley Homes,2026-06-15 10:37,James Smith,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,90,No
+17664,Elmfield Dental,2026-06-15 11:09,Priya Patel,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,90,No
+17665,Castle Accountancy,2026-06-15 11:58,Daniel Hughes,Browser certificate warning,Updated root certificates via policy.,Closed,60,No
+17666,Kingsbridge Architects,2026-06-15 12:00,James Smith,Printer showing offline,Restarted print spooler and re-added queue.,Closed,180,No
+17667,Kingsbridge Architects,2026-06-15 12:51,Daniel Hughes,Locked out of account,Unlocked account and checked sign-in logs.,Closed,120,No
+17668,Smith & Co,2026-06-15 13:20,Tom Walker,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,195,No
+17669,Dorset Legal,2026-06-15 13:45,Priya Patel,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,60,No
+17670,Northgate Veterinary,2026-06-16 09:02,Priya Patel,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,90,No
+17671,Harbour Physio,2026-06-16 09:54,Sophie Clarke,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,45,No
+17672,Castle Accountancy,2026-06-16 10:15,Priya Patel,Locked out of account,Unlocked account and checked sign-in logs.,Closed,45,No
+17673,Elmfield Dental,2026-06-16 10:32,Priya Patel,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,90,No
+17674,Riverside Care Group,2026-06-16 12:07,James Smith,Printer showing offline,Restarted print spooler and re-added queue.,Closed,90,No
+17675,Sterling Wealth Partners,2026-06-16 12:14,Priya Patel,VPN not connecting,Reissued VPN profile.,Closed,60,No
+17676,Castle Accountancy,2026-06-16 13:03,Sophie Clarke,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,159,No
+17677,Meridian Logistics,2026-06-16 13:42,Priya Patel,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,30,No
+17678,Harbour Physio,2026-06-17 09:30,James Smith,New user onboarding for physiotherapist,Created account and set up booking system access.,Closed,35,No
+17679,Thames Valley Recruitment,2026-06-17 09:36,Tom Walker,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,45,No
+17680,Elmfield Dental,2026-06-17 11:09,Daniel Hughes,Chargeable: additional monitor install,Approved by office manager.,Closed,90,Yes
+17681,Meridian Logistics,2026-06-17 11:27,Sophie Clarke,Printer showing offline,Restarted print spooler and re-added queue.,Closed,45,No
+17682,Smith & Co,2026-06-17 11:33,Daniel Hughes,Shared calendar permissions,Granted editor access to team calendar.,Closed,75,No
+17683,Elmfield Dental,2026-06-17 11:41,Priya Patel,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,15,No
+17684,Kingsbridge Architects,2026-06-17 12:14,Daniel Hughes,Shared calendar permissions,Granted editor access to team calendar.,Closed,60,No
+17685,Northgate Veterinary,2026-06-17 12:54,Priya Patel,Unable to access shared drive,Permissions corrected on folder.,Closed,60,No
+17686,Pennine Engineering,2026-06-17 12:55,Sophie Clarke,SharePoint access request,Added user to site members.,Closed,150,No
+17687,Castle Accountancy,2026-06-17 13:19,Daniel Hughes,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,90,No
+17688,Bramley Homes,2026-06-17 13:42,Tom Walker,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,20,No
+17689,Castle Accountancy,2026-06-18 10:21,Sophie Clarke,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,90,No
+17690,Dorset Legal,2026-06-18 11:38,Sophie Clarke,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,45,No
+17691,Castle Accountancy,2026-06-18 12:13,Daniel Hughes,Unable to access shared drive,Permissions corrected on folder.,Closed,30,No
+17692,Pennine Engineering,2026-06-18 12:28,James Smith,Distribution list change request,Updated membership of distribution list.,Closed,75,No
+17693,Smith & Co,2026-06-18 12:47,Sophie Clarke,Browser certificate warning,Updated root certificates via policy.,Closed,15,No
+17694,Pennine Engineering,2026-06-19 09:44,Priya Patel,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,45,No
+17695,ABC Ltd,2026-06-19 10:02,Priya Patel,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,60,No
+17696,ABC Ltd,2026-06-19 10:24,Sophie Clarke,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,20,No
+17697,ABC Ltd,2026-06-19 10:55,Priya Patel,Browser certificate warning,Updated root certificates via policy.,Closed,15,No
+17698,ABC Ltd,2026-06-19 10:59,Sophie Clarke,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,45,No
+17699,Riverside Care Group,2026-06-19 11:12,James Smith,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,90,No
+17700,Willow & Hart Interiors,2026-06-19 12:22,Daniel Hughes,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,30,No
+17701,Elmfield Dental,2026-06-19 13:15,Daniel Hughes,Build new laptop for reception,"Built and enrolled laptop, installed apps and printers.",Closed,50,No
+17702,Dorset Legal,2026-06-19 13:40,Daniel Hughes,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,60,No
+17703,Kingsbridge Architects,2026-06-22 09:21,Sophie Clarke,Browser certificate warning,Updated root certificates via policy.,Closed,15,No
+17704,Castle Accountancy,2026-06-22 09:42,Daniel Hughes,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,90,No
+17705,Riverside Care Group,2026-06-22 09:49,Priya Patel,Printer showing offline,Restarted print spooler and re-added queue.,Closed,45,No
+17706,Northgate Veterinary,2026-06-22 10:04,Sophie Clarke,Cannot print to large format plotter,Reinstalled driver.,Closed,90,No
+17707,Bramley Homes,2026-06-22 10:07,Daniel Hughes,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,120,No
+17708,Meridian Logistics,2026-06-22 10:45,James Smith,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,180,No
+17709,Thames Valley Recruitment,2026-06-22 11:19,Tom Walker,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,30,No
+17710,Thames Valley Recruitment,2026-06-22 11:44,Priya Patel,Shared calendar permissions,Granted editor access to team calendar.,Closed,30,No
+17711,Dorset Legal,2026-06-22 11:48,Sophie Clarke,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,90,No
+17712,Sterling Wealth Partners,2026-06-22 12:03,Sophie Clarke,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,20,No
+17713,Meridian Logistics,2026-06-22 12:09,James Smith,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,75,No
+17714,Meridian Logistics,2026-06-22 12:33,Sophie Clarke,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,60,No
+17715,ABC Ltd,2026-06-22 13:05,Priya Patel,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,120,No
+17716,Willow & Hart Interiors,2026-06-23 09:26,Daniel Hughes,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,60,No
+17717,Harbour Physio,2026-06-23 11:33,James Smith,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,20,No
+17718,Elmfield Dental,2026-06-23 11:45,Tom Walker,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,200,No
+17719,Dorset Legal,2026-06-23 13:42,Priya Patel,Locked out of account,Unlocked account and checked sign-in logs.,Closed,30,No
+17720,Castle Accountancy,2026-06-24 09:06,James Smith,MFA prompt not received,Re-registered authenticator app.,Closed,30,No
+17721,Pennine Engineering,2026-06-24 11:37,Daniel Hughes,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,90,No
+17722,Bramley Homes,2026-06-24 12:45,Daniel Hughes,Connect MD's personal iPad to company email,MD wants work email on his personal iPad. Set up Outlook app and MFA.,Closed,45,No
+17723,Dorset Legal,2026-06-24 13:14,Sophie Clarke,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,20,No
+17724,Pennine Engineering,2026-06-24 13:40,James Smith,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,45,No
+17725,Harbour Physio,2026-06-24 13:45,James Smith,Spam getting through filter,Tuned anti-spam policy.,Closed,45,No
+17726,Bramley Homes,2026-06-24 13:57,James Smith,Shared calendar permissions,Granted editor access to team calendar.,Closed,130,No
+17727,Castle Accountancy,2026-06-24 13:59,James Smith,Distribution list change request,Updated membership of distribution list.,Closed,150,No
+17728,ABC Ltd,2026-06-25 09:03,James Smith,Browser certificate warning,Updated root certificates via policy.,Closed,45,No
+17729,ABC Ltd,2026-06-25 09:22,Tom Walker,SharePoint access request,Added user to site members.,Closed,150,No
+17730,Northgate Veterinary,2026-06-25 10:17,Daniel Hughes,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,15,No
+17731,Harbour Physio,2026-06-25 10:54,James Smith,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,170,No
+17732,Castle Accountancy,2026-06-25 11:11,Tom Walker,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,60,No
+17733,Sterling Wealth Partners,2026-06-25 11:15,Daniel Hughes,Shared calendar permissions,Granted editor access to team calendar.,Closed,190,No
+17734,ABC Ltd,2026-06-25 11:45,Tom Walker,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,30,No
+17735,Sterling Wealth Partners,2026-06-25 12:19,Daniel Hughes,VPN not connecting,Reissued VPN profile.,Closed,60,No
+17736,Riverside Care Group,2026-06-25 13:50,Tom Walker,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,150,No
+17737,Harbour Physio,2026-06-26 09:01,Daniel Hughes,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,150,No
+17738,Elmfield Dental,2026-06-26 09:04,Sophie Clarke,VPN not connecting,Reissued VPN profile.,Closed,60,No
+17739,Sterling Wealth Partners,2026-06-26 09:08,James Smith,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,60,No
+17740,Dorset Legal,2026-06-26 09:10,Daniel Hughes,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,120,No
+17741,Castle Accountancy,2026-06-26 09:17,James Smith,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,180,No
+17742,Northgate Veterinary,2026-06-26 09:35,Sophie Clarke,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,90,No
+17743,Elmfield Dental,2026-06-26 09:39,Sophie Clarke,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,30,No
+17744,Meridian Logistics,2026-06-26 10:44,Priya Patel,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,90,Yes
+17745,Pennine Engineering,2026-06-26 10:56,Tom Walker,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,90,No
+17746,Riverside Care Group,2026-06-26 11:00,James Smith,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,20,No
+17747,Willow & Hart Interiors,2026-06-26 11:25,Daniel Hughes,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,15,No
+17748,ABC Ltd,2026-06-26 12:31,James Smith,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,90,No
+17749,Bramley Homes,2026-06-26 12:42,Priya Patel,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,45,No
+17750,Meridian Logistics,2026-06-26 13:58,James Smith,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,150,No
+17751,Elmfield Dental,2026-06-29 09:02,Sophie Clarke,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,60,No
+17752,Riverside Care Group,2026-06-29 09:10,Sophie Clarke,Spam getting through filter,Tuned anti-spam policy.,Closed,20,No
+17753,Riverside Care Group,2026-06-29 09:26,Tom Walker,Browser certificate warning,Updated root certificates via policy.,Closed,90,No
+17754,Kingsbridge Architects,2026-06-29 12:05,Priya Patel,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,90,No
+17755,Smith & Co,2026-06-29 12:47,Priya Patel,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,45,No
+17756,Meridian Logistics,2026-06-30 09:05,James Smith,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,150,No
+17757,Riverside Care Group,2026-06-30 09:18,Sophie Clarke,Chargeable: additional monitor install,Approved by office manager.,Closed,30,Yes
+17758,Smith & Co,2026-06-30 09:22,Priya Patel,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,60,No
+17759,Castle Accountancy,2026-06-30 10:05,Priya Patel,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,30,No
+17760,Kingsbridge Architects,2026-06-30 10:14,Daniel Hughes,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,90,No
+17761,Dorset Legal,2026-06-30 10:32,James Smith,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,135,No
+17762,Northgate Veterinary,2026-06-30 10:33,James Smith,Locked out of account,Unlocked account and checked sign-in logs.,Closed,60,No
+17763,Riverside Care Group,2026-06-30 10:40,Tom Walker,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,30,No
+17764,Sterling Wealth Partners,2026-06-30 10:49,James Smith,Locked out of account,Unlocked account and checked sign-in logs.,Closed,60,No
+17765,Kingsbridge Architects,2026-06-30 11:51,Sophie Clarke,Cannot print to large format plotter,Reinstalled driver.,Closed,30,No
+17766,Pennine Engineering,2026-06-30 11:51,James Smith,VPN not connecting,Reissued VPN profile.,Closed,60,No
+17767,Bramley Homes,2026-06-30 12:26,Daniel Hughes,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,90,No
+17768,Riverside Care Group,2026-06-30 12:43,James Smith,Unable to access shared drive,Permissions corrected on folder.,Closed,75,No
+17769,ABC Ltd,2026-06-30 13:15,Priya Patel,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,155,No
+17770,Sterling Wealth Partners,2026-06-30 13:21,Sophie Clarke,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,30,No
+17771,Riverside Care Group,2026-06-30 13:54,Daniel Hughes,Unable to access shared drive,Permissions corrected on folder.,Closed,185,No
+17772,Riverside Care Group,2026-06-30 13:57,Sophie Clarke,SharePoint access request,Added user to site members.,Closed,30,No
+17773,Castle Accountancy,2026-07-01 09:25,Daniel Hughes,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,90,No
+17774,Riverside Care Group,2026-07-01 10:48,Daniel Hughes,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,170,No
+17775,Riverside Care Group,2026-07-01 12:24,Priya Patel,Spam getting through filter,Tuned anti-spam policy.,Closed,30,No
+17776,Dorset Legal,2026-07-01 12:42,Sophie Clarke,MFA prompt not received,Re-registered authenticator app.,Closed,30,No
+17777,Sterling Wealth Partners,2026-07-01 13:50,Sophie Clarke,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,15,No
+17778,Smith & Co,2026-07-01 13:59,Priya Patel,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,90,No
+17779,Thames Valley Recruitment,2026-07-02 09:09,Daniel Hughes,Cannot print to large format plotter,Reinstalled driver.,Closed,155,No
+17780,Smith & Co,2026-07-02 09:10,Tom Walker,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,30,No
+17781,Meridian Logistics,2026-07-02 09:50,Daniel Hughes,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,75,No
+17782,Willow & Hart Interiors,2026-07-02 11:49,Priya Patel,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,30,No
+17783,Dorset Legal,2026-07-02 12:06,Daniel Hughes,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,45,No
+17784,ABC Ltd,2026-07-02 12:17,James Smith,MFA prompt not received,Re-registered authenticator app.,Closed,180,No
+17785,ABC Ltd,2026-07-02 12:31,James Smith,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,30,No
+17786,Castle Accountancy,2026-07-02 12:37,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,180,No
+17787,Bramley Homes,2026-07-02 12:42,Daniel Hughes,Cannot print to large format plotter,Reinstalled driver.,Closed,60,No
+17788,Elmfield Dental,2026-07-02 13:06,James Smith,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,45,No
+17789,Thames Valley Recruitment,2026-07-02 13:33,Daniel Hughes,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,60,No
+17790,Riverside Care Group,2026-07-02 13:43,Sophie Clarke,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,45,No
+17791,Castle Accountancy,2026-07-03 09:56,Priya Patel,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,150,No
+17792,Willow & Hart Interiors,2026-07-03 10:42,James Smith,Disk space low on file server,Cleared temp files and extended volume.,Closed,165,No
+17793,Castle Accountancy,2026-07-03 10:50,Daniel Hughes,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,30,No
+17794,Northgate Veterinary,2026-07-03 12:08,Tom Walker,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,180,No
+17795,Riverside Care Group,2026-07-03 12:29,Daniel Hughes,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,150,No
+17796,Pennine Engineering,2026-07-03 13:00,James Smith,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,120,No
+17797,Elmfield Dental,2026-07-06 09:11,Priya Patel,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,90,No
+17798,Bramley Homes,2026-07-06 10:00,Daniel Hughes,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,45,Yes
+17799,ABC Ltd,2026-07-06 11:10,Sophie Clarke,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,90,No
+17800,Sterling Wealth Partners,2026-07-06 11:58,Tom Walker,SharePoint access request,Added user to site members.,Closed,90,No
+17801,Pennine Engineering,2026-07-06 12:09,Tom Walker,VPN not connecting,Reissued VPN profile.,Closed,120,No
+17802,Castle Accountancy,2026-07-06 12:47,Sophie Clarke,Locked out of account,Unlocked account and checked sign-in logs.,Closed,20,No
+17803,Kingsbridge Architects,2026-07-06 12:49,Daniel Hughes,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,120,No
+17804,Dorset Legal,2026-07-06 13:38,Daniel Hughes,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,90,No
+17805,Northgate Veterinary,2026-07-07 10:02,Priya Patel,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,45,No
+17806,Willow & Hart Interiors,2026-07-07 11:22,Tom Walker,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,45,No
+17807,ABC Ltd,2026-07-07 11:23,James Smith,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,30,No
+17808,Castle Accountancy,2026-07-07 12:42,James Smith,Shared calendar permissions,Granted editor access to team calendar.,Closed,150,No
+17809,Bramley Homes,2026-07-07 13:36,Daniel Hughes,Printer showing offline,Restarted print spooler and re-added queue.,Closed,60,No
+17810,ABC Ltd,2026-07-07 13:40,Daniel Hughes,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,15,No
+17811,Kingsbridge Architects,2026-07-08 10:05,Tom Walker,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,180,No
+17812,Elmfield Dental,2026-07-09 09:26,Priya Patel,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,150,No
+17813,Pennine Engineering,2026-07-09 09:59,Daniel Hughes,SharePoint access request,Added user to site members.,Closed,45,No
+17814,ABC Ltd,2026-07-09 10:01,Tom Walker,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,15,No
+17815,Meridian Logistics,2026-07-09 10:44,Tom Walker,Locked out of account,Unlocked account and checked sign-in logs.,Closed,75,No
+17816,Kingsbridge Architects,2026-07-09 10:48,James Smith,Shared calendar permissions,Granted editor access to team calendar.,Closed,180,No
+17817,Castle Accountancy,2026-07-09 10:49,Tom Walker,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,150,No
+17818,Smith & Co,2026-07-09 10:50,Sophie Clarke,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,45,No
+17819,Elmfield Dental,2026-07-09 11:27,Sophie Clarke,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,15,No
+17820,Bramley Homes,2026-07-09 11:32,Daniel Hughes,Browser certificate warning,Updated root certificates via policy.,Closed,150,No
+17821,Bramley Homes,2026-07-09 11:32,Daniel Hughes,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,20,No
+17822,Riverside Care Group,2026-07-09 13:45,Priya Patel,Distribution list change request,Updated membership of distribution list.,Closed,30,No
+17823,Pennine Engineering,2026-07-10 09:41,Sophie Clarke,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,150,No
+17824,Smith & Co,2026-07-10 12:21,Tom Walker,Disk space low on file server,Cleared temp files and extended volume.,Closed,90,No
+17825,Castle Accountancy,2026-07-10 12:25,Priya Patel,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,45,No
+17826,ABC Ltd,2026-07-10 12:53,Daniel Hughes,Cannot print to large format plotter,Reinstalled driver.,Closed,75,No
+17827,Northgate Veterinary,2026-07-10 13:30,Priya Patel,Configure new PC for consulting room 3,"Configured PC, practice system client and label printer.",Closed,60,No
+17828,Thames Valley Recruitment,2026-07-13 09:45,Daniel Hughes,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,120,No
+17829,ABC Ltd,2026-07-13 10:18,Sophie Clarke,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,30,No
+17830,Kingsbridge Architects,2026-07-13 10:45,James Smith,AutoCAD licence server not starting after vendor update,"Network licence manager failing after vendor update. Spent time with Autodesk support, reinstalled FlexLM service.",Closed,110,No
+17831,Northgate Veterinary,2026-07-13 11:26,Daniel Hughes,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,60,No
+17832,Meridian Logistics,2026-07-13 11:30,Priya Patel,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,30,No
+17833,Castle Accountancy,2026-07-13 11:45,Sophie Clarke,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,60,No
+17834,Castle Accountancy,2026-07-13 12:14,Tom Walker,Distribution list change request,Updated membership of distribution list.,Closed,30,No
+17835,ABC Ltd,2026-07-13 12:39,Priya Patel,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,60,No
+17836,Castle Accountancy,2026-07-13 12:44,Sophie Clarke,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,60,No
+17837,ABC Ltd,2026-07-13 13:01,James Smith,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,90,No
+17838,Riverside Care Group,2026-07-13 13:02,Tom Walker,Browser certificate warning,Updated root certificates via policy.,Closed,30,No
+17839,Castle Accountancy,2026-07-14 09:29,Priya Patel,Cannot print to large format plotter,Reinstalled driver.,Closed,180,No
+17840,Riverside Care Group,2026-07-14 09:34,Sophie Clarke,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,90,No
+17841,Harbour Physio,2026-07-14 10:17,Sophie Clarke,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,15,No
+17842,Dorset Legal,2026-07-14 11:00,Daniel Hughes,Printer showing offline,Restarted print spooler and re-added queue.,Closed,195,No
+17843,Kingsbridge Architects,2026-07-14 13:18,Daniel Hughes,Spam getting through filter,Tuned anti-spam policy.,Closed,150,No
+17844,Dorset Legal,2026-07-14 13:52,Tom Walker,Spam getting through filter,Tuned anti-spam policy.,Closed,90,No
+17845,ABC Ltd,2026-07-15 09:58,Daniel Hughes,MFA prompt not received,Re-registered authenticator app.,Closed,15,No
+17846,Castle Accountancy,2026-07-15 10:14,Daniel Hughes,Spam getting through filter,Tuned anti-spam policy.,Closed,60,No
+17847,Harbour Physio,2026-07-15 10:16,James Smith,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,180,Yes
+17848,Riverside Care Group,2026-07-15 10:19,Daniel Hughes,Locked out of account,Unlocked account and checked sign-in logs.,Closed,20,No
+17849,Sterling Wealth Partners,2026-07-15 10:20,James Smith,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,120,No
+17850,Castle Accountancy,2026-07-15 12:21,Priya Patel,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,60,No
+17851,Thames Valley Recruitment,2026-07-15 12:47,Daniel Hughes,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,75,No
+17852,Sterling Wealth Partners,2026-07-15 12:50,James Smith,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,150,No
+17853,Castle Accountancy,2026-07-15 13:02,James Smith,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,45,No
+17854,Willow & Hart Interiors,2026-07-16 10:45,James Smith,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,180,No
+17855,Willow & Hart Interiors,2026-07-16 10:52,James Smith,Shared calendar permissions,Granted editor access to team calendar.,Closed,75,No
+17856,Meridian Logistics,2026-07-16 11:21,Daniel Hughes,Cannot print to large format plotter,Reinstalled driver.,Closed,60,No
+17857,Riverside Care Group,2026-07-16 11:24,James Smith,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,15,No
+17858,Dorset Legal,2026-07-16 11:56,Daniel Hughes,Printer showing offline,Restarted print spooler and re-added queue.,Closed,45,No
+17859,Meridian Logistics,2026-07-17 10:05,James Smith,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,60,No
+17860,Dorset Legal,2026-07-17 10:31,Sophie Clarke,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,75,No
+17861,Smith & Co,2026-07-17 10:44,Tom Walker,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,20,No
+17862,ABC Ltd,2026-07-17 11:02,Daniel Hughes,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,45,No
+17863,Elmfield Dental,2026-07-17 11:27,Daniel Hughes,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,75,No
+17864,ABC Ltd,2026-07-17 11:32,Sophie Clarke,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,180,No
+17865,Riverside Care Group,2026-07-17 11:59,James Smith,SharePoint access request,Added user to site members.,Closed,15,No
+17866,Elmfield Dental,2026-07-17 12:08,Priya Patel,VPN not connecting,Reissued VPN profile.,Closed,150,No
+17867,Dorset Legal,2026-07-17 12:13,Tom Walker,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,120,No
+17868,Harbour Physio,2026-07-17 12:28,Daniel Hughes,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,45,No
+17869,Smith & Co,2026-07-17 12:32,Priya Patel,Distribution list change request,Updated membership of distribution list.,Closed,180,No
+17870,Riverside Care Group,2026-07-17 13:07,James Smith,Locked out of account,Unlocked account and checked sign-in logs.,Closed,150,No
+17871,Willow & Hart Interiors,2026-07-17 13:14,Sophie Clarke,SharePoint access request,Added user to site members.,Closed,30,No
+17872,Meridian Logistics,2026-07-18 10:05,Daniel Hughes,Saturday callout for email outage at depot,Depot reported no email on Saturday morning. Resolved connector issue.,Closed,60,No
+17873,Castle Accountancy,2026-07-20 09:01,James Smith,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,30,No
+17874,Bramley Homes,2026-07-20 09:19,Tom Walker,Unable to access shared drive,Permissions corrected on folder.,Closed,120,No
+17875,Castle Accountancy,2026-07-20 09:33,Sophie Clarke,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,15,No
+17876,Northgate Veterinary,2026-07-20 09:38,James Smith,SharePoint access request,Added user to site members.,Closed,120,No
+17877,Meridian Logistics,2026-07-20 09:49,James Smith,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,45,No
+17878,Northgate Veterinary,2026-07-20 10:48,Tom Walker,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,150,No
+17879,Willow & Hart Interiors,2026-07-20 10:58,Priya Patel,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,30,No
+17880,Willow & Hart Interiors,2026-07-20 11:12,Priya Patel,Unable to access shared drive,Permissions corrected on folder.,Closed,15,No
+17881,Riverside Care Group,2026-07-20 11:13,Tom Walker,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,60,No
+17882,Sterling Wealth Partners,2026-07-20 11:46,Daniel Hughes,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,60,No
+17883,Thames Valley Recruitment,2026-07-20 13:13,Sophie Clarke,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,60,No
+17884,ABC Ltd,2026-07-21 09:21,Priya Patel,MFA prompt not received,Re-registered authenticator app.,Closed,15,No
+17885,ABC Ltd,2026-07-21 10:10,Daniel Hughes,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,15,No
+17886,Harbour Physio,2026-07-21 10:10,Daniel Hughes,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,60,No
+17887,Castle Accountancy,2026-07-21 10:14,James Smith,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,200,No
+17888,Meridian Logistics,2026-07-21 11:00,Daniel Hughes,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,60,No
+17889,Sterling Wealth Partners,2026-07-21 11:32,Daniel Hughes,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,75,No
+17890,Meridian Logistics,2026-07-21 12:57,Tom Walker,Chargeable: additional monitor install,Approved by office manager.,Closed,30,Yes
+17891,Elmfield Dental,2026-07-21 13:01,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,120,No
+17892,Meridian Logistics,2026-07-22 09:47,Priya Patel,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,60,No
+17893,Meridian Logistics,2026-07-22 10:01,Daniel Hughes,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,30,No
+17894,ABC Ltd,2026-07-22 10:10,Sophie Clarke,Locked out of account,Unlocked account and checked sign-in logs.,Closed,180,No
+17895,Dorset Legal,2026-07-22 10:34,Tom Walker,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,180,No
+17896,Sterling Wealth Partners,2026-07-22 10:52,Priya Patel,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,195,No
+17897,Thames Valley Recruitment,2026-07-22 11:13,Sophie Clarke,Spam getting through filter,Tuned anti-spam policy.,Closed,60,No
+17898,Bramley Homes,2026-07-22 11:16,Sophie Clarke,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,185,No
+17899,Harbour Physio,2026-07-22 12:01,James Smith,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,60,No
+17900,Pennine Engineering,2026-07-22 12:23,Tom Walker,Shared calendar permissions,Granted editor access to team calendar.,Closed,90,No
+17901,Meridian Logistics,2026-07-22 12:52,Tom Walker,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,130,No
+17902,Kingsbridge Architects,2026-07-22 13:21,Priya Patel,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,115,No
+17903,Riverside Care Group,2026-07-22 13:54,James Smith,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,150,No
+17904,Meridian Logistics,2026-07-23 09:07,Daniel Hughes,Spam getting through filter,Tuned anti-spam policy.,Closed,60,No
+17905,Dorset Legal,2026-07-23 10:05,Priya Patel,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,45,No
+17906,Riverside Care Group,2026-07-23 10:52,Priya Patel,Chargeable: additional monitor install,Approved by office manager.,Closed,150,Yes
+17907,Pennine Engineering,2026-07-23 11:09,Priya Patel,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,120,No
+17908,Riverside Care Group,2026-07-23 13:01,Daniel Hughes,Browser certificate warning,Updated root certificates via policy.,Closed,75,No
+17909,Castle Accountancy,2026-07-23 13:04,Daniel Hughes,Shared calendar permissions,Granted editor access to team calendar.,Closed,20,No
+17910,Harbour Physio,2026-07-24 09:08,Sophie Clarke,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,60,No
+17911,Meridian Logistics,2026-07-24 09:10,James Smith,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,20,No
+17912,Bramley Homes,2026-07-24 09:12,Priya Patel,Shared calendar permissions,Granted editor access to team calendar.,Closed,45,No
+17913,Meridian Logistics,2026-07-24 09:32,Priya Patel,VPN not connecting,Reissued VPN profile.,Closed,120,No
+17914,Dorset Legal,2026-07-24 09:55,Tom Walker,Chargeable: additional monitor install,Approved by office manager.,Closed,150,Yes
+17915,Pennine Engineering,2026-07-24 10:58,Priya Patel,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,180,No
+17916,Sterling Wealth Partners,2026-07-24 11:02,Daniel Hughes,Cannot print to large format plotter,Reinstalled driver.,Closed,60,No
+17917,Harbour Physio,2026-07-24 11:11,Sophie Clarke,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,90,No
+17918,Riverside Care Group,2026-07-24 12:52,Sophie Clarke,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,45,No
+17919,Riverside Care Group,2026-07-24 13:24,Daniel Hughes,Unable to access shared drive,Permissions corrected on folder.,Closed,90,No
+17920,Riverside Care Group,2026-07-24 13:24,Daniel Hughes,Disk space low on file server,Cleared temp files and extended volume.,Closed,20,No
+17921,Northgate Veterinary,2026-07-27 11:12,Tom Walker,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,60,No
+17922,Pennine Engineering,2026-07-27 11:53,Daniel Hughes,VPN not connecting,Reissued VPN profile.,Closed,45,No
+17923,ABC Ltd,2026-07-27 13:03,Sophie Clarke,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,190,No
+17924,Sterling Wealth Partners,2026-07-27 13:06,Tom Walker,Disk space low on file server,Cleared temp files and extended volume.,Closed,15,No
+17925,Kingsbridge Architects,2026-07-27 13:59,Tom Walker,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,45,No
+17926,Sterling Wealth Partners,2026-07-28 09:26,Tom Walker,Browser certificate warning,Updated root certificates via policy.,Closed,90,No
+17927,ABC Ltd,2026-07-28 10:08,Tom Walker,SharePoint access request,Added user to site members.,Closed,45,No
+17928,Elmfield Dental,2026-07-28 10:26,James Smith,Printer showing offline,Restarted print spooler and re-added queue.,Closed,90,No
+17929,Thames Valley Recruitment,2026-07-28 10:30,James Smith,New starter setup x2,"Accounts, licences and CRM access for two consultants.",Closed,40,No
+17930,ABC Ltd,2026-07-28 12:07,Sophie Clarke,Spam getting through filter,Tuned anti-spam policy.,Closed,15,No
+17931,Meridian Logistics,2026-07-28 12:37,Priya Patel,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,45,No
+17932,Meridian Logistics,2026-07-28 12:43,James Smith,Distribution list change request,Updated membership of distribution list.,Closed,180,No
+17933,Sterling Wealth Partners,2026-07-28 13:11,Priya Patel,Browser certificate warning,Updated root certificates via policy.,Closed,30,No
+17934,Dorset Legal,2026-07-28 13:54,James Smith,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,45,No
+17935,Northgate Veterinary,2026-07-29 09:12,Daniel Hughes,MFA prompt not received,Re-registered authenticator app.,Closed,45,No
+17936,Elmfield Dental,2026-07-29 10:48,Priya Patel,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,60,No
+17937,ABC Ltd,2026-07-29 11:34,James Smith,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,20,No
+17938,ABC Ltd,2026-07-30 09:47,Sophie Clarke,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,90,No
+17939,Willow & Hart Interiors,2026-07-30 10:08,James Smith,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,90,Yes
+17940,Pennine Engineering,2026-07-30 11:51,James Smith,Shared calendar permissions,Granted editor access to team calendar.,Closed,150,No
+17941,Castle Accountancy,2026-07-30 12:26,Tom Walker,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,45,No
+17942,Thames Valley Recruitment,2026-07-30 12:45,Daniel Hughes,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,90,Yes
+17943,Smith & Co,2026-07-30 12:52,Daniel Hughes,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,60,No
+17944,Bramley Homes,2026-07-30 13:33,Sophie Clarke,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,20,No
+17945,ABC Ltd,2026-07-31 09:43,Priya Patel,Cannot print to large format plotter,Reinstalled driver.,Closed,120,No
+17946,Dorset Legal,2026-07-31 10:47,James Smith,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,90,No
+17947,Riverside Care Group,2026-07-31 11:01,Tom Walker,Distribution list change request,Updated membership of distribution list.,Closed,45,No
+17948,ABC Ltd,2026-07-31 11:26,Tom Walker,Chargeable: additional monitor install,Approved by office manager.,Closed,60,Yes
+17949,Harbour Physio,2026-07-31 12:08,Priya Patel,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,60,No
+17950,ABC Ltd,2026-07-31 12:26,James Smith,Disk space low on file server,Cleared temp files and extended volume.,Closed,15,No
+17951,Elmfield Dental,2026-07-31 12:30,Priya Patel,Dentally integration with X-ray software not syncing,Imaging bridge not passing patient records. Reinstalled bridge.,Closed,45,No
+17952,Smith & Co,2026-07-31 12:45,Sophie Clarke,Printer lease swap,Chargeable per quote. Swapped leased MFD and set up scan to email.,Closed,25,Yes
+17953,Bramley Homes,2026-07-31 13:13,James Smith,Cannot print to large format plotter,Reinstalled driver.,Closed,15,No
+17954,ABC Ltd,2026-08-03 09:32,Priya Patel,Cannot print to large format plotter,Reinstalled driver.,Closed,20,No
+17955,ABC Ltd,2026-08-03 10:16,James Smith,MFA prompt not received,Re-registered authenticator app.,Closed,200,No
+17956,Willow & Hart Interiors,2026-08-03 10:26,Tom Walker,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,90,No
+17957,Elmfield Dental,2026-08-03 11:37,Priya Patel,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,75,No
+17958,Elmfield Dental,2026-08-03 12:29,Tom Walker,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,30,No
+17959,Bramley Homes,2026-08-03 13:02,Tom Walker,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,90,No
+17960,Thames Valley Recruitment,2026-08-03 13:42,Tom Walker,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,15,No
+17961,Castle Accountancy,2026-08-04 10:39,Tom Walker,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,150,No
+17962,Elmfield Dental,2026-08-04 10:39,Tom Walker,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,90,No
+17963,Kingsbridge Architects,2026-08-04 11:13,Tom Walker,Spam getting through filter,Tuned anti-spam policy.,Closed,60,No
+17964,Sterling Wealth Partners,2026-08-04 11:40,Tom Walker,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,60,No
+17965,Pennine Engineering,2026-08-04 12:30,Tom Walker,Site visit to patch desks in workshop office,Site visit to patch six desks in the workshop office and test ports.,Closed,120,No
+17966,Bramley Homes,2026-08-04 13:05,Sophie Clarke,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,45,No
+17967,Northgate Veterinary,2026-08-04 13:59,Sophie Clarke,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,75,No
+17968,Castle Accountancy,2026-08-05 09:46,Daniel Hughes,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,30,No
+17969,Kingsbridge Architects,2026-08-05 10:09,Priya Patel,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,150,No
+17970,Castle Accountancy,2026-08-05 11:59,Tom Walker,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,60,No
+17971,Elmfield Dental,2026-08-05 12:38,Priya Patel,Distribution list change request,Updated membership of distribution list.,Closed,90,No
+17972,Harbour Physio,2026-08-05 13:18,James Smith,Cannot print to large format plotter,Reinstalled driver.,Closed,15,No
+17973,Castle Accountancy,2026-08-06 09:04,James Smith,MFA prompt not received,Re-registered authenticator app.,Closed,60,No
+17974,Pennine Engineering,2026-08-06 09:19,Priya Patel,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,90,No
+17975,Pennine Engineering,2026-08-06 09:28,Daniel Hughes,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,20,No
+17976,Northgate Veterinary,2026-08-06 11:06,James Smith,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,120,No
+17977,ABC Ltd,2026-08-06 12:24,James Smith,Chargeable: additional monitor install,Approved by office manager.,Closed,150,Yes
+17978,Castle Accountancy,2026-08-06 12:31,James Smith,Cannot print to large format plotter,Reinstalled driver.,Closed,60,No
+17979,ABC Ltd,2026-08-06 12:44,Sophie Clarke,Cannot print to large format plotter,Reinstalled driver.,Closed,90,No
+17980,Sterling Wealth Partners,2026-08-07 09:11,Sophie Clarke,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,105,No
+17981,Thames Valley Recruitment,2026-08-07 09:54,Tom Walker,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,45,No
+17982,Harbour Physio,2026-08-07 10:31,Tom Walker,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,60,No
+17983,Smith & Co,2026-08-07 11:44,Priya Patel,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,45,No
+17984,Riverside Care Group,2026-08-07 12:31,Tom Walker,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,120,No
+17985,Castle Accountancy,2026-08-07 13:20,Daniel Hughes,Unable to access shared drive,Permissions corrected on folder.,Closed,170,No
+17986,Elmfield Dental,2026-08-07 13:22,Priya Patel,VPN not connecting,Reissued VPN profile.,Closed,90,No
+17987,ABC Ltd,2026-08-07 13:48,James Smith,MFA prompt not received,Re-registered authenticator app.,Closed,30,No
+17988,Castle Accountancy,2026-08-10 09:07,Sophie Clarke,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,120,No
+17989,Pennine Engineering,2026-08-10 09:47,James Smith,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,45,No
+17990,Northgate Veterinary,2026-08-10 09:55,Daniel Hughes,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,165,No
+17991,Riverside Care Group,2026-08-11 09:03,Tom Walker,Unable to access shared drive,Permissions corrected on folder.,Closed,120,No
+17992,Riverside Care Group,2026-08-11 09:57,Daniel Hughes,SharePoint access request,Added user to site members.,Closed,180,No
+17993,Elmfield Dental,2026-08-11 10:26,Daniel Hughes,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,75,No
+17994,Meridian Logistics,2026-08-11 12:00,Sophie Clarke,Distribution list change request,Updated membership of distribution list.,Closed,15,No
+17995,Meridian Logistics,2026-08-11 12:01,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,15,No
+17996,ABC Ltd,2026-08-11 12:20,Priya Patel,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,120,No
+17997,ABC Ltd,2026-08-11 13:01,Tom Walker,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,60,No
+17998,Pennine Engineering,2026-08-11 13:26,Daniel Hughes,Disk space low on file server,Cleared temp files and extended volume.,Closed,120,No
+17999,Northgate Veterinary,2026-08-11 13:31,Tom Walker,Disk space low on file server,Cleared temp files and extended volume.,Closed,15,No
+18000,Smith & Co,2026-08-11 13:39,Sophie Clarke,Browser certificate warning,Updated root certificates via policy.,Closed,150,No
+18001,Elmfield Dental,2026-08-11 13:48,Priya Patel,Unable to access shared drive,Permissions corrected on folder.,Closed,195,No
+18002,ABC Ltd,2026-08-12 09:16,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,90,No
+18003,Pennine Engineering,2026-08-12 09:23,James Smith,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,150,No
+18004,Kingsbridge Architects,2026-08-12 11:44,Priya Patel,Browser certificate warning,Updated root certificates via policy.,Closed,180,No
+18005,ABC Ltd,2026-08-12 12:08,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,60,No
+18006,Willow & Hart Interiors,2026-08-12 13:19,James Smith,Cannot print to large format plotter,Reinstalled driver.,Closed,120,No
+18007,Smith & Co,2026-08-12 13:23,Tom Walker,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,90,No
+18008,Elmfield Dental,2026-08-13 09:43,Daniel Hughes,VPN not connecting,Reissued VPN profile.,Closed,20,No
+18009,Pennine Engineering,2026-08-13 09:59,Sophie Clarke,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,60,No
+18010,Dorset Legal,2026-08-13 10:07,Tom Walker,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,180,No
+18011,Willow & Hart Interiors,2026-08-13 10:54,James Smith,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,102,No
+18012,Bramley Homes,2026-08-13 10:56,Sophie Clarke,Cannot print to large format plotter,Reinstalled driver.,Closed,30,No
+18013,Castle Accountancy,2026-08-13 12:21,James Smith,Distribution list change request,Updated membership of distribution list.,Closed,45,No
+18014,Sterling Wealth Partners,2026-08-13 13:13,Tom Walker,Shared calendar permissions,Granted editor access to team calendar.,Closed,90,No
+18015,Thames Valley Recruitment,2026-08-13 13:29,James Smith,Unable to access shared drive,Permissions corrected on folder.,Closed,45,No
+18016,Bramley Homes,2026-08-13 13:51,James Smith,Unable to access shared drive,Permissions corrected on folder.,Closed,130,No
+18017,Castle Accountancy,2026-08-13 14:15,Priya Patel,Sage 50 accounts won't open after update,Sage 50 data path broken after update. Repaired install and re-pointed company data.,Closed,75,No
+18018,Dorset Legal,2026-08-14 09:08,Tom Walker,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,180,No
+18019,ABC Ltd,2026-08-14 10:34,Sophie Clarke,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,180,No
+18020,Willow & Hart Interiors,2026-08-14 11:12,Sophie Clarke,MFA prompt not received,Re-registered authenticator app.,Closed,120,No
+18021,Meridian Logistics,2026-08-14 12:13,Daniel Hughes,SharePoint access request,Added user to site members.,Closed,90,No
+18022,Pennine Engineering,2026-08-14 12:15,Sophie Clarke,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,45,No
+18023,Meridian Logistics,2026-08-14 12:18,Priya Patel,Printer showing offline,Restarted print spooler and re-added queue.,Closed,60,No
+18024,Meridian Logistics,2026-08-14 12:58,Daniel Hughes,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,15,No
+18025,Castle Accountancy,2026-08-14 13:17,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,15,No
+18026,Pennine Engineering,2026-08-14 13:58,Daniel Hughes,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,30,No
+18027,Sterling Wealth Partners,2026-08-17 09:08,James Smith,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,180,No
+18028,Riverside Care Group,2026-08-17 09:15,Daniel Hughes,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,180,No
+18029,Sterling Wealth Partners,2026-08-17 09:41,James Smith,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,120,No
+18030,ABC Ltd,2026-08-17 10:03,Tom Walker,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,45,No
+18031,Dorset Legal,2026-08-17 10:18,Priya Patel,Chargeable: additional monitor install,Approved by office manager.,Closed,45,Yes
+18032,Castle Accountancy,2026-08-17 10:29,James Smith,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,90,No
+18033,Pennine Engineering,2026-08-17 11:53,Sophie Clarke,Cannot print to large format plotter,Reinstalled driver.,Closed,45,No
+18034,Dorset Legal,2026-08-18 09:18,Sophie Clarke,VPN not connecting,Reissued VPN profile.,Closed,150,No
+18035,Pennine Engineering,2026-08-18 09:45,James Smith,MFA prompt not received,Re-registered authenticator app.,Closed,45,No
+18036,Bramley Homes,2026-08-18 09:48,Tom Walker,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,90,No
+18037,Dorset Legal,2026-08-18 11:20,Daniel Hughes,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,180,No
+18038,Riverside Care Group,2026-08-18 13:05,Priya Patel,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,45,No
+18039,ABC Ltd,2026-08-18 13:55,Sophie Clarke,Browser certificate warning,Updated root certificates via policy.,Closed,45,No
+18040,Riverside Care Group,2026-08-19 09:20,Priya Patel,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,60,No
+18041,Meridian Logistics,2026-08-19 09:27,Daniel Hughes,Printer showing offline,Restarted print spooler and re-added queue.,Closed,60,No
+18042,Castle Accountancy,2026-08-19 09:44,James Smith,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,90,No
+18043,Kingsbridge Architects,2026-08-19 10:07,Tom Walker,Shared calendar permissions,Granted editor access to team calendar.,Closed,15,No
+18044,Kingsbridge Architects,2026-08-19 10:08,Daniel Hughes,Distribution list change request,Updated membership of distribution list.,Closed,165,No
+18045,Dorset Legal,2026-08-19 10:29,Sophie Clarke,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,45,No
+18046,Harbour Physio,2026-08-19 10:44,Priya Patel,Unable to access shared drive,Permissions corrected on folder.,Closed,60,No
+18047,Bramley Homes,2026-08-19 11:03,Priya Patel,Printer showing offline,Restarted print spooler and re-added queue.,Closed,30,No
+18048,Riverside Care Group,2026-08-19 11:10,Tom Walker,Printer showing offline,Restarted print spooler and re-added queue.,Closed,30,No
+18049,Bramley Homes,2026-08-19 11:30,Priya Patel,Replace cracked screen on director's laptop,"Director dropped laptop. Sourced replacement panel, fitted cracked screen replacement and tested display.",Closed,95,No
+18050,Northgate Veterinary,2026-08-19 12:16,Priya Patel,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,150,No
+18051,Riverside Care Group,2026-08-19 12:23,Sophie Clarke,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,45,No
+18052,ABC Ltd,2026-08-19 12:28,Daniel Hughes,Printer showing offline,Restarted print spooler and re-added queue.,Closed,90,No
+18053,Castle Accountancy,2026-08-19 12:51,Daniel Hughes,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,60,No
+18054,Thames Valley Recruitment,2026-08-19 13:25,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,180,No
+18055,Castle Accountancy,2026-08-20 10:33,Tom Walker,Browser certificate warning,Updated root certificates via policy.,Closed,20,No
+18056,Harbour Physio,2026-08-20 11:34,James Smith,SharePoint access request,Added user to site members.,Closed,180,No
+18057,Castle Accountancy,2026-08-20 12:33,Tom Walker,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,180,No
+18058,Riverside Care Group,2026-08-20 13:16,James Smith,VPN not connecting,Reissued VPN profile.,Closed,80,No
+18059,Harbour Physio,2026-08-20 13:45,Tom Walker,MFA prompt not received,Re-registered authenticator app.,Closed,90,No
+18060,Meridian Logistics,2026-08-21 09:24,Daniel Hughes,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,150,No
+18061,Northgate Veterinary,2026-08-21 09:46,Daniel Hughes,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,30,No
+18062,Castle Accountancy,2026-08-21 10:24,Tom Walker,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,45,No
+18063,ABC Ltd,2026-08-21 11:21,Tom Walker,Cannot print to large format plotter,Reinstalled driver.,Closed,30,No
+18064,Castle Accountancy,2026-08-21 12:34,Daniel Hughes,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,20,No
+18065,Harbour Physio,2026-08-21 12:39,Tom Walker,Cannot print to large format plotter,Reinstalled driver.,Closed,120,No
+18066,Kingsbridge Architects,2026-08-24 09:02,James Smith,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,90,No
+18067,Meridian Logistics,2026-08-24 10:56,Priya Patel,Spam getting through filter,Tuned anti-spam policy.,Closed,45,No
+18068,Harbour Physio,2026-08-24 11:19,Daniel Hughes,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,55,No
+18069,Elmfield Dental,2026-08-24 11:42,Daniel Hughes,VPN not connecting,Reissued VPN profile.,Closed,30,No
+18070,Pennine Engineering,2026-08-24 11:50,Tom Walker,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,160,No
+18071,Castle Accountancy,2026-08-24 12:52,Sophie Clarke,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,60,No
+18072,Riverside Care Group,2026-08-24 13:02,Daniel Hughes,SharePoint access request,Added user to site members.,Closed,150,No
+18073,Willow & Hart Interiors,2026-08-24 13:26,James Smith,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,60,No
+18074,Bramley Homes,2026-08-24 13:27,James Smith,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,30,No
+18075,Bramley Homes,2026-08-24 13:28,Daniel Hughes,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,75,No
+18076,Willow & Hart Interiors,2026-08-25 09:16,James Smith,MFA prompt not received,Re-registered authenticator app.,Closed,45,No
+18077,Northgate Veterinary,2026-08-25 09:17,Priya Patel,Spam getting through filter,Tuned anti-spam policy.,Closed,90,No
+18078,Castle Accountancy,2026-08-25 09:19,Tom Walker,SharePoint access request,Added user to site members.,Closed,45,No
+18079,Sterling Wealth Partners,2026-08-25 09:46,James Smith,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,60,No
+18080,Dorset Legal,2026-08-25 10:51,Tom Walker,Disk space low on file server,Cleared temp files and extended volume.,Closed,60,No
+18081,Thames Valley Recruitment,2026-08-25 10:54,Priya Patel,Browser certificate warning,Updated root certificates via policy.,Closed,180,No
+18082,Pennine Engineering,2026-08-25 11:41,Sophie Clarke,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,30,No
+18083,Kingsbridge Architects,2026-08-25 11:44,Sophie Clarke,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,75,No
+18084,Sterling Wealth Partners,2026-08-25 12:11,Sophie Clarke,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,150,No
+18085,Kingsbridge Architects,2026-08-25 12:54,Daniel Hughes,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,120,No
+18086,Riverside Care Group,2026-08-25 12:55,James Smith,Unable to access shared drive,Permissions corrected on folder.,Closed,150,No
+18087,ABC Ltd,2026-08-25 13:07,James Smith,VPN not connecting,Reissued VPN profile.,Closed,150,No
+18088,ABC Ltd,2026-08-25 13:15,James Smith,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,60,No
+18089,Meridian Logistics,2026-08-25 13:22,Priya Patel,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,120,No
+18090,Harbour Physio,2026-08-25 13:41,James Smith,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,30,No
+18091,Riverside Care Group,2026-08-25 13:44,Tom Walker,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,120,No
+18092,Bramley Homes,2026-08-25 13:49,Tom Walker,Distribution list change request,Updated membership of distribution list.,Closed,45,No
+18093,Elmfield Dental,2026-08-25 13:57,James Smith,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,45,No
+18094,Elmfield Dental,2026-08-26 09:15,Priya Patel,Install additional surgery workstation,Quoted and approved. Installed workstation in surgery 4.,Closed,70,Yes
+18095,Thames Valley Recruitment,2026-08-26 09:18,Tom Walker,Spam getting through filter,Tuned anti-spam policy.,Closed,75,No
+18096,Harbour Physio,2026-08-26 10:10,Priya Patel,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,20,No
+18097,Castle Accountancy,2026-08-26 10:35,Tom Walker,Distribution list change request,Updated membership of distribution list.,Closed,45,No
+18098,Meridian Logistics,2026-08-26 10:51,Sophie Clarke,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,180,No
+18099,Harbour Physio,2026-08-26 11:10,Daniel Hughes,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,90,No
+18100,Dorset Legal,2026-08-26 12:02,James Smith,Spam getting through filter,Tuned anti-spam policy.,Closed,90,No
+18101,Dorset Legal,2026-08-26 12:59,Tom Walker,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,90,No
+18102,Smith & Co,2026-08-26 13:09,Tom Walker,Spam getting through filter,Tuned anti-spam policy.,Closed,45,No
+18103,Elmfield Dental,2026-08-26 13:32,Tom Walker,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,30,No
+18104,ABC Ltd,2026-08-26 13:47,Sophie Clarke,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,30,No
+18105,Dorset Legal,2026-08-26 13:54,James Smith,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,60,No
+18106,Harbour Physio,2026-08-27 10:10,James Smith,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,60,No
+18107,Meridian Logistics,2026-08-27 10:42,Tom Walker,Locked out of account,Unlocked account and checked sign-in logs.,Closed,150,No
+18108,Thames Valley Recruitment,2026-08-27 11:07,James Smith,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,60,No
+18109,Castle Accountancy,2026-08-27 11:27,Sophie Clarke,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,30,No
+18110,ABC Ltd,2026-08-27 13:30,Tom Walker,Office move: patch network in new suite,Office move to second floor. Patched network and moved printers.,Closed,80,No
+18111,Castle Accountancy,2026-08-27 13:31,Sophie Clarke,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,75,No
+18112,Meridian Logistics,2026-08-28 09:10,Sophie Clarke,Cannot print to large format plotter,Reinstalled driver.,Closed,180,No
+18113,Smith & Co,2026-08-28 09:53,Tom Walker,MFA prompt not received,Re-registered authenticator app.,Closed,150,No
+18114,Castle Accountancy,2026-08-28 10:31,James Smith,MFA prompt not received,Re-registered authenticator app.,Closed,45,No
+18115,Castle Accountancy,2026-08-28 10:44,James Smith,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,90,No
+18116,Kingsbridge Architects,2026-08-28 11:19,Tom Walker,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,45,No
+18117,ABC Ltd,2026-08-31 09:02,Priya Patel,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,60,No
+18118,Dorset Legal,2026-08-31 09:08,James Smith,Shared calendar permissions,Granted editor access to team calendar.,Closed,60,No
+18119,ABC Ltd,2026-08-31 09:17,Daniel Hughes,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,90,No
+18120,Northgate Veterinary,2026-08-31 10:22,Sophie Clarke,Printer showing offline,Restarted print spooler and re-added queue.,Closed,15,No
+18121,Bramley Homes,2026-08-31 10:39,Tom Walker,Printer showing offline,Restarted print spooler and re-added queue.,Closed,60,No
+18122,Sterling Wealth Partners,2026-08-31 12:10,Sophie Clarke,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,75,No
+18123,Willow & Hart Interiors,2026-08-31 12:33,Daniel Hughes,Spam getting through filter,Tuned anti-spam policy.,Closed,150,No
+18124,Riverside Care Group,2026-08-31 13:00,Priya Patel,Additional Wi-Fi access point installation,Chargeable install agreed with operations manager.,Closed,40,Yes
+18125,Thames Valley Recruitment,2026-09-01 09:22,Daniel Hughes,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,30,Yes
+18126,Elmfield Dental,2026-09-01 10:00,Priya Patel,Onboarding two associates,"Onboarding two associate dentists: accounts, MFA, laptop handover.",Closed,50,No
+18127,Harbour Physio,2026-09-01 11:06,Daniel Hughes,Unable to access shared drive,Permissions corrected on folder.,Closed,60,No
+18128,ABC Ltd,2026-09-01 11:54,Tom Walker,Distribution list change request,Updated membership of distribution list.,Closed,60,No
+18129,Willow & Hart Interiors,2026-09-01 12:23,James Smith,Locked out of account,Unlocked account and checked sign-in logs.,Closed,180,No
+18130,ABC Ltd,2026-09-01 12:26,Priya Patel,Shared calendar permissions,Granted editor access to team calendar.,Closed,60,No
+18131,Sterling Wealth Partners,2026-09-01 12:27,Tom Walker,Cannot print to large format plotter,Reinstalled driver.,Closed,120,No
+18132,Pennine Engineering,2026-09-01 12:50,Priya Patel,SharePoint access request,Added user to site members.,Closed,20,No
+18133,Dorset Legal,2026-09-01 13:10,Sophie Clarke,Distribution list change request,Updated membership of distribution list.,Closed,15,No
+18134,Elmfield Dental,2026-09-02 09:28,Daniel Hughes,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,60,No
+18135,Bramley Homes,2026-09-02 10:10,Tom Walker,Unable to access shared drive,Permissions corrected on folder.,Closed,90,No
+18136,Smith & Co,2026-09-02 10:11,Priya Patel,Shared calendar permissions,Granted editor access to team calendar.,Closed,160,No
+18137,Meridian Logistics,2026-09-02 10:59,James Smith,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,20,No
+18138,Smith & Co,2026-09-02 11:36,Tom Walker,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,150,No
+18139,Dorset Legal,2026-09-02 11:45,Daniel Hughes,SharePoint access request,Added user to site members.,Closed,90,No
+18140,Castle Accountancy,2026-09-02 13:39,James Smith,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,60,No
+18141,Castle Accountancy,2026-09-02 13:53,Daniel Hughes,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,180,No
+18142,ABC Ltd,2026-09-03 09:58,James Smith,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,150,No
+18143,Willow & Hart Interiors,2026-09-03 10:04,Tom Walker,Locked out of account,Unlocked account and checked sign-in logs.,Closed,120,No
+18144,Thames Valley Recruitment,2026-09-03 10:38,Tom Walker,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,30,No
+18145,Harbour Physio,2026-09-03 12:23,James Smith,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,75,No
+18146,Riverside Care Group,2026-09-03 12:38,James Smith,MFA prompt not received,Re-registered authenticator app.,Closed,150,No
+18147,Castle Accountancy,2026-09-04 10:42,James Smith,Browser certificate warning,Updated root certificates via policy.,Closed,60,No
+18148,Castle Accountancy,2026-09-04 11:04,Sophie Clarke,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,180,Yes
+18149,Kingsbridge Architects,2026-09-04 11:22,James Smith,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,75,No
+18150,ABC Ltd,2026-09-04 11:24,Daniel Hughes,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,45,No
+18151,ABC Ltd,2026-09-04 12:19,Daniel Hughes,VPN not connecting,Reissued VPN profile.,Closed,150,No
+18152,Harbour Physio,2026-09-04 12:29,James Smith,Shared calendar permissions,Granted editor access to team calendar.,Closed,30,No
+18153,Pennine Engineering,2026-09-04 13:35,Tom Walker,Distribution list change request,Updated membership of distribution list.,Closed,45,No
+18154,Kingsbridge Architects,2026-09-04 13:48,Priya Patel,SharePoint access request,Added user to site members.,Closed,30,No
+18155,Riverside Care Group,2026-09-07 09:32,Priya Patel,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,45,No
+18156,Willow & Hart Interiors,2026-09-07 09:40,Priya Patel,Cannot print to large format plotter,Reinstalled driver.,Closed,180,No
+18157,Bramley Homes,2026-09-07 12:02,Tom Walker,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,15,No
+18158,ABC Ltd,2026-09-07 12:11,Priya Patel,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,75,No
+18159,Kingsbridge Architects,2026-09-07 12:20,Tom Walker,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,60,No
+18160,Elmfield Dental,2026-09-07 13:04,Tom Walker,Disk space low on file server,Cleared temp files and extended volume.,Closed,90,No
+18161,Dorset Legal,2026-09-08 10:11,Tom Walker,Printer showing offline,Restarted print spooler and re-added queue.,Closed,15,No
+18162,Castle Accountancy,2026-09-08 11:06,James Smith,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,45,No
+18163,Smith & Co,2026-09-08 11:32,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,20,No
+18164,Elmfield Dental,2026-09-09 09:11,James Smith,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,90,No
+18165,ABC Ltd,2026-09-09 09:27,Tom Walker,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,15,No
+18166,Pennine Engineering,2026-09-09 09:57,Sophie Clarke,Distribution list change request,Updated membership of distribution list.,Closed,30,No
+18167,Sterling Wealth Partners,2026-09-09 09:59,Daniel Hughes,Browser certificate warning,Updated root certificates via policy.,Closed,195,No
+18168,Harbour Physio,2026-09-09 10:35,Daniel Hughes,Browser certificate warning,Updated root certificates via policy.,Closed,60,No
+18169,Thames Valley Recruitment,2026-09-09 10:39,Priya Patel,Locked out of account,Unlocked account and checked sign-in logs.,Closed,150,No
+18170,Thames Valley Recruitment,2026-09-09 11:09,Daniel Hughes,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,90,No
+18171,Dorset Legal,2026-09-09 11:45,Tom Walker,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,15,No
+18172,Castle Accountancy,2026-09-09 12:06,Sophie Clarke,Spam getting through filter,Tuned anti-spam policy.,Closed,150,No
+18173,Elmfield Dental,2026-09-09 13:10,James Smith,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,30,No
+18174,Sterling Wealth Partners,2026-09-09 13:17,Sophie Clarke,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,60,No
+18175,Northgate Veterinary,2026-09-09 13:31,Tom Walker,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,150,No
+18176,Meridian Logistics,2026-09-09 13:39,Sophie Clarke,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,150,No
+18177,Meridian Logistics,2026-09-09 21:40,Tom Walker,Out of hours: warehouse scanner system down,Night shift could not scan. Remote session to restart handheld scanner service and print server.,Closed,100,No
+18178,Kingsbridge Architects,2026-09-10 09:10,Priya Patel,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,90,No
+18179,ABC Ltd,2026-09-10 10:38,Priya Patel,Printer showing offline,Restarted print spooler and re-added queue.,Closed,60,No
+18180,ABC Ltd,2026-09-10 10:41,Tom Walker,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,20,No
+18181,Dorset Legal,2026-09-10 11:14,Daniel Hughes,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,30,No
+18182,Sterling Wealth Partners,2026-09-10 11:27,Priya Patel,Browser certificate warning,Updated root certificates via policy.,Closed,60,No
+18183,Riverside Care Group,2026-09-10 11:40,Sophie Clarke,Printer showing offline,Restarted print spooler and re-added queue.,Closed,150,No
+18184,Riverside Care Group,2026-09-10 12:50,Daniel Hughes,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,135,No
+18185,Meridian Logistics,2026-09-10 13:03,Daniel Hughes,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,75,No
+18186,ABC Ltd,2026-09-10 13:46,James Smith,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,75,No
+18187,Pennine Engineering,2026-09-10 13:55,Priya Patel,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,20,No
+18188,Thames Valley Recruitment,2026-09-10 14:45,Sophie Clarke,Reconfigure meeting room AV,Client approved chargeable work to rewire meeting room screen.,Closed,30,Yes
+18189,Kingsbridge Architects,2026-09-11 09:30,Daniel Hughes,Revit crashing when opening central model,"Revit 2025 crashing on two workstations when opening the central model. Cleared local cache, repaired install, liaised with vendor.",Closed,150,No
+18190,Castle Accountancy,2026-09-11 10:19,James Smith,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,30,No
+18191,Riverside Care Group,2026-09-11 10:46,James Smith,Shared calendar permissions,Granted editor access to team calendar.,Closed,120,No
+18192,Pennine Engineering,2026-09-11 10:48,Sophie Clarke,MFA prompt not received,Re-registered authenticator app.,Closed,90,No
+18193,ABC Ltd,2026-09-11 11:28,Priya Patel,Browser certificate warning,Updated root certificates via policy.,Closed,156,No
+18194,Castle Accountancy,2026-09-11 12:41,Tom Walker,Browser certificate warning,Updated root certificates via policy.,Closed,150,No
+18195,Elmfield Dental,2026-09-14 10:13,Priya Patel,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,45,No
+18196,Dorset Legal,2026-09-14 10:30,Sophie Clarke,MFA prompt not received,Re-registered authenticator app.,Closed,30,No
+18197,Elmfield Dental,2026-09-14 11:29,James Smith,Cannot print to large format plotter,Reinstalled driver.,Closed,120,No
+18198,Castle Accountancy,2026-09-14 12:40,Sophie Clarke,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,180,No
+18199,Harbour Physio,2026-09-15 09:17,James Smith,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,150,No
+18492,Bramley Homes,2026-09-15 10:20,James Smith,Set up employee's personal MacBook,"Sales negotiator asked us to configure her personal MacBook with Outlook, Teams and the shared drive so she can work from it. Installed Company Portal, configured mail and OneDrive, mapped drives.",Closed,80,No
+18200,Bramley Homes,2026-09-15 10:34,Priya Patel,Printer showing offline,Restarted print spooler and re-added queue.,Closed,45,No
+18201,Pennine Engineering,2026-09-15 11:47,Priya Patel,Distribution list change request,Updated membership of distribution list.,Closed,90,No
+18202,Willow & Hart Interiors,2026-09-15 11:47,James Smith,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,30,No
+18203,ABC Ltd,2026-09-15 12:17,James Smith,MFA prompt not received,Re-registered authenticator app.,Closed,15,No
+18204,Castle Accountancy,2026-09-15 13:08,Tom Walker,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,90,No
+18205,Northgate Veterinary,2026-09-15 13:15,Priya Patel,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,90,No
+18206,Thames Valley Recruitment,2026-09-15 13:19,James Smith,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,75,No
+18207,Riverside Care Group,2026-09-16 09:04,Priya Patel,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,60,No
+18208,Riverside Care Group,2026-09-16 09:54,James Smith,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,30,No
+18209,Dorset Legal,2026-09-16 10:12,Tom Walker,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,75,No
+18210,Meridian Logistics,2026-09-16 11:11,Priya Patel,VPN not connecting,Reissued VPN profile.,Closed,30,No
+18211,Pennine Engineering,2026-09-16 12:36,Tom Walker,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,90,No
+18212,Dorset Legal,2026-09-16 13:47,Daniel Hughes,Disk space low on file server,Cleared temp files and extended volume.,Closed,15,No
+18213,Thames Valley Recruitment,2026-09-16 13:56,Daniel Hughes,Locked out of account,Unlocked account and checked sign-in logs.,Closed,75,No
+18214,Pennine Engineering,2026-09-17 09:00,James Smith,Distribution list change request,Updated membership of distribution list.,Closed,30,No
+18215,Meridian Logistics,2026-09-17 09:32,James Smith,Teams calls dropping audio,Updated audio drivers and Teams client.,Closed,45,No
+18216,ABC Ltd,2026-09-17 09:35,Tom Walker,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,60,No
+18217,Kingsbridge Architects,2026-09-17 09:50,Sophie Clarke,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",Closed,120,No
+18218,Smith & Co,2026-09-17 10:12,Tom Walker,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,150,No
+18219,Pennine Engineering,2026-09-17 11:29,Daniel Hughes,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,170,No
+18220,Bramley Homes,2026-09-17 11:54,James Smith,Chargeable: additional monitor install,Approved by office manager.,Closed,90,Yes
+18221,Riverside Care Group,2026-09-18 09:27,Daniel Hughes,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,30,No
+18222,Meridian Logistics,2026-09-18 09:51,Tom Walker,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,30,No
+18223,ABC Ltd,2026-09-18 09:58,Tom Walker,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,20,No
+18224,Meridian Logistics,2026-09-18 10:56,Tom Walker,MFA prompt not received,Re-registered authenticator app.,Closed,45,No
+18225,Meridian Logistics,2026-09-18 11:14,Tom Walker,Printer showing offline,Restarted print spooler and re-added queue.,Closed,90,No
+18226,Elmfield Dental,2026-09-18 11:45,James Smith,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,15,No
+18227,Dorset Legal,2026-09-18 11:52,Tom Walker,Distribution list change request,Updated membership of distribution list.,Closed,20,No
+18228,Dorset Legal,2026-09-18 11:52,James Smith,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,105,No
+18229,Willow & Hart Interiors,2026-09-18 12:07,James Smith,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,90,No
+18230,ABC Ltd,2026-09-18 12:44,Sophie Clarke,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,45,No
+18231,Harbour Physio,2026-09-18 13:33,Priya Patel,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,45,No
+18232,Dorset Legal,2026-09-18 13:38,Tom Walker,Shared calendar permissions,Granted editor access to team calendar.,Closed,60,No
+18233,Elmfield Dental,2026-09-18 13:41,Priya Patel,Printer showing offline,Restarted print spooler and re-added queue.,Closed,70,No
+18234,Meridian Logistics,2026-09-18 13:41,Priya Patel,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,90,No
+18235,Harbour Physio,2026-09-21 09:21,Priya Patel,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Closed,90,No
+18236,Pennine Engineering,2026-09-21 10:17,Daniel Hughes,Chargeable: additional monitor install,Approved by office manager.,Closed,90,Yes
+18237,ABC Ltd,2026-09-21 10:58,Tom Walker,Antivirus alert investigated,"Alert reviewed, file quarantined, scan clean.",Closed,120,No
+18238,Pennine Engineering,2026-09-21 10:58,Priya Patel,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,60,No
+18239,Riverside Care Group,2026-09-21 11:18,Daniel Hughes,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,90,No
+18240,Castle Accountancy,2026-09-21 12:51,Daniel Hughes,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,120,No
+18241,Meridian Logistics,2026-09-21 13:08,James Smith,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,160,No
+18242,Elmfield Dental,2026-09-21 13:30,Tom Walker,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,150,Yes
+18243,Riverside Care Group,2026-09-22 09:08,Priya Patel,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,180,No
+18244,Dorset Legal,2026-09-22 09:24,James Smith,Wi-Fi dropping in meeting room,Adjusted access point channel.,Closed,75,No
+18245,Bramley Homes,2026-09-22 12:14,Tom Walker,Chargeable: additional monitor install,Approved by office manager.,Closed,30,Yes
+18246,Castle Accountancy,2026-09-22 12:19,Priya Patel,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,90,No
+18247,Sterling Wealth Partners,2026-09-22 12:50,Priya Patel,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,90,No
+18248,ABC Ltd,2026-09-22 13:16,James Smith,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,30,No
+18249,Northgate Veterinary,2026-09-22 13:23,Priya Patel,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Closed,150,No
+18250,Elmfield Dental,2026-09-22 13:44,Tom Walker,Backup job warning,"Investigated failed job, re-ran successfully.",Closed,45,No
+18251,ABC Ltd,2026-09-23 09:25,Sophie Clarke,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,90,No
+18252,Bramley Homes,2026-09-23 10:34,Tom Walker,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,45,No
+18253,Northgate Veterinary,2026-09-23 11:32,Daniel Hughes,OneDrive sync errors,Reset OneDrive client and resolved conflicting files.,Closed,120,No
+18254,ABC Ltd,2026-09-23 12:07,Sophie Clarke,Unable to access shared drive,Permissions corrected on folder.,Closed,20,No
+18255,Bramley Homes,2026-09-23 12:08,James Smith,Distribution list change request,Updated membership of distribution list.,Closed,190,No
+18256,Dorset Legal,2026-09-23 12:16,Tom Walker,Chargeable: additional monitor install,Approved by office manager.,Closed,150,Yes
+18257,Dorset Legal,2026-09-23 12:23,Sophie Clarke,Quoted work: firewall firmware upgrade window,Approved chargeable change.,Closed,75,Yes
+18258,Riverside Care Group,2026-09-23 12:23,Priya Patel,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,180,No
+18259,Bramley Homes,2026-09-24 09:04,James Smith,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,30,No
+18260,Bramley Homes,2026-09-24 09:38,Daniel Hughes,MFA prompt not received,Re-registered authenticator app.,Closed,60,No
+18261,Riverside Care Group,2026-09-24 09:56,James Smith,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,150,No
+18262,Northgate Veterinary,2026-09-24 10:03,Priya Patel,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,150,No
+18263,Sterling Wealth Partners,2026-09-24 11:24,Priya Patel,Printer showing offline,Restarted print spooler and re-added queue.,Closed,45,No
+18264,Dorset Legal,2026-09-24 11:41,James Smith,Laptop battery warning,"Ran diagnostics, battery within tolerance, advised user.",Closed,60,No
+18265,Castle Accountancy,2026-09-24 11:59,James Smith,Printer showing offline,Restarted print spooler and re-added queue.,Closed,30,No
+18266,Meridian Logistics,2026-09-24 12:55,Tom Walker,Locked out of account,Unlocked account and checked sign-in logs.,Closed,75,No
+18267,Pennine Engineering,2026-09-24 12:59,Daniel Hughes,Locked out of account,Unlocked account and checked sign-in logs.,Closed,60,No
+18268,Kingsbridge Architects,2026-09-24 13:51,Daniel Hughes,Cannot print to large format plotter,Reinstalled driver.,Closed,180,No
+18269,Castle Accountancy,2026-09-24 13:58,Tom Walker,Windows update failed,Cleared update cache and reinstalled cumulative update.,Closed,90,No
+18270,Kingsbridge Architects,2026-09-25 10:15,Tom Walker,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,90,No
+18271,Kingsbridge Architects,2026-09-25 11:07,Sophie Clarke,Leaver: disable account,"Disabled account, converted mailbox, removed licences.",Closed,15,No
+18272,Dorset Legal,2026-09-25 11:13,Daniel Hughes,Spam getting through filter,Tuned anti-spam policy.,In progress,120,No
+18273,Bramley Homes,2026-09-25 11:17,Sophie Clarke,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Open,75,No
+18274,Harbour Physio,2026-09-25 11:34,Sophie Clarke,VPN not connecting,Reissued VPN profile.,Open,90,No
+18275,Pennine Engineering,2026-09-25 11:53,Daniel Hughes,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,90,No
+18276,Dorset Legal,2026-09-25 13:16,Tom Walker,VPN not connecting,Reissued VPN profile.,Open,20,No
+18277,Sterling Wealth Partners,2026-09-25 13:36,Tom Walker,Quoted work: firewall firmware upgrade window,Approved chargeable change.,In progress,60,Yes
+18278,ABC Ltd,2026-09-28 09:25,Daniel Hughes,SharePoint access request,Added user to site members.,Closed,150,No
+18279,Meridian Logistics,2026-09-28 09:32,Daniel Hughes,Outlook keeps asking for password,Cleared cached credentials and re-created profile.,Open,150,No
+18280,Harbour Physio,2026-09-28 10:07,James Smith,SharePoint access request,Added user to site members.,Closed,175,No
+18281,Meridian Logistics,2026-09-28 10:17,Priya Patel,Mailbox nearly full,Enabled archive and applied retention policy.,Closed,20,No
+18282,Castle Accountancy,2026-09-28 10:35,Priya Patel,MFA prompt not received,Re-registered authenticator app.,Closed,60,No
+18283,Kingsbridge Architects,2026-09-28 10:55,Tom Walker,Locked out of account,Unlocked account and checked sign-in logs.,Open,150,No
+18284,Elmfield Dental,2026-09-28 11:20,Tom Walker,Unable to access shared drive,Permissions corrected on folder.,Closed,45,No
+18285,Willow & Hart Interiors,2026-09-28 11:30,Priya Patel,Fix owner's son's laptop with virus,Owner asked us to look at her son's laptop. Removed adware and reset browser.,Closed,60,No
+18286,ABC Ltd,2026-09-28 11:51,James Smith,MFA prompt not received,Re-registered authenticator app.,Closed,150,No
+18287,ABC Ltd,2026-09-28 12:28,Priya Patel,Password reset,User locked out after password expiry. Reset and confirmed sign-in.,Closed,30,No
+18288,Sterling Wealth Partners,2026-09-29 10:12,Tom Walker,Slow performance on laptop,"Removed startup items, ran updates, checked disk health.",In progress,60,No
+18289,Dorset Legal,2026-09-29 10:33,James Smith,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",In progress,20,No
+18290,Dorset Legal,2026-09-29 12:55,Sophie Clarke,Locked out of account,Unlocked account and checked sign-in logs.,Waiting on client,150,No
+18291,Castle Accountancy,2026-09-30 09:34,Priya Patel,Email not syncing on mobile,Re-added account in Outlook mobile.,Closed,120,No
+18292,ABC Ltd,2026-09-30 09:48,Tom Walker,Email not syncing on mobile,Re-added account in Outlook mobile.,Open,30,No
+18293,Thames Valley Recruitment,2026-09-30 10:01,James Smith,Phishing email reported,"Investigated message, purged from mailboxes, blocked sender.",Closed,120,No
+18294,ABC Ltd,2026-09-30 10:15,Daniel Hughes,SharePoint access request,Added user to site members.,Open,90,No
+18295,Pennine Engineering,2026-09-30 10:29,Tom Walker,Mailbox nearly full,Enabled archive and applied retention policy.,In progress,75,No
+18296,Elmfield Dental,2026-09-30 11:32,Tom Walker,Scanner to email not working,Updated SMTP relay settings on scanner.,Closed,90,No
+18297,Sterling Wealth Partners,2026-09-30 12:30,Daniel Hughes,Excel crashing when opening file,Disabled faulty add-in and repaired Office.,Open,150,No
+18298,Bramley Homes,2026-09-30 12:41,Tom Walker,Docking station not detecting monitors,Updated dock firmware and display drivers.,Closed,30,No
+18299,Castle Accountancy,2026-09-30 13:37,Tom Walker,Adobe Acrobat licence prompt,Reassigned licence in admin console.,Closed,45,No

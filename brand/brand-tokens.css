@@ -1,0 +1,160 @@
+/*
+ * Brand tokens: the single source of truth for colour, type, radius, shadow
+ * and motion. Plain CSS custom properties, so the same file can drive the app,
+ * the marketing site, emails and slide templates.
+ *
+ * The app maps these onto Tailwind utilities in src/styles/theme.css, and the
+ * PDF report and charts read the same values from src/brand/tokens.ts (a test
+ * keeps the two in sync).
+ *
+ * The foundation is dark. Paper values (print and PDF) live under
+ * [data-surface="paper"] and @media print.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* Brand */
+  --brand-primary: #0a0b0d; /* Ink: the dark foundation */
+  --brand-secondary: #edeef0; /* Bone: type and marks on ink */
+  --brand-accent: #c4f25b; /* Recovery lime: money recovered, positive movement */
+  --brand-accent-hover: #d4f87f;
+  --brand-accent-ink: #0a0b0d; /* text and icons on the accent */
+  --brand-accent-soft: rgb(196 242 91 / 0.1);
+  --brand-accent-line: rgb(196 242 91 / 0.3);
+  --brand-accent-deep: #4d6b00; /* the accent on paper, where lime is unreadable */
+
+  /* The mark: body and lifted piece. Paper swaps both (see below). */
+  --brand-mark: #edeef0;
+  --brand-mark-accent: #c4f25b;
+
+  /* UI: surfaces, from the page down to things that float */
+  --brand-background: #0a0b0d;
+  --brand-surface-sunken: #0d0e10;
+  --brand-surface: #111316;
+  --brand-surface-hover: #15181b;
+  --brand-surface-raised: #181b1f;
+  --brand-overlay: rgb(4 5 6 / 0.72);
+
+  /* UI: borders */
+  --brand-border: #262a30;
+  --brand-border-muted: #1b1e22;
+  --brand-border-strong: #363b43;
+
+  /* UI: text (contrast on --brand-surface: 16.0, 8.4, 5.1, 3.0) */
+  --brand-text: #edeef0;
+  --brand-text-secondary: #a9afb8;
+  --brand-muted: #7f8690;
+  --brand-faint: #5b616a; /* icons, disabled, never body text */
+
+  /* Semantic: always paired with an icon or a label, never colour alone */
+  --brand-success: #4cd18f;
+  --brand-success-soft: rgb(76 209 143 / 0.12);
+  --brand-success-line: rgb(76 209 143 / 0.3);
+  --brand-warning: #f2b84b;
+  --brand-warning-soft: rgb(242 184 75 / 0.12);
+  --brand-warning-line: rgb(242 184 75 / 0.3);
+  --brand-danger: #f2735f;
+  --brand-danger-soft: rgb(242 115 95 / 0.12);
+  --brand-danger-line: rgb(242 115 95 / 0.3);
+  --brand-info: #74a9f6;
+  --brand-info-soft: rgb(116 169 246 / 0.12);
+  --brand-info-line: rgb(116 169 246 / 0.3);
+
+  /* Data visualisation: neutrals carry the data, the accent marks the money */
+  --viz-positive: var(--brand-accent);
+  --viz-series: #3d434c;
+  --viz-series-strong: #6a717b;
+  --viz-grid: #1c1f24;
+  --viz-axis: #7f8690;
+  /* Categorical, validated for colour-blind separation on --brand-surface. Max four; fold the rest into Other. */
+  --viz-cat-1: #7fa421;
+  --viz-cat-2: #4a8ee0;
+  --viz-cat-3: #c96f38;
+  --viz-cat-4: #a174e6;
+  --viz-cat-other: #4c525b;
+
+  /* Type: one family. Tabular figures for every number that can change. */
+  --font-display: "Host Grotesk Variable", "Host Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: var(--font-display);
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+  --type-display: 4rem; /* 64: landing hero */
+  --type-display-leading: 1;
+  --type-display-tracking: -0.04em;
+  --type-h1: 1.75rem; /* 28: page titles */
+  --type-h1-leading: 1.15;
+  --type-h1-tracking: -0.025em;
+  --type-h2: 1.25rem; /* 20: section titles */
+  --type-h2-leading: 1.3;
+  --type-h2-tracking: -0.015em;
+  --type-h3: 0.9375rem; /* 15: card titles */
+  --type-h3-leading: 1.4;
+  --type-h3-tracking: -0.005em;
+  --type-body: 0.875rem; /* 14: app body */
+  --type-body-leading: 1.55;
+  --type-lead: 1.125rem; /* 18: marketing body */
+  --type-lead-leading: 1.55;
+  --type-small: 0.8125rem; /* 13: secondary text, table cells */
+  --type-small-leading: 1.5;
+  --type-caption: 0.75rem; /* 12: captions, helper text */
+  --type-caption-leading: 1.4;
+  --type-eyebrow: 0.6875rem; /* 11: uppercase labels */
+  --type-eyebrow-tracking: 0.09em;
+  --type-data-xl: 4.5rem; /* 72: the headline figure */
+  --type-data-xl-tracking: -0.045em;
+  --type-data-lg: 1.75rem; /* 28: KPI figures */
+  --type-data-lg-tracking: -0.03em;
+  --type-data-md: 1.125rem; /* 18: inline figures */
+
+  /* Radius: controls are crisp, containers are soft */
+  --radius-xs: 4px; /* badges, chips */
+  --radius-sm: 6px; /* small controls, tags */
+  --radius-md: 8px; /* buttons, inputs */
+  --radius-lg: 12px; /* cards, tables */
+  --radius-xl: 16px; /* modals, panels */
+  --radius-2xl: 24px; /* marketing frames */
+
+  /* Shadow: on dark, depth comes from surface steps and a hairline; shadows only lift floating layers */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.5);
+  --shadow-md: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -12px rgb(0 0 0 / 0.75);
+  --shadow-lg: 0 1px 0 rgb(255 255 255 / 0.05) inset, 0 32px 80px -24px rgb(0 0 0 / 0.85), 0 0 0 1px rgb(255 255 255 / 0.04);
+  --shadow-glow: 0 0 0 1px var(--brand-accent-line), 0 8px 40px -8px rgb(196 242 91 / 0.25);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+}
+
+/* Paper: printed pages and the PDF report. Same roles, light values. */
+[data-surface="paper"] {
+  color-scheme: light;
+  --brand-background: #ffffff;
+  --brand-surface-sunken: #f6f7f8;
+  --brand-surface: #ffffff;
+  --brand-surface-hover: #f6f7f8;
+  --brand-surface-raised: #f1f2f4;
+  --brand-border: #dfe2e6;
+  --brand-border-muted: #eceef1;
+  --brand-border-strong: #c9ced4;
+  --brand-text: #0a0b0d;
+  --brand-text-secondary: #464c55;
+  --brand-muted: #636a74;
+  --brand-faint: #9aa1aa;
+  --brand-accent: #4d6b00;
+  --brand-accent-hover: #3e5700;
+  --brand-accent-ink: #ffffff;
+  --brand-accent-soft: rgb(77 107 0 / 0.08);
+  --brand-accent-line: rgb(77 107 0 / 0.3);
+  --brand-mark: #0a0b0d;
+  --brand-mark-accent: #5a8700; /* lime on white: a graphic, 4.3:1, never text */
+  --brand-success: #17804d;
+  --brand-warning: #9a6200;
+  --brand-danger: #c2412d;
+  --brand-info: #2563c4;
+  --viz-series: #c9ced4;
+  --viz-series-strong: #636a74;
+  --viz-grid: #eceef1;
+  --viz-axis: #636a74;
+}

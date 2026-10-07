@@ -1,0 +1,794 @@
+client,type,name,ownership,license,status,first_seen
+ABC Ltd,user,Lucy Wright,,Microsoft 365 Business Premium,active,2024-11-25
+ABC Ltd,user,Grace Baker,,Microsoft 365 Business Premium,active,2025-11-05
+ABC Ltd,user,Emily Johnson,,Microsoft 365 Business Premium,active,2024-10-26
+ABC Ltd,user,Leo Harris,,Microsoft 365 Business Premium,active,2024-10-15
+ABC Ltd,user,Lily Green,,Microsoft 365 Business Premium,active,2024-11-13
+ABC Ltd,user,Ella Roberts,,Microsoft 365 Business Premium,active,2022-08-14
+ABC Ltd,user,Sophia James,,Microsoft 365 Business Premium,active,2024-05-24
+ABC Ltd,user,Rosie Clark,,Microsoft 365 Business Premium,active,2023-09-10
+ABC Ltd,user,Mia King,,Microsoft 365 Business Premium,active,2024-07-13
+ABC Ltd,user,Lily Taylor,,Microsoft 365 Business Premium,active,2025-11-04
+ABC Ltd,user,Amelia Patel,,Microsoft 365 Business Premium,active,2023-11-09
+ABC Ltd,user,Lily Allen,,Microsoft 365 Business Premium,active,2025-04-09
+ABC Ltd,user,Jack Martin,,Microsoft 365 Business Premium,active,2025-05-09
+ABC Ltd,user,Ava Wilson,,Microsoft 365 Business Premium,active,2024-04-16
+ABC Ltd,user,Alfie Ward,,Microsoft 365 Business Premium,active,2025-04-16
+ABC Ltd,user,Florence Hill,,Microsoft 365 Business Premium,active,2024-12-12
+ABC Ltd,user,Megan Hall,,Microsoft 365 Business Premium,active,2024-07-04
+ABC Ltd,user,Olivia Scott,,Microsoft 365 Business Premium,active,2023-11-15
+ABC Ltd,user,Ethan Wilson,,Microsoft 365 Business Premium,active,2023-09-08
+ABC Ltd,user,Charlie Wright,,Microsoft 365 Business Premium,active,2024-08-01
+ABC Ltd,user,Charlie King,,Microsoft 365 Business Premium,active,2024-06-04
+ABC Ltd,user,Joshua Green,,Microsoft 365 Business Premium,active,2025-06-01
+ABC Ltd,user,Emily Morgan,,Microsoft 365 Business Premium,active,2022-07-26
+ABC Ltd,user,Evie Clark,,Microsoft 365 Business Premium,active,2022-11-06
+ABC Ltd,user,Ethan Wright,,Microsoft 365 Business Premium,active,2024-03-24
+ABC Ltd,user,Harry Morris,,Microsoft 365 Business Premium,active,2023-04-05
+ABC Ltd,user,Megan Morgan,,Microsoft 365 Business Premium,active,2023-12-17
+ABC Ltd,user,Poppy Johnson,,Microsoft 365 Business Premium,active,2024-02-11
+ABC Ltd,user,Lucy James,,Microsoft 365 Business Premium,active,2025-10-19
+ABC Ltd,user,Samuel Morgan,,Microsoft 365 Business Premium,active,2024-06-07
+ABC Ltd,user,Alfie Scott,,Microsoft 365 Business Premium,active,2023-05-22
+ABC Ltd,user,Joshua Walker,,Microsoft 365 Business Premium,active,2022-05-04
+ABC Ltd,user,Lily Mitchell,,Microsoft 365 Business Premium,active,2023-08-22
+ABC Ltd,user,Lucy Brown,,Microsoft 365 Business Premium,active,2022-12-20
+ABC Ltd,user,Olivia Thomas,,Microsoft 365 Business Premium,active,2022-07-20
+ABC Ltd,user,James Hughes,,Microsoft 365 Business Premium,active,2023-06-23
+ABC Ltd,user,Thomas Lewis,,Microsoft 365 Business Premium,active,2024-03-21
+ABC Ltd,user,Thomas Baker,,Microsoft 365 Business Premium,active,2026-07-06
+ABC Ltd,user,Henry James,,Microsoft 365 Business Premium,active,2026-07-20
+ABC Ltd,device,ABC-SRV-001,company,,active,2023-06-23
+ABC Ltd,device,ABC-SRV-002,company,,active,2025-09-06
+ABC Ltd,device,ABC-LT-003,company,,active,2023-04-25
+ABC Ltd,device,ABC-LT-004,company,,active,2022-06-11
+ABC Ltd,device,ABC-LT-005,company,,active,2025-10-20
+ABC Ltd,device,ABC-LT-006,company,,active,2024-05-03
+ABC Ltd,device,ABC-DT-007,company,,active,2024-07-23
+ABC Ltd,device,ABC-LT-008,company,,active,2022-03-12
+ABC Ltd,device,ABC-DT-009,company,,active,2025-12-24
+ABC Ltd,device,ABC-LT-010,company,,active,2022-07-03
+ABC Ltd,device,ABC-LT-011,company,,active,2025-03-25
+ABC Ltd,device,ABC-LT-012,company,,active,2024-05-12
+ABC Ltd,device,ABC-LT-013,company,,active,2025-10-26
+ABC Ltd,device,ABC-LT-014,company,,active,2024-03-10
+ABC Ltd,device,ABC-LT-015,company,,active,2024-11-03
+ABC Ltd,device,ABC-LT-016,company,,active,2022-08-26
+ABC Ltd,device,ABC-LT-017,company,,active,2022-07-23
+ABC Ltd,device,ABC-LT-018,company,,active,2025-04-02
+ABC Ltd,device,ABC-DT-019,company,,active,2022-11-07
+ABC Ltd,device,ABC-DT-020,company,,active,2022-07-08
+ABC Ltd,device,ABC-LT-021,company,,active,2025-12-24
+ABC Ltd,device,ABC-LT-022,company,,active,2025-06-06
+ABC Ltd,device,ABC-DT-023,company,,active,2025-08-18
+ABC Ltd,device,ABC-LT-024,company,,active,2023-05-20
+ABC Ltd,device,ABC-LT-025,company,,active,2025-02-24
+ABC Ltd,device,ABC-LT-026,company,,active,2022-04-24
+ABC Ltd,device,ABC-LT-027,company,,active,2024-03-12
+ABC Ltd,device,ABC-LT-028,company,,active,2022-06-10
+ABC Ltd,device,ABC-LT-029,company,,active,2025-02-20
+ABC Ltd,device,ABC-DT-030,company,,active,2023-02-11
+ABC Ltd,device,ABC-LT-031,company,,active,2022-01-22
+ABC Ltd,device,ABC-DT-032,company,,active,2023-04-18
+ABC Ltd,device,ABC-LT-033,company,,active,2022-05-10
+ABC Ltd,device,ABC-DT-034,company,,active,2025-10-21
+ABC Ltd,device,ABC-LT-035,company,,active,2024-03-12
+ABC Ltd,device,ABC-LT-036,company,,active,2024-11-20
+ABC Ltd,device,ABC-LT-037,company,,active,2022-09-23
+ABC Ltd,device,ABC-LT-038,company,,active,2024-03-02
+ABC Ltd,device,ABC-DT-039,company,,active,2022-12-22
+ABC Ltd,device,ABC-DT-040,company,,active,2022-08-02
+ABC Ltd,device,ABC-DT-041,company,,active,2022-03-21
+ABC Ltd,device,ABC-LT-042,company,,active,2025-02-14
+Bramley Homes,user,William Taylor,,Microsoft 365 Business Premium,active,2025-08-09
+Bramley Homes,user,Ava Mitchell,,Microsoft 365 Business Premium,active,2023-04-03
+Bramley Homes,user,Thomas White,,Microsoft 365 Business Premium,active,2025-12-22
+Bramley Homes,user,Mia Walker,,Microsoft 365 Business Premium,active,2022-06-16
+Bramley Homes,user,Zara Clarke,,Microsoft 365 Business Premium,active,2022-09-15
+Bramley Homes,user,Ava Baker,,Microsoft 365 Business Premium,active,2022-07-15
+Bramley Homes,user,Samuel Roberts,,Microsoft 365 Business Premium,active,2024-12-02
+Bramley Homes,user,Hannah Wood,,Microsoft 365 Business Premium,active,2022-12-22
+Bramley Homes,user,Charlie Roberts,,Microsoft 365 Business Premium,active,2024-09-22
+Bramley Homes,user,Lucy James,,Microsoft 365 Business Premium,active,2024-11-20
+Bramley Homes,user,Ella Ward,,Microsoft 365 Business Premium,active,2022-01-17
+Bramley Homes,user,James Johnson,,Microsoft 365 Business Premium,active,2023-11-02
+Bramley Homes,user,Leo Wood,,Microsoft 365 Business Premium,active,2024-11-24
+Bramley Homes,user,Joshua Green,,Microsoft 365 Business Premium,active,2023-12-17
+Bramley Homes,user,Florence Edwards,,Microsoft 365 Business Premium,active,2025-12-11
+Bramley Homes,user,Ella Moore,,Microsoft 365 Business Premium,active,2023-06-22
+Bramley Homes,user,Florence Clarke,,Microsoft 365 Business Premium,active,2024-12-05
+Bramley Homes,user,Mia Turner,,Microsoft 365 Business Premium,active,2025-11-22
+Bramley Homes,device,BRM-SRV-001,company,,active,2024-04-27
+Bramley Homes,device,BRM-SRV-002,company,,active,2025-06-02
+Bramley Homes,device,BRM-DT-003,company,,active,2024-11-14
+Bramley Homes,device,BRM-DT-004,company,,active,2022-08-04
+Bramley Homes,device,BRM-LT-005,company,,active,2024-08-07
+Bramley Homes,device,BRM-LT-006,company,,active,2022-02-01
+Bramley Homes,device,BRM-LT-007,company,,active,2024-11-11
+Bramley Homes,device,BRM-LT-008,company,,active,2024-02-05
+Bramley Homes,device,BRM-DT-009,company,,active,2022-02-12
+Bramley Homes,device,BRM-DT-010,company,,active,2023-02-17
+Bramley Homes,device,BRM-LT-011,company,,active,2022-10-05
+Bramley Homes,device,BRM-DT-012,company,,active,2023-04-08
+Bramley Homes,device,BRM-LT-013,company,,active,2023-05-19
+Bramley Homes,device,BRM-LT-014,company,,active,2024-06-13
+Bramley Homes,device,BRM-DT-015,company,,active,2025-01-25
+Bramley Homes,device,BRM-LT-016,company,,active,2023-08-15
+Bramley Homes,device,BRM-LT-017,company,,active,2023-08-01
+Bramley Homes,device,BRM-LT-018,company,,active,2025-08-21
+Bramley Homes,device,BRM-LT-019,company,,active,2022-03-04
+Bramley Homes,device,BRM-LT-020,company,,active,2022-09-04
+Bramley Homes,device,BRM-LT-021,company,,active,2025-04-27
+Bramley Homes,device,BRM-LT-022,company,,active,2025-01-06
+Castle Accountancy,user,Megan Clark,,Microsoft 365 Business Premium,active,2025-11-03
+Castle Accountancy,user,Ethan Jackson,,Microsoft 365 Business Premium,active,2022-03-07
+Castle Accountancy,user,James Walker,,Microsoft 365 Business Premium,active,2022-07-24
+Castle Accountancy,user,Rosie Martin,,Microsoft 365 Business Premium,active,2024-12-12
+Castle Accountancy,user,Evie Wilson,,Microsoft 365 Business Premium,active,2024-12-15
+Castle Accountancy,user,Leo Young,,Microsoft 365 Business Premium,active,2025-09-10
+Castle Accountancy,user,Noah Young,,Microsoft 365 Business Premium,active,2022-12-20
+Castle Accountancy,user,Chloe Ward,,Microsoft 365 Business Premium,active,2022-07-04
+Castle Accountancy,user,Noah Johnson,,Microsoft 365 Business Premium,active,2024-06-10
+Castle Accountancy,user,Arthur Jackson,,Microsoft 365 Business Premium,active,2023-01-18
+Castle Accountancy,user,Isla Robinson,,Microsoft 365 Business Premium,active,2025-05-14
+Castle Accountancy,user,Ruby Morris,,Microsoft 365 Business Premium,active,2025-05-12
+Castle Accountancy,user,Olivia Lewis,,Microsoft 365 Business Premium,active,2024-11-27
+Castle Accountancy,user,Rosie Lewis,,Microsoft 365 Business Premium,active,2025-02-27
+Castle Accountancy,user,Arthur Johnson,,Microsoft 365 Business Premium,active,2024-03-25
+Castle Accountancy,user,Emily Morgan,,Microsoft 365 Business Premium,active,2022-03-17
+Castle Accountancy,user,Arthur Allen,,Microsoft 365 Business Premium,active,2023-10-25
+Castle Accountancy,user,Grace Cooper,,Microsoft 365 Business Premium,active,2023-03-15
+Castle Accountancy,user,Amelia Roberts,,Microsoft 365 Business Premium,active,2023-07-02
+Castle Accountancy,user,Florence Scott,,Microsoft 365 Business Premium,active,2023-04-10
+Castle Accountancy,user,Mia Thompson,,Microsoft 365 Business Premium,active,2025-03-21
+Castle Accountancy,user,Ethan Thompson,,Microsoft 365 Business Premium,active,2025-07-23
+Castle Accountancy,user,Amelia Thomas,,Microsoft 365 Business Premium,active,2022-05-04
+Castle Accountancy,user,Daniel Green,,Microsoft 365 Business Premium,active,2022-02-14
+Castle Accountancy,device,CAS-SRV-001,company,,active,2022-08-25
+Castle Accountancy,device,CAS-SRV-002,company,,active,2024-11-21
+Castle Accountancy,device,CAS-LT-003,company,,active,2022-02-04
+Castle Accountancy,device,CAS-LT-004,company,,active,2023-03-02
+Castle Accountancy,device,CAS-DT-005,company,,active,2023-10-26
+Castle Accountancy,device,CAS-LT-006,company,,active,2025-04-15
+Castle Accountancy,device,CAS-DT-007,company,,active,2024-11-01
+Castle Accountancy,device,CAS-LT-008,company,,active,2025-05-17
+Castle Accountancy,device,CAS-LT-009,company,,active,2023-10-24
+Castle Accountancy,device,CAS-LT-010,company,,active,2022-09-06
+Castle Accountancy,device,CAS-DT-011,company,,active,2022-08-04
+Castle Accountancy,device,CAS-LT-012,company,,active,2023-09-16
+Castle Accountancy,device,CAS-LT-013,company,,active,2023-05-09
+Castle Accountancy,device,CAS-LT-014,company,,active,2023-01-22
+Castle Accountancy,device,CAS-LT-015,company,,active,2023-08-11
+Castle Accountancy,device,CAS-DT-016,company,,active,2025-07-20
+Castle Accountancy,device,CAS-LT-017,company,,active,2024-07-24
+Castle Accountancy,device,CAS-LT-018,company,,active,2025-10-19
+Castle Accountancy,device,CAS-LT-019,company,,active,2024-05-11
+Castle Accountancy,device,CAS-LT-020,company,,active,2022-01-13
+Castle Accountancy,device,CAS-LT-021,company,,active,2022-12-23
+Castle Accountancy,device,CAS-LT-022,company,,active,2024-09-01
+Castle Accountancy,device,CAS-DT-023,company,,active,2025-07-14
+Castle Accountancy,device,CAS-LT-024,company,,active,2024-02-08
+Castle Accountancy,device,CAS-DT-025,company,,active,2024-11-05
+Castle Accountancy,device,CAS-LT-026,company,,active,2022-08-12
+Harbour Physio,user,Leo King,,Microsoft 365 Business Premium,active,2024-08-06
+Harbour Physio,user,Florence Robinson,,Microsoft 365 Business Premium,active,2024-11-04
+Harbour Physio,user,Henry Walker,,Microsoft 365 Business Premium,active,2025-11-05
+Harbour Physio,user,James Watson,,Microsoft 365 Business Premium,active,2025-12-27
+Harbour Physio,user,Rosie Martin,,Microsoft 365 Business Premium,active,2024-07-27
+Harbour Physio,user,Grace Clark,,Microsoft 365 Business Premium,active,2024-09-25
+Harbour Physio,user,Alfie Thomas,,Microsoft 365 Business Premium,active,2023-10-02
+Harbour Physio,user,Oscar Cooper,,Microsoft 365 Business Premium,active,2023-12-16
+Harbour Physio,user,Theo Morris,,Microsoft 365 Business Premium,active,2025-10-04
+Harbour Physio,user,Ethan Jackson,,Microsoft 365 Business Premium,active,2023-08-10
+Harbour Physio,user,Henry King,,Microsoft 365 Business Premium,active,2025-01-13
+Harbour Physio,user,Samuel Watson,,Microsoft 365 Business Premium,active,2022-06-20
+Harbour Physio,device,HBP-SRV-001,company,,active,2022-07-26
+Harbour Physio,device,HBP-SRV-002,company,,active,2022-07-01
+Harbour Physio,device,HBP-DT-003,company,,active,2025-06-24
+Harbour Physio,device,HBP-LT-004,company,,active,2024-04-10
+Harbour Physio,device,HBP-LT-005,company,,active,2023-09-23
+Harbour Physio,device,HBP-DT-006,company,,active,2022-01-09
+Harbour Physio,device,HBP-DT-007,company,,active,2022-03-19
+Harbour Physio,device,HBP-LT-008,company,,active,2023-02-22
+Harbour Physio,device,HBP-LT-009,company,,active,2024-02-10
+Harbour Physio,device,HBP-DT-010,company,,active,2022-02-26
+Harbour Physio,device,HBP-DT-011,company,,active,2024-02-20
+Harbour Physio,device,HBP-LT-012,company,,active,2023-09-09
+Harbour Physio,device,HBP-LT-013,company,,active,2023-01-14
+Harbour Physio,device,HBP-LT-014,company,,active,2025-01-14
+Elmfield Dental,user,Daniel Cooper,,Microsoft 365 Business Premium,active,2022-11-02
+Elmfield Dental,user,Grace Wright,,Microsoft 365 Business Premium,active,2022-07-20
+Elmfield Dental,user,Daniel Wood,,Microsoft 365 Business Premium,active,2023-01-04
+Elmfield Dental,user,Poppy White,,Microsoft 365 Business Premium,active,2024-08-13
+Elmfield Dental,user,Leo Thompson,,Microsoft 365 Business Premium,active,2022-10-25
+Elmfield Dental,user,Leo Morgan,,Microsoft 365 Business Premium,active,2025-11-13
+Elmfield Dental,user,Ella Allen,,Microsoft 365 Business Premium,active,2022-01-27
+Elmfield Dental,user,Samuel Thompson,,Microsoft 365 Business Premium,active,2025-11-08
+Elmfield Dental,user,Olivia Johnson,,Microsoft 365 Business Premium,active,2022-12-17
+Elmfield Dental,user,Alfie Hughes,,Microsoft 365 Business Premium,active,2022-07-20
+Elmfield Dental,user,Lily James,,Microsoft 365 Business Premium,active,2025-08-12
+Elmfield Dental,user,Daniel Clarke,,Microsoft 365 Business Premium,active,2024-09-02
+Elmfield Dental,user,Amelia Turner,,Microsoft 365 Business Premium,active,2023-04-20
+Elmfield Dental,user,Samuel Moore,,Microsoft 365 Business Premium,active,2024-04-17
+Elmfield Dental,user,Hannah Jackson,,Microsoft 365 Business Premium,active,2023-12-04
+Elmfield Dental,user,Daniel Hughes,,Microsoft 365 Business Premium,active,2024-09-25
+Elmfield Dental,user,Thomas Taylor,,Microsoft 365 Business Premium,active,2024-05-10
+Elmfield Dental,user,Alfie Roberts,,Microsoft 365 Business Premium,active,2025-06-19
+Elmfield Dental,user,Amelia Thompson,,Microsoft 365 Business Premium,active,2025-10-18
+Elmfield Dental,user,Hannah Patel,,Microsoft 365 Business Premium,active,2025-11-05
+Elmfield Dental,device,ELM-SRV-001,company,,active,2024-01-13
+Elmfield Dental,device,ELM-SRV-002,company,,active,2025-11-18
+Elmfield Dental,device,ELM-LT-003,company,,active,2024-06-17
+Elmfield Dental,device,ELM-DT-004,company,,active,2023-02-26
+Elmfield Dental,device,ELM-DT-005,company,,active,2024-12-02
+Elmfield Dental,device,ELM-LT-006,company,,active,2023-01-03
+Elmfield Dental,device,ELM-DT-007,company,,active,2024-07-22
+Elmfield Dental,device,ELM-DT-008,company,,active,2024-08-24
+Elmfield Dental,device,ELM-LT-009,company,,active,2025-01-19
+Elmfield Dental,device,ELM-LT-010,company,,active,2025-04-10
+Elmfield Dental,device,ELM-DT-011,company,,active,2022-09-26
+Elmfield Dental,device,ELM-DT-012,company,,active,2025-06-10
+Elmfield Dental,device,ELM-LT-013,company,,active,2025-11-09
+Elmfield Dental,device,ELM-LT-014,company,,active,2023-12-22
+Elmfield Dental,device,ELM-LT-015,company,,active,2025-08-15
+Elmfield Dental,device,ELM-LT-016,company,,active,2022-02-01
+Elmfield Dental,device,ELM-DT-017,company,,active,2025-01-09
+Elmfield Dental,device,ELM-LT-018,company,,active,2025-06-25
+Elmfield Dental,device,ELM-LT-019,company,,active,2023-06-01
+Elmfield Dental,device,ELM-LT-020,company,,active,2022-05-20
+Elmfield Dental,device,ELM-LT-021,company,,active,2022-04-23
+Elmfield Dental,device,ELM-LT-022,company,,active,2024-10-06
+Elmfield Dental,device,ELM-DT-023,company,,active,2025-04-16
+Elmfield Dental,device,ELM-LT-024,company,,active,2025-07-08
+Elmfield Dental,device,ELM-LT-025,company,,active,2023-05-11
+Elmfield Dental,device,ELM-DT-026,company,,active,2023-07-17
+Elmfield Dental,device,ELM-LT-027,company,,active,2024-06-23
+Elmfield Dental,device,ELM-LT-028,company,,active,2022-11-21
+Smith & Co,user,Leo Baker,,Microsoft 365 Business Standard,active,2023-11-21
+Smith & Co,user,Chloe Turner,,Microsoft 365 Business Standard,active,2023-04-03
+Smith & Co,user,Chloe Wood,,Microsoft 365 Business Standard,active,2025-09-22
+Smith & Co,user,Noah Morris,,Microsoft 365 Business Standard,active,2022-04-07
+Smith & Co,user,Ruby Moore,,Microsoft 365 Business Standard,active,2023-07-10
+Smith & Co,user,Rosie Evans,,Microsoft 365 Business Standard,active,2024-10-12
+Smith & Co,user,Rosie Martin,,Microsoft 365 Business Standard,active,2022-05-02
+Smith & Co,user,George Brown,,Microsoft 365 Business Standard,active,2024-09-03
+Smith & Co,user,Charlie Young,,Microsoft 365 Business Standard,active,2024-02-06
+Smith & Co,user,Thomas Thompson,,Microsoft 365 Business Standard,active,2024-01-11
+Smith & Co,user,Evie Watson,,Microsoft 365 Business Standard,active,2024-04-10
+Smith & Co,user,Theo Patel,,Microsoft 365 Business Standard,active,2024-04-27
+Smith & Co,user,William Turner,,Microsoft 365 Business Standard,active,2025-10-21
+Smith & Co,user,Rosie King,,Microsoft 365 Business Standard,active,2022-03-11
+Smith & Co,user,Mia Taylor,,Microsoft 365 Business Standard,active,2022-02-13
+Smith & Co,user,Sophia Wood,,Microsoft 365 Business Standard,active,2025-03-15
+Smith & Co,user,Emily Morris,,Microsoft 365 Business Standard,active,2023-10-21
+Smith & Co,user,Oscar Thomas,,Microsoft 365 Business Standard,active,2023-06-21
+Smith & Co,user,Thomas Clark,,Microsoft 365 Business Standard,active,2022-07-25
+Smith & Co,user,Archie Brown,,Microsoft 365 Business Standard,active,2024-01-20
+Smith & Co,user,Samuel Hughes,,Microsoft 365 Business Standard,active,2024-01-05
+Smith & Co,device,SMC-SRV-001,company,,active,2022-04-15
+Smith & Co,device,SMC-SRV-002,company,,active,2024-11-08
+Smith & Co,device,SMC-LT-003,company,,active,2024-11-21
+Smith & Co,device,SMC-LT-004,company,,active,2023-06-10
+Smith & Co,device,SMC-LT-005,company,,active,2023-01-08
+Smith & Co,device,SMC-DT-006,company,,active,2022-06-24
+Smith & Co,device,SMC-LT-007,company,,active,2024-09-01
+Smith & Co,device,SMC-LT-008,company,,active,2024-04-16
+Smith & Co,device,SMC-LT-009,company,,active,2022-04-20
+Smith & Co,device,SMC-LT-010,company,,active,2023-06-13
+Smith & Co,device,SMC-LT-011,company,,active,2023-11-01
+Smith & Co,device,SMC-LT-012,company,,active,2024-11-06
+Smith & Co,device,SMC-LT-013,company,,active,2025-12-02
+Smith & Co,device,SMC-LT-014,company,,active,2022-12-23
+Smith & Co,device,SMC-DT-015,company,,active,2023-08-04
+Smith & Co,device,SMC-LT-016,company,,active,2022-08-20
+Smith & Co,device,SMC-LT-017,company,,active,2023-05-11
+Smith & Co,device,SMC-LT-018,company,,active,2025-05-08
+Smith & Co,device,SMC-LT-019,company,,active,2023-05-16
+Smith & Co,device,SMC-LT-020,company,,active,2022-06-06
+Smith & Co,device,SMC-LT-021,company,,active,2024-03-03
+Smith & Co,device,SMC-DT-022,company,,active,2023-05-04
+Smith & Co,device,SMC-LT-023,company,,active,2022-06-03
+Dorset Legal,user,Poppy Hughes,,Microsoft 365 Business Premium,active,2022-10-04
+Dorset Legal,user,Archie Scott,,Microsoft 365 Business Premium,active,2024-09-21
+Dorset Legal,user,Archie Hill,,Microsoft 365 Business Premium,active,2023-05-20
+Dorset Legal,user,Alfie Hill,,Microsoft 365 Business Premium,active,2025-09-01
+Dorset Legal,user,Oscar Edwards,,Microsoft 365 Business Premium,active,2022-02-27
+Dorset Legal,user,Samuel Edwards,,Microsoft 365 Business Premium,active,2024-11-18
+Dorset Legal,user,Florence Clarke,,Microsoft 365 Business Premium,active,2025-11-10
+Dorset Legal,user,Joshua Martin,,Microsoft 365 Business Premium,active,2024-06-24
+Dorset Legal,user,Poppy Green,,Microsoft 365 Business Premium,active,2023-09-08
+Dorset Legal,user,Oscar Thomas,,Microsoft 365 Business Premium,active,2023-09-02
+Dorset Legal,user,Rosie King,,Microsoft 365 Business Premium,active,2023-02-20
+Dorset Legal,user,Freddie Johnson,,Microsoft 365 Business Premium,active,2024-11-22
+Dorset Legal,user,Alfie Hall,,Microsoft 365 Business Premium,active,2025-01-09
+Dorset Legal,user,Evie Thomas,,Microsoft 365 Business Premium,active,2025-03-08
+Dorset Legal,user,George Cooper,,Microsoft 365 Business Premium,active,2023-12-05
+Dorset Legal,user,Ethan Jackson,,Microsoft 365 Business Premium,active,2025-12-04
+Dorset Legal,user,Lily Watson,,Microsoft 365 Business Premium,active,2022-01-20
+Dorset Legal,user,Ruby Young,,Microsoft 365 Business Premium,active,2023-01-11
+Dorset Legal,user,Grace Wright,,Microsoft 365 Business Premium,active,2022-06-13
+Dorset Legal,user,Emily Allen,,Microsoft 365 Business Premium,active,2023-08-14
+Dorset Legal,user,Sophia Johnson,,Microsoft 365 Business Premium,active,2024-03-24
+Dorset Legal,user,Grace Turner,,Microsoft 365 Business Premium,active,2025-09-17
+Dorset Legal,user,Hannah Turner,,Microsoft 365 Business Premium,active,2022-04-02
+Dorset Legal,user,Joshua King,,Microsoft 365 Business Premium,active,2022-09-10
+Dorset Legal,user,Harry Thomas,,Microsoft 365 Business Premium,active,2022-02-19
+Dorset Legal,user,Alfie Thompson,,Microsoft 365 Business Premium,active,2023-12-17
+Dorset Legal,user,James Lewis,,Microsoft 365 Business Premium,active,2025-07-06
+Dorset Legal,user,Ethan Green,,Microsoft 365 Business Premium,active,2022-03-15
+Dorset Legal,user,Mia Edwards,,Microsoft 365 Business Premium,active,2023-01-17
+Dorset Legal,user,Isla Brown,,Microsoft 365 Business Premium,active,2023-12-25
+Dorset Legal,user,Freddie Wright,,Microsoft 365 Business Premium,active,2025-09-02
+Dorset Legal,user,Oscar King,,Microsoft 365 Business Premium,active,2023-06-08
+Dorset Legal,user,Harry Young,,Microsoft 365 Business Premium,active,2024-02-08
+Dorset Legal,user,Ruby Watson,,Microsoft 365 Business Premium,active,2023-06-20
+Dorset Legal,user,Ella Ward,,Microsoft 365 Business Premium,active,2022-06-08
+Dorset Legal,user,George Scott,,Microsoft 365 Business Premium,active,2024-10-26
+Dorset Legal,user,Daniel Moore,,Microsoft 365 Business Premium,active,2024-09-04
+Dorset Legal,user,Mia Patel,,Microsoft 365 Business Premium,active,2025-05-04
+Dorset Legal,user,Sophia Martin,,Microsoft 365 Business Premium,active,2022-02-10
+Dorset Legal,user,William Moore,,Microsoft 365 Business Premium,active,2022-05-08
+Dorset Legal,user,Evie Harris,,Microsoft 365 Business Premium,active,2025-08-10
+Dorset Legal,user,Joshua Hughes,,Microsoft 365 Business Premium,active,2023-07-26
+Dorset Legal,user,George Clarke,,Microsoft 365 Business Premium,active,2022-10-02
+Dorset Legal,user,Daniel Wood,,Microsoft 365 Business Premium,active,2023-08-18
+Dorset Legal,user,Hannah Walker,,Microsoft 365 Business Premium,active,2025-05-16
+Dorset Legal,device,DSL-SRV-001,company,,active,2024-01-15
+Dorset Legal,device,DSL-SRV-002,company,,active,2025-12-10
+Dorset Legal,device,DSL-LT-003,company,,active,2025-09-21
+Dorset Legal,device,DSL-LT-004,company,,active,2025-07-19
+Dorset Legal,device,DSL-LT-005,company,,active,2022-02-09
+Dorset Legal,device,DSL-LT-006,company,,active,2024-07-16
+Dorset Legal,device,DSL-DT-007,company,,active,2024-09-06
+Dorset Legal,device,DSL-LT-008,company,,active,2024-11-13
+Dorset Legal,device,DSL-LT-009,company,,active,2022-06-11
+Dorset Legal,device,DSL-DT-010,company,,active,2024-07-19
+Dorset Legal,device,DSL-LT-011,company,,active,2024-07-04
+Dorset Legal,device,DSL-DT-012,company,,active,2023-05-26
+Dorset Legal,device,DSL-DT-013,company,,active,2023-12-27
+Dorset Legal,device,DSL-DT-014,company,,active,2024-01-09
+Dorset Legal,device,DSL-LT-015,company,,active,2024-05-14
+Dorset Legal,device,DSL-LT-016,company,,active,2023-10-03
+Dorset Legal,device,DSL-DT-017,company,,active,2022-02-17
+Dorset Legal,device,DSL-LT-018,company,,active,2023-09-27
+Dorset Legal,device,DSL-LT-019,company,,active,2022-08-02
+Dorset Legal,device,DSL-DT-020,company,,active,2023-12-04
+Dorset Legal,device,DSL-LT-021,company,,active,2023-01-15
+Dorset Legal,device,DSL-LT-022,company,,active,2024-07-19
+Dorset Legal,device,DSL-DT-023,company,,active,2023-02-27
+Dorset Legal,device,DSL-DT-024,company,,active,2023-05-03
+Dorset Legal,device,DSL-DT-025,company,,active,2023-07-05
+Dorset Legal,device,DSL-LT-026,company,,active,2024-08-17
+Dorset Legal,device,DSL-DT-027,company,,active,2023-09-17
+Dorset Legal,device,DSL-LT-028,company,,active,2024-08-05
+Dorset Legal,device,DSL-LT-029,company,,active,2022-09-20
+Dorset Legal,device,DSL-DT-030,company,,active,2022-08-18
+Dorset Legal,device,DSL-LT-031,company,,active,2023-01-19
+Dorset Legal,device,DSL-LT-032,company,,active,2023-05-22
+Dorset Legal,device,DSL-LT-033,company,,active,2025-12-25
+Dorset Legal,device,DSL-LT-034,company,,active,2023-05-22
+Dorset Legal,device,DSL-DT-035,company,,active,2024-01-08
+Dorset Legal,device,DSL-LT-036,company,,active,2022-05-26
+Dorset Legal,device,DSL-LT-037,company,,active,2022-04-15
+Dorset Legal,device,DSL-LT-038,company,,active,2022-11-08
+Dorset Legal,device,DSL-LT-039,company,,active,2022-07-11
+Dorset Legal,device,DSL-LT-040,company,,active,2024-11-18
+Dorset Legal,device,DSL-LT-041,company,,active,2022-12-24
+Dorset Legal,device,DSL-LT-042,company,,active,2022-10-12
+Dorset Legal,device,DSL-DT-043,company,,active,2023-02-11
+Dorset Legal,device,DSL-DT-044,company,,active,2024-04-13
+Dorset Legal,device,DSL-LT-045,company,,active,2022-11-17
+Dorset Legal,device,DSL-DT-046,company,,active,2022-03-04
+Dorset Legal,device,DSL-LT-047,company,,active,2024-10-21
+Dorset Legal,device,DSL-LT-048,company,,active,2022-09-14
+Dorset Legal,device,DSL-LT-049,company,,active,2023-12-10
+Dorset Legal,device,DSL-LT-050,company,,active,2023-02-21
+Dorset Legal,device,DSL-LT-051,company,,active,2023-06-01
+Dorset Legal,device,DSL-LT-052,company,,active,2025-08-12
+Dorset Legal,device,DSL-LT-053,company,,active,2023-11-11
+Dorset Legal,device,DSL-LT-054,company,,active,2023-07-27
+Dorset Legal,device,DSL-LT-055,company,,active,2024-09-14
+Dorset Legal,device,DSL-LT-056,company,,active,2025-03-18
+Kingsbridge Architects,user,Lily Hill,,Microsoft 365 Business Premium,active,2023-03-05
+Kingsbridge Architects,user,Florence Johnson,,Microsoft 365 Business Premium,active,2022-04-15
+Kingsbridge Architects,user,Grace Hill,,Microsoft 365 Business Premium,active,2024-01-24
+Kingsbridge Architects,user,Florence Ward,,Microsoft 365 Business Premium,active,2025-04-08
+Kingsbridge Architects,user,Emily Cooper,,Microsoft 365 Business Premium,active,2024-05-05
+Kingsbridge Architects,user,Ruby Brown,,Microsoft 365 Business Premium,active,2022-10-25
+Kingsbridge Architects,user,Mia Morgan,,Microsoft 365 Business Premium,active,2024-02-18
+Kingsbridge Architects,user,Leo Ward,,Microsoft 365 Business Premium,active,2025-05-02
+Kingsbridge Architects,user,George Lewis,,Microsoft 365 Business Premium,active,2025-10-23
+Kingsbridge Architects,user,Oscar Baker,,Microsoft 365 Business Premium,active,2024-03-05
+Kingsbridge Architects,user,Alfie Wood,,Microsoft 365 Business Premium,active,2023-03-13
+Kingsbridge Architects,user,Ella Wood,,Microsoft 365 Business Premium,active,2025-12-13
+Kingsbridge Architects,user,Lucy Patel,,Microsoft 365 Business Premium,active,2022-03-06
+Kingsbridge Architects,user,Theo Martin,,Microsoft 365 Business Premium,active,2024-09-22
+Kingsbridge Architects,user,Thomas Clarke,,Microsoft 365 Business Premium,active,2024-04-04
+Kingsbridge Architects,user,Evie Patel,,Microsoft 365 Business Premium,active,2022-12-04
+Kingsbridge Architects,device,KGA-SRV-001,company,,active,2023-06-08
+Kingsbridge Architects,device,KGA-SRV-002,company,,active,2023-10-08
+Kingsbridge Architects,device,KGA-LT-003,company,,active,2022-03-01
+Kingsbridge Architects,device,KGA-LT-004,company,,active,2024-08-22
+Kingsbridge Architects,device,KGA-LT-005,company,,active,2023-06-19
+Kingsbridge Architects,device,KGA-LT-006,company,,active,2022-07-13
+Kingsbridge Architects,device,KGA-LT-007,company,,active,2025-12-06
+Kingsbridge Architects,device,KGA-LT-008,company,,active,2024-01-12
+Kingsbridge Architects,device,KGA-LT-009,company,,active,2025-08-11
+Kingsbridge Architects,device,KGA-LT-010,company,,active,2025-07-23
+Kingsbridge Architects,device,KGA-LT-011,company,,active,2025-11-07
+Kingsbridge Architects,device,KGA-LT-012,company,,active,2023-12-10
+Kingsbridge Architects,device,KGA-DT-013,company,,active,2023-04-12
+Kingsbridge Architects,device,KGA-DT-014,company,,active,2024-10-15
+Kingsbridge Architects,device,KGA-LT-015,company,,active,2023-03-08
+Kingsbridge Architects,device,KGA-DT-016,company,,active,2024-10-11
+Kingsbridge Architects,device,KGA-LT-017,company,,active,2025-04-04
+Kingsbridge Architects,device,KGA-DT-018,company,,active,2022-12-15
+Kingsbridge Architects,device,KGA-LT-019,company,,active,2025-09-08
+Kingsbridge Architects,device,KGA-LT-020,company,,active,2023-02-19
+Meridian Logistics,user,Florence White,,Microsoft 365 Business Premium,active,2024-11-20
+Meridian Logistics,user,George Edwards,,Microsoft 365 Business Premium,active,2022-08-06
+Meridian Logistics,user,Ava Young,,Microsoft 365 Business Premium,active,2025-06-01
+Meridian Logistics,user,Arthur Hughes,,Microsoft 365 Business Premium,active,2024-11-16
+Meridian Logistics,user,Ethan Evans,,Microsoft 365 Business Premium,active,2022-11-22
+Meridian Logistics,user,Lucy Mitchell,,Microsoft 365 Business Premium,active,2025-08-12
+Meridian Logistics,user,Ethan Clarke,,Microsoft 365 Business Premium,active,2025-01-01
+Meridian Logistics,user,Ethan Thompson,,Microsoft 365 Business Premium,active,2023-06-09
+Meridian Logistics,user,Ella Turner,,Microsoft 365 Business Premium,active,2022-07-02
+Meridian Logistics,user,James Lewis,,Microsoft 365 Business Premium,active,2023-05-25
+Meridian Logistics,user,Ella Cooper,,Microsoft 365 Business Premium,active,2024-03-15
+Meridian Logistics,user,Lily Lewis,,Microsoft 365 Business Premium,active,2024-03-07
+Meridian Logistics,user,Poppy Wilson,,Microsoft 365 Business Premium,active,2025-08-05
+Meridian Logistics,user,Emily Green,,Microsoft 365 Business Premium,active,2024-02-03
+Meridian Logistics,user,Ethan James,,Microsoft 365 Business Premium,active,2022-11-03
+Meridian Logistics,user,Ella Harris,,Microsoft 365 Business Premium,active,2023-02-18
+Meridian Logistics,user,Sophia Hill,,Microsoft 365 Business Premium,active,2023-04-22
+Meridian Logistics,user,Joshua Clark,,Microsoft 365 Business Premium,active,2022-02-05
+Meridian Logistics,user,Archie Robinson,,Microsoft 365 Business Premium,active,2025-10-07
+Meridian Logistics,user,Florence Mitchell,,Microsoft 365 Business Premium,active,2024-04-07
+Meridian Logistics,user,Rosie Watson,,Microsoft 365 Business Premium,active,2022-04-06
+Meridian Logistics,user,Olivia Hall,,Microsoft 365 Business Premium,active,2023-10-26
+Meridian Logistics,user,Chloe Thompson,,Microsoft 365 Business Premium,active,2024-03-21
+Meridian Logistics,user,Oscar Morris,,Microsoft 365 Business Premium,active,2024-08-10
+Meridian Logistics,user,Grace Young,,Microsoft 365 Business Premium,active,2023-01-10
+Meridian Logistics,user,Megan Harrison,,Microsoft 365 Business Premium,active,2022-05-21
+Meridian Logistics,user,Thomas Clarke,,Microsoft 365 Business Premium,active,2023-01-25
+Meridian Logistics,user,Ruby Hughes,,Microsoft 365 Business Premium,active,2022-05-13
+Meridian Logistics,user,Arthur Morris,,Microsoft 365 Business Premium,active,2025-08-10
+Meridian Logistics,user,Rosie White,,Microsoft 365 Business Premium,active,2025-03-16
+Meridian Logistics,device,MDL-SRV-001,company,,active,2025-02-18
+Meridian Logistics,device,MDL-SRV-002,company,,active,2025-04-03
+Meridian Logistics,device,MDL-LT-003,company,,active,2022-09-02
+Meridian Logistics,device,MDL-DT-004,company,,active,2023-05-20
+Meridian Logistics,device,MDL-LT-005,company,,active,2025-02-12
+Meridian Logistics,device,MDL-LT-006,company,,active,2024-06-11
+Meridian Logistics,device,MDL-LT-007,company,,active,2025-10-22
+Meridian Logistics,device,MDL-LT-008,company,,active,2024-06-05
+Meridian Logistics,device,MDL-LT-009,company,,active,2025-09-09
+Meridian Logistics,device,MDL-LT-010,company,,active,2024-04-12
+Meridian Logistics,device,MDL-DT-011,company,,active,2023-05-22
+Meridian Logistics,device,MDL-LT-012,company,,active,2025-11-26
+Meridian Logistics,device,MDL-LT-013,company,,active,2025-09-27
+Meridian Logistics,device,MDL-LT-014,company,,active,2022-12-24
+Meridian Logistics,device,MDL-DT-015,company,,active,2025-11-15
+Meridian Logistics,device,MDL-LT-016,company,,active,2022-02-07
+Meridian Logistics,device,MDL-LT-017,company,,active,2022-05-12
+Meridian Logistics,device,MDL-LT-018,company,,active,2024-04-09
+Meridian Logistics,device,MDL-LT-019,company,,active,2023-03-03
+Meridian Logistics,device,MDL-LT-020,company,,active,2024-02-23
+Meridian Logistics,device,MDL-DT-021,company,,active,2023-12-07
+Meridian Logistics,device,MDL-DT-022,company,,active,2025-02-20
+Meridian Logistics,device,MDL-LT-023,company,,active,2022-12-08
+Meridian Logistics,device,MDL-LT-024,company,,active,2022-11-17
+Meridian Logistics,device,MDL-DT-025,company,,active,2025-08-17
+Meridian Logistics,device,MDL-LT-026,company,,active,2023-08-03
+Meridian Logistics,device,MDL-DT-027,company,,active,2024-05-21
+Meridian Logistics,device,MDL-LT-028,company,,active,2025-06-18
+Meridian Logistics,device,MDL-LT-029,company,,active,2024-09-18
+Meridian Logistics,device,MDL-LT-030,company,,active,2022-12-22
+Meridian Logistics,device,MDL-LT-031,company,,active,2025-09-08
+Meridian Logistics,device,MDL-LT-032,company,,active,2025-08-24
+Meridian Logistics,device,MDL-DT-033,company,,active,2024-12-01
+Meridian Logistics,device,MDL-DT-034,company,,active,2024-09-10
+Meridian Logistics,device,MDL-LT-035,company,,active,2023-07-08
+Meridian Logistics,device,MDL-LT-036,company,,active,2023-12-05
+Meridian Logistics,device,MDL-LT-037,company,,active,2023-08-20
+Meridian Logistics,device,MDL-LT-038,company,,active,2022-01-16
+Meridian Logistics,device,MDL-LT-039,company,,active,2025-12-06
+Meridian Logistics,device,MDL-DT-040,company,,active,2025-10-01
+Meridian Logistics,device,MDL-LT-041,company,,active,2022-06-03
+Meridian Logistics,device,MDL-LT-042,company,,active,2025-07-12
+Meridian Logistics,device,MDL-LT-043,company,,active,2023-09-20
+Northgate Veterinary,user,George Hill,,Microsoft 365 Business Standard,active,2022-10-20
+Northgate Veterinary,user,Harry Mitchell,,Microsoft 365 Business Standard,active,2023-10-20
+Northgate Veterinary,user,Emily Green,,Microsoft 365 Business Standard,active,2023-04-23
+Northgate Veterinary,user,William Harrison,,Microsoft 365 Business Standard,inactive,2022-07-22
+Northgate Veterinary,user,Chloe Watson,,Microsoft 365 Business Standard,active,2022-10-01
+Northgate Veterinary,user,Grace Wilson,,Microsoft 365 Business Standard,active,2023-01-01
+Northgate Veterinary,user,Henry Edwards,,Microsoft 365 Business Standard,active,2022-07-12
+Northgate Veterinary,user,Lily Edwards,,Microsoft 365 Business Standard,active,2022-06-07
+Northgate Veterinary,user,Ella King,,Microsoft 365 Business Standard,active,2023-11-17
+Northgate Veterinary,user,Poppy Turner,,Microsoft 365 Business Standard,active,2022-01-15
+Northgate Veterinary,user,Emily Clarke,,Microsoft 365 Business Standard,active,2025-10-09
+Northgate Veterinary,user,Samuel Allen,,Microsoft 365 Business Standard,active,2024-07-01
+Northgate Veterinary,user,George Robinson,,Microsoft 365 Business Standard,active,2025-08-07
+Northgate Veterinary,user,Henry Hall,,Microsoft 365 Business Standard,active,2022-03-13
+Northgate Veterinary,user,Freddie Hall,,Microsoft 365 Business Standard,active,2023-06-24
+Northgate Veterinary,user,Archie Evans,,Microsoft 365 Business Standard,active,2023-10-05
+Northgate Veterinary,user,Archie Harrison,,Microsoft 365 Business Standard,active,2024-04-05
+Northgate Veterinary,user,Oscar Thompson,,Microsoft 365 Business Standard,active,2022-03-25
+Northgate Veterinary,user,Theo Wilson,,Microsoft 365 Business Standard,active,2022-03-07
+Northgate Veterinary,user,Lily Johnson,,Microsoft 365 Business Standard,active,2022-04-21
+Northgate Veterinary,user,Daniel Wilson,,Microsoft 365 Business Standard,active,2024-08-02
+Northgate Veterinary,user,Poppy Thompson,,Microsoft 365 Business Standard,active,2022-06-03
+Northgate Veterinary,user,Thomas Taylor,,Microsoft 365 Business Standard,active,2026-07-14
+Northgate Veterinary,device,NGV-SRV-001,company,,active,2024-11-13
+Northgate Veterinary,device,NGV-SRV-002,company,,active,2024-05-09
+Northgate Veterinary,device,NGV-LT-003,company,,active,2023-10-10
+Northgate Veterinary,device,NGV-LT-004,company,,active,2023-10-17
+Northgate Veterinary,device,NGV-LT-005,company,,active,2023-01-27
+Northgate Veterinary,device,NGV-LT-006,company,,active,2023-06-20
+Northgate Veterinary,device,NGV-LT-007,company,,active,2025-05-17
+Northgate Veterinary,device,NGV-LT-008,company,,active,2023-01-14
+Northgate Veterinary,device,NGV-LT-009,company,,active,2024-03-22
+Northgate Veterinary,device,NGV-DT-010,company,,active,2025-08-12
+Northgate Veterinary,device,NGV-LT-011,company,,active,2025-05-03
+Northgate Veterinary,device,NGV-DT-012,company,,active,2024-03-02
+Northgate Veterinary,device,NGV-DT-013,company,,active,2022-08-23
+Northgate Veterinary,device,NGV-DT-014,company,,active,2024-11-24
+Northgate Veterinary,device,NGV-LT-015,company,,active,2024-06-01
+Northgate Veterinary,device,NGV-DT-016,company,,active,2022-08-12
+Northgate Veterinary,device,NGV-LT-017,company,,active,2025-05-24
+Northgate Veterinary,device,NGV-LT-018,company,,active,2023-08-12
+Northgate Veterinary,device,NGV-LT-019,company,,active,2022-07-19
+Northgate Veterinary,device,NGV-LT-020,company,,active,2024-10-05
+Northgate Veterinary,device,NGV-LT-021,company,,active,2024-04-11
+Northgate Veterinary,device,NGV-DT-022,company,,active,2023-04-07
+Northgate Veterinary,device,NGV-DT-023,company,,active,2025-03-25
+Northgate Veterinary,device,NGV-DT-024,company,,active,2023-12-21
+Northgate Veterinary,device,NGV-LT-025,company,,active,2022-01-21
+Northgate Veterinary,device,NGV-LT-026,company,,active,2024-03-10
+Pennine Engineering,user,William Green,,Microsoft 365 Business Premium,active,2023-07-19
+Pennine Engineering,user,Emily Evans,,Microsoft 365 Business Premium,active,2022-06-20
+Pennine Engineering,user,Archie Hughes,,Microsoft 365 Business Premium,active,2025-10-03
+Pennine Engineering,user,Noah Harrison,,Microsoft 365 Business Premium,active,2022-02-13
+Pennine Engineering,user,Olivia Cooper,,Microsoft 365 Business Premium,active,2025-12-09
+Pennine Engineering,user,Joshua Roberts,,Microsoft 365 Business Premium,active,2022-01-20
+Pennine Engineering,user,Sophia Moore,,Microsoft 365 Business Premium,active,2022-08-13
+Pennine Engineering,user,Charlie Evans,,Microsoft 365 Business Premium,active,2022-07-23
+Pennine Engineering,user,Chloe James,,Microsoft 365 Business Premium,active,2022-01-13
+Pennine Engineering,user,Poppy Johnson,,Microsoft 365 Business Premium,active,2024-10-13
+Pennine Engineering,user,Isla Roberts,,Microsoft 365 Business Premium,active,2023-10-01
+Pennine Engineering,user,Charlie King,,Microsoft 365 Business Premium,active,2024-12-07
+Pennine Engineering,user,William Roberts,,Microsoft 365 Business Premium,active,2024-04-20
+Pennine Engineering,user,Ruby Walker,,Microsoft 365 Business Premium,active,2025-07-04
+Pennine Engineering,user,Samuel Walker,,Microsoft 365 Business Premium,active,2022-08-22
+Pennine Engineering,user,Mia Martin,,Microsoft 365 Business Premium,active,2025-12-22
+Pennine Engineering,user,Lucy Robinson,,Microsoft 365 Business Premium,active,2022-10-01
+Pennine Engineering,user,Olivia Martin,,Microsoft 365 Business Premium,active,2025-05-08
+Pennine Engineering,user,Ruby Robinson,,Microsoft 365 Business Premium,active,2023-01-12
+Pennine Engineering,user,Daniel King,,Microsoft 365 Business Premium,active,2025-12-16
+Pennine Engineering,user,Chloe Wood,,Microsoft 365 Business Premium,active,2025-07-18
+Pennine Engineering,user,Emily Wright,,Microsoft 365 Business Premium,active,2023-01-04
+Pennine Engineering,user,Arthur King,,Microsoft 365 Business Premium,active,2024-08-13
+Pennine Engineering,user,Lily Allen,,Microsoft 365 Business Premium,active,2025-04-11
+Pennine Engineering,user,Samuel Morgan,,Microsoft 365 Business Premium,active,2025-08-17
+Pennine Engineering,user,Zara Evans,,Microsoft 365 Business Premium,active,2024-07-18
+Pennine Engineering,user,Hannah Baker,,Microsoft 365 Business Premium,active,2022-10-15
+Pennine Engineering,user,William Wilson,,Microsoft 365 Business Premium,active,2022-08-12
+Pennine Engineering,device,PEN-SRV-001,company,,active,2023-08-23
+Pennine Engineering,device,PEN-SRV-002,company,,active,2022-06-12
+Pennine Engineering,device,PEN-LT-003,company,,active,2023-04-05
+Pennine Engineering,device,PEN-LT-004,company,,active,2022-08-19
+Pennine Engineering,device,PEN-LT-005,company,,active,2025-02-07
+Pennine Engineering,device,PEN-DT-006,company,,active,2022-11-20
+Pennine Engineering,device,PEN-LT-007,company,,active,2025-02-26
+Pennine Engineering,device,PEN-DT-008,company,,active,2025-08-12
+Pennine Engineering,device,PEN-LT-009,company,,active,2022-04-02
+Pennine Engineering,device,PEN-DT-010,company,,active,2025-07-09
+Pennine Engineering,device,PEN-DT-011,company,,active,2023-02-04
+Pennine Engineering,device,PEN-DT-012,company,,active,2023-10-27
+Pennine Engineering,device,PEN-LT-013,company,,active,2023-12-27
+Pennine Engineering,device,PEN-DT-014,company,,active,2024-04-20
+Pennine Engineering,device,PEN-LT-015,company,,active,2025-10-25
+Pennine Engineering,device,PEN-LT-016,company,,active,2024-01-06
+Pennine Engineering,device,PEN-LT-017,company,,active,2025-01-04
+Pennine Engineering,device,PEN-LT-018,company,,active,2025-03-25
+Pennine Engineering,device,PEN-LT-019,company,,active,2024-02-18
+Pennine Engineering,device,PEN-LT-020,company,,active,2023-02-12
+Pennine Engineering,device,PEN-LT-021,company,,active,2023-02-02
+Pennine Engineering,device,PEN-LT-022,company,,active,2023-04-10
+Pennine Engineering,device,PEN-DT-023,company,,active,2024-11-12
+Pennine Engineering,device,PEN-LT-024,company,,active,2024-04-21
+Pennine Engineering,device,PEN-DT-025,company,,active,2023-04-22
+Pennine Engineering,device,PEN-LT-026,company,,active,2022-10-13
+Pennine Engineering,device,PEN-DT-027,company,,active,2023-02-27
+Pennine Engineering,device,PEN-DT-028,company,,active,2023-03-27
+Pennine Engineering,device,PEN-DT-029,company,,active,2023-02-21
+Pennine Engineering,device,PEN-LT-030,company,,active,2025-12-15
+Pennine Engineering,device,PEN-LT-031,company,,active,2025-05-26
+Pennine Engineering,device,PEN-DT-032,company,,active,2022-10-05
+Pennine Engineering,device,PEN-DT-033,company,,active,2023-12-24
+Pennine Engineering,device,PEN-LT-034,company,,active,2023-05-21
+Pennine Engineering,device,PEN-LT-035,company,,active,2026-05-11
+Pennine Engineering,device,PEN-LT-036,company,,active,2026-07-02
+Riverside Care Group,user,James Brown,,Microsoft 365 Business Premium,active,2023-11-02
+Riverside Care Group,user,Lily Wright,,Microsoft 365 Business Premium,active,2025-06-06
+Riverside Care Group,user,Lily Hall,,Microsoft 365 Business Premium,active,2025-06-02
+Riverside Care Group,user,Ruby Clark,,Microsoft 365 Business Premium,active,2023-12-05
+Riverside Care Group,user,Mia Mitchell,,Microsoft 365 Business Premium,active,2024-07-25
+Riverside Care Group,user,George Harris,,Microsoft 365 Business Premium,active,2024-05-11
+Riverside Care Group,user,Hannah Walker,,Microsoft 365 Business Premium,active,2022-06-18
+Riverside Care Group,user,Leo Wright,,Microsoft 365 Business Premium,active,2025-01-05
+Riverside Care Group,user,Ava Jackson,,Microsoft 365 Business Premium,active,2025-01-02
+Riverside Care Group,user,Harry Patel,,Microsoft 365 Business Premium,active,2024-06-08
+Riverside Care Group,user,Amelia Wood,,Microsoft 365 Business Premium,active,2025-09-26
+Riverside Care Group,user,Leo Roberts,,Microsoft 365 Business Premium,active,2024-07-11
+Riverside Care Group,user,Oscar Moore,,Microsoft 365 Business Premium,active,2024-10-02
+Riverside Care Group,user,Joshua Lewis,,Microsoft 365 Business Premium,active,2025-12-07
+Riverside Care Group,user,Amelia Hill,,Microsoft 365 Business Premium,active,2024-07-19
+Riverside Care Group,user,Amelia King,,Microsoft 365 Business Premium,active,2023-03-01
+Riverside Care Group,user,Samuel Edwards,,Microsoft 365 Business Premium,active,2024-02-14
+Riverside Care Group,user,James Edwards,,Microsoft 365 Business Premium,active,2023-02-07
+Riverside Care Group,user,Chloe Brown,,Microsoft 365 Business Premium,active,2023-02-05
+Riverside Care Group,user,Olivia Roberts,,Microsoft 365 Business Premium,active,2023-08-21
+Riverside Care Group,user,Ella Harris,,Microsoft 365 Business Premium,active,2025-03-01
+Riverside Care Group,user,William Baker,,Microsoft 365 Business Premium,active,2024-01-06
+Riverside Care Group,user,Sophia Thompson,,Microsoft 365 Business Premium,active,2025-09-27
+Riverside Care Group,user,George Wilson,,Microsoft 365 Business Premium,active,2024-05-11
+Riverside Care Group,user,Oscar King,,Microsoft 365 Business Premium,active,2025-08-21
+Riverside Care Group,user,Isla Evans,,Microsoft 365 Business Premium,active,2024-04-07
+Riverside Care Group,user,Olivia Taylor,,Microsoft 365 Business Premium,active,2023-04-01
+Riverside Care Group,user,Joshua Clark,,Microsoft 365 Business Premium,active,2022-11-08
+Riverside Care Group,user,Sophia Thomas,,Microsoft 365 Business Premium,active,2025-12-09
+Riverside Care Group,user,Harry Hill,,Microsoft 365 Business Premium,active,2022-04-14
+Riverside Care Group,user,Harry Morgan,,Microsoft 365 Business Premium,active,2023-06-23
+Riverside Care Group,user,Zara Wright,,Microsoft 365 Business Premium,active,2025-04-22
+Riverside Care Group,user,Leo Baker,,Microsoft 365 Business Premium,active,2022-07-19
+Riverside Care Group,user,Sophia Martin,,Microsoft 365 Business Premium,active,2022-01-21
+Riverside Care Group,user,Lucy Robinson,,Microsoft 365 Business Premium,active,2024-03-25
+Riverside Care Group,user,Ethan Cooper,,Microsoft 365 Business Premium,active,2022-02-20
+Riverside Care Group,user,Amelia Ward,,Microsoft 365 Business Premium,active,2025-10-11
+Riverside Care Group,user,Ruby Young,,Microsoft 365 Business Premium,active,2023-02-24
+Riverside Care Group,user,Joshua Hill,,Microsoft 365 Business Premium,active,2022-01-15
+Riverside Care Group,user,Ethan Allen,,Microsoft 365 Business Premium,active,2022-06-07
+Riverside Care Group,user,Ava Brown,,Microsoft 365 Business Premium,active,2023-07-19
+Riverside Care Group,user,Arthur Scott,,Microsoft 365 Business Premium,active,2023-01-03
+Riverside Care Group,user,Ava Cooper,,Microsoft 365 Business Premium,active,2026-07-15
+Riverside Care Group,device,RCG-SRV-001,company,,active,2025-08-18
+Riverside Care Group,device,RCG-SRV-002,company,,active,2023-04-16
+Riverside Care Group,device,RCG-DT-003,company,,active,2025-04-03
+Riverside Care Group,device,RCG-LT-004,company,,active,2025-07-05
+Riverside Care Group,device,RCG-DT-005,company,,active,2024-01-09
+Riverside Care Group,device,RCG-LT-006,company,,active,2025-01-12
+Riverside Care Group,device,RCG-LT-007,company,,active,2025-07-20
+Riverside Care Group,device,RCG-LT-008,company,,active,2023-04-04
+Riverside Care Group,device,RCG-DT-009,company,,active,2022-10-19
+Riverside Care Group,device,RCG-LT-010,company,,active,2023-10-19
+Riverside Care Group,device,RCG-DT-011,company,,active,2025-12-13
+Riverside Care Group,device,RCG-LT-012,company,,active,2024-06-09
+Riverside Care Group,device,RCG-LT-013,company,,active,2022-08-01
+Riverside Care Group,device,RCG-LT-014,company,,active,2022-06-24
+Riverside Care Group,device,RCG-LT-015,company,,active,2025-11-11
+Riverside Care Group,device,RCG-LT-016,company,,active,2022-04-24
+Riverside Care Group,device,RCG-DT-017,company,,active,2024-09-01
+Riverside Care Group,device,RCG-DT-018,company,,active,2023-11-15
+Riverside Care Group,device,RCG-LT-019,company,,active,2024-01-09
+Riverside Care Group,device,RCG-LT-020,company,,active,2023-09-21
+Riverside Care Group,device,RCG-LT-021,company,,active,2025-11-09
+Riverside Care Group,device,RCG-LT-022,company,,active,2025-04-23
+Riverside Care Group,device,RCG-DT-023,company,,active,2023-07-12
+Riverside Care Group,device,RCG-LT-024,company,,active,2023-09-08
+Riverside Care Group,device,RCG-LT-025,company,,active,2023-04-22
+Riverside Care Group,device,RCG-LT-026,company,,active,2022-04-20
+Riverside Care Group,device,RCG-LT-027,company,,active,2024-01-25
+Riverside Care Group,device,RCG-LT-028,company,,active,2024-06-18
+Riverside Care Group,device,RCG-LT-029,company,,active,2023-08-16
+Riverside Care Group,device,RCG-LT-030,company,,active,2022-02-02
+Riverside Care Group,device,RCG-LT-031,company,,active,2022-01-21
+Riverside Care Group,device,RCG-LT-032,company,,active,2023-05-02
+Riverside Care Group,device,RCG-LT-033,company,,active,2024-05-07
+Riverside Care Group,device,RCG-DT-034,company,,active,2023-04-14
+Riverside Care Group,device,RCG-LT-035,company,,active,2023-10-25
+Riverside Care Group,device,RCG-LT-036,company,,active,2023-09-02
+Riverside Care Group,device,RCG-DT-037,company,,active,2022-01-18
+Riverside Care Group,device,RCG-LT-038,company,,active,2022-11-16
+Riverside Care Group,device,RCG-LT-039,company,,active,2025-09-10
+Riverside Care Group,device,RCG-LT-040,company,,active,2023-04-23
+Riverside Care Group,device,RCG-LT-041,company,,active,2025-07-18
+Riverside Care Group,device,RCG-LT-042,company,,active,2024-05-14
+Riverside Care Group,device,RCG-LT-043,company,,active,2024-06-20
+Riverside Care Group,device,RCG-LT-044,company,,active,2022-07-18
+Riverside Care Group,device,RCG-LT-045,company,,active,2023-10-01
+Riverside Care Group,device,RCG-DT-046,company,,active,2025-01-11
+Riverside Care Group,device,RCG-LT-047,company,,active,2023-05-06
+Riverside Care Group,device,RCG-LT-048,company,,active,2024-01-04
+Sterling Wealth Partners,user,Rosie Thomas,,Microsoft 365 Business Premium,active,2025-11-18
+Sterling Wealth Partners,user,Ella Morgan,,Microsoft 365 Business Premium,active,2023-08-01
+Sterling Wealth Partners,user,Jack King,,Microsoft 365 Business Premium,active,2025-11-14
+Sterling Wealth Partners,user,Ella Robinson,,Microsoft 365 Business Premium,active,2025-02-03
+Sterling Wealth Partners,user,Grace Edwards,,Microsoft 365 Business Premium,active,2022-07-23
+Sterling Wealth Partners,user,James Clarke,,Microsoft 365 Business Premium,active,2025-08-03
+Sterling Wealth Partners,user,Oscar Brown,,Microsoft 365 Business Premium,active,2023-01-09
+Sterling Wealth Partners,user,Jack Walker,,Microsoft 365 Business Premium,active,2022-05-04
+Sterling Wealth Partners,user,Florence Watson,,Microsoft 365 Business Premium,active,2024-10-20
+Sterling Wealth Partners,user,Amelia Clarke,,Microsoft 365 Business Premium,active,2025-07-02
+Sterling Wealth Partners,user,James Mitchell,,Microsoft 365 Business Premium,active,2022-05-14
+Sterling Wealth Partners,user,Zara Allen,,Microsoft 365 Business Premium,active,2022-09-20
+Sterling Wealth Partners,user,Archie Thomas,,Microsoft 365 Business Premium,active,2025-05-05
+Sterling Wealth Partners,user,Theo Thomas,,Microsoft 365 Business Premium,active,2024-09-10
+Sterling Wealth Partners,device,SWP-SRV-001,company,,active,2023-06-10
+Sterling Wealth Partners,device,SWP-SRV-002,company,,active,2022-03-19
+Sterling Wealth Partners,device,SWP-LT-003,company,,active,2025-11-23
+Sterling Wealth Partners,device,SWP-LT-004,company,,active,2025-01-27
+Sterling Wealth Partners,device,SWP-LT-005,company,,active,2022-07-18
+Sterling Wealth Partners,device,SWP-LT-006,company,,active,2025-02-13
+Sterling Wealth Partners,device,SWP-LT-007,company,,active,2023-11-12
+Sterling Wealth Partners,device,SWP-LT-008,company,,active,2025-08-03
+Sterling Wealth Partners,device,SWP-LT-009,company,,active,2024-06-23
+Sterling Wealth Partners,device,SWP-LT-010,company,,active,2022-12-18
+Sterling Wealth Partners,device,SWP-LT-011,company,,active,2025-04-21
+Sterling Wealth Partners,device,SWP-LT-012,company,,active,2025-01-25
+Sterling Wealth Partners,device,SWP-LT-013,company,,active,2022-01-18
+Sterling Wealth Partners,device,SWP-LT-014,company,,active,2025-12-01
+Sterling Wealth Partners,device,SWP-LT-015,company,,active,2024-08-21
+Sterling Wealth Partners,device,SWP-LT-016,company,,active,2024-06-10
+Sterling Wealth Partners,device,SWP-LT-017,company,,active,2022-01-04
+Sterling Wealth Partners,device,SWP-LT-018,company,,active,2024-02-01
+Thames Valley Recruitment,user,Emily Taylor,,Microsoft 365 Business Premium,active,2025-06-18
+Thames Valley Recruitment,user,Megan Wood,,Microsoft 365 Business Premium,active,2023-04-09
+Thames Valley Recruitment,user,Zara Clark,,Microsoft 365 Business Premium,active,2023-06-24
+Thames Valley Recruitment,user,Charlie Jackson,,Microsoft 365 Business Premium,active,2023-08-12
+Thames Valley Recruitment,user,Lucy Turner,,Microsoft 365 Business Premium,active,2023-05-13
+Thames Valley Recruitment,user,William Morgan,,Microsoft 365 Business Premium,active,2022-09-22
+Thames Valley Recruitment,user,Archie Morris,,Microsoft 365 Business Premium,active,2025-01-01
+Thames Valley Recruitment,user,Lily James,,Microsoft 365 Business Premium,active,2024-10-22
+Thames Valley Recruitment,user,Zara Clarke,,Microsoft 365 Business Premium,active,2025-12-25
+Thames Valley Recruitment,user,Harry Green,,Microsoft 365 Business Premium,active,2023-06-16
+Thames Valley Recruitment,user,Ruby Evans,,Microsoft 365 Business Premium,active,2022-11-20
+Thames Valley Recruitment,user,Grace Clarke,,Microsoft 365 Business Premium,active,2023-07-21
+Thames Valley Recruitment,user,Lucy Thomas,,Microsoft 365 Business Premium,active,2022-03-03
+Thames Valley Recruitment,user,James Mitchell,,Microsoft 365 Business Premium,active,2022-11-12
+Thames Valley Recruitment,user,Alfie Morgan,,Microsoft 365 Business Premium,active,2023-05-01
+Thames Valley Recruitment,user,Noah Jackson,,Microsoft 365 Business Premium,active,2025-11-20
+Thames Valley Recruitment,user,Rosie Ward,,Microsoft 365 Business Premium,active,2024-01-21
+Thames Valley Recruitment,user,Harry Hill,,Microsoft 365 Business Premium,active,2022-09-23
+Thames Valley Recruitment,user,Ella Harris,,Microsoft 365 Business Premium,active,2025-05-03
+Thames Valley Recruitment,user,Henry Harris,,Microsoft 365 Business Premium,active,2026-07-01
+Thames Valley Recruitment,device,TVR-SRV-001,company,,active,2025-10-26
+Thames Valley Recruitment,device,TVR-SRV-002,company,,active,2024-09-20
+Thames Valley Recruitment,device,TVR-LT-003,company,,active,2022-01-11
+Thames Valley Recruitment,device,TVR-LT-004,company,,active,2024-11-01
+Thames Valley Recruitment,device,TVR-LT-005,company,,active,2023-07-01
+Thames Valley Recruitment,device,TVR-LT-006,company,,active,2024-11-11
+Thames Valley Recruitment,device,TVR-DT-007,company,,active,2025-03-22
+Thames Valley Recruitment,device,TVR-LT-008,company,,active,2023-05-08
+Thames Valley Recruitment,device,TVR-LT-009,company,,active,2025-08-10
+Thames Valley Recruitment,device,TVR-LT-010,company,,active,2025-06-16
+Thames Valley Recruitment,device,TVR-LT-011,company,,active,2025-06-01
+Thames Valley Recruitment,device,TVR-DT-012,company,,active,2022-03-12
+Thames Valley Recruitment,device,TVR-LT-013,company,,active,2023-08-16
+Thames Valley Recruitment,device,TVR-LT-014,company,,active,2023-07-26
+Thames Valley Recruitment,device,TVR-DT-015,company,,active,2025-08-27
+Thames Valley Recruitment,device,TVR-DT-016,company,,active,2025-07-04
+Thames Valley Recruitment,device,TVR-DT-017,company,,active,2024-08-06
+Thames Valley Recruitment,device,TVR-LT-018,company,,active,2022-09-09
+Thames Valley Recruitment,device,TVR-DT-019,company,,active,2024-10-13
+Thames Valley Recruitment,device,TVR-DT-020,company,,active,2023-10-19
+Thames Valley Recruitment,device,TVR-LT-021,company,,active,2022-09-25
+Willow & Hart Interiors,user,Rosie Jackson,,Microsoft 365 Business Premium,active,2025-05-06
+Willow & Hart Interiors,user,Poppy Clarke,,Microsoft 365 Business Premium,active,2023-08-21
+Willow & Hart Interiors,user,Oscar Taylor,,Microsoft 365 Business Premium,active,2023-05-27
+Willow & Hart Interiors,user,William Harrison,,Microsoft 365 Business Premium,active,2024-07-08
+Willow & Hart Interiors,user,Jack Clark,,Microsoft 365 Business Premium,active,2022-07-04
+Willow & Hart Interiors,user,William Turner,,Microsoft 365 Business Premium,active,2023-09-13
+Willow & Hart Interiors,user,Alfie Patel,,Microsoft 365 Business Premium,active,2024-07-08
+Willow & Hart Interiors,user,Megan Morgan,,Microsoft 365 Business Premium,active,2022-07-13
+Willow & Hart Interiors,device,WHI-SRV-001,company,,active,2022-03-19
+Willow & Hart Interiors,device,WHI-SRV-002,company,,active,2025-04-14
+Willow & Hart Interiors,device,WHI-LT-003,company,,active,2025-06-14
+Willow & Hart Interiors,device,WHI-LT-004,company,,active,2023-07-05
+Willow & Hart Interiors,device,WHI-LT-005,company,,active,2023-04-17
+Willow & Hart Interiors,device,WHI-LT-006,company,,active,2024-06-09
+Willow & Hart Interiors,device,WHI-LT-007,company,,active,2025-01-10
+Willow & Hart Interiors,device,WHI-DT-008,company,,active,2024-09-10
+Willow & Hart Interiors,device,WHI-LT-009,company,,active,2022-12-04
