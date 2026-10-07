@@ -164,9 +164,11 @@ export function Hero({ f }: { f: HeroFigures }) {
             return (
               <li key={l} className="min-w-0">
                 <div className="flex items-baseline justify-between gap-3">
-                  <span className="flex min-w-0 items-baseline gap-2">
+                  {/* Three columns are too narrow for the count beside the
+                      level between sm and xl, so it goes underneath there. */}
+                  <span className="flex min-w-0 flex-wrap items-baseline gap-x-2 sm:max-xl:flex-col sm:max-xl:items-start sm:max-xl:gap-y-0.5">
                     <ConfidenceLevel level={l} short />
-                    <span className="tnum truncate text-caption text-ink-3">{plural(v.count, 'opportunity', 'opportunities')}</span>
+                    <span className="tnum text-caption text-ink-3">{plural(v.count, 'opportunity', 'opportunities')}</span>
                   </span>
                   <span className={cx('tnum shrink-0 text-small font-semibold', v.value > 0 ? 'text-ink' : 'text-ink-3')}>{money(v.value)}</span>
                 </div>

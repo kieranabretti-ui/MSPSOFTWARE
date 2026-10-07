@@ -113,6 +113,36 @@ export function autoMap(headers: string[], kind: CsvKind): Record<string, string
   return mapping
 }
 
+// Required fields no other export requires (minutes for time entries, the
+// service and price for billing): the columns that tell one export from another.
+const DISTINCTIVE = Object.fromEntries(
+  KIND_ORDER.map((k) => [k, SCHEMAS[k].fields.filter((x) => x.required && !KIND_ORDER.some((o) => o !== k && SCHEMAS[o].fields.some((y) => y.required && y.key === x.key))).map((x) => x.key)]),
+) as Record<CsvKind, string[]>
+
+/**
+ * For a file dropped in the wrong slot: the export its columns match better
+ * than `kind`, or null. Kinds rank by the share of their required fields the
+ * columns cover, then by how many columns they explain, then by distinctive
+ * fields matched. Only a kind with at least one distinctive field present is
+ * suggested, so a file of shared columns (client, date) suggests nothing.
+ */
+export function suggestKind(headers: string[], kind: CsvKind): CsvKind | null {
+  const fit = (k: CsvKind) => {
+    const m = autoMap(headers, k)
+    const required = SCHEMAS[k].fields.filter((x) => x.required)
+    return { k, ratio: required.filter((x) => m[x.key]).length / required.length, mapped: Object.keys(m).length, distinct: DISTINCTIVE[k].filter((key) => m[key]).length }
+  }
+  const beats = (a: ReturnType<typeof fit>, b: ReturnType<typeof fit>) => a.ratio - b.ratio || a.mapped - b.mapped || a.distinct - b.distinct
+  const own = fit(kind)
+  let best: ReturnType<typeof fit> | null = null
+  for (const k of KIND_ORDER) {
+    if (k === kind) continue
+    const c = fit(k)
+    if (c.distinct > 0 && beats(c, own) > 0 && (!best || beats(c, best) > 0)) best = c
+  }
+  return best?.k ?? null
+}
+
 // ---------------------------------------------------------------- parsing
 
 export function parseNumber(v: string | undefined): number | null {

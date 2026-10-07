@@ -395,8 +395,31 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
   const ROW = 21
   const tableH = (rows: number, foot = false) => 24 + 18 + rows * ROW + (foot ? ROW : 0) + 4
 
-  // Cover band
-  const BAND = 326
+  // Cover band. The notes under its figures wrap inside their own columns, so
+  // they are measured before anything is drawn: the gap bar and the foot of
+  // the band move down to clear the longest.
+  const LABEL = 192
+  const BASE = 240
+  const NOTE = 258
+  const COL1 = M + CW * 0.54
+  const COL2 = M + CW * 0.78
+  const wrap = (t: string, size: number, maxW: number) => doc.setFont(F, 'normal').setFontSize(size).splitTextToSize(t, maxW) as string[]
+  const leadNote = wrap(`${opportunities(r.findingCount)} in ${r.period}`, 9, COL1 - M - 24)
+  const recurringNote =
+    r.recurringAgreement > 0 && r.recurringPricing > 0 ? `${money(r.recurringAgreement)} agreement and billing, ${money(r.recurringPricing)} pricing` : r.recurringPricing > 0 ? 'Pricing below target margin' : 'Agreement and billing gaps'
+  const stats = [
+    { x: COL1, maxW: COL2 - COL1 - 12, label: 'Recurring leakage', value: money(r.monthly), c: r.monthly > 0 ? lime : bone2, unit: 'a month', note: recurringNote },
+    { x: COL2, maxW: W - M - COL2, label: 'Annualised', value: money(r.annual), c: bone, unit: null, note: 'If left uncorrected' },
+  ].map((st) => {
+    const size = fit(st.value, st.maxW, 22, 14)
+    const vw = width(st.value, size, 'bold')
+    const unitFits = !!st.unit && vw + 4 + width(st.unit, 9) <= st.maxW
+    return { ...st, size, vw, unitFits, lines: wrap(st.unit && !unitFits ? `${st.unit}, ${st.note.toLowerCase()}` : st.note, 8, st.maxW) }
+  })
+  // Line heights: 11 for the 9pt note, 10 for the 8pt ones.
+  const noteFoot = Math.max(NOTE + (leadNote.length - 1) * 11, ...stats.map((st) => NOTE + (st.lines.length - 1) * 10))
+  const GAP = Math.max(280, noteFoot + 16) // top of the gap bar
+  const BAND = GAP + 46
   doc.setFillColor(...band).rect(0, 0, W, BAND, 'F')
   brand.drawMark(doc, M, 56 - 15, 15)
   type(15, 'bold', bone).text('Headroom', M + brand.markAdvance(15), 56, { charSpace: -0.3 })
@@ -411,34 +434,21 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
   type(10, 'normal', bone2).text(`${r.workspace}  ·  ${r.period}  ·  Generated ${r.generated}`, M, 140)
   doc.setDrawColor(...hairline).setLineWidth(0.5).line(M, 166, W - M, 166)
 
-  const LABEL = 192
-  const BASE = 240
-  const NOTE = 258
-  const COL1 = M + CW * 0.54
-  const COL2 = M + CW * 0.78
   type(9, 'normal', boneMuted).text('Potential revenue leakage identified', M, LABEL)
   const bigSize = fit(money(r.total), COL1 - M - 24, 48, 28)
   type(bigSize, 'bold', bone).text(money(r.total), M, BASE, { charSpace: -bigSize * 0.03 })
-  type(9, 'normal', bone2).text(`${opportunities(r.findingCount)} in ${r.period}`, M, NOTE)
-
-  const stat = (x: number, maxW: number, label: string, value: string, c: RGB, unit: string | null, note: string) => {
-    type(9, 'normal', boneMuted).text(label, x, LABEL)
-    const size = fit(value, maxW, 22, 14)
-    const vw = width(value, size, 'bold')
-    const unitFits = !!unit && vw + 4 + width(unit, 9) <= maxW
-    type(size, 'bold', c).text(value, x, BASE)
-    if (unit && unitFits) type(9, 'normal', bone2).text(unit, x + vw + 4, BASE)
-    type(8, 'normal', boneMuted).text(unit && !unitFits ? `${unit}, ${note.toLowerCase()}` : note, x, NOTE)
+  type(9, 'normal', bone2).text(leadNote, M, NOTE, { lineHeightFactor: 11 / 9 })
+  for (const st of stats) {
+    type(9, 'normal', boneMuted).text(st.label, st.x, LABEL)
+    type(st.size, 'bold', st.c).text(st.value, st.x, BASE)
+    if (st.unit && st.unitFits) type(9, 'normal', bone2).text(st.unit, st.x + st.vw + 4, BASE)
+    type(8, 'normal', boneMuted).text(st.lines, st.x, NOTE, { lineHeightFactor: 10 / 8 })
   }
-  const recurringNote =
-    r.recurringAgreement > 0 && r.recurringPricing > 0 ? `${money(r.recurringAgreement)} agreement and billing, ${money(r.recurringPricing)} pricing` : r.recurringPricing > 0 ? 'Pricing below target margin' : 'Agreement and billing gaps'
-  stat(COL1, COL2 - COL1 - 12, 'Recurring leakage', money(r.monthly), r.monthly > 0 ? lime : bone2, 'a month', recurringNote)
-  stat(COL2, W - M - COL2, 'Annualised', money(r.annual), bone, null, 'If left uncorrected')
 
   // The gap: what the agreements billed, and the leakage on top, with a
   // hairline tick at the junction as on screen.
   if (r.billed > 0) {
-    const gy = 280
+    const gy = GAP
     const gh = 12
     const share = r.total / (r.billed + r.total)
     const gw = r.total > 0 ? Math.max(CW * share, CW * 0.015) : 0

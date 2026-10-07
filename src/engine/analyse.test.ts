@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { analyse } from './analyse'
+import { liveClientHealth } from './health'
+import { stripJoiners } from './format'
 import { buildDemoDataset } from '../demo/dataset'
 
 // Client ids are generated per build, so lookups by name use this dataset.
@@ -57,6 +59,19 @@ describe('demo dataset analysis', () => {
     expect(margin.description).toContain('£522')
     expect(margin.description).toContain('£336')
     expect(findings.filter((f) => f.meta.overlaps?.length)).toHaveLength(1)
+  })
+
+  it('tells ABC Ltd to bill its agreement gaps before repricing', () => {
+    const abc = clientNamed('ABC Ltd')
+    const mt = summary.client_metrics.find((c) => c.client_id === abc.id)!
+    expect(mt.health).toBe('at_risk')
+    expect(stripJoiners(mt.recommendation)).toBe('Bill the agreement gaps first (+£72 a month). That restores the 30% target margin on its own, so repricing can wait.')
+    // With the user drift dismissed, nothing restores the margin but pricing.
+    const live = findings.filter((f) => f.client_id === abc.id && f.finding_key !== `AGREEMENT_DRIFT:${abc.id}:user`)
+    const h = liveClientHealth(mt, live, summary.settings!, summary.average_monthly_hours, summary.months.length)
+    expect(h.recommendation).toBe('Review pricing or move this client to a higher support tier.')
+    // Every other client's next step is unchanged by the overlap.
+    expect(summary.client_metrics.filter((c) => /agreement gaps first/.test(c.recommendation)).map((c) => c.name)).toEqual(['ABC Ltd'])
   })
 
   it('records the drift calculation inputs', () => {
