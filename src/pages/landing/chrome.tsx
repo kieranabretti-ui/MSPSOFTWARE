@@ -297,9 +297,7 @@ export function Footer() {
         <div className="lg:col-span-4">
           <p className="text-small font-medium text-ink">Planned pricing</p>
           <p className="tnum mt-1.5 max-w-[44ch] text-small text-ink-3">Starter £99, Growth £249 and Pro £499 a month. Not live yet; your first audit is free.</p>
-          {(COMPANY.legalName || COMPANY.registeredAddress) && (
-            <p className="mt-5 text-caption text-ink-3">{[COMPANY.legalName, COMPANY.registeredAddress].filter(Boolean).join(', ')}</p>
-          )}
+          {COMPANY.legalName && <p className="mt-5 max-w-[48ch] text-caption text-ink-3">{companyLine()}</p>}
         </div>
       </div>
       <div className="border-t border-line-soft">
@@ -310,4 +308,16 @@ export function Footer() {
       </div>
     </footer>
   )
+}
+
+// "Headroom is a trading name of …": the legal line the footer and security page share.
+export function companyLine() {
+  const c = COMPANY
+  return [
+    `${BRAND.name} is a trading name of ${c.legalName}`,
+    c.registeredIn && `, registered in ${c.registeredIn}`,
+    c.companyNumber && ` (company number ${c.companyNumber})`,
+    '.',
+    c.registeredAddress && ` Registered office: ${c.registeredAddress}.`,
+  ].filter(Boolean).join('')
 }

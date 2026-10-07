@@ -1,6 +1,6 @@
 import { useEffect, type ReactNode } from 'react'
 import { COMPANY } from '../brand/brand'
-import { Close, Footer, TopBar } from './landing/chrome'
+import { Close, Footer, TopBar, companyLine } from './landing/chrome'
 import { Section, wrap } from './landing/primitives'
 
 // How Headroom handles an MSP's data, in sentences the code and its deploy
@@ -142,6 +142,7 @@ export default function Security() {
           <p className="mt-6 max-w-[60ch] text-lead text-ink-2">
             Headroom is early-stage software. This page sets out exactly what it does with your data today, and what it doesn't do yet.
           </p>
+          {COMPANY.legalName && <p className="mt-4 max-w-[60ch] text-small text-ink-3">{companyLine()}</p>}
           <nav aria-label="On this page" className="mt-10 flex flex-wrap gap-x-5 gap-y-2">
             {GROUPS.map((g) => (
               <a key={g.id} href={`#${g.id}`} className="rounded-sm text-small text-ink-3 underline-offset-4 transition-colors hover:text-ink hover:underline">
