@@ -1,5 +1,5 @@
 import { useId, useState, type FormEvent } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { useStore } from '../data/store'
 import { DEFAULT_SETTINGS } from '../engine/types'
 import { Button, Field, PageSkeleton, cx, inputCls } from '../components/ui'
@@ -10,20 +10,24 @@ import { AuthShell, FormError, NextSteps } from './auth/AuthShell'
 // is valued with. The rates can be skipped; the defaults are sensible.
 export default function Onboarding() {
   const { ready, user, workspace } = useStore()
-  const [step, setStep] = useState<1 | 2>(1)
+  // The rates step is in the address, so a reload carries on with it.
+  const [params, setParams] = useSearchParams()
+  const [step, setStep] = useState<1 | 2>(params.get('step') === 'rates' ? 2 : 1)
   const [creating, setCreating] = useState(false)
   if (!ready) return <PageSkeleton />
   if (!user) return <Navigate to="/login" replace />
   // Someone who already has a workspace has nothing to set up. The workspace
   // step 1 is creating doesn't count: step 2 carries on here.
   if (workspace && step === 1 && !creating) return <Navigate to="/app" replace />
-  return step === 1 ? (
+  // A reload on the rates step before any workspace exists starts from the name.
+  return step === 1 || !workspace ? (
     <NameStep
       creating={creating}
       onCreating={setCreating}
       onCreated={() => {
         setStep(2)
         setCreating(false)
+        setParams({ step: 'rates' }, { replace: true })
       }}
     />
   ) : (

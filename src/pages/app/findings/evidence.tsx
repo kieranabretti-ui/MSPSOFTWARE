@@ -3,7 +3,7 @@ import { ChartColumn, Clock, Laptop, Users, type LucideIcon } from 'lucide-react
 import { Badge, cx } from '../../../components/ui'
 import { ICONS } from '../../../brand/icons'
 import { dateTime, money } from '../../../lib/format'
-import { fmtMinutes, monthLabel } from '../../../engine/analyse'
+import { fmtMinutes, monthLabel } from '../../../engine/format'
 import type { Evidence } from '../../../engine/types'
 
 // The evidence ledger: each source record the rules engine used, drawn in the

@@ -39,7 +39,9 @@ export function confidenceOf(f: Pick<FindingDraft, 'confidence' | 'meta'>): Conf
   if (rule === 'margin.below_target' && calc.kind === 'margin')
     return read(
       'MEDIUM',
-      `An estimate from logged support hours and the labour cost (${gbp(calc.labour_rate)}/h), software cost and target margin (${Math.round(calc.target_margin * 100)}%) in Settings.`,
+      calc.software_source === 'client'
+        ? `An estimate from logged support hours, the labour cost (${gbp(calc.labour_rate)}/h) and target margin (${Math.round(calc.target_margin * 100)}%) in Settings, and the software cost (${gbp(calc.software)} a month) from your clients export.`
+        : `An estimate from logged support hours and the labour cost (${gbp(calc.labour_rate)}/h), default software cost per user and target margin (${Math.round(calc.target_margin * 100)}%) in Settings.`,
       true,
     )
   if (rule === 'unbilled.billing_mismatch') return read('MEDIUM', 'Your PSA marks the ticket billable but the time non-billable. It may be a deliberate write-off, so check before invoicing.')

@@ -4,6 +4,8 @@ project_id = "headroom"
 [auth]
 site_url = "http://localhost:5173"
 additional_redirect_urls = ["http://localhost:5173/app"]
+# Matches the sign-up form. Set the same minimum in the hosted dashboard.
+minimum_password_length = 8
 
 [functions.ai-review]
 verify_jwt = true

@@ -7,6 +7,7 @@ import { GapBar, TrendChart } from '../../../components/charts'
 import { ConfidenceLevel } from '../../../components/ConfidenceLevel'
 import { ICONS } from '../../../brand/icons'
 import { hours, money, num, pct, plural } from '../../../lib/format'
+import { signed } from '../../../engine/format'
 import { CATEGORY_META } from '../../../lib/labels'
 import { confidenceOf } from '../../../lib/confidence'
 import { CLAUSE_LABELS, extractClauses } from '../../../engine/contractTerms'
@@ -60,11 +61,10 @@ export function LeakagePanel({
             <Figure>{money(leakage)}</Figure>
           </div>
           <p className="mt-1.5 text-small text-ink-3">
-            {findingCount > 0 ? `Across ${plural(findingCount, 'opportunity', 'opportunities')} in ${periodLabel}` : `None found in ${periodLabel}`}
-            {billed > 0 ? `, against ${plural(months, 'month')} of MRR.` : '.'}
+            {findingCount > 0 ? `Across ${plural(findingCount, 'opportunity', 'opportunities')} in ${periodLabel}.` : `None found in ${periodLabel}.`}
           </p>
           <div className="mt-5 max-w-[640px]">
-            {billed > 0 ? <GapBar billed={billed} gap={leakage} height={14} /> : <p className="text-caption text-ink-3">Add this client's monthly recurring revenue to see leakage against what you bill.</p>}
+            {billed > 0 ? <GapBar billed={billed} gap={leakage} height={14} billedLabel={`MRR over ${plural(months, 'month')}`} /> : <p className="text-caption text-ink-3">Add this client's monthly recurring revenue to see leakage against what you bill.</p>}
           </div>
         </div>
         <dl className="flex flex-col justify-center border-t border-line-soft px-5 py-6 sm:px-7 md:border-l md:border-t-0">
@@ -255,7 +255,7 @@ export function ProfitabilityCard({ mt, target, periodLabel, avgHours, labourRat
           <p className="mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <Figure size="md">{money(needed)}</Figure>
             <span className="text-small text-ink-3">a month,</span>
-            <span className="tnum text-small font-semibold text-accent">+{money(uplift)} MRR</span>
+            <span className="tnum text-small font-semibold text-accent">{signed(money(uplift))} MRR</span>
           </p>
           <p className="mt-1.5 max-w-[60ch] text-caption text-ink-3">At this period's average support hours and costs. Review it with {clientName} before changing the agreement.</p>
         </div>

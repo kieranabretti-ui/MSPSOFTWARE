@@ -75,7 +75,7 @@
   --viz-cat-other: #4c525b;
 
   /* Type: one family. Tabular figures for every number that can change. */
-  --font-display: "Host Grotesk Variable", "Host Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Host Grotesk Variable", "Host Grotesk", "Host Grotesk Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-body: var(--font-display);
   --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
 

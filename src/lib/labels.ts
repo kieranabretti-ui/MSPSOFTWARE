@@ -5,7 +5,7 @@ export const CATEGORY_META: Record<Category, { label: string; short: string; blu
   UNBILLED_TIME: { label: 'Unbilled work', short: 'Unbilled', blurb: 'Potentially billable time logged as non-billable' },
   AGREEMENT_DRIFT: { label: 'Agreement drift', short: 'Drift', blurb: 'More users or devices than the agreement covers' },
   UNDERPRICED_CLIENT: { label: 'Underpriced clients', short: 'Underpriced', blurb: 'Clients below your target margin' },
-  EXCESSIVE_USAGE: { label: 'Excessive usage', short: 'Over allowance', blurb: 'Support beyond included hours' },
+  EXCESSIVE_USAGE: { label: 'Usage over allowance', short: 'Over allowance', blurb: 'Support beyond included hours' },
   MISSING_LICENSE: { label: 'Unbilled licences', short: 'Licences', blurb: 'Licences assigned but not billed' },
   RECURRING_CHARGE_MISMATCH: { label: 'Billing mismatch', short: 'Mismatch', blurb: 'Recurring charges below the agreement' },
   OTHER: { label: 'Other', short: 'Other', blurb: 'Other commercial anomalies' },

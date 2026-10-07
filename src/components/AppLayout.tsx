@@ -76,7 +76,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               <n.icon className="size-4 opacity-70 transition-opacity group-hover:opacity-100" />
               <span className="flex-1">{n.label}</span>
               {count > 0 && (
-                <span className="tnum rounded-xs bg-line px-1.5 text-[11px] font-medium text-ink-2">
+                <span className="tnum rounded-xs bg-line px-1.5 text-[11px] font-medium text-ink-2" title={`${count} to review (New and Reviewing)`}>
                   <span aria-hidden>{count}</span>
                   <span className="sr-only">, {count} to review</span>
                 </span>
@@ -197,8 +197,8 @@ export default function AppLayout() {
         <Sidebar />
       </aside>
 
-      {/* mobile top bar */}
-      <div className="no-print sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line-soft bg-canvas/85 px-4 backdrop-blur-md lg:hidden">
+      {/* mobile top bar: the page's banner landmark below lg */}
+      <header className="no-print sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line-soft bg-canvas/85 px-4 backdrop-blur-md lg:hidden">
         <Logo />
         <button
           ref={menuRef}
@@ -210,7 +210,7 @@ export default function AppLayout() {
         >
           <Menu className="size-5" />
         </button>
-      </div>
+      </header>
       {open && (
         <div className="fixed inset-0 z-40 lg:hidden" onClick={closeMenu}>
           <div className="absolute inset-0 bg-[var(--brand-overlay)]" />
@@ -232,19 +232,19 @@ export default function AppLayout() {
       )}
 
       {(workspace?.is_demo || backend.mode === 'local') && (
-        <div className="no-print flex items-start gap-2 border-b border-line-soft bg-sunken px-4 py-2 text-small text-ink-2 sm:px-8">
+        <section aria-label={workspace?.is_demo ? 'Demo notice' : 'Local mode notice'} className="no-print flex items-start gap-2 border-b border-line-soft bg-sunken px-4 py-2 text-small text-ink-2 sm:px-8">
           <FlaskConical className="mt-[3px] size-3.5 shrink-0 text-ink-3" aria-hidden />
           {workspace?.is_demo ? (
             <p className="min-w-0 flex-1">
               <strong className="font-semibold text-ink">Demo data</strong>
-              <span className="sm:hidden">: a fictional MSP{isDemoSession ? ', nothing is saved.' : '.'}</span>
+              <span className="sm:hidden">: a fictional MSP{isDemoSession ? ', changes stay in this browser.' : '.'}</span>
               <span className="hidden sm:inline">. Northlight IT and its clients are fictional, built to show how Headroom works.</span>
-              {isDemoSession && <span className="hidden text-ink-3 sm:inline"> Nothing you do here is saved to a server.</span>}
+              {isDemoSession && <span className="hidden text-ink-3 sm:inline"> Nothing you change here is saved to a server.</span>}
             </p>
           ) : (
             <p className="min-w-0 flex-1">
               <strong className="font-semibold text-ink">Local mode.</strong> Your data is stored only in this browser.
-              {isDemoSession && <span className="hidden text-ink-3 sm:inline"> Nothing you do here is saved to a server.</span>}
+              {isDemoSession && <span className="hidden text-ink-3 sm:inline"> Nothing you change here is saved to a server.</span>}
             </p>
           )}
           {isDemoSession && (
@@ -252,7 +252,7 @@ export default function AppLayout() {
               Start your own audit
             </Button>
           )}
-        </div>
+        </section>
       )}
 
       <main ref={mainRef} id="main" tabIndex={-1} inert={open} className="mx-auto max-w-[1200px] px-4 py-7 focus:outline-none sm:px-8 sm:py-10">

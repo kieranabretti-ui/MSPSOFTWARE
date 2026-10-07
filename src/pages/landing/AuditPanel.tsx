@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode }
 import { Link } from 'react-router-dom'
 import { ArrowRight, Check, Loader2 } from 'lucide-react'
 import { Badge, Figure, cx } from '../../components/ui'
-import { GapBar } from '../../components/bars'
+import { GAP_SHARE_NOTE, GapBar } from '../../components/bars'
 import { ConfidenceLevel } from '../../components/ConfidenceLevel'
 import { money, plural } from '../../lib/format'
 import { CATEGORY_META } from '../../lib/labels'
@@ -89,7 +89,7 @@ function Counting({ value, shown, live }: { value: string; shown: string; live: 
 
 function Stat({ label, children, sub }: { label: string; children: ReactNode; sub?: ReactNode }) {
   return (
-    <div className="flex min-w-0 flex-col justify-center border-line-soft px-4 py-4 not-last:border-r sm:px-6 md:not-last:border-r-0 md:not-last:border-b">
+    <div className="flex min-w-0 flex-col justify-start border-line-soft px-4 py-4 not-last:border-r sm:px-6 md:justify-center md:not-last:border-r-0 md:not-last:border-b">
       <dt className="text-caption text-ink-3 sm:text-small sm:text-ink-2">{label}</dt>
       <dd className="mt-1.5">{children}</dd>
       {sub && <dd className="tnum mt-1 text-caption text-ink-3">{sub}</dd>}
@@ -131,7 +131,7 @@ export function AuditPanel() {
               </Figure>
             </div>
             <p className="tnum mt-2.5 text-small text-ink-3">
-              Across {plural(totals.findings, 'opportunity', 'opportunities')} at {totals.clients} clients, measured against {period.months} months of agreement revenue.
+              Across {plural(totals.findings, 'opportunity', 'opportunities')} at {totals.clients} clients over {period.months} months.
             </p>
           </div>
           <div>
@@ -140,11 +140,13 @@ export function AuditPanel() {
             </div>
             <div className="tnum mt-2.5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-caption" style={arrive(at(650, 400))}>
               <span className="text-ink-3">
-                Billed <span className="text-ink-2">{money(totals.billed)}</span>
+                Billed over {period.months} months <span className="text-ink-2">{money(totals.billed)}</span>
               </span>
               <span className="text-ink-3">
                 Potential leakage <span className="font-semibold text-accent">{money(totals.identified)}</span>
-                <span className="ml-1.5">· {share}%</span>
+                <span className="ml-1.5" title={GAP_SHARE_NOTE}>
+                  · {share}%<span className="sr-only"> of billed plus potential leakage</span>
+                </span>
               </span>
             </div>
           </div>
@@ -178,10 +180,12 @@ export function AuditPanel() {
                 style={i === 0 ? undefined : arrive(at(landAt(i), 400))}
               >
                 <div className="min-w-0">
-                  <p className="truncate text-small font-medium text-ink">{f.title}</p>
+                  <p className="line-clamp-2 text-small font-medium text-ink">{f.title}</p>
                   <p className="truncate text-caption text-ink-3">
                     {f.client} · {CATEGORY_META[f.category].short}
                   </p>
+                  {/* Disclosed, not netted: the same money as the client's agreement gaps. */}
+                  {f.overlaps && <p className="text-caption text-ink-2">Overlaps with {f.client}'s agreement gaps. Don't count both.</p>}
                 </div>
                 <span className="hidden sm:block">
                   <ConfidenceLevel level={f.level} short />

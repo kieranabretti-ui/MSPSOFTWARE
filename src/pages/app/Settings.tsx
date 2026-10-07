@@ -1,10 +1,11 @@
 import { useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react'
 import { ChevronDown } from 'lucide-react'
-import { useStore } from '../../data/store'
+import { useMetrics, useStore } from '../../data/store'
 import { Badge, Button, Card, Field, PageHeader, TextLink, cx, inputCls } from '../../components/ui'
 import { useToast } from '../../components/toast'
 import { DEFAULT_SETTINGS, type WorkspaceSettings } from '../../engine/types'
 import { mapError } from '../../lib/errors'
+import { money } from '../../lib/format'
 import { Callout } from './data/kit'
 
 type NumKey = Exclude<keyof WorkspaceSettings, 'currency' | 'business_hours_start' | 'business_hours_end'>
@@ -91,6 +92,9 @@ export default function Settings() {
   const [vals, setVals] = useState<Record<string, string>>(initial)
   const [error, setError] = useState<{ key: ErrKey; text: string } | null>(null)
   const [saving, setSaving] = useState(false)
+  // The headline before the last re-run, so the result can say what moved.
+  const m = useMetrics()
+  const [rerun, setRerun] = useState<{ total: number; monthly: number } | null>(null)
   const saved = initial()
   const dirty = name !== workspace!.name || Object.keys(saved).some((k) => saved[k] !== vals[k])
 
@@ -112,9 +116,14 @@ export default function Settings() {
     }
     if (vals.business_hours_start >= vals.business_hours_end) return fail('hours', 'Support hours must end after they start.')
     setSaving(true)
+    setRerun(null)
+    const before = { total: m.total, monthly: m.monthly }
     try {
       await updateSettings(patch, name.trim())
-      if (analysis) await runAnalysis({ source: 'settings' })
+      if (analysis) {
+        await runAnalysis({ source: 'settings' })
+        setRerun(before)
+      }
       toast(analysis ? 'Saved. The analysis has been re-run with your new rates.' : 'Saved. These apply the next time you run the analysis.')
     } catch (e) {
       toast(mapError(e, 'settings'), 'error')
@@ -178,9 +187,16 @@ export default function Settings() {
                   <Callout tone="danger" className="py-1.5">
                     Fix the highlighted field, then save.
                   </Callout>
+                ) : saving && analysis ? (
+                  <span className="text-ink-2">Saving and re-running the analysis…</span>
                 ) : dirty ? (
                   <span className="flex items-center gap-2 text-ink-2">
                     <span className="size-1.5 rounded-full bg-warning" aria-hidden /> Unsaved changes
+                  </span>
+                ) : rerun ? (
+                  <span className="tnum text-ink-2">
+                    Analysis re-run with these assumptions: potential leakage is now <span className="font-semibold text-ink">{money(m.total)}</span> (was {money(rerun.total)}),{' '}
+                    {money(m.monthly)} a month recurring (was {money(rerun.monthly)}). <TextLink to="/app">View the overview</TextLink>
                   </span>
                 ) : (
                   <span className="text-ink-3">{analysis ? 'Saving re-runs the analysis with these assumptions.' : 'These apply the next time you run the analysis.'}</span>

@@ -16,7 +16,7 @@ export default function NotFound() {
         <div className="w-full max-w-xl">
           <h1 className="text-h1 text-balance text-ink">Nothing at this address</h1>
           <p className="mt-3 max-w-[56ch] text-body text-ink-2">
-            That page does not exist, or it has moved. Your workspace, findings and reports are untouched.
+            That page does not exist, or it has moved. Your workspace, opportunities and reports are untouched.
           </p>
           <div className="mt-7 flex flex-wrap gap-2">
             <ButtonLink to="/app">Open the dashboard</ButtonLink>

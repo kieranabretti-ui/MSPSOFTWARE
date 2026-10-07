@@ -187,8 +187,9 @@ export function buildLandingSnapshot(): LandingSnapshot {
       .sort((a, b) => b.value - a.value),
     levels: sumBy(LEVEL_ORDER, (f) => confidenceOf(f).level).map((x, i) => ({ level: LEVEL_ORDER[i], ...x })),
     stages: sumBy(STAGE_ORDER, (f) => demoStageOf(f, clientName)).map((x, i) => ({ status: STAGE_ORDER[i], ...x })),
-    topFindings: findings
-      .filter((f) => !f.meta.overlaps?.length)
+    // The app's own order (highest value first), overlaps included and flagged.
+    topFindings: [...findings]
+      .sort((a, b) => b.estimated_value - a.estimated_value)
       .slice(0, 5)
       .map(lite),
     recurring: {

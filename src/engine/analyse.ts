@@ -1,6 +1,9 @@
 import { classifyText, isOutsideHours, CATEGORY_NOUNS, OUT_OF_SCOPE_TITLES, type Classification, type WorkCategory } from './classify'
 import { extractClauses, type Clause, type ClauseType } from './contractTerms'
 import { liveClientHealth } from './health'
+import { fmtMinutes, monthLabel, periodLabel, signed } from './format'
+
+export { fmtMinutes, monthLabel, periodLabel }
 import type {
   AnalysisSummary,
   Asset,
@@ -23,21 +26,12 @@ const r1 = (n: number) => Math.round(n * 10) / 10
 const r2 = (n: number) => Math.round(n * 100) / 100
 const monthOf = (iso: string) => iso.slice(0, 7)
 const gbp = (n: number) => `£${n.toLocaleString('en-GB', { maximumFractionDigits: 2 })}`
+const dayLabel = (iso: string) => {
+  const d = new Date(`${iso.slice(0, 10)}T00:00:00Z`)
+  return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+}
 const poss = (name: string) => (/s$/i.test(name) ? `${name}'` : `${name}'s`)
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
-
-export function fmtMinutes(min: number): string {
-  const h = Math.floor(min / 60)
-  const m = Math.round(min % 60)
-  if (!h) return `${m}m`
-  return m ? `${h}h ${m}m` : `${h}h`
-}
-
-export function monthLabel(month: string, style: 'short' | 'long' = 'short'): string {
-  const [y, m] = month.split('-').map(Number)
-  const d = new Date(y, m - 1, 1)
-  return d.toLocaleString('en-GB', style === 'short' ? { month: 'short' } : { month: 'long', year: 'numeric' })
-}
 
 function monthEnd(month: string): string {
   const [y, m] = month.split('-').map(Number)
@@ -409,7 +403,7 @@ export function analyse(input: Dataset): AnalysisOutput {
           {
             kind: 'asset',
             label: `${kind === 'user' ? 'Users' : 'Devices'} list`,
-            text: `${list.length} active ${kind}s.${newest.length ? ` Most recently added: ${newest.map((a) => `${a.name} (${a.first_seen})`).join(', ')}.` : ''}`,
+            text: `${list.length} active ${kind}s.${newest.length ? ` Most recently added: ${newest.map((a) => `${a.name} (${dayLabel(a.first_seen!)})`).join(', ')}.` : ''}`,
           },
           {
             kind: 'billing',
@@ -420,7 +414,7 @@ export function analyse(input: Dataset): AnalysisOutput {
         estimated_value: identified,
         monthly_value: monthly,
         annual_value: monthly * 12,
-        recommended_action: `Review the agreement with ${client.name} and update the recurring charge to ${list.length} ${kind}s (+${gbp(monthly)}/month). ${monthsAffected > 1 ? `Consider whether the ${gbp(identified)} already delivered in the period can be back-billed.` : ''}`.trim(),
+        recommended_action: `Review the agreement with ${client.name} and update the recurring charge to ${list.length} ${kind}s (${signed(gbp(monthly))}/month). ${monthsAffected > 1 ? `Consider whether the ${gbp(identified)} already delivered in the period can be back-billed.` : ''}`.trim(),
         source_data: [
           { table: 'clients', id: client.id, label: client.name },
           ...newest.map((a) => ({ table: 'assets' as const, id: a.id, label: a.name })),
@@ -471,7 +465,7 @@ export function analyse(input: Dataset): AnalysisOutput {
         estimated_value: identified,
         monthly_value: monthly,
         annual_value: monthly * 12,
-        recommended_action: `Increase the "${line.service}" quantity to ${holders.length} (+${gbp(monthly)}/month), or remove unused licence assignments.`,
+        recommended_action: `Increase the "${line.service}" quantity to ${holders.length} (${signed(gbp(monthly))}/month), or remove unused licence assignments.`,
         source_data: [{ table: 'billing_items', id: line.id, label: line.service }],
         meta: { rule: 'license.unbilled', period_values: pv, calc: { kind: 'licence', licence: license, assigned: holders.length, billed: line.quantity, unit_price: line.unit_price, price_label: line.service } },
       })
@@ -479,7 +473,8 @@ export function analyse(input: Dataset): AnalysisOutput {
 
     // Usage vs included hours / margin
     const h = hours.get(client.id) ?? {}
-    const included = client.included_hours ?? clausesByClient.get(client.id)?.clauses.find((c) => c.type === 'included_hours')?.value ?? null
+    const contractHours = clausesByClient.get(client.id)?.clauses.find((c) => c.type === 'included_hours')?.value ?? null
+    const included = client.included_hours ?? contractHours
     if (included != null) {
       const pv: Record<string, number> = {}
       const over: string[] = []
@@ -511,7 +506,10 @@ export function analyse(input: Dataset): AnalysisOutput {
           estimated_value: identified,
           monthly_value: 0,
           annual_value: 0,
-          recommended_action: `Bill the overage at ${gbp(s.billable_rate_per_hour)}/h as the agreement allows, or move ${client.name} to a tier with more included hours.`,
+          recommended_action:
+            contractHours != null
+              ? `Bill the overage at ${gbp(s.billable_rate_per_hour)}/h as the agreement allows, or move ${client.name} to a tier with more included hours.`
+              : `Check whether the agreement allows overage, then bill it at ${gbp(s.billable_rate_per_hour)}/h, or move ${client.name} to a tier with more included hours.`,
           source_data: [{ table: 'clients', id: client.id, label: client.name }],
           meta: {
             rule: 'usage.over_allowance',
@@ -560,7 +558,7 @@ export function analyse(input: Dataset): AnalysisOutput {
           title: `Gross margin ${Math.round(margin * 100)}% against a ${Math.round(s.target_margin * 100)}% target`,
           description:
             `${client.name} pays ${gbp(mrr)} a month and averaged ${r1(avgHours)} support hours a month. At ${gbp(s.labour_cost_per_hour)}/h labour plus ${gbp(sw)} software, it earns ${gbp(round(avgContribution))} a month on average against the ${gbp(targetContribution)} a ${pct} margin needs. In the ${belowMonths} month${belowMonths === 1 ? '' : 's'} it fell below target the shortfall totalled ${gbp(identified)}, an average of ${gbp(monthly)} a month across the ${months.length}-month period.` +
-            (overlaps.length ? ` Billing the agreement gaps found for ${client.name} (+${gbp(agreementMonthly)} a month) would restore the target margin on its own, so don't count both.` : ''),
+            (overlaps.length ? ` Billing the agreement gaps found for ${client.name} (${signed(gbp(agreementMonthly))} a month) would restore the target margin on its own, so don't count both.` : ''),
           evidence: [
             { kind: 'client', label: 'Contract value', text: `MRR ${gbp(client.monthly_recurring_revenue)}${client.package ? ` · ${client.package}` : ''}` },
             { kind: 'metric', label: 'Support hours', text: months.map((m) => `${monthLabel(m, 'long')}: ${r1(h[m] ?? 0)}h`).join('\n') },
@@ -569,7 +567,7 @@ export function analyse(input: Dataset): AnalysisOutput {
           estimated_value: identified,
           monthly_value: monthly,
           annual_value: monthly * 12,
-          recommended_action: `Review pricing with ${client.name}: at this period's average hours and costs, about ${gbp(targetPrice)}/month (+${gbp(targetPrice - client.monthly_recurring_revenue)}) would restore your ${Math.round(s.target_margin * 100)}% target margin. Alternatively, look at what's driving ticket volume or move them to a higher support tier.`,
+          recommended_action: `Review pricing with ${client.name}: at this period's average hours and costs, about ${gbp(targetPrice)}/month (${signed(gbp(targetPrice - client.monthly_recurring_revenue))}) would restore your ${Math.round(s.target_margin * 100)}% target margin. Alternatively, look at what's driving ticket volume or move them to a higher support tier.`,
           source_data: [{ table: 'clients', id: client.id, label: client.name }],
           meta: {
             rule: 'margin.below_target',
@@ -579,6 +577,7 @@ export function analyse(input: Dataset): AnalysisOutput {
               mrr,
               labour_rate: s.labour_cost_per_hour,
               software: sw,
+              software_source: client.monthly_software_cost != null ? 'client' : 'default',
               target_margin: s.target_margin,
               avg_hours: r2(avgHours),
               avg_contribution: round(avgContribution),
@@ -654,13 +653,6 @@ export function analyse(input: Dataset): AnalysisOutput {
       settings: { ...s },
     },
   }
-}
-
-export function periodLabel(first: string, last: string): string {
-  if (first === last) return monthLabel(first, 'long')
-  const sameYear = first.slice(0, 4) === last.slice(0, 4)
-  const start = sameYear ? monthLabel(first, 'long').replace(/ \d{4}$/, '') : monthLabel(first, 'long')
-  return `${start} – ${monthLabel(last, 'long')}`
 }
 
 function softwareCost(client: Client, users: number, perUser: number) {

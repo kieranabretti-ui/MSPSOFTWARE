@@ -239,10 +239,11 @@ export function Modal({ open, onClose, title, children, footer, wide }: { open: 
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className={cx('elevate-3 max-h-[92vh] w-full overflow-y-auto rounded-t-xl border border-line bg-surface sm:rounded-xl', wide ? 'sm:max-w-3xl' : 'sm:max-w-lg')}
+        className={cx('elevate-3 flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-xl border border-line bg-surface sm:rounded-xl', wide ? 'sm:max-w-3xl' : 'sm:max-w-lg')}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-line-soft px-5 py-4">
+        {/* Header and footer stay put; only the body scrolls, so the action is always in view. */}
+        <div className="flex shrink-0 items-center justify-between border-b border-line-soft px-5 py-4">
           <h2 ref={titleRef} id={titleId} tabIndex={-1} className="text-h3 text-ink focus:outline-none">
             {title}
           </h2>
@@ -250,10 +251,10 @@ export function Modal({ open, onClose, title, children, footer, wide }: { open: 
             <X className="size-4" />
           </button>
         </div>
-        <div ref={bodyRef} className="px-5 py-5">
+        <div ref={bodyRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5">
           {children}
         </div>
-        {footer && <div className="flex justify-end gap-2 border-t border-line-soft px-5 py-4">{footer}</div>}
+        {footer && <div className="flex shrink-0 justify-end gap-2 border-t border-line-soft px-5 py-4">{footer}</div>}
       </div>
     </div>
   )

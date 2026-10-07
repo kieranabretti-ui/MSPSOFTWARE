@@ -2,13 +2,34 @@ import type { Analysis, Action, Finding, Report, Workspace } from '../engine/typ
 import type { Backend, DataPatch, SessionUser } from './backend'
 import type { SupabaseBackend } from './supabaseBackend'
 
+// Whether this browser could already hold a Supabase session: a stored auth
+// token, or a sign-in link or confirmation landing with its tokens in the
+// address. Pure, so it can be tested without a browser.
+export function mightHaveSession(storageKeys: string[], hash: string, search: string): boolean {
+  return storageKeys.some((k) => /^sb-.+-auth-token$/.test(k)) || /(?:^|[#&])(access_token|refresh_token|error_description)=/.test(hash) || /[?&](code|token_hash)=/.test(search)
+}
+
+function browserMightHaveSession(): boolean {
+  try {
+    const keys: string[] = []
+    for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i) ?? '')
+    return mightHaveSession(keys, location.hash, location.search)
+  } catch {
+    return true // storage blocked: ask Supabase rather than guess
+  }
+}
+
 // The hosted backend, loaded on first use. supabase-js is the largest
-// dependency, so it stays out of the entry chunk and the landing page never
-// downloads it. Every method waits for the module once, then delegates.
+// dependency, so it stays out of the entry chunk, and a visitor with no
+// session (the landing page's usual reader) never downloads it: the session
+// check answers "nobody" without loading it, and listeners wait for the
+// module to arrive for another reason. Every method waits for the module
+// once, then delegates.
 export class LazySupabaseBackend implements Backend {
   mode = 'supabase' as const
   supportsMagicLink = true
   private real: Promise<SupabaseBackend> | null = null
+  private listeners = new Set<(b: SupabaseBackend) => void>()
 
   constructor(
     private url: string,
@@ -16,7 +37,7 @@ export class LazySupabaseBackend implements Backend {
   ) {}
 
   private load(): Promise<SupabaseBackend> {
-    if (!this.real)
+    if (!this.real) {
       this.real = import('./supabaseBackend').then(
         (m) => new m.SupabaseBackend(this.url, this.anonKey),
         (e) => {
@@ -24,10 +45,15 @@ export class LazySupabaseBackend implements Backend {
           throw e
         },
       )
+      this.real.then((b) => this.listeners.forEach((fn) => fn(b)), () => undefined)
+    }
     return this.real
   }
 
   getSession() {
+    // No stored session and no sign-in link: nobody is signed in, and there is
+    // no reason to download supabase-js to be told so.
+    if (!this.real && !browserMightHaveSession()) return Promise.resolve(null)
     return this.load().then((b) => b.getSession())
   }
   signUp(email: string, password: string, name: string) {
@@ -43,19 +69,20 @@ export class LazySupabaseBackend implements Backend {
     return this.load().then((b) => b.signOut())
   }
 
-  // Subscribes once the module is loaded. The returned function works either
+  // Subscribes once the module is loaded, without loading it: a sign-in,
+  // sign-up or stored session brings it in. The returned function works either
   // side of that: before, it stops the subscription from ever starting.
   onAuthChange(cb: (user: SessionUser | null) => void) {
     let off: (() => void) | null = null
     let stopped = false
-    this.load().then(
-      (b) => {
-        if (!stopped) off = b.onAuthChange(cb)
-      },
-      () => undefined,
-    )
+    const attach = (b: SupabaseBackend) => {
+      if (!stopped && !off) off = b.onAuthChange(cb)
+    }
+    if (this.real) this.real.then(attach, () => undefined)
+    else this.listeners.add(attach)
     return () => {
       stopped = true
+      this.listeners.delete(attach)
       off?.()
     }
   }

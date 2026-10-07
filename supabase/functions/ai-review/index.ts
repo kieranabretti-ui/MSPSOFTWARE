@@ -69,10 +69,10 @@ const SCHEMA = {
 }
 
 const SYSTEM = `You help managed service providers review possible revenue leakage found by a rules engine.
-You will be given one finding and the evidence the engine attached to it.
-Explain to an account manager, in plain British English, why this work may be billable or underpriced.
-Use only facts that appear in the finding or its evidence. Do not introduce figures, dates, names or contract terms that are not there.
-Present the value as potential, never as money that is definitely owed.
+You will be given one opportunity and the evidence the engine attached to it.
+Explain to an account manager, in plain British English, why this work may be billable or underpriced. Call it an opportunity, not a finding.
+Use only facts that appear in the opportunity or its evidence. Do not introduce figures, dates, names or contract terms that are not there.
+Present the value as potential, never as money that is definitely owed. Never state a confidence percentage.
 Every quote must be copied exactly from one evidence item's text.`
 
 const normalise = (s: string) => s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, ' ').trim().toLowerCase()
@@ -108,7 +108,7 @@ async function handle(req: Request): Promise<Response> {
   })
   const { data: finding, error } = await supabase
     .from('findings')
-    .select('id, category, severity, confidence, title, description, evidence, estimated_value, monthly_value, recommended_action, client:clients(name)')
+    .select('id, category, severity, title, description, evidence, estimated_value, monthly_value, recommended_action, client:clients(name)')
     .eq('id', findingId)
     .maybeSingle()
   if (error) return failed(error)
@@ -120,10 +120,9 @@ async function handle(req: Request): Promise<Response> {
     `Client: ${client}`,
     `Category: ${finding.category}`,
     `Title: ${finding.title}`,
-    `Engine description: ${finding.description}`,
+    `Engine description: ${finding.description.replace(/\u2060/g, '')}`,
     `Estimated potential value: £${finding.estimated_value}${Number(finding.monthly_value) > 0 ? ` (about £${finding.monthly_value} a month if uncorrected)` : ''}`,
-    `Engine confidence: ${finding.confidence}%`,
-    `Recommended action: ${finding.recommended_action}`,
+    `Recommended action: ${finding.recommended_action.replace(/\u2060/g, '')}`,
     '',
     'Evidence:',
     ...evidence.map((e, i) => `<evidence index="${i + 1}" kind="${e.kind}" label="${e.label}">\n${e.text}\n</evidence>`),

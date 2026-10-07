@@ -1,13 +1,15 @@
-import { useId, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../../../data/store'
-import { Button, Field, Modal, inputCls } from '../../../components/ui'
+import { Button, Field, Modal, cx, inputCls } from '../../../components/ui'
 import { useToast } from '../../../components/toast'
 import { parseNumber } from '../../../data/importers'
 import { ICONS } from '../../../brand/icons'
 import { GENERIC_ERROR, mapError } from '../../../lib/errors'
 
 const EMPTY = { name: '', mrr: '', users: '', devices: '', pkg: '', included: '', software: '' }
+type Key = keyof typeof EMPTY
+const ORDER: Key[] = ['name', 'mrr', 'pkg', 'users', 'devices', 'included', 'software']
 
 export function AddClientModal({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated?: (id: string) => void }) {
   const { createClient, data } = useStore()
@@ -15,19 +17,33 @@ export function AddClientModal({ open, onClose, onCreated }: { open: boolean; on
   const nav = useNavigate()
   const formId = useId()
   const [form, setForm] = useState(EMPTY)
+  // A save that fails; field checks sit under their own field.
   const [error, setError] = useState<string | null>(null)
+  const [errors, setErrors] = useState<Partial<Record<Key, string>>>({})
+  const refs = useRef<Partial<Record<Key, HTMLInputElement | null>>>({})
   const [busy, setBusy] = useState(false)
-  const set = (k: keyof typeof form) => (e: ChangeEvent<HTMLInputElement>) => setForm({ ...form, [k]: e.target.value })
+  const set = (k: Key) => (e: ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [k]: e.target.value })
+    if (errors[k]) setErrors({ ...errors, [k]: undefined })
+  }
+  const input = (k: Key) => ({ ref: (el: HTMLInputElement | null) => void (refs.current[k] = el), value: form[k], onChange: set(k), className: cx(inputCls, errors[k] && 'border-danger-line') })
   const submit = async (e?: FormEvent) => {
     e?.preventDefault()
     if (busy) return
     setError(null)
-    if (!form.name.trim()) return setError('Enter the client name.')
-    if (data.clients.some((c) => c.name.toLowerCase() === form.name.trim().toLowerCase())) return setError('A client with this name already exists.')
+    const errs: Partial<Record<Key, string>> = {}
+    if (!form.name.trim()) errs.name = 'Enter the client name.'
+    else if (data.clients.some((c) => c.name.toLowerCase() === form.name.trim().toLowerCase())) errs.name = 'A client with this name already exists.'
     const mrr = parseNumber(form.mrr)
-    if (mrr == null || mrr < 0) return setError('Enter the monthly recurring revenue as a number.')
+    if (mrr == null || mrr < 0) errs.mrr = 'Enter the monthly recurring revenue as a number.'
     for (const [k, label] of [['users', 'Contracted users'], ['devices', 'Contracted devices'], ['included', 'Included hours'], ['software', 'Software cost']] as const)
-      if (form[k] && parseNumber(form[k]) == null) return setError(`${label} must be a number.`)
+      if (form[k] && parseNumber(form[k]) == null) errs[k] = `${label} must be a number.`
+    setErrors(errs)
+    const first = ORDER.find((k) => errs[k])
+    if (first || mrr == null) {
+      if (first) refs.current[first]?.focus()
+      return
+    }
     setBusy(true)
     try {
       const c = await createClient({
@@ -71,27 +87,27 @@ export function AddClientModal({ open, onClose, onCreated }: { open: boolean; on
       <form id={formId} onSubmit={submit} noValidate>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
-            <Field label="Client name">
-              <input className={inputCls} value={form.name} onChange={set('name')} autoFocus autoComplete="organization" />
+            <Field label="Client name" error={errors.name}>
+              <input {...input('name')} autoFocus autoComplete="organization" />
             </Field>
           </div>
-          <Field label="Monthly recurring revenue (£)">
-            <input className={`${inputCls} tnum`} inputMode="decimal" value={form.mrr} onChange={set('mrr')} placeholder="1500" />
+          <Field label="Monthly recurring revenue (£)" error={errors.mrr}>
+            <input {...input('mrr')} className={cx(input('mrr').className, 'tnum')} inputMode="decimal" placeholder="1500" />
           </Field>
           <Field label="Package">
-            <input className={inputCls} value={form.pkg} onChange={set('pkg')} placeholder="Business Pro" />
+            <input {...input('pkg')} placeholder="Business Pro" />
           </Field>
-          <Field label="Contracted users">
-            <input className={`${inputCls} tnum`} inputMode="numeric" value={form.users} onChange={set('users')} />
+          <Field label="Contracted users" error={errors.users}>
+            <input {...input('users')} className={cx(input('users').className, 'tnum')} inputMode="numeric" />
           </Field>
-          <Field label="Contracted devices">
-            <input className={`${inputCls} tnum`} inputMode="numeric" value={form.devices} onChange={set('devices')} />
+          <Field label="Contracted devices" error={errors.devices}>
+            <input {...input('devices')} className={cx(input('devices').className, 'tnum')} inputMode="numeric" />
           </Field>
-          <Field label="Included hours / month" hint="Only for block-hours agreements">
-            <input className={`${inputCls} tnum`} inputMode="decimal" value={form.included} onChange={set('included')} />
+          <Field label="Included hours / month" hint="Only for block-hours agreements" error={errors.included}>
+            <input {...input('included')} className={cx(input('included').className, 'tnum')} inputMode="decimal" />
           </Field>
-          <Field label="Software cost / month (£)" hint="Your cost for tools and licences">
-            <input className={`${inputCls} tnum`} inputMode="decimal" value={form.software} onChange={set('software')} />
+          <Field label="Software cost / month (£)" hint="Your cost for tools and licences" error={errors.software}>
+            <input {...input('software')} className={cx(input('software').className, 'tnum')} inputMode="decimal" />
           </Field>
         </div>
         {error && (

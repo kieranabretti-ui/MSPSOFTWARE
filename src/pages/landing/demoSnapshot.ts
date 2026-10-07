@@ -130,6 +130,19 @@ export const DEMO: LandingSnapshot = {
       "workDate": null
     },
     {
+      "title": "Gross margin 28% against a 30% target",
+      "client": "ABC Ltd",
+      "category": "UNDERPRICED_CLIENT",
+      "severity": "HIGH",
+      "confidence": 82,
+      "level": "MEDIUM",
+      "overlaps": true,
+      "value": 336,
+      "monthly": 56,
+      "ticketRef": null,
+      "workDate": null
+    },
+    {
       "title": "4 more users than contracted",
       "client": "ABC Ltd",
       "category": "AGREEMENT_DRIFT",
@@ -165,19 +178,6 @@ export const DEMO: LandingSnapshot = {
       "overlaps": false,
       "value": 240,
       "monthly": 40,
-      "ticketRef": null,
-      "workDate": null
-    },
-    {
-      "title": "Gross margin 28% against a 30% target",
-      "client": "Castle Accountancy",
-      "category": "UNDERPRICED_CLIENT",
-      "severity": "HIGH",
-      "confidence": 82,
-      "level": "MEDIUM",
-      "overlaps": false,
-      "value": 229,
-      "monthly": 38,
       "ticketRef": null,
       "workDate": null
     }

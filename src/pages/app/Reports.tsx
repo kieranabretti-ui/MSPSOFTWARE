@@ -1,12 +1,11 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { Download, FileSpreadsheet, Printer } from 'lucide-react'
 import { useMetrics, useStore } from '../../data/store'
-import { Badge, Button, Figure, Logo, LogoMark, PageHeader, cx } from '../../components/ui'
+import { Badge, Button, ButtonLink, Card, EmptyState, Figure, Logo, LogoMark, PageHeader, cx } from '../../components/ui'
 import { GapBar } from '../../components/bars'
 import { ConfidenceLevel } from '../../components/ConfidenceLevel'
 import { useToast } from '../../components/toast'
-import { GetStarted } from './Overview'
-import { findingsCsv } from './Opportunities'
+import { findingsCsv } from './findings/csv'
 import { buildReport, reportPdf, DISCLAIMER, type ReportModel } from '../../lib/report'
 import { downloadFile, hours, money, pct, plural, relative } from '../../lib/format'
 import { IS_PREVIEW } from '../../lib/env'
@@ -39,20 +38,22 @@ interface Col {
   label: string
   num?: boolean
   wide?: boolean
+  // a fixed width from sm up, so sibling tables share their columns
+  w?: string
 }
 
-function Ledger({ caption, cols, rows, foot }: { caption: string; cols: Col[]; rows: ReactNode[][]; foot?: ReactNode[] }) {
+function Ledger({ caption, cols, rows, foot, fixed }: { caption: string; cols: Col[]; rows: ReactNode[][]; foot?: ReactNode[]; fixed?: boolean }) {
   // The last column on screen carries no trailing padding, on phones as well
   // as on wider screens where the wide columns return.
   const lastOnPhone = (i: number) => cols.slice(i + 1).every((c) => c.wide)
   const cell = (c: Col, i: number) => cx(c.num ? 'text-right' : 'text-left', c.wide && 'hidden sm:table-cell', i < cols.length - 1 && 'pr-4 sm:pr-6', lastOnPhone(i) && 'max-sm:pr-0')
   return (
-    <table className="w-full text-small">
+    <table className={cx('w-full text-small', fixed && 'sm:table-fixed')}>
       <caption className="sr-only">{caption}</caption>
       <thead>
         <tr className="border-b border-line-strong">
           {cols.map((c, i) => (
-            <th key={c.label} scope="col" className={cx('pb-2.5 align-bottom text-label uppercase text-ink-3', cell(c, i))}>
+            <th key={c.label} scope="col" className={cx('pb-2.5 align-bottom text-label uppercase text-ink-3', cell(c, i), c.w)}>
               {c.label}
             </th>
           ))}
@@ -133,7 +134,17 @@ export default function Reports() {
     return (
       <>
         <PageHeader title="Reports" />
-        <GetStarted />
+        <Card>
+          <EmptyState
+            title="No report yet"
+            body="Run your first analysis and the report is written from it: the leakage found, the clients most at risk and what to do first, ready to download as PDF."
+            action={
+              <ButtonLink to="/app/analyses" variant="accent">
+                Start analysis
+              </ButtonLink>
+            }
+          />
+        </Card>
       </>
     )
 
@@ -166,7 +177,7 @@ export default function Reports() {
 
   return (
     <>
-      <div className="no-print">
+      <div className="no-print max-w-[880px]">
         <PageHeader
           title="Reports"
           subtitle={
@@ -309,8 +320,15 @@ export default function Reports() {
                 {s.rows.length > 0 && (
                   <Ledger
                     caption={s.title}
-                    cols={[{ label: 'Client', wide: true }, { label: 'Opportunity' }, { label: 'Confidence', wide: true }, { label: 'Value', num: true }]}
-                    rows={s.rows.map((x) => [
+                    fixed
+                    cols={[
+                      { label: 'Client', wide: true, w: 'sm:w-44' },
+                      { label: 'Opportunity' },
+                      { label: 'Confidence', wide: true, w: 'sm:w-28' },
+                      { label: 'Value', num: true, w: 'sm:w-20' },
+                    ]}
+                    rows={[
+                      ...s.rows.map((x) => [
                       x.client,
                       <>
                         <span className="block text-ink">{x.title}</span>
@@ -322,7 +340,18 @@ export default function Reports() {
                       </>,
                       <ConfidenceLevel level={x.level} short />,
                       money(x.value),
-                    ])}
+                    ]),
+                      ...(s.more
+                        ? [
+                            [
+                              '',
+                              <span className="tnum text-ink-3">+ {s.more.count} more {s.more.count === 1 ? 'opportunity' : 'opportunities'}</span>,
+                              '',
+                              <span className="text-ink-2">{money(s.more.value)}</span>,
+                            ],
+                          ]
+                        : []),
+                    ]}
                   />
                 )}
               </Section>
@@ -335,6 +364,7 @@ export default function Reports() {
                   { label: 'Client' },
                   { label: 'MRR', num: true, wide: true },
                   { label: 'Labour', num: true, wide: true },
+                  { label: 'Software', num: true, wide: true },
                   { label: 'Contribution', num: true },
                   { label: 'Margin', num: true },
                   { label: 'Hours / mo', num: true, wide: true },
@@ -349,6 +379,7 @@ export default function Reports() {
                   </>,
                   money(c.mrr),
                   money(c.labour_cost),
+                  money(c.software_cost),
                   money(c.contribution),
                   <MarginValue margin={c.margin} target={r.targetMargin} known={c.known} />,
                   hours(c.avg_monthly_hours),
@@ -363,9 +394,12 @@ export default function Reports() {
                   {r.actions.map((a, i) => (
                     <li key={i} className="grid grid-cols-[1.5rem_minmax(0,1fr)_auto] gap-x-3 py-3.5 text-body print:break-inside-avoid sm:gap-x-4">
                       <span className="tnum text-small leading-[1.55rem] text-ink-3">{i + 1}</span>
-                      <p className="tnum text-ink-2">
-                        <span className="font-medium text-ink">{a.client}.</span> {a.action}
-                      </p>
+                      <div className="tnum text-ink-2">
+                        <p>
+                          <span className="font-medium text-ink">{a.client}.</span> {a.action}
+                        </p>
+                        {a.note && <p className="mt-1 text-small text-ink-3">{a.note}</p>}
+                      </div>
                       <span className="tnum text-right font-semibold text-ink">{money(a.value)}</span>
                     </li>
                   ))}
@@ -387,6 +421,7 @@ export default function Reports() {
               <p className="tnum max-w-[60ch] text-body leading-[1.7] text-ink-2 sm:pt-0.5">
                 If the recurring items in this report are corrected, the estimated annual opportunity is <strong className="font-semibold text-ink">{money(r.annual)}</strong> ({money(r.monthly)} a month), in addition to the{' '}
                 <strong className="font-semibold text-ink">{money(r.total)}</strong> identified in {r.period}.
+                {r.overlap.monthly > 0 && ` Up to ${money(r.overlap.monthly * 12)} a year of it overlaps at ${r.overlap.clients.join(' and ')}.`}
               </p>
             </section>
           </div>

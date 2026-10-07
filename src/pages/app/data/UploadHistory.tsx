@@ -27,6 +27,7 @@ export function UploadHistory({ uploads, onClear }: { uploads: Upload[]; onClear
       />
       {rows.length ? (
         <table className="w-full table-fixed text-small">
+          <caption className="sr-only">Uploads, newest first</caption>
           <thead>
             <tr className="border-b border-line-soft">
               <th scope="col" className={cx(TH, 'pl-4 sm:pl-5')}>

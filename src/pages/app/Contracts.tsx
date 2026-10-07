@@ -14,10 +14,13 @@ import { billedTotal, recurringGap } from './contracts/ContractVsReality'
 // bill, what you actually support, and the recurring gap between them. Each
 // client links to the contract section of its own page for the detail.
 
-type Status = 'drift' | 'ended' | 'none' | 'inline'
-const STATUS: Record<Status, string> = { drift: 'Drift', ended: 'Ended', none: 'No contract uploaded', inline: 'In line' }
-// Drift first, then contracts that need renewing, then gaps in the data.
-const STATUS_ORDER: Status[] = ['drift', 'ended', 'none', 'inline']
+// Drift is users or devices above the agreement; a billing gap is any other
+// recurring gap (a charge below the agreement, licences not billed). Ended
+// agreements and missing contract PDFs are notes beside the status, so a
+// client without a PDF can still show the drift its records reveal.
+type Status = 'drift' | 'gap' | 'clear' | 'pending'
+const STATUS: Record<Status, string> = { drift: 'Drift', gap: 'Billing gap', clear: 'No recurring gap', pending: 'Not analysed yet' }
+const STATUS_ORDER: Status[] = ['drift', 'gap', 'clear', 'pending']
 
 interface Row {
   c: Client
@@ -38,20 +41,27 @@ interface Term {
   ended: boolean
 }
 
-// Columns give way on narrow screens; the client with its agreement, the
-// recurring gap and the status always stay. Header, cells and totals share these.
+// Columns give way on narrower screens, users and devices last of all so the
+// contract and reality stay side by side. Below md each client is a stacked
+// card instead. Header, cells and totals share these.
 const COL = {
-  term: 'hidden lg:table-cell',
-  mrr: 'hidden md:table-cell',
-  billed: 'hidden xl:table-cell',
-  users: 'hidden md:table-cell',
-  devices: 'hidden xl:table-cell',
+  term: 'hidden xl:table-cell',
+  billed: 'hidden min-[1400px]:table-cell',
   clauses: 'hidden min-[1400px]:table-cell',
 }
-const thBase = 'px-3 py-2.5 align-bottom text-label font-semibold uppercase text-ink-3'
+const thBase = 'whitespace-nowrap px-3 py-2.5 align-bottom text-label font-semibold uppercase text-ink-3'
 const th = cx(thBase, 'text-right')
 const td = 'px-3 py-3 text-right tnum'
 const dash = <span className="text-ink-3">—</span>
+
+// The agreement's tier ("Business Pro") rather than its full title; the title
+// stays on hover.
+function agreementLabel(r: Row): { label: string; full?: string } {
+  const title = r.contracts[0]?.title
+  if (!title) return { label: [r.c.package, 'No contract PDF'].filter(Boolean).join(' · ') }
+  const tier = r.c.package && title.includes(r.c.package) ? r.c.package : (title.split(/\s[–-]\s/).pop() ?? title)
+  return { label: `${tier}${r.contracts.length > 1 ? ` · +${r.contracts.length - 1} more` : ''}`, full: r.contracts.map((k) => k.title).join('; ') }
+}
 
 const DAY = 86_400_000
 const monthYear = (d: Date) => d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' })
@@ -83,11 +93,16 @@ function group<T extends { client_id: string }>(xs: T[]) {
   return m
 }
 
-function StatusText({ status }: { status: Status }) {
+function StatusText({ r }: { r: Row }) {
+  const status = r.status
   return (
-    <span className={cx('inline-flex items-center gap-1 whitespace-nowrap text-caption font-medium', status === 'drift' ? 'text-ink' : status === 'ended' ? 'text-ink-2' : 'text-ink-3')}>
-      {status === 'drift' && <ArrowUp className="size-3 shrink-0 text-ink-3" aria-hidden />}
-      {STATUS[status]}
+    <span className="flex flex-col gap-0.5">
+      <span className={cx('inline-flex items-center gap-1 whitespace-nowrap text-caption font-medium', status === 'drift' || status === 'gap' ? 'text-ink' : 'text-ink-3')}>
+        {status === 'drift' && <ArrowUp className="size-3 shrink-0 text-ink-3" aria-hidden />}
+        {STATUS[status]}
+      </span>
+      {r.term.ended && <span className="whitespace-nowrap text-caption text-ink-2">Agreement ended</span>}
+      {!r.contracts.length && <span className="whitespace-nowrap text-caption text-ink-3">No contract PDF</span>}
     </span>
   )
 }
@@ -130,9 +145,11 @@ export default function Contracts() {
     const out: Row[] = data.clients.map((c) => {
       const ks = contracts.get(c.id) ?? []
       const as = assets.get(c.id) ?? []
-      const gap = analysis ? recurringGap(findings.get(c.id) ?? []) : null
+      const fs = findings.get(c.id) ?? []
+      const gap = analysis ? recurringGap(fs) : null
       const term = termOf(c, today)
-      const status: Status = !ks.length ? 'none' : gap ? 'drift' : term.ended ? 'ended' : 'inline'
+      const drift = fs.some((f) => f.category === 'AGREEMENT_DRIFT' && f.status !== 'dismissed')
+      const status: Status = gap == null ? 'pending' : drift ? 'drift' : gap > 0 ? 'gap' : 'clear'
       return {
         c,
         contracts: ks,
@@ -145,11 +162,12 @@ export default function Contracts() {
         status,
       }
     })
-    return out.sort((a, b) => (b.gap ?? 0) - (a.gap ?? 0) || STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status) || a.c.name.localeCompare(b.c.name))
+    return out.sort((a, b) => (b.gap ?? 0) - (a.gap ?? 0) || STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status) || Number(b.term.ended) - Number(a.term.ended) || a.c.name.localeCompare(b.c.name))
   }, [data.clients, data.contracts, data.billing_items, data.assets, data.findings, analysis])
 
   const missing = rows.filter((r) => !r.contracts.length).length
   const drifting = rows.filter((r) => r.status === 'drift').length
+  const gapOnly = rows.filter((r) => r.status === 'gap').length
   const ended = rows.filter((r) => r.term.ended).length
   const maxGap = Math.max(0, ...rows.map((r) => r.gap ?? 0))
   const totalGap = rows.reduce((a, r) => a + (r.gap ?? 0), 0)
@@ -166,17 +184,23 @@ export default function Contracts() {
     <>
       Each client's agreement against what you actually deliver and bill.
       <span className="mt-0.5 block text-small">
-        {plural(rows.length - missing, 'agreement')}
+        {missing > 0 ? `${rows.length - missing} of ${plural(rows.length, 'contract')} uploaded` : plural(rows.length, 'agreement')}
         {analysis && drifting > 0 && (
           <>
             {sep}
-            {drifting} with recurring drift
+            {drifting} with agreement drift
+          </>
+        )}
+        {analysis && gapOnly > 0 && (
+          <>
+            {sep}
+            {gapOnly} with a billing gap
           </>
         )}
         {ended > 0 && (
           <>
             {sep}
-            {ended} ended
+            {plural(ended, 'agreement')} ended
           </>
         )}
       </span>
@@ -221,7 +245,47 @@ export default function Contracts() {
             </Notice>
           )}
 
-          <Card className="overflow-hidden">
+          {/* Phones: one card per client, contract beside reality in a line. */}
+          <Card className="overflow-hidden md:hidden">
+            <ul className="divide-y divide-line-soft" aria-label="Clients, largest recurring gap first">
+              {rows.map((r) => {
+                const a = agreementLabel(r)
+                return (
+                  <li key={r.c.id}>
+                    <Link to={`/app/clients/${r.c.id}#contract`} className="block px-4 py-3.5 transition-colors duration-150 hover:bg-hover">
+                      <span className="flex items-baseline justify-between gap-3">
+                        <span className="min-w-0 text-body font-medium text-ink">{r.c.name}</span>
+                        {r.gap == null ? dash : <span className={cx('tnum shrink-0 whitespace-nowrap text-small', r.gap > 0 ? 'font-semibold text-ink' : 'text-ink-3')}>{money(r.gap)}/mo</span>}
+                      </span>
+                      <span className="mt-0.5 block text-caption text-ink-3" title={a.full}>
+                        {a.label} · <span className="tnum">{r.term.main}</span>
+                      </span>
+                      <span className="tnum mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-small">
+                        <span className="inline-flex items-baseline gap-1.5">
+                          <span className="text-caption text-ink-3">Users</span>
+                          <SeatCount actual={r.users} contracted={r.c.contracted_users} noun="users" />
+                        </span>
+                        <span className="inline-flex items-baseline gap-1.5">
+                          <span className="text-caption text-ink-3">Devices</span>
+                          <SeatCount actual={r.devices} contracted={r.c.contracted_devices} noun="devices" />
+                        </span>
+                      </span>
+                      <span className="mt-2 block">
+                        <StatusText r={r} />
+                      </span>
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+            {rows.length > 1 && analysis && (
+              <p className="flex items-baseline justify-between gap-3 border-t border-line bg-sunken px-4 py-3 text-small font-semibold text-ink">
+                All clients <span className="tnum">{money(totalGap)}/mo</span>
+              </p>
+            )}
+          </Card>
+
+          <Card className="hidden overflow-hidden md:block">
             <div className="overflow-x-auto">
               <table className="w-full text-small">
                 <caption className="sr-only">Each client's agreement against what is billed and supported, largest recurring gap first</caption>
@@ -233,20 +297,20 @@ export default function Contracts() {
                     <th scope="col" className={cx(thBase, COL.term, 'text-left')}>
                       Term
                     </th>
-                    <th scope="col" className={cx(th, COL.mrr)}>
-                      Agreement MRR
+                    <th scope="col" className={th} title="Agreement MRR">
+                      MRR
                     </th>
-                    <th scope="col" className={cx(th, COL.billed)}>
-                      Billed a month
+                    <th scope="col" className={cx(th, COL.billed)} title="Recurring billing lines a month">
+                      Billed
                     </th>
-                    <th scope="col" className={cx(th, COL.users)} title="Actual / contracted">
+                    <th scope="col" className={th} title="Actual / contracted">
                       Users
                     </th>
-                    <th scope="col" className={cx(th, COL.devices)} title="Actual / contracted">
+                    <th scope="col" className={th} title="Actual / contracted">
                       Devices
                     </th>
-                    <th scope="col" className={cx(th, COL.clauses)}>
-                      Scope clauses
+                    <th scope="col" className={cx(th, COL.clauses)} title="Scope clauses found in the contract">
+                      Clauses
                     </th>
                     <th scope="col" className={th}>
                       Recurring gap
@@ -261,47 +325,41 @@ export default function Contracts() {
                     const to = `/app/clients/${r.c.id}#contract`
                     const billed = r.billing.length ? billedTotal(r.billing) : null
                     const diff = billed == null ? null : billed - r.c.monthly_recurring_revenue
-                    const title = r.contracts[0]?.title
+                    const a = agreementLabel(r)
                     return (
                       <tr key={r.c.id} className="cursor-pointer align-top transition-colors duration-150 hover:bg-hover" onClick={() => nav(to)}>
-                        <th scope="row" className="min-w-[11rem] py-3 pl-4 pr-3 text-left font-normal sm:pl-5">
+                        <th scope="row" className="min-w-[10rem] py-3 pl-4 pr-3 text-left font-normal sm:pl-5">
                           <Link to={to} onClick={(e) => e.stopPropagation()} className="text-body font-medium text-ink underline-offset-4 hover:underline">
                             {r.c.name}
                           </Link>
-                          <span className="block max-w-[34ch] text-caption text-ink-3">
-                            {title ? (
-                              <>
-                                <span className="text-ink-2">{title}</span>
-                                {r.c.package && !title.includes(r.c.package) && ` · ${r.c.package}`}
-                                {r.contracts.length > 1 && ` · +${r.contracts.length - 1} more`}
-                              </>
-                            ) : (
-                              [r.c.package, 'No contract uploaded'].filter(Boolean).join(' · ')
-                            )}
+                          <span className="block text-caption text-ink-2" title={a.full}>
+                            {a.label}
                           </span>
-                          <span className="tnum block text-caption text-ink-3 lg:hidden">{r.term.main}</span>
+                          <span className="tnum block text-caption text-ink-3 xl:hidden">{r.term.main}</span>
                         </th>
                         <td className={cx('tnum px-3 py-3', COL.term)}>
                           <span className={cx('block whitespace-nowrap', r.term.ended ? 'text-ink' : 'text-ink-2')}>{r.term.main}</span>
                           {r.term.sub && <span className="block whitespace-nowrap text-caption text-ink-3">{r.term.sub}</span>}
                         </td>
-                        <td className={cx(td, COL.mrr, 'text-ink')}>{r.c.monthly_recurring_revenue > 0 ? money(r.c.monthly_recurring_revenue) : <span className="text-ink-3">Not set</span>}</td>
+                        <td className={cx(td, 'text-ink')}>{r.c.monthly_recurring_revenue > 0 ? money(r.c.monthly_recurring_revenue) : <span className="text-ink-3">Not set</span>}</td>
                         <td className={cx(td, COL.billed)}>
                           {billed == null ? (
                             <span className="text-ink-3">Not uploaded</span>
                           ) : (
                             <>
                               <span className="block text-ink">{money(billed)}</span>
-                              <span className={cx('block whitespace-nowrap text-caption', diff ? 'font-semibold text-ink-2' : 'text-ink-3')}>
-                                {diff ? `${money(Math.abs(diff))} ${diff > 0 ? 'above' : 'below'} MRR` : 'Matches MRR'}
-                              </span>
+                              {diff ? (
+                                <span className="block whitespace-nowrap text-caption font-semibold text-ink-2">
+                                  {money(Math.abs(diff))} {diff > 0 ? 'above' : 'below'} MRR
+                                </span>
+                              ) : null}
                             </>
                           )}
                         </td>
-                        <td className={cx(td, COL.users, 'whitespace-nowrap')}>
+                        <td className={cx(td, 'whitespace-nowrap')}>
                           <SeatCount actual={r.users} contracted={r.c.contracted_users} noun="users" />
                         </td>
-                        <td className={cx(td, COL.devices, 'whitespace-nowrap')}>
+                        <td className={cx(td, 'whitespace-nowrap')}>
                           <SeatCount actual={r.devices} contracted={r.c.contracted_devices} noun="devices" />
                         </td>
                         <td className={cx(td, COL.clauses, 'text-ink-2')}>
@@ -309,7 +367,7 @@ export default function Contracts() {
                         </td>
                         <td className={td}>{r.gap == null ? dash : <GapCell gap={r.gap} max={maxGap} />}</td>
                         <td className="py-3 pl-3 pr-4 sm:pr-5">
-                          <StatusText status={r.status} />
+                          <StatusText r={r} />
                         </td>
                       </tr>
                     )
@@ -320,10 +378,10 @@ export default function Contracts() {
                     <tr className="border-t border-line bg-sunken font-semibold text-ink">
                       <td className="py-3 pl-4 pr-3 text-small sm:pl-5">All clients</td>
                       <td className={COL.term} />
-                      <td className={cx(td, COL.mrr)}>{money(totalMrr)}</td>
+                      <td className={td}>{money(totalMrr)}</td>
                       <td className={cx(td, COL.billed)}>{withBilling.length ? money(totalBilled) : ''}</td>
-                      <td className={COL.users} />
-                      <td className={COL.devices} />
+                      <td />
+                      <td />
                       <td className={COL.clauses} />
                       <td className={td}>{analysis ? <GapCell gap={totalGap} /> : ''}</td>
                       <td />
@@ -334,7 +392,7 @@ export default function Contracts() {
             </div>
           </Card>
           <p className="mt-3 max-w-[90ch] text-caption text-ink-3">
-            Users and devices show actual / contracted; anything above contract carries an up arrow. The recurring gap is the monthly value of agreement drift, billing mismatches and unbilled licences, leaving out any you have dismissed. Open a client to see its contract against reality term by term.
+            Users and devices show actual / contracted; anything above contract carries an up arrow. The recurring gap is the monthly value of agreement drift, billing mismatches and unbilled licences, leaving out any you have dismissed. Drift means more users or devices than the agreement covers; a billing gap is a charge or licence below it. Open a client to see its contract against reality term by term.
           </p>
         </>
       )}

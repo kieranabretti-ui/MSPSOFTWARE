@@ -9,15 +9,17 @@ import { Section, inWords, sectionTitleCls } from './primitives'
 
 // Planned pricing, not live. The tiers and their limits are the owner's
 // proposals and say so; until pricing goes live every account gets the whole
-// product, and the first audit is free. Growth is the recommended tier and
-// carries the section's one lime button.
+// product, and the first audit is free. Anything the product can't do yet
+// (team seats, integrations, a support line) carries a Planned mark. Growth is
+// the recommended tier and carries the section's one lime button.
 
 interface Plan {
   key: 'starter' | 'growth' | 'pro'
   name: string
   price: number
   who: string
-  limits: { clients: string; users: string }
+  // usersPlanned: more than one user per workspace needs team invites, which don't exist yet
+  limits: { clients: string; users: string; usersPlanned?: boolean }
   includes: { text: string; planned?: boolean }[]
   recommended?: boolean
 }
@@ -29,14 +31,14 @@ export const PLANS: Plan[] = [
     price: 99,
     who: 'For MSPs starting to find leakage.',
     limits: { clients: 'Up to 25', users: '1' },
-    includes: [{ text: 'All four leakage checks' }, { text: 'Evidence, calculation and confidence on every opportunity' }, { text: 'PDF and CSV reports' }],
+    includes: [{ text: 'Every leakage check' }, { text: 'Evidence, calculation and confidence on every opportunity' }, { text: 'PDF and CSV reports' }],
   },
   {
     key: 'growth',
     name: 'Growth',
     price: 249,
     who: 'For continuous commercial intelligence.',
-    limits: { clients: 'Up to 100', users: '3' },
+    limits: { clients: 'Up to 100', users: '3', usersPlanned: true },
     includes: [
       { text: 'Everything in Starter' },
       { text: 'Recovery queue' },
@@ -50,8 +52,8 @@ export const PLANS: Plan[] = [
     name: 'Pro',
     price: 499,
     who: 'For advanced automation and intelligence.',
-    limits: { clients: 'Unlimited', users: '10' },
-    includes: [{ text: 'Everything in Growth' }, { text: 'PSA integrations as they launch', planned: true }, { text: 'Priority support' }],
+    limits: { clients: 'Unlimited', users: '10', usersPlanned: true },
+    includes: [{ text: 'Everything in Growth' }, { text: 'PSA integrations as they launch', planned: true }, { text: 'Priority support', planned: true }],
   },
 ]
 
@@ -108,7 +110,8 @@ export function Pricing() {
               'flex min-w-0 flex-col px-5 py-6 sm:px-7 sm:py-7 lg:px-6 xl:px-7',
               i > 0 && 'border-t border-line lg:border-l lg:border-t-0',
               // The recommended tier sits forward: a raised fill inside a stronger hairline, over the frame's own.
-              p.recommended && 'relative z-10 -m-px rounded-lg bg-raised ring-1 ring-line-strong',
+              // Square corners: it never sits at a corner of the frame, so its edges run straight into the frame's.
+              p.recommended && 'relative z-10 -m-px bg-raised ring-1 ring-line-strong',
             )}
           >
             <div className="flex items-center justify-between gap-3">
@@ -128,7 +131,14 @@ export function Pricing() {
               </div>
               <div className="border-l border-line-soft py-3 pl-4">
                 <dt className="text-caption text-ink-3">Users</dt>
-                <dd className="tnum mt-0.5 font-medium text-ink">{p.limits.users}</dd>
+                <dd className="tnum mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 font-medium text-ink">
+                  {p.limits.users}
+                  {p.limits.usersPlanned && (
+                    <span title="Team invites are planned. Each workspace has one user today.">
+                      <Badge tone="info">Planned</Badge>
+                    </span>
+                  )}
+                </dd>
               </div>
             </dl>
 
@@ -156,7 +166,7 @@ export function Pricing() {
       </div>
 
       <p className="mt-5 max-w-[80ch] text-small text-ink-3">
-        Limits are proposals and will be confirmed before pricing goes live. Until then, every account has the whole product, and your first audit is free.
+        Limits are proposals and will be confirmed before pricing goes live. Until then, every account has the whole product as it is today (one user per workspace), and your first audit is free.
       </p>
     </Section>
   )

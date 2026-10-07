@@ -4,15 +4,14 @@ import { ArrowLeft, Plus, Sparkles } from 'lucide-react'
 import { useStore } from '../../data/store'
 import { Button, Card, CardHeader, Disclaimer, EmptyState, Field, Figure, Modal, SeverityBadge, TextLink, inputCls, cx } from '../../components/ui'
 import { useToast } from '../../components/toast'
-import { StatusBadge } from './Opportunities'
 import { EvidenceRow, ValueByMonth } from './findings/evidence'
 import { CalculationBlock } from './findings/CalculationBlock'
 import { ConfidenceReading } from './findings/ConfidenceReading'
 import { StageControl } from './findings/StageControl'
-import { TASK_STATUS_OPTIONS, TaskDot } from './findings/StatusTag'
+import { FindingStatusTag, TASK_STATUS_OPTIONS, TaskDot } from './findings/StatusTag'
 import { Select } from './data/kit'
 import { dateTime, money, plural } from '../../lib/format'
-import { fmtMinutes, monthLabel, periodLabel } from '../../engine/analyse'
+import { fmtMinutes, monthLabel, periodLabel } from '../../engine/format'
 import { confidenceOf } from '../../lib/confidence'
 import { mapError } from '../../lib/errors'
 import { track } from '../../lib/track'
@@ -40,7 +39,7 @@ const HOW_CHECKED: Record<string, string> = {
   mismatch: 'Compared the contracted quantity on the client record with the quantity on the recurring billing line.',
   license: "Counted users assigned each licence and compared that with the licence's billing line.",
   usage: 'Added up support hours per month and compared them with the included hours.',
-  margin: 'Estimated monthly margin from support hours and the labour cost and software cost in Settings.',
+  margin: 'Estimated monthly margin from support hours and the labour cost and default software cost per user in Settings.',
 }
 
 // The method line under the facts. Where the inputs differ from the usual
@@ -51,6 +50,8 @@ function howChecked(f: Finding): string {
   let method = HOW_CHECKED[f.meta.rule] ?? HOW_CHECKED[f.meta.rule.split('.')[0]] ?? ''
   if (c?.kind === 'time' && f.meta.rule.startsWith('unbilled.') && f.meta.rule !== 'unbilled.billing_mismatch' && !c.contract_checked)
     method = 'Matched the ticket against work MSPs commonly charge for. No contract was uploaded for this client, so its wording was not checked.'
+  if (c?.kind === 'margin' && c.software_source === 'client')
+    method = 'Estimated monthly margin from support hours, the labour cost in Settings and the software cost in your clients export.'
   if (c?.kind === 'seats' && c.baseline_source === 'billing')
     method = 'Compared active users or devices in your users and devices export with the quantity on the recurring billing line, as the client record has no contracted figure.'
   const priced = c && (c.kind === 'mismatch' || c.kind === 'licence' || (c.kind === 'seats' && c.price_source === 'billing_line'))
@@ -62,7 +63,7 @@ function Fact({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="min-w-0">
       <dt className="text-caption text-ink-3">{label}</dt>
-      <dd className="mt-1 truncate text-body font-medium text-ink">{children}</dd>
+      <dd className="mt-1 break-words text-body font-medium text-ink">{children}</dd>
     </div>
   )
 }
@@ -235,10 +236,24 @@ export default function FindingDetail() {
             </>
           )}
           <span className="ml-1">
-            <StatusBadge status={f.status} />
+            <FindingStatusTag status={f.status} />
           </span>
         </div>
       </header>
+
+      {/* Below lg the stage and its one next step sit under the title, so
+          moving an opportunity on never means scrolling past its evidence. */}
+      <Card className="mb-6 lg:hidden">
+        <div className="px-5 py-4">
+          <div className="mb-3 flex items-baseline justify-between gap-3">
+            <h2 className="text-h3 text-ink">Stage</h2>
+            <TextLink to="/app/queue" className="shrink-0">
+              Recovery queue
+            </TextLink>
+          </div>
+          <StageControl finding={f} via="detail" />
+        </div>
+      </Card>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
         {/* The figure, the sum behind it, how sure we are, and why */}
@@ -310,19 +325,21 @@ export default function FindingDetail() {
 
         {/* The decision: where it stands, the one step that moves it on, and who is on it */}
         <Card className="@container lg:col-start-3 lg:row-start-1">
-          <CardHeader
-            as="h2"
-            title="Stage"
-            right={
-              <TextLink to="/app/queue" className="shrink-0 pt-0.5">
-                Recovery queue
-              </TextLink>
-            }
-          />
-          <div className="px-5 py-5">
-            <StageControl finding={f} via="detail" />
+          <div className="hidden lg:block">
+            <CardHeader
+              as="h2"
+              title="Stage"
+              right={
+                <TextLink to="/app/queue" className="shrink-0 pt-0.5">
+                  Recovery queue
+                </TextLink>
+              }
+            />
+            <div className="px-5 py-5">
+              <StageControl finding={f} via="detail" />
+            </div>
           </div>
-          <div className="border-t border-line-soft px-5 py-5">
+          <div className="border-line-soft px-5 py-5 lg:border-t">
             <h2 className="text-h3 text-ink">Recommended action</h2>
             <p className="mt-2 text-body leading-relaxed text-ink-2">{f.recommended_action}</p>
           </div>

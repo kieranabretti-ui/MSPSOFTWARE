@@ -1,4 +1,4 @@
-import { fmtMinutes, monthLabel } from '../engine/analyse'
+import { fmtMinutes, monthLabel, signed } from '../engine/format'
 import type { FindingDraft } from '../engine/types'
 import { money, num } from './format'
 
@@ -101,7 +101,7 @@ export function formatCalculation(f: Pick<FindingDraft, 'meta' | 'estimated_valu
           `${money(total)} ÷ ${c.months} month${s(c.months)} = ${money(monthly)} a month on average`,
         ],
         result: `${money(monthly)} a month`,
-        note: `Price that restores ${pct} at average cost: ${money(c.target_price)} a month (+${money(c.target_price - c.mrr)}).`,
+        note: `Price that restores ${pct} at average cost: ${money(c.target_price)} a month (${signed(money(c.target_price - c.mrr))}).`,
         total,
         monthly,
       }

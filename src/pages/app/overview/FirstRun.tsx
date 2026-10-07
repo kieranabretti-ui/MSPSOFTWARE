@@ -17,7 +17,7 @@ const SOURCES = [
   { icon: ICONS.tickets, name: 'Tickets and time entries', finds: 'Out-of-scope work done for free, billable time never invoiced, support beyond allowances' },
   { icon: ICONS.clients, name: 'Clients, users and devices', finds: 'Clients who have grown past their agreement, licences assigned but never billed' },
   { icon: ICONS.billing, name: 'Billing lines', finds: 'Recurring charges below the agreement, clients priced under your target margin' },
-  { icon: ICONS.contracts, name: 'Contracts and SOWs', finds: 'What each agreement covers, so every opportunity cites the clause behind it' },
+  { icon: ICONS.contracts, name: 'Contracts and SOWs', finds: 'What each agreement covers, so out-of-scope opportunities cite the clause behind them' },
 ]
 
 // The first-run state for a workspace with no analysis yet. Also shown by the
@@ -77,7 +77,7 @@ export function GetStarted({ onRunChange }: { onRunChange?: (active: boolean) =>
           <p className="mt-4 max-w-[52ch] text-body text-ink-2">
             {hasData
               ? 'Run the analysis to check every ticket, time entry, device and billing line against your agreements. It takes a few seconds, and every pound links back to its evidence.'
-              : 'Upload the exports your PSA, RMM and billing system already produce. Headroom checks every ticket, device and invoice line against the agreement and shows what you could be charging for.'}
+              : "Upload the exports your PSA, RMM and billing system already produce. Headroom checks every ticket, device and invoice line against each client's agreement figures and, where you upload them, its contract, then shows what you could be charging for."}
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
             {hasData ? (

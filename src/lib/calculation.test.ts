@@ -46,7 +46,7 @@ describe('formatCalculation on the demo', () => {
     expect(calc.lines).toContain('£336 ÷ 6 months = £56 a month on average')
     expect(calc.lines.some((l) => l.startsWith('Shortfall in the 4 months below target: ') && l.endsWith('= £336'))).toBe(true)
     expect(calc.result).toBe('£56 a month')
-    expect(calc.note).toBe('Price that restores 30% at average cost: £1,897 a month (+£47).')
+    expect(calc.note).toBe('Price that restores 30% at average cost: £1,897 a month (+\u2060£47).')
   })
 
   it('shows one line per month over the allowance', () => {

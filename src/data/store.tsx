@@ -23,6 +23,7 @@ import { applyDemoStages } from '../demo/stages'
 import { confidenceOf } from '../lib/confidence'
 import { mapError } from '../lib/errors'
 import { recurringKind } from '../lib/labels'
+import { overlapOf } from '../lib/overlap'
 import { setTrackContext, track, type AnalysisSource } from '../lib/track'
 import type { Backend, SessionUser, WorkspaceData } from './backend'
 import { emptyData } from './backend'
@@ -581,6 +582,8 @@ export function useMetrics() {
       atRisk,
       byLevel,
       byStage,
+      // counted twice and disclosed, not netted (see lib/overlap)
+      overlap: overlapOf(data.findings),
       history: data.analyses,
     }
   }, [data, analysis, workspace])

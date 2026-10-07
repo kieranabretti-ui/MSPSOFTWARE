@@ -2,47 +2,16 @@ import { useDeferredValue, useMemo, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowDown, Download, FilterX, Search } from 'lucide-react'
 import { useMetrics, useStore } from '../../data/store'
-import { Button, Card, EmptyState, PageHeader, inputCls, cx } from '../../components/ui'
+import { Button, ButtonLink, Card, EmptyState, PageHeader, inputCls, cx } from '../../components/ui'
 import { ConfidenceLevel } from '../../components/ConfidenceLevel'
-import { GetStarted } from './Overview'
 import { FilterSelect } from './findings/FilterSelect'
-import { FindingStatusTag } from './findings/StatusTag'
+import { FindingStatusTag, StageMark } from './findings/StatusTag'
+import { findingsCsv } from './findings/csv'
 import { OpportunityTabs } from './findings/OpportunityTabs'
-import { downloadFile, money, plural, toCsv } from '../../lib/format'
+import { downloadFile, money, plural } from '../../lib/format'
 import { confidenceOf } from '../../lib/confidence'
-import { formatCalculation } from '../../lib/calculation'
 import { ALL_CATEGORIES, CATEGORY_META, CONFIDENCE, FINDING_STATUS, LEVEL_ORDER, STAGE_ORDER } from '../../lib/labels'
-import type { ConfidenceLevel as Level, Finding, FindingStatus } from '../../engine/types'
-
-export function StatusBadge({ status }: { status: FindingStatus }) {
-  return <FindingStatusTag status={status} />
-}
-
-// One row per opportunity, in the product's words. The raw stage and the
-// confidence score stay alongside the labels for anyone re-sorting in a sheet.
-export function findingsCsv(findings: Finding[], clientName: (id: string) => string) {
-  return toCsv(
-    findings.map((f) => ({
-      id: f.id,
-      client: clientName(f.client_id),
-      category: CATEGORY_META[f.category].label,
-      stage: FINDING_STATUS[f.status],
-      status: f.status,
-      confidence_level: CONFIDENCE[confidenceOf(f).level].short,
-      confidence_score: f.confidence,
-      priority: f.severity,
-      title: f.title,
-      description: f.description,
-      calculation: formatCalculation(f)?.lines.join(' / ') ?? '',
-      estimated_value: f.estimated_value,
-      monthly_value: f.monthly_value,
-      annual_value: f.annual_value,
-      recommended_action: f.recommended_action,
-      evidence: f.evidence.map((e) => `${e.label}: ${e.text.replace(/\n/g, ' / ')}`).join(' | '),
-      source_data: f.source_data.map((s) => `${s.table}:${s.label}`).join('; '),
-    })),
-  )
-}
+import type { ConfidenceLevel as Level } from '../../engine/types'
 
 // Column visibility, shared by the header, the rows and the totals row so the
 // table keeps one grid at every width. The opportunity and its value always show.
@@ -96,7 +65,17 @@ export default function Opportunities() {
       <>
         <PageHeader title="Opportunities" />
         <OpportunityTabs />
-        <GetStarted />
+        <Card>
+          <EmptyState
+            title="No opportunities yet"
+            body="Run your first analysis to find unbilled work, agreement drift and underpriced clients, each with the evidence behind it."
+            action={
+              <ButtonLink to="/app/analyses" variant="accent">
+                Start analysis
+              </ButtonLink>
+            }
+          />
+        </Card>
       </>
     )
 
@@ -223,6 +202,7 @@ export default function Opportunities() {
           <>
             <div className="overflow-x-auto">
               <table className="w-full text-small">
+                <caption className="sr-only">Opportunities, highest potential value first</caption>
                 <thead>
                   <tr className="border-b border-line-soft bg-sunken">
                     <th scope="col" className={cx(TH, 'pl-4 sm:pl-5')}>
@@ -261,19 +241,19 @@ export default function Opportunities() {
                           >
                             {f.title}
                           </Link>
-                          <span className="mt-0.5 block truncate text-caption text-ink-3">
+                          <span className="mt-0.5 block text-caption text-ink-3 sm:truncate">
                             {m.clientName(f.client_id)}
-                            {f.meta.ticket_ref && <span className="tnum"> · Ticket #{f.meta.ticket_ref}</span>}
+                            {f.meta.ticket_ref && <span className="tnum whitespace-nowrap"> · Ticket #{f.meta.ticket_ref}</span>}
                             <span className="hidden sm:inline xl:hidden"> · {CATEGORY_META[f.category].short}</span>
                           </span>
                           <span className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 sm:hidden">
                             <ConfidenceLevel level={lvl} short />
                             <span className="text-caption text-ink-3">{CATEGORY_META[f.category].short}</span>
-                            {f.status !== 'open' && <StatusBadge status={f.status} />}
+                            {f.status !== 'open' && <FindingStatusTag status={f.status} />}
                           </span>
                           {f.status !== 'open' && (
                             <span className="mt-2 hidden sm:flex md:hidden">
-                              <StatusBadge status={f.status} />
+                              <FindingStatusTag status={f.status} />
                             </span>
                           )}
                         </td>
@@ -282,7 +262,14 @@ export default function Opportunities() {
                           <ConfidenceLevel level={lvl} short />
                         </td>
                         <td className={cx('whitespace-nowrap px-3 py-3', COL.stage)}>
-                          {f.status === 'open' ? <span className="sr-only">{FINDING_STATUS.open}</span> : <StatusBadge status={f.status} />}
+                          {f.status === 'open' ? (
+                            <span className="inline-flex items-center gap-1.5 text-caption text-ink-3">
+                              <StageMark status="open" />
+                              {FINDING_STATUS.open}
+                            </span>
+                          ) : (
+                            <FindingStatusTag status={f.status} />
+                          )}
                         </td>
                         <td className="whitespace-nowrap py-3 pl-3 pr-4 text-right align-top sm:pr-5 sm:align-middle">
                           <span className="tnum block text-body font-semibold text-ink">{money(f.estimated_value)}</span>
