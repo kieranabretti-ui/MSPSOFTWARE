@@ -2,12 +2,12 @@
   "id": "P016",
   "buys": false,
   "purchases_first_month": 0,
-  "reason_code": "convenience",
-  "reason": "I do the billing myself every month, so I reckon I'd already know if I was leaking much, and pulling exports out of the PSA and billing system plus digging out contract PDFs is an afternoon I haven't got. I might have a go at the free audit on a quiet Friday, but I wouldn't pay £99 a month to keep uploading CSVs by hand.",
-  "objection": "With no PSA integration it's on me to export everything every time, and on a demo MSP it found about £700 a month across 15 clients, which for my size is one ticket I'd probably write off anyway.",
-  "would_change_my_mind": "A direct integration with my PSA so it runs without me exporting anything, and then a free audit that turns up real money I can bill, with the ticket to back it, that I'd genuinely missed.",
+  "reason_code": "habit",
+  "reason": "I do the billing myself every month and I sit in front of my bigger clients every quarter, so I reckon I already know where the leakage is. A free audit might be worth a look one quiet week, but I'm not signing up to another £99 a month on top of a PSA I already pay for.",
+  "objection": "Even with you holding my hand on the exports, it's still 45 minutes plus digging out contracts, and then a report telling me things I half know and haven't had the nerve to bill for. Finding the money isn't the hard bit, having the conversation with a client I've known ten years is.",
+  "would_change_my_mind": "If the free audit actually turned up a few grand I'd genuinely missed, with the tickets to prove it, I'd pay the £99 to keep it running. A recommendation from another MSP owner I trust would get me to book the call in the first place.",
   "price_too_cheap": 15,
   "price_cheap": 40,
   "price_expensive": 99,
-  "price_too_expensive": 180
+  "price_too_expensive": 175
 }

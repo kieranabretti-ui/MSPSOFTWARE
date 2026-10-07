@@ -1,0 +1,13 @@
+{
+  "id": "P017",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "need",
+  "reason": "I might run the free audit out of curiosity, but I do month-end billing myself so I'd fix whatever it finds once and then I'm paying £99 a month for a tool that keeps telling me what I already know. Exporting CSVs and contract PDFs every month is more admin I don't have time for.",
+  "objection": "It finds money once, then what am I paying for every month? And £4,281 over six months on a made-up 15-client MSP doesn't tell me anything about my book.",
+  "would_change_my_mind": "If the free audit found a real, recurring leak in my own data that I'd genuinely missed, or if it was a one-off fee per audit instead of a monthly subscription.",
+  "price_too_cheap": 15,
+  "price_cheap": 35,
+  "price_expensive": 79,
+  "price_too_expensive": 150
+}

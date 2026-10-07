@@ -1,13 +1,13 @@
 {
   "id": "P004",
-  "buys": false,
-  "purchases_first_month": 0,
-  "reason_code": "quality",
-  "reason": "I might throw the free audit at the two clients I already think are underpaying, but I'm not paying for it in the first month. Our ticket categories are a mess, so I expect it to flag a load of noise, and I've already paid for one reporting tool nobody opened after week three.",
-  "objection": "Garbage in, garbage out. If it's reading our PSA categories to decide what's out of scope, the numbers will be wrong, and then I'm spending my ops manager's time arguing with a spreadsheet instead of recovering money.",
-  "would_change_my_mind": "The free audit on our own messy exports turning up something I can actually take into a client meeting next month, with the ticket evidence lined up, for one of those two underpaying clients, and without anyone on my team having to clean up the data first.",
-  "price_too_cheap": 49,
-  "price_cheap": 149,
-  "price_expensive": 499,
-  "price_too_expensive": 1000
+  "buys": true,
+  "purchases_first_month": 1,
+  "reason_code": "need",
+  "reason": "I've got two clients I'm fairly sure are taking the mick on usage, and a free audit with a 'don't pay unless it finds a grand' guarantee costs me one call and an export. If it puts the ticket numbers behind those two, £99 a month is nothing next to one renewal uplift.",
+  "objection": "Our ticket categories are a mess, so I expect half the 'unbilled' findings to be wrong or arguable, and then I've wasted my ops lead's week arguing with a report. I've bought reporting before that nobody looked at after month one.",
+  "would_change_my_mind": "If the first report is mostly noise from our miscategorised tickets and I have to clean it up myself, I cancel and don't come back.",
+  "price_too_cheap": 20,
+  "price_cheap": 75,
+  "price_expensive": 300,
+  "price_too_expensive": 600
 }

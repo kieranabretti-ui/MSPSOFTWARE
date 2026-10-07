@@ -3,11 +3,11 @@
   "buys": false,
   "purchases_first_month": 0,
   "reason_code": "trust",
-  "reason": "I do month-end billing myself, so I reckon I'd already spot most of this. And I'm not uploading every client contract and device list to a company with no customers and no reviews just to see a number off made-up demo data.",
-  "objection": "No integrations, no reviews, no customers yet. That's my client data and contracts going to an unknown outfit, and half my contracts are old PDFs it'll probably misread anyway.",
-  "would_change_my_mind": "Another UK MSP owner I know telling me it found real money in their books that they'd actually missed, plus clear answers on where the data goes and how long it's kept.",
+  "reason": "I do the billing myself every month, so I reckon I already know where most of the leakage is. Handing my whole PSA export and client contracts to a one-man outfit with no integrations, no reviews and no customers isn't something I'd do in a normal week, free or not.",
+  "objection": "It's my client data and my contracts going to someone nobody's heard of. A DPA is just paper if the company folds in six months, and after that I'd be paying £99 a month for something I mostly do in a spreadsheet already.",
+  "would_change_my_mind": "A couple of MSP owners I know or trust, say from a peer group or forum, telling me it found real money they actually billed, and a direct read-only integration with my PSA so I'm not emailing exports around.",
   "price_too_cheap": 20,
   "price_cheap": 49,
-  "price_expensive": 149,
-  "price_too_expensive": 300
+  "price_expensive": 150,
+  "price_too_expensive": 250
 }

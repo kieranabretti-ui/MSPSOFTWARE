@@ -3,11 +3,11 @@
   "buys": false,
   "purchases_first_month": 0,
   "reason_code": "trust",
-  "reason": "I don't buy tools off an ad. If a few owners in my peer group said it found real money and their clients didn't walk when they started billing for it, I'd look, but nobody has yet. And I already know we do some free work; that's how we keep clients, so a list of 'leakage' isn't news to me.",
-  "objection": "Most of what it calls leakage is goodwill I chose to give away, and I'm not uploading contracts and client billing data to a new company with no track record just to be told what I already know. £4k over six months on demo data isn't enough to make me move.",
-  "would_change_my_mind": "Two or three owners in my peer group showing me their own audit results, with money they actually recovered without losing clients.",
-  "price_too_cheap": 30,
-  "price_cheap": 79,
-  "price_expensive": 249,
-  "price_too_expensive": 450
+  "reason": "I know we give away some work, that's how we keep clients, and I don't need a stranger telling me which goodwill to claw back. Nobody in my peer group has used this, and I'm not handing a one-man startup our PSA export and client contracts to be one of his first ten guinea pigs.",
+  "objection": "It's an unknown founder with no track record asking for our full ticket history and client contracts. A DPA is just paper if the company folds, and I'd want proof it finds real money rather than a list of things I already chose not to bill.",
+  "would_change_my_mind": "Two or three owners in my peer group telling me it found real, billable money in their book without upsetting clients, ideally with benchmark numbers I can compare against.",
+  "price_too_cheap": 20,
+  "price_cheap": 50,
+  "price_expensive": 200,
+  "price_too_expensive": 400
 }

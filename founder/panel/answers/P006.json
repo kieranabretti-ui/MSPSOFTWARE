@@ -1,13 +1,13 @@
 {
   "id": "P006",
-  "buys": false,
-  "purchases_first_month": 0,
+  "buys": true,
+  "purchases_first_month": 1,
   "reason_code": "need",
-  "reason": "I'd probably run the free audit because it costs me nothing but an afternoon of exports, but I wouldn't pay yet. Most of the free work it'll flag is free on purpose, it's how we keep clients, so I'm not convinced there's £99 a month of money I'd actually go and chase.",
-  "objection": "Leakage I'll never bill isn't a return. If half of what it finds is goodwill I chose to give, and the rest depends on how well it reads our messy old contract PDFs, the real recoverable number could be tiny once my accountant looks at it.",
-  "would_change_my_mind": "The free audit on my own data turning up unbilled licences or uninvoiced billable time, not goodwill work, worth clearly more than a year's subscription that I can actually invoice.",
+  "reason": "The audit is free, there's a DPA, and if it finds less than £1,000 I don't pay, so as a numbers person I'd book the call and let the report make the case. I'd only keep the £99 a month if the first report turns up real money I'm prepared to bill, not just goodwill I already know about.",
+  "objection": "I already know we do some free work and that's partly how we keep clients. My worry is the report mostly lists stuff I'll choose not to bill, and I've handed client ticket data and contracts to a one-person outfit I've never heard of.",
+  "would_change_my_mind": "If the first report's billable findings that I'd actually invoice come in under a few hundred pounds a month, I'd cancel and not take the subscription.",
   "price_too_cheap": 20,
-  "price_cheap": 49,
-  "price_expensive": 179,
-  "price_too_expensive": 300
+  "price_cheap": 50,
+  "price_expensive": 200,
+  "price_too_expensive": 400
 }

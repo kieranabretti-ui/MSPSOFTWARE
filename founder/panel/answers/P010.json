@@ -3,11 +3,11 @@
   "buys": false,
   "purchases_first_month": 0,
   "reason_code": "need",
-  "reason": "I already pay for a billing reconciliation and reporting stack that catches unbilled licences and time, so this looks like overlap. I might run the free audit out of curiosity, but I wouldn't pay £99 a month for a list of maybes I then have to chase client by client.",
-  "objection": "Potential leakage isn't money in the bank. Every item means an awkward conversation with a client I want to keep, and £4k over six months on a 15-client demo isn't enough to justify another tool, another round of CSV exports and the time to review it.",
-  "would_change_my_mind": "If the free audit on my own data turned up a meaningful amount that my current tools had clearly missed, mostly in things I can actually bill without a fight, like unbilled licences and seat growth past the agreement.",
-  "price_too_cheap": 15,
-  "price_cheap": 40,
+  "reason": "I already pay for a reconciliation/BI tool that flags unbilled licences and over-serviced clients, so this mostly looks like overlap. Even the free audit costs me a 45-minute call and an export in a week I don't have, and a list of 'potential' money still means me going cap in hand to every client.",
+  "objection": "Potential leakage isn't money in the bank. I'd have to chase every client and risk the relationship, and most of the licence side my existing tool already catches.",
+  "would_change_my_mind": "Seeing a peer MSP on r/msp or a LinkedIn group show it found billable time and outgrown agreements that Gradient/BrightGauge-style tools missed, and that they actually got paid for it.",
+  "price_too_cheap": 20,
+  "price_cheap": 49,
   "price_expensive": 99,
-  "price_too_expensive": 200
+  "price_too_expensive": 199
 }

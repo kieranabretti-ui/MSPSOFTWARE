@@ -1,0 +1,13 @@
+{
+  "id": "P020",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "need",
+  "reason": "I do the billing myself every month, so I already know where most of the free work goes, and a lot of it is deliberate because it keeps clients happy. I might run the free audit on a quiet evening out of curiosity, but I wouldn't pay £99 to £249 a month to be told about favours I chose to do.",
+  "objection": "Most of what it calls leakage I'd look at and say 'yes, I know, that's goodwill'. And exporting CSVs and digging out contract PDFs is another month-end job on top of the one that already takes too long.",
+  "would_change_my_mind": "If the free audit on my own data turned up a real chunk of billable time or licences I genuinely didn't know about, a few thousand quid I'd actually go and invoice, not just goodwill I already give away on purpose.",
+  "price_too_cheap": 15,
+  "price_cheap": 40,
+  "price_expensive": 99,
+  "price_too_expensive": 200
+}
