@@ -5,8 +5,9 @@
 Headroom reads the exports an MSP already has (tickets, time entries, users and devices, billing
 lines and contracts) and finds revenue leakage: out-of-scope work done for free, billable time that
 never reached an invoice, clients who have grown past their agreement, licences that aren't billed,
-and clients priced below your target margin. Every finding shows the evidence behind it, a confidence
-score, an estimated value and a recommended action. Figures are always presented as **potential**
+and clients priced below your target margin. Every opportunity shows the evidence behind it, how its
+value was calculated, a confidence level (High, Medium or Low) with its basis, an estimated value and a
+recommended action. Figures are always presented as **potential**
 leakage to review, never as money that is definitely recoverable.
 
 This is a working MVP. It runs from CSV and PDF uploads only; there are no PSA, RMM, accounting or
@@ -19,7 +20,7 @@ npm install
 npm run dev
 ```
 
-Open <http://localhost:5173> and click **View Demo**. A demo MSP (Northlight IT, 15 clients,
+Open <http://localhost:5173> and click **Explore the demo**. A demo MSP (Northlight IT, 15 clients,
 fictional) is generated, analysed and shown on the dashboard:
 
 | | |
@@ -27,17 +28,22 @@ fictional) is generated, analysed and shown on the dashboard:
 | Potential leakage identified (Apr–Sep 2026) | **£4,281** |
 | Recurring leakage | **£356 a month** |
 | Annualised recurring opportunity | **£4,272** |
-| Out-of-scope work | £1,240 · 12 findings |
-| Unbilled time | £840 · 17 findings |
-| Agreement drift | £1,120 · 6 findings |
+| Out-of-scope work | £1,240 · 12 opportunities |
+| Unbilled work | £840 · 17 opportunities |
+| Agreement drift | £1,120 · 6 opportunities |
 | Underpriced clients | £681 · 3 clients |
 
 The remaining £400 comes from one block-hours overage and one unbilled licence. Demo data is labelled
 as such throughout the app and in the report.
 
-The demo is fully interactive: open a finding (try ticket #18492, a personal MacBook set up for a
-client whose agreement covers company-owned devices only), mark it valid or dismiss it, create and
-resolve actions, look at client profitability, and download the report as PDF or CSV.
+The demo is fully interactive: open an opportunity (try ticket #18492, a personal MacBook set up for a
+client whose agreement covers company-owned devices only), move it from New through Reviewing and
+Approved to Actioned or dismiss it, work the recovery queue, look at client profitability, and download
+the report as PDF or CSV.
+
+The landing page's **Get a Free Revenue Leakage Audit** opens sign-up (`/signup?intent=audit`). The free
+audit is a self-serve account plus its first analysis; from inside the demo the button ends the demo
+first. Pricing (Starter £99, Growth £249, Pro £499 a month) is shown as planned, not live.
 
 ## Running modes
 
@@ -46,7 +52,7 @@ resolve actions, look at client profitability, and download the report as PDF or
 | **Local** | No Supabase keys set | Email/password accounts and workspaces are stored in this browser only. Good for demos and evaluation. |
 | **Supabase** | `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` set | Supabase Auth (email/password and magic link), Postgres with Row Level Security per workspace, private file storage, and the optional AI review. |
 
-**View Demo** always runs in a local sandbox, so the shared demo never touches a real workspace.
+**Explore the demo** always runs in a local sandbox, so the shared demo never touches a real workspace.
 
 ### Setting up Supabase
 
@@ -114,7 +120,8 @@ with `npm run samples`.
 
 The analysis is a deterministic rules engine (`src/engine/`). The same data always produces the same
 findings, and every finding links back to the rows it came from. Nothing is sent to an AI model
-unless someone clicks **Explain this finding**.
+unless someone clicks **Explain this opportunity**. The `/security` page sets out what is and isn't in
+place, in sentences the code backs.
 
 | Category | What it checks | How it is valued |
 |---|---|---|
@@ -153,7 +160,7 @@ The function runs with the caller's own session, so Row Level Security still app
 | `npm run build:preview` | Build a self-contained preview to `dist-preview/`: it opens straight into the demo, keeps routes in memory so any static host works without rewrites, and turns off file downloads |
 | `npm run typecheck` | TypeScript only |
 | `npm test` | Vitest: the engine must produce exactly the headline figures above, the brand tokens in `src/brand/tokens.ts` must match `brand/brand-tokens.css`, and the landing page's demo snapshot must match the engine |
-| `npm run e2e` | Browser smoke test of the demo, findings, actions, reports, sign-up, CSV mapping, PDF contract upload and mobile layout (needs `dev` or `preview` running; set `BASE_URL` if not on 5173) |
+| `npm run e2e` | Browser smoke test of the landing page, the demo, opportunities, the recovery queue, reports, sign-up, CSV mapping, PDF contract upload, mobile layout and leaving the demo for the free audit (needs `dev` or `preview` running; set `BASE_URL` if not on 5173) |
 | `npm run samples` | Regenerate `samples/` |
 
 CI (`.github/workflows/ci.yml`) runs the type check, tests, build and the browser smoke test on every

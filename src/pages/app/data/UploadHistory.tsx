@@ -106,7 +106,7 @@ export function UploadHistory({ uploads, onClear }: { uploads: Upload[]; onClear
           </tbody>
         </table>
       ) : (
-        <div className="px-5 py-8 text-center">
+        <div className="px-5 py-8">
           <p className="text-body text-ink-2">Nothing uploaded yet.</p>
           <p className="mt-1 text-small text-ink-3">Each file you import appears here with its row count and any warnings.</p>
         </div>

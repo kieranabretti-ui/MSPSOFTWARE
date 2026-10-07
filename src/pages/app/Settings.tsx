@@ -1,9 +1,10 @@
 import { useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react'
 import { ChevronDown } from 'lucide-react'
-import { useStore, supabaseConfigured } from '../../data/store'
+import { useStore } from '../../data/store'
 import { Badge, Button, Card, Field, PageHeader, TextLink, cx, inputCls } from '../../components/ui'
 import { useToast } from '../../components/toast'
 import { DEFAULT_SETTINGS, type WorkspaceSettings } from '../../engine/types'
+import { mapError } from '../../lib/errors'
 import { Callout } from './data/kit'
 
 type NumKey = Exclude<keyof WorkspaceSettings, 'currency' | 'business_hours_start' | 'business_hours_end'>
@@ -22,9 +23,9 @@ const FIELDS: FieldDef[] = [
 const byKey = (k: NumKey) => FIELDS.find((f) => f.key === k)!
 
 const GROUPS: { title: string; body: string; keys: NumKey[] }[] = [
-  { title: 'Rates', body: 'What an hour costs you, and what you charge for one. These value every finding about time.', keys: ['labour_cost_per_hour', 'billable_rate_per_hour', 'after_hours_multiplier'] },
+  { title: 'Rates', body: 'What an hour costs you, and what you charge for one. Every opportunity about time is valued with these.', keys: ['labour_cost_per_hour', 'billable_rate_per_hour', 'after_hours_multiplier'] },
   { title: 'Default prices', body: 'Used when a client has no matching billing line, so drift and licences can still be valued.', keys: ['default_user_price', 'default_device_price', 'default_software_cost_per_user'] },
-  { title: 'Thresholds', body: 'How far a client can fall short, or run over, before it becomes a finding.', keys: ['target_margin', 'excessive_usage_threshold'] },
+  { title: 'Thresholds', body: 'How far a client can fall short, or run over, before it becomes an opportunity.', keys: ['target_margin', 'excessive_usage_threshold'] },
 ]
 
 type ErrKey = NumKey | 'name' | 'hours'
@@ -78,7 +79,7 @@ function TimeSelect({ value, onChange, invalid }: { value: string; onChange: (v:
 }
 
 export default function Settings() {
-  const { workspace, user, updateSettings, runAnalysis, analysis, backend } = useStore()
+  const { workspace, user, updateSettings, runAnalysis, analysis, backend, isDemoSession } = useStore()
   const toast = useToast()
   const s = workspace!.settings
   const initial = (): Record<string, string> => ({
@@ -113,10 +114,10 @@ export default function Settings() {
     setSaving(true)
     try {
       await updateSettings(patch, name.trim())
-      if (analysis) await runAnalysis()
-      toast(analysis ? 'Settings saved and analysis re-run.' : 'Settings saved.')
+      if (analysis) await runAnalysis({ source: 'settings' })
+      toast(analysis ? 'Saved. The analysis has been re-run with your new rates.' : 'Saved. These apply the next time you run the analysis.')
     } catch (e) {
-      toast(e instanceof Error ? e.message : 'Could not save settings.', 'error')
+      toast(mapError(e, 'settings'), 'error')
     } finally {
       setSaving(false)
     }
@@ -212,17 +213,19 @@ export default function Settings() {
           <Section title="Storage" body="Where this workspace keeps its data.">
             <div className="space-y-2.5">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="text-body text-ink-2">Backend</span>
-                {backend.mode === 'supabase' ? <Badge tone="success">Supabase</Badge> : <Badge tone="warning">This browser only</Badge>}
+                <span className="text-body text-ink-2">Stored in</span>
+                {backend.mode === 'supabase' ? <Badge tone="success">Your workspace</Badge> : isDemoSession ? <Badge>Demo sandbox</Badge> : <Badge tone="warning">This browser only</Badge>}
               </div>
               {backend.mode === 'supabase' ? (
-                <p className="max-w-[68ch] text-small text-ink-3">Stored in Supabase with row-level security on every table. Contract files are kept in private storage.</p>
+                <p className="max-w-[68ch] text-small text-ink-3">Stored in your Headroom workspace with row-level security on every table. Contract files are kept in private storage.</p>
+              ) : isDemoSession ? (
+                <p className="max-w-[68ch] text-small text-ink-3">This is the demo sandbox. Sign out and create an account to keep your own data.</p>
               ) : (
-                <p className="max-w-[68ch] text-small text-ink-3">
-                  {supabaseConfigured
-                    ? 'This is the demo sandbox. Sign out and create an account to keep data in your workspace.'
-                    : 'Supabase is not configured for this deployment, so data stays in this browser. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable accounts and shared storage.'}
-                </p>
+                <p className="max-w-[68ch] text-small text-ink-3">Stored only in this browser on this device. Clearing browser data removes it.</p>
+              )}
+              {/* Setup help for developers only; production builds drop this branch. */}
+              {import.meta.env.DEV && backend.mode === 'local' && !isDemoSession && (
+                <p className="max-w-[68ch] text-caption text-ink-3">Development build: set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to store workspaces with accounts.</p>
               )}
             </div>
           </Section>
@@ -233,7 +236,7 @@ export default function Settings() {
                 <Badge>Planned</Badge>
               </div>
               <p className="max-w-[68ch] text-small text-ink-3">
-                Until then, upload the CSV exports you already have. <TextLink to="/app/data">Go to Data</TextLink>
+                Until then, upload the CSV exports you already have. <TextLink to="/app/analyses">Go to Analyses</TextLink>
               </p>
             </div>
           </Section>

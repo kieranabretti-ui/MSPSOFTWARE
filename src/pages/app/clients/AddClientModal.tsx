@@ -5,6 +5,7 @@ import { Button, Field, Modal, inputCls } from '../../../components/ui'
 import { useToast } from '../../../components/toast'
 import { parseNumber } from '../../../data/importers'
 import { ICONS } from '../../../brand/icons'
+import { GENERIC_ERROR, mapError } from '../../../lib/errors'
 
 const EMPTY = { name: '', mrr: '', users: '', devices: '', pkg: '', included: '', software: '' }
 
@@ -41,10 +42,11 @@ export function AddClientModal({ open, onClose, onCreated }: { open: boolean; on
       setForm(EMPTY)
       onClose()
       if (onCreated) return onCreated(c.id)
-      toast(`${c.name} added. Upload their tickets and contract, then re-run the analysis.`)
+      toast(`${c.name} added. Upload their tickets and contract on the Analyses page, then run the analysis again.`)
       nav(`/app/clients/${c.id}`)
-    } catch {
-      setError('The client could not be saved. Check your connection and try again.')
+    } catch (e) {
+      const message = mapError(e, 'save')
+      setError(message === GENERIC_ERROR ? "We couldn't save this client. Nothing was changed. Try again." : message)
     } finally {
       setBusy(false)
     }

@@ -1,32 +1,23 @@
 import type { ReactNode } from 'react'
-import { ChevronDown, ChevronRight } from 'lucide-react'
 import { Badge, Figure, cx } from '../../components/ui'
 import { ShareBars } from '../../components/bars'
+import { ConfidenceLevel } from '../../components/ConfidenceLevel'
 import { money, num, plural } from '../../lib/format'
-import { CATEGORY_META } from '../../lib/labels'
+import { CATEGORY_META, CONFIDENCE, FINDING_STATUS } from '../../lib/labels'
 import { DEMO } from './demoSnapshot'
 import { Section, SectionIntro } from './primitives'
 
-// Upload, Analyse, Recover: one frame, three panes, each showing what that
-// step actually produced for the demo MSP rather than an icon and a promise.
-// The sequence lives in the joins: a small chevron set into the hairline
-// between panes, across on desktop and down on mobile.
+// How it works, in four numbered steps. The numbers carry the order, and each
+// pane shows what that step actually produced for the demo MSP rather than an
+// icon and a promise: the files, the checks, the evidence, the queue.
 
-function Pane({ verb, line, join, children, foot, className }: { verb: string; line: string; join?: boolean; children: ReactNode; foot?: ReactNode; className?: string }) {
+function Pane({ n, title, line, children, foot, className }: { n: string; title: string; line: ReactNode; children: ReactNode; foot?: ReactNode; className?: string }) {
   return (
-    <div className={cx('relative flex min-w-0 flex-col', className)}>
-      {join && (
-        <span
-          className="absolute left-5 top-0 flex h-4 w-6 -translate-y-1/2 items-center justify-center bg-surface text-ink-3 sm:left-7 lg:left-0 lg:top-[2.375rem] lg:h-6 lg:w-4 lg:-translate-x-1/2"
-          aria-hidden
-        >
-          <ChevronDown className="size-3.5 lg:hidden" />
-          <ChevronRight className="hidden size-3.5 lg:block" />
-        </span>
-      )}
+    <div className={cx('flex min-w-0 flex-col', className)}>
       <div className="px-5 pb-5 pt-6 sm:px-7">
-        <h3 className="text-h2 text-ink">{verb}</h3>
-        <p className="mt-1 text-small text-ink-3">{line}</p>
+        <p className="tnum text-small font-medium text-ink-3">{n}</p>
+        <h3 className="mt-2 text-h2 text-ink">{title}</h3>
+        <p className="mt-1.5 max-w-[56ch] text-small text-ink-3">{line}</p>
       </div>
       <div className="flex-1 px-5 pb-6 sm:px-7">{children}</div>
       {foot && <div className="flex min-h-13 items-center border-t border-line-soft bg-sunken px-5 py-3 sm:px-7">{foot}</div>}
@@ -44,16 +35,23 @@ export function Flow() {
     { name: 'Billing lines', kind: 'CSV', rows: d.billingLines },
     { name: 'Contracts', kind: 'PDF', rows: d.contracts },
   ]
-  const recurringShown = DEMO.recurring.rows
+  const { rows: recurringRows, restCount, restMonthly } = DEMO.recurring
+  // The working stages; nothing in the demo is dismissed.
+  const stages = DEMO.stages.filter((s) => s.status !== 'dismissed' || s.count > 0)
 
   return (
     <Section id="how" label="how-title">
       <SectionIntro id="how-title" title="Headroom finds the revenue hiding inside your existing MSP data.">
-        <p>No integration project. Upload the exports you already run, let the rules check every ticket against its contract, and act on what they find.</p>
+        <p>No integration project. Upload the exports you already run, let the rules check them against each agreement, and act on what they find.</p>
       </SectionIntro>
 
-      <div className="mt-12 grid grid-cols-1 overflow-hidden rounded-xl border border-line bg-surface lg:mt-16 lg:grid-cols-3">
-        <Pane verb="Upload" line="The exports from your PSA, RMM and billing system, plus contract PDFs." foot={<p className="text-caption text-ink-3">What {DEMO.msp} uploaded for the demo.</p>}>
+      <div className="mt-12 grid grid-cols-1 overflow-hidden rounded-xl border border-line bg-surface md:grid-cols-2 lg:mt-16">
+        <Pane
+          n="01"
+          title="Upload your PSA exports"
+          line="CSV exports from your PSA, RMM and billing system, plus contract PDFs."
+          foot={<p className="text-caption text-ink-3">What {DEMO.msp} uploaded for the demo.</p>}
+        >
           <table className="w-full text-small">
             <caption className="sr-only">Data uploaded</caption>
             <tbody>
@@ -76,40 +74,89 @@ export function Flow() {
         </Pane>
 
         <Pane
-          className="border-t border-line lg:border-l lg:border-t-0"
-          join
-          verb="Analyse"
-          line="Rules check every ticket, time entry, user, device and charge against the agreement."
-          foot={<p className="tnum text-caption text-ink-3">{plural(DEMO.totals.findings, 'finding')}, each tied to the record behind it.</p>}
+          className="border-t border-line md:border-l md:border-t-0"
+          n="02"
+          title="We analyse it"
+          line="Rules compare tickets, time, users, devices and charges with each agreement, and check each ticket against the clauses found in that client's contract."
+          foot={<p className="tnum text-caption text-ink-3">{plural(DEMO.totals.findings, 'opportunity', 'opportunities')}, each tied to the record behind it.</p>}
         >
           <ShareBars
             rows={DEMO.categories.map((c) => ({
               label: CATEGORY_META[c.category].label,
               value: c.value,
-              sub: c.category === 'UNDERPRICED_CLIENT' ? plural(c.clients, 'client') : plural(c.count, 'finding'),
+              sub: c.category === 'UNDERPRICED_CLIENT' ? plural(c.clients, 'client') : plural(c.count, 'opportunity', 'opportunities'),
             }))}
           />
         </Pane>
 
         <Pane
-          className="border-t border-line lg:border-l lg:border-t-0"
-          join
-          verb="Recover"
-          line="Correct the agreement, bill the work, or reprice the client."
+          className="border-t border-line"
+          n="03"
+          title="Find the leakage"
+          line="Every opportunity carries its records, its calculation and a confidence level."
+          foot={<p className="tnum text-caption text-ink-3">Each level comes from the rule that raised it and where its evidence came from.</p>}
+        >
+          <table className="w-full text-small">
+            <caption className="sr-only">Opportunities in the demo by confidence level</caption>
+            <thead>
+              <tr className="border-b border-line-soft">
+                <th scope="col" className="pb-2 text-left text-caption font-normal text-ink-3">
+                  Confidence
+                </th>
+                <th scope="col" className="pb-2 text-right text-caption font-normal text-ink-3">
+                  Opportunities
+                </th>
+                <th scope="col" className="pb-2 text-right text-caption font-normal text-ink-3">
+                  Value
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {DEMO.levels.map((l) => (
+                <tr key={l.level} className="border-t border-line-soft first:border-t-0">
+                  <th scope="row" className="py-2.5 pr-3 text-left font-normal">
+                    <ConfidenceLevel level={l.level} />
+                  </th>
+                  <td className="tnum py-2.5 pr-3 text-right text-ink-2">{l.count}</td>
+                  <td className="tnum py-2.5 text-right font-medium text-ink">{money(l.value)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <dl className="mt-4 space-y-1.5 border-t border-line-soft pt-4 text-caption">
+            {DEMO.levels.map((l) => (
+              <div key={l.level} className="flex gap-2">
+                <dt className="w-14 shrink-0 font-medium text-ink-2">{CONFIDENCE[l.level].short}</dt>
+                <dd className="text-ink-3">{CONFIDENCE[l.level].definition}</dd>
+              </div>
+            ))}
+          </dl>
+        </Pane>
+
+        <Pane
+          className="border-t border-line md:border-l"
+          n="04"
+          title="Take action"
+          line={
+            <>
+              <span className="font-medium text-ink-2">Commercial opportunities: turn findings into action, prioritised by financial impact.</span> Work through each opportunity from New to Actioned:
+              correct the agreement, bill the work or reprice the client.
+            </>
+          }
           foot={
             <div className="flex w-full items-baseline justify-between gap-4">
-              <p className="tnum text-caption text-ink-3">Recurring, across {plural(DEMO.recurring.count, 'finding')}</p>
+              <p className="tnum text-caption text-ink-3">Recurring, across {plural(DEMO.recurring.count, 'opportunity', 'opportunities')}</p>
               <p className="tnum text-right">
                 <Figure size="md" tone="accent">
                   {money(DEMO.totals.monthly)}
                 </Figure>
-                <span className="ml-1 text-small text-ink-3">a month</span>
+                <span className="ml-1 text-small text-ink-3">a month recurring</span>
               </p>
             </div>
           }
         >
           <ul>
-            {recurringShown.map((f) => (
+            {recurringRows.map((f) => (
               <li key={f.title + f.client} className="flex items-baseline justify-between gap-4 border-t border-line-soft py-2.5 first:border-t-0">
                 <span className="min-w-0">
                   <span className="block truncate text-small font-medium text-ink">{f.client}</span>
@@ -117,12 +164,29 @@ export function Flow() {
                 </span>
                 <span className="tnum shrink-0 text-small font-semibold text-ink">
                   +{money(f.monthly)}
-                  <span className="font-normal text-ink-3">/mo</span>
+                  <span className="font-normal text-ink-3"> a month</span>
                 </span>
               </li>
             ))}
           </ul>
-          <p className="tnum mt-3 text-caption text-ink-3">{money(DEMO.totals.annual)} a year if left uncorrected.</p>
+          {restCount > 0 && (
+            <p className="tnum border-t border-line-soft py-2.5 text-caption text-ink-3">
+              +{plural(restCount, 'more recurring opportunity', 'more recurring opportunities')} · {money(restMonthly)} a month
+            </p>
+          )}
+          <div className="@container mt-3">
+            <dl aria-label="Opportunities by stage in the demo" className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-line-soft bg-line-soft @md:grid-cols-4">
+              {stages.map((s) => (
+                <div key={s.status} className="min-w-0 bg-surface px-3 py-2.5">
+                  <dt className="truncate text-caption text-ink-3">{FINDING_STATUS[s.status]}</dt>
+                  <dd className="tnum mt-0.5 flex items-baseline gap-1.5">
+                    <span className="text-small font-semibold text-ink">{s.count}</span>
+                    <span className="truncate text-caption text-ink-2">{money(s.value)}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </Pane>
       </div>
     </Section>

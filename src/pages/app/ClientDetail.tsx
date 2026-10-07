@@ -1,17 +1,23 @@
-import { useMemo } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useEffect, useMemo } from 'react'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { useStore, counted } from '../../data/store'
-import { Card, EmptyState, HealthDot, PageHeader, ButtonLink } from '../../components/ui'
+import { Card, EmptyState, PageHeader, ButtonLink } from '../../components/ui'
 import { money } from '../../lib/format'
 import { monthLabel } from '../../engine/analyse'
-import { AgreementCard, AgreementFacts, ClientFindings, ContractsCard, HoursCard, LeakagePanel, ProfitabilityCard } from './clients/profile'
+import { DEFAULT_SETTINGS } from '../../engine/types'
+import { AgreementFacts, ClientFindings, ContractsCard, HoursCard, LeakagePanel, ProfitabilityCard } from './clients/profile'
+import { ClientHealth, useLiveHealth } from './clients/parts'
+import { ContractVsReality } from './contracts/ContractVsReality'
 
 export default function ClientDetail() {
   const { id } = useParams()
+  const { hash } = useLocation()
   const { data, analysis, workspace } = useStore()
+  const health = useLiveHealth()
   const client = data.clients.find((c) => c.id === id)
   const mt = analysis?.summary.client_metrics.find((c) => c.client_id === id)
+  const live = id ? health.get(id) : undefined
   const findings = data.findings.filter((f) => f.client_id === id).sort((a, b) => b.estimated_value - a.estimated_value)
   const contracts = data.contracts.filter((c) => c.client_id === id)
   const billing = data.billing_items.filter((b) => b.client_id === id)
@@ -24,6 +30,16 @@ export default function ClientDetail() {
     for (const t of data.tickets) if (t.client_id === id && !withEntries.has(t.external_id)) h[t.date.slice(0, 7)] = (h[t.date.slice(0, 7)] ?? 0) + t.time_spent_minutes / 60
     return analysis.summary.months.map((m) => ({ label: monthLabel(m), value: Math.round((h[m] ?? 0) * 10) / 10 }))
   }, [analysis, data.time_entries, data.tickets, id])
+
+  // A link from the Contracts page lands on the contract section. The layout
+  // scrolls to the top on a new page, so this waits a frame and goes after it.
+  const target = hash.slice(1)
+  const ready = !!mt
+  useEffect(() => {
+    if (!target || !ready) return
+    const raf = requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }))
+    return () => cancelAnimationFrame(raf)
+  }, [target, ready, id])
 
   if (!client)
     return (
@@ -40,11 +56,17 @@ export default function ClientDetail() {
       </Card>
     )
 
-  const live = findings.filter(counted)
-  const leakage = live.reduce((a, f) => a + f.estimated_value, 0)
-  const recurring = live.reduce((a, f) => a + f.monthly_value, 0)
-  const target = workspace?.settings.target_margin ?? 0.3
-  const labourRate = workspace?.settings.labour_cost_per_hour ?? 35
+  const counting = findings.filter(counted)
+  // Overlaps are disclosed, not netted (the engine records them per opportunity).
+  const countedKeys = new Set(counting.map((f) => f.finding_key))
+  const overlap = counting.some((f) => f.meta.overlaps?.some((k) => countedKeys.has(k)))
+  const leakage = counting.reduce((a, f) => a + f.estimated_value, 0)
+  const recurring = counting.reduce((a, f) => a + f.monthly_value, 0)
+  // The settings the analysis ran with, so the target price and margins agree
+  // with the opportunities it raised.
+  const settings = { ...DEFAULT_SETTINGS, ...workspace?.settings, ...analysis?.summary.settings }
+  const targetMargin = settings.target_margin
+  const labourRate = settings.labour_cost_per_hour
   const months = analysis?.summary.months.length ?? 0
   const periodLabel = analysis?.summary.period_label ?? ''
 
@@ -61,20 +83,20 @@ export default function ClientDetail() {
         title={client.name}
         subtitle={
           <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            {mt && <HealthDot health={mt.health} />}
+            {live && <ClientHealth health={live.health} known={live.known} />}
             <span className="tnum">{meta}</span>
           </span>
         }
       />
 
-      {!mt ? (
+      {!mt || !live ? (
         <div className="space-y-6">
           <AgreementFacts client={client} />
           <Card>
             <EmptyState
               title="Not analysed yet"
-              body="Upload tickets, time and agreement data for this client, then run the analysis from the Data page."
-              action={<ButtonLink to="/app/data">Go to data</ButtonLink>}
+              body="Upload tickets, time and agreement data for this client, then run the analysis from the Analyses page to see its margin, contract against reality and any opportunities."
+              action={<ButtonLink to="/app/analyses">Go to Analyses</ButtonLink>}
             />
           </Card>
         </div>
@@ -86,22 +108,26 @@ export default function ClientDetail() {
             billed={client.monthly_recurring_revenue * months}
             months={months}
             periodLabel={periodLabel}
-            findingCount={live.length}
-            health={mt.health}
-            reasons={mt.reasons}
-            recommendation={mt.recommendation}
+            findingCount={counting.length}
+            health={live.health}
+            known={live.known}
+            overlap={overlap}
+            reasons={live.reasons}
+            recommendation={live.recommendation}
           />
 
-          <ClientFindings findings={findings} total={leakage} periodLabel={periodLabel} />
+          <ClientFindings findings={findings} total={leakage} periodLabel={periodLabel} clientId={client.id} />
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <ProfitabilityCard mt={mt} target={target} periodLabel={periodLabel} avgHours={analysis!.summary.average_monthly_hours} labourRate={labourRate} clientName={client.name} />
-            <AgreementCard client={client} mt={mt} billing={billing} />
-          </div>
+          <section id="contract" className="scroll-mt-20 lg:scroll-mt-8">
+            <ContractVsReality client={client} mt={mt} billing={billing} contracts={contracts} findings={findings} settings={settings} />
+          </section>
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <HoursCard data={monthly} includedHours={client.included_hours} labourRate={labourRate} />
-            <ContractsCard contracts={contracts} />
+          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+            <ProfitabilityCard mt={mt} target={targetMargin} periodLabel={periodLabel} avgHours={analysis!.summary.average_monthly_hours} labourRate={labourRate} clientName={client.name} />
+            <div className="space-y-6">
+              <HoursCard data={monthly} includedHours={client.included_hours} labourRate={labourRate} />
+              <ContractsCard contracts={contracts} />
+            </div>
           </div>
         </div>
       )}

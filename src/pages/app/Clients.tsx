@@ -2,12 +2,12 @@ import { useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'r
 import { Link, useNavigate } from 'react-router-dom'
 import { Plus, Search, X } from 'lucide-react'
 import { useMetrics, useStore } from '../../data/store'
-import { Button, ButtonLink, Card, EmptyState, HealthDot, PageHeader, cx, inputCls } from '../../components/ui'
+import { Button, ButtonLink, Card, EmptyState, PageHeader, cx, inputCls } from '../../components/ui'
 import { ICONS } from '../../brand/icons'
 import { hours, money, plural } from '../../lib/format'
 import type { Client, ClientMetrics } from '../../engine/types'
 import { AddClientModal } from './clients/AddClientModal'
-import { LeakageCell, MarginValue, SeatCount } from './clients/parts'
+import { ClientHealth, LeakageCell, MarginValue, SeatCount, marginKnown, useLiveHealth, type LiveHealth } from './clients/parts'
 
 // Data.tsx imports the modal from here.
 export { AddClientModal }
@@ -21,6 +21,8 @@ const VIEWS: { id: View; icon: (typeof ICONS)[keyof typeof ICONS] }[] = [
 interface Row {
   c: Client
   mt: ClientMetrics | undefined
+  // health from the opportunities that still count
+  live: LiveHealth | undefined
   leakage: number
 }
 
@@ -41,6 +43,11 @@ const thBase = 'px-3 py-2.5 text-label font-semibold uppercase text-ink-3'
 const th = cx(thBase, 'text-right')
 const td = 'px-3 py-3 text-right tnum'
 const dash = <span className="text-ink-3">—</span>
+const sep = (
+  <span aria-hidden className="text-ink-3">
+    {' · '}
+  </span>
+)
 
 export default function Clients() {
   const { data, analysis, workspace } = useStore()
@@ -51,28 +58,33 @@ export default function Clients() {
   const [adding, setAdding] = useState(false)
   const tabs = useRef<(HTMLButtonElement | null)[]>([])
   const metrics = useMemo(() => new Map((analysis?.summary.client_metrics ?? []).map((c) => [c.client_id, c])), [analysis])
+  const health = useLiveHealth()
   const target = workspace?.settings.target_margin ?? 0.3
   const months = analysis?.summary.months.length ?? 0
 
-  const all: Row[] = data.clients.map((c) => ({ c, mt: metrics.get(c.id), leakage: m.leakageByClient.get(c.id) ?? 0 }))
+  const all: Row[] = data.clients.map((c) => ({ c, mt: metrics.get(c.id), live: health.get(c.id), leakage: m.leakageByClient.get(c.id) ?? 0 }))
+  // Margin sorts and totals only use clients whose margin can be measured.
+  const marginOf = (r: Row) => (r.mt && marginKnown(r.mt) ? r.mt.margin : Infinity)
   const rows = all
     .filter(({ c }) => !q || c.name.toLowerCase().includes(q.toLowerCase()))
     .sort(
       view === 'profitability'
-        ? // Weakest margin first; clients without figures go last.
-          (a, b) => (a.mt ? a.mt.margin : Infinity) - (b.mt ? b.mt.margin : Infinity) || a.c.name.localeCompare(b.c.name)
+        ? // Weakest margin first; clients without a measurable margin go last.
+          (a, b) => marginOf(a) - marginOf(b) || a.c.name.localeCompare(b.c.name)
         : (a, b) => b.leakage - a.leakage || a.c.name.localeCompare(b.c.name),
     )
   const avg = analysis?.summary.average_monthly_hours
-  const atRisk = all.filter((r) => r.mt?.health === 'at_risk').length
+  // Live health is never At risk without MRR, so those clients stay out of this count.
+  const atRisk = all.filter((r) => r.live?.known && r.live.health === 'at_risk').length
   const overContract = all.filter(({ c, mt }) => mt && ((c.contracted_users != null && mt.users > c.contracted_users) || (c.contracted_devices != null && mt.devices > c.contracted_devices))).length
 
   // Totals for the rows on screen, so a search still adds up.
   const withMt = rows.filter((r) => r.mt) as (Row & { mt: ClientMetrics })[]
-  const sum = (f: (r: Row & { mt: ClientMetrics }) => number) => withMt.reduce((a, r) => a + f(r), 0)
+  const sum = (f: (r: Row & { mt: ClientMetrics }) => number, rs = withMt) => rs.reduce((a, r) => a + f(r), 0)
+  const measured = withMt.filter((r) => marginKnown(r.mt))
   const totalMrr = rows.reduce((a, r) => a + r.c.monthly_recurring_revenue, 0)
-  const totalContribution = sum((r) => r.mt.contribution)
-  const totalMtMrr = sum((r) => r.mt.mrr)
+  const totalContribution = sum((r) => r.mt.contribution, measured)
+  const totalMtMrr = sum((r) => r.mt.mrr, measured)
   const totalLeakage = rows.reduce((a, r) => a + r.leakage, 0)
   // Bars rank against the largest leak across every client, so a search keeps the scale.
   const maxLeakage = Math.max(0, ...all.map((r) => r.leakage))
@@ -88,9 +100,19 @@ export default function Clients() {
   const subtitle: ReactNode = analysis ? (
     <>
       {plural(data.clients.length, 'client')}
-      {atRisk > 0 && <> · {atRisk} at risk</>}
-      {overContract > 0 && <> · {overContract} above contract</>}
-      <span className="text-ink-4"> · </span>
+      {atRisk > 0 && (
+        <>
+          {sep}
+          {atRisk} at risk
+        </>
+      )}
+      {overContract > 0 && (
+        <>
+          {sep}
+          {overContract} above contract
+        </>
+      )}
+      {sep}
       Monthly averages for {analysis.summary.period_label}
     </>
   ) : (
@@ -112,14 +134,14 @@ export default function Clients() {
         <Card>
           <EmptyState
             title="No clients yet"
-            body="Add a client by hand, upload a clients CSV, or load the demo MSP from the Data page."
+            body="Upload your clients export on the Analyses page, or add a client by hand, to see each client's margin, agreement and potential leakage."
             action={
               <>
                 <Button onClick={() => setAdding(true)}>
                   <Plus className="size-4" /> Add client
                 </Button>
-                <Button variant="secondary" onClick={() => nav('/app/data')}>
-                  Go to data
+                <Button variant="secondary" onClick={() => nav('/app/analyses')}>
+                  Go to Analyses
                 </Button>
               </>
             }
@@ -130,8 +152,8 @@ export default function Clients() {
           {!analysis && (
             <div className="mb-4 flex flex-col gap-3 rounded-lg border border-line bg-surface px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:px-5">
               <p className="text-small text-ink-2">Run the analysis to see leakage, margins and health for each client.</p>
-              <ButtonLink to="/app/data" variant="secondary" size="sm" className="self-start sm:self-auto">
-                Go to data
+              <ButtonLink to="/app/analyses" variant="secondary" size="sm" className="self-start sm:self-auto">
+                Go to Analyses
               </ButtonLink>
             </div>
           )}
@@ -204,14 +226,14 @@ export default function Clients() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-line-soft">
-                  {rows.map(({ c, mt, leakage }) => (
+                  {rows.map(({ c, mt, live, leakage }) => (
                     <tr key={c.id} className="cursor-pointer transition-colors duration-150 hover:bg-hover" onClick={() => nav(`/app/clients/${c.id}`)}>
                       <td className="py-3 pl-4 pr-3 sm:pl-5">
                         <Link to={`/app/clients/${c.id}`} onClick={(e) => e.stopPropagation()} className="text-body font-medium text-ink underline-offset-4 hover:underline">
                           {c.name}
                         </Link>
                         {c.package && <span className="block text-caption text-ink-3">{c.package}</span>}
-                        <span className="mt-1 block sm:hidden">{mt ? <HealthDot health={mt.health} /> : <span className="text-caption text-ink-3">Not analysed</span>}</span>
+                        <span className="mt-1 block sm:hidden">{live ? <ClientHealth health={live.health} known={live.known} /> : <span className="text-caption text-ink-3">Not analysed</span>}</span>
                       </td>
                       <td className={cx(td, COL.mrr, 'text-ink')}>{money(c.monthly_recurring_revenue)}</td>
                       {view === 'overview' ? (
@@ -219,19 +241,19 @@ export default function Clients() {
                           <td className={cx(td, COL.users)}>{mt ? <SeatCount actual={mt.users} contracted={c.contracted_users} noun="users" /> : dash}</td>
                           <td className={cx(td, COL.devices)}>{mt ? <SeatCount actual={mt.devices} contracted={c.contracted_devices} noun="devices" /> : dash}</td>
                           <td className={cx(td, COL.support, 'text-ink-2')}>{mt ? hours(mt.avg_monthly_hours) : dash}</td>
-                          <td className={cx(td, COL.margin)}>{mt ? <MarginValue margin={mt.margin} target={target} /> : dash}</td>
+                          <td className={cx(td, COL.margin)}>{mt ? <MarginValue margin={mt.margin} target={target} known={marginKnown(mt)} /> : dash}</td>
                           <td className={cx(td, 'pr-4 sm:pr-3')}>{mt ? <LeakageCell leakage={leakage} max={maxLeakage} /> : dash}</td>
                         </>
                       ) : (
                         <>
                           <td className={cx(td, COL.labour, 'text-ink-2')}>{mt ? money(mt.labour_cost) : dash}</td>
                           <td className={cx(td, COL.software, 'text-ink-2')}>{mt ? money(mt.software_cost) : dash}</td>
-                          <td className={cx(td, mt && mt.contribution < 0 ? 'font-semibold text-danger' : 'text-ink')}>{mt ? money(mt.contribution) : dash}</td>
+                          <td className={cx(td, mt && marginKnown(mt) && mt.contribution < 0 ? 'font-semibold text-danger' : 'text-ink')}>{mt ? money(mt.contribution) : dash}</td>
                           <td className={cx(td, COL.perHour, 'text-ink-2')}>{mt?.revenue_per_hour ? money(mt.revenue_per_hour) : dash}</td>
-                          <td className={cx(td, 'pr-4 sm:pr-3')}>{mt ? <MarginValue margin={mt.margin} target={target} /> : dash}</td>
+                          <td className={cx(td, 'pr-4 sm:pr-3')}>{mt ? <MarginValue margin={mt.margin} target={target} known={marginKnown(mt)} /> : dash}</td>
                         </>
                       )}
-                      <td className={cx('py-3 pl-3 pr-5', COL.health)}>{mt ? <HealthDot health={mt.health} /> : <span className="text-caption text-ink-3">Not analysed</span>}</td>
+                      <td className={cx('py-3 pl-3 pr-5', COL.health)}>{live ? <ClientHealth health={live.health} known={live.known} /> : <span className="text-caption text-ink-3">Not analysed</span>}</td>
                     </tr>
                   ))}
                   {rows.length === 0 && (
@@ -284,6 +306,7 @@ export default function Clients() {
               ? `Users and devices show supported / contracted; anything above contract carries an up arrow. The bar ranks each client's potential leakage over ${months ? plural(months, 'month') : 'the period'} against the largest. `
               : 'Contribution is MRR less estimated labour and software, before overheads. '}
             Margins below your {Math.round(target * 100)}% target carry a red dot.
+            {withMt.length > measured.length && ' Clients without MRR show Needs MRR and are left out of the margin total and the at-risk count.'}
           </p>
         </>
       )}

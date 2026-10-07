@@ -71,30 +71,31 @@ export function AuthShell({
 
 // The demo MSP's own figures, from the engine-generated snapshot the landing
 // page uses (its test fails if they drift from the analysis).
-const DEMO = { total: SNAPSHOT.totals.identified, billed: SNAPSHOT.totals.billed, findings: SNAPSHOT.totals.findings }
+const DEMO = { total: SNAPSHOT.totals.identified, billed: SNAPSHOT.totals.billed, opportunities: SNAPSHOT.totals.findings, period: SNAPSHOT.period.label }
 
 // One real proof element: the signature GapBar on the demo MSP.
 export function DemoProof() {
   return (
     <div>
       <figure className="rounded-lg border border-line bg-surface p-5">
-        <figcaption className="text-caption text-ink-3">Demo MSP, six months to September 2026</figcaption>
+        <figcaption className="text-caption text-ink-3">Demo MSP, {DEMO.period}</figcaption>
         <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
           <Figure tone="accent">{money(DEMO.total)}</Figure>
-          <span className="tnum text-small text-ink-2">potential leakage across {DEMO.findings} findings</span>
+          <span className="tnum text-small text-ink-2">potential leakage across {DEMO.opportunities} opportunities</span>
         </div>
-        <GapBar billed={DEMO.billed} gap={DEMO.total} height={14} label={false} className="mt-6" />
-        <p className="tnum mt-2.5 text-caption text-ink-3">{money(DEMO.billed)} billed over the period, 2.9% leaking</p>
+        <GapBar billed={DEMO.billed} gap={DEMO.total} height={14} className="mt-6" />
       </figure>
       <Disclaimer className="mt-4 max-w-[62ch]" />
     </div>
   )
 }
 
+// The landing page's four steps, so the promise and the product use the same words.
 const NEXT = [
-  { icon: ICONS.data, title: 'Upload', body: 'CSV exports from your PSA, RMM and billing system, plus contract PDFs.' },
-  { icon: ICONS.findings, title: 'Analyse', body: 'Every ticket, device and billing line is checked against the agreement.' },
-  { icon: ICONS.revenue, title: 'Recover', body: 'Each finding carries its evidence, a value and the action to take.' },
+  { icon: ICONS.data, title: 'Upload your PSA exports', body: 'CSV exports from your PSA, RMM and billing system, plus contract PDFs.' },
+  { icon: ICONS.findings, title: 'We analyse it', body: 'Every ticket, time entry, device and billing line is checked against the agreement.' },
+  { icon: ICONS.leakage, title: 'Find the leakage', body: 'Each opportunity carries its evidence, its calculation and a confidence level.' },
+  { icon: ICONS.actions, title: 'Take action', body: 'Work through each one from New to Actioned: correct the agreement, bill the work or reprice the client.' },
 ]
 
 // What happens after the workspace exists. A sequence, not a card grid.

@@ -1,19 +1,22 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowUp, ChevronRight } from 'lucide-react'
-import type { BillingItem, Client, ClientMetrics, Contract, Finding, Health } from '../../../engine/types'
-import { Badge, Card, CardHeader, Figure, HealthDot, SeverityBadge, TextLink, cx } from '../../../components/ui'
+import { ChevronRight } from 'lucide-react'
+import type { Client, ClientMetrics, Contract, Finding, Health } from '../../../engine/types'
+import { Badge, Card, CardHeader, Figure, TextLink, cx } from '../../../components/ui'
 import { GapBar, TrendChart } from '../../../components/charts'
+import { ConfidenceLevel } from '../../../components/ConfidenceLevel'
 import { ICONS } from '../../../brand/icons'
 import { hours, money, num, pct, plural } from '../../../lib/format'
 import { CATEGORY_META } from '../../../lib/labels'
+import { confidenceOf } from '../../../lib/confidence'
 import { CLAUSE_LABELS, extractClauses } from '../../../engine/contractTerms'
-import { StatusBadge } from '../Opportunities'
-import { MarginValue, isBelowTarget } from './parts'
+import { FindingStatusTag } from '../findings/StatusTag'
+import { ClientHealth, MarginValue, isBelowTarget, marginKnown } from './parts'
 
 // The sections of a client's profile page, top to bottom: what is leaking,
-// the findings behind it, what the client earns you against what the
-// agreement covers, then the supporting data.
+// the opportunities behind it, the agreement against what you deliver (in
+// contracts/ContractVsReality), what the client earns you, then the
+// supporting data.
 
 const rowLink = 'block transition-colors duration-150 hover:bg-hover focus-visible:-outline-offset-2'
 
@@ -27,6 +30,8 @@ export function LeakagePanel({
   periodLabel,
   findingCount,
   health,
+  known,
+  overlap = false,
   reasons,
   recommendation,
 }: {
@@ -37,6 +42,10 @@ export function LeakagePanel({
   periodLabel: string
   findingCount: number
   health: Health
+  // false when there is no MRR, so margin and health can't be measured
+  known: boolean
+  // true when two counted opportunities overlap (see the engine's meta.overlaps)
+  overlap?: boolean
   reasons: string[]
   recommendation: string
 }) {
@@ -51,7 +60,7 @@ export function LeakagePanel({
             <Figure>{money(leakage)}</Figure>
           </div>
           <p className="mt-1.5 text-small text-ink-3">
-            {findingCount > 0 ? `Across ${plural(findingCount, 'finding')} in ${periodLabel}` : `None found in ${periodLabel}`}
+            {findingCount > 0 ? `Across ${plural(findingCount, 'opportunity', 'opportunities')} in ${periodLabel}` : `None found in ${periodLabel}`}
             {billed > 0 ? `, against ${plural(months, 'month')} of MRR.` : '.'}
           </p>
           <div className="mt-5 max-w-[640px]">
@@ -67,10 +76,11 @@ export function LeakagePanel({
           <dd className="mt-1.5 text-caption text-ink-3">
             {recurring > 0 ? (
               <>
-                <span className="tnum">{money(recurring * 12)}</span> a year if the agreement and billing stay as they are
+                <span className="tnum">{money(recurring * 12)}</span> a year if nothing changes.
+                {overlap && ' Part of this overlaps: billing the agreement gaps would restore the target margin on its own.'}
               </>
             ) : findingCount > 0 ? (
-              'Nothing recurring. These findings are one-off work.'
+              'Nothing recurring. These opportunities are one-off work.'
             ) : (
               'Nothing recurring to recover.'
             )}
@@ -79,7 +89,7 @@ export function LeakagePanel({
       </div>
       <div className="flex flex-col gap-3 border-t border-line-soft bg-sunken px-5 py-4 sm:flex-row sm:gap-6 sm:px-7">
         <div className="shrink-0 sm:w-20 sm:pt-px">
-          <HealthDot health={health} />
+          <ClientHealth health={health} known={known} />
         </div>
         <div className="min-w-0 flex-1 text-small">
           {reasons.length > 0 ? (
@@ -103,15 +113,23 @@ export function LeakagePanel({
   )
 }
 
-// 2. Every finding for the client, biggest first. Dismissed findings stay
-//    listed but drop out of the total.
-export function ClientFindings({ findings, total, periodLabel }: { findings: Finding[]; total: number; periodLabel: string }) {
+// 2. Every opportunity for the client, biggest first, with its confidence and
+//    its stage once it has moved on from New. Dismissed ones stay listed but
+//    drop out of the total.
+export function ClientFindings({ findings, total, periodLabel, clientId }: { findings: Finding[]; total: number; periodLabel: string; clientId: string }) {
+  const dismissedCount = findings.filter((f) => f.status === 'dismissed').length
   return (
     <Card className="overflow-hidden">
       <CardHeader
-        title="Findings"
-        subtitle={findings.length ? `${plural(findings.length, 'finding')} for this client · ${money(total)} potential` : undefined}
-        right={findings.length > 0 ? <TextLink to="/app/findings" className="shrink-0 pt-0.5">All findings</TextLink> : undefined}
+        title="Opportunities"
+        subtitle={findings.length ? `${plural(findings.length, 'opportunity', 'opportunities')} for this client${dismissedCount ? `, ${dismissedCount} dismissed` : ''} · ${money(total)} potential` : undefined}
+        right={
+          findings.length > 0 ? (
+            <TextLink to={`/app/opportunities?client=${encodeURIComponent(clientId)}`} className="shrink-0 pt-0.5">
+              View in list
+            </TextLink>
+          ) : undefined
+        }
       />
       {findings.length ? (
         <ul className="divide-y divide-line-soft">
@@ -119,25 +137,21 @@ export function ClientFindings({ findings, total, periodLabel }: { findings: Fin
             const dismissed = f.status === 'dismissed'
             return (
               <li key={f.id}>
-                <Link to={`/app/findings/${f.id}`} className={cx(rowLink, 'group flex items-start gap-4 px-4 py-3.5 sm:items-center sm:px-5')}>
-                  <span className="hidden w-[68px] shrink-0 sm:block">
-                    <SeverityBadge severity={f.severity} />
+                <Link to={`/app/opportunities/${f.id}`} className={cx(rowLink, 'group flex items-start gap-4 px-4 py-3.5 sm:items-center sm:px-5')}>
+                  <span className="hidden w-[84px] shrink-0 sm:block">
+                    <ConfidenceLevel level={confidenceOf(f).level} short />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className={cx('block text-body font-medium sm:truncate', dismissed ? 'text-ink-3' : 'text-ink')}>{f.title}</span>
-                    <span className="mt-0.5 block text-caption text-ink-3">
-                      {CATEGORY_META[f.category].label}
-                      <span aria-hidden> · </span>
-                      <span className="tnum whitespace-nowrap">{f.confidence}% confidence</span>
-                    </span>
+                    <span className="mt-0.5 block text-caption text-ink-3">{CATEGORY_META[f.category].label}</span>
                     <span className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 sm:hidden">
-                      <SeverityBadge severity={f.severity} />
-                      {f.status !== 'open' && <StatusBadge status={f.status} />}
+                      <ConfidenceLevel level={confidenceOf(f).level} short />
+                      {f.status !== 'open' && <FindingStatusTag status={f.status} />}
                     </span>
                   </span>
                   {f.status !== 'open' && (
                     <span className="hidden shrink-0 sm:block">
-                      <StatusBadge status={f.status} />
+                      <FindingStatusTag status={f.status} />
                     </span>
                   )}
                   <span className="flex shrink-0 items-center gap-2">
@@ -151,7 +165,7 @@ export function ClientFindings({ findings, total, periodLabel }: { findings: Fin
         </ul>
       ) : (
         <div className="px-5 py-8">
-          <p className="text-body font-medium text-ink">No potential leakage found</p>
+          <p className="text-body font-medium text-ink">No opportunities for this client</p>
           <p className="mt-1 max-w-[56ch] text-small text-ink-3">Nothing in {periodLabel} points to unbilled, out-of-scope or underpriced work for this client.</p>
         </div>
       )}
@@ -210,25 +224,27 @@ function MrrSplit({ mrr, labour, software, target, margin }: { mrr: number; labo
   )
 }
 
-// 3a. What the client earns you each month, and the price that would restore
+// 4a. What the client earns you each month, and the price that would restore
 //     the target margin when they fall short of it.
 export function ProfitabilityCard({ mt, target, periodLabel, avgHours, labourRate, clientName }: { mt: ClientMetrics; target: number; periodLabel: string; avgHours: number; labourRate: number; clientName: string }) {
-  const below = isBelowTarget(mt.margin, target)
+  const known = marginKnown(mt)
+  const below = known && isBelowTarget(mt.margin, target)
   // The price at which this period's average labour and software come to
-  // (1 - target) of revenue. Only the page's own figures go in.
-  const needed = target < 1 ? Math.ceil((mt.labour_cost + mt.software_cost) / (1 - target)) : null
+  // (1 - target) of revenue: the engine's own figure, so it matches the
+  // underpricing opportunity. Older analyses fall back to the same formula.
+  const needed = mt.target_price ?? (target < 1 ? Math.round((mt.labour_cost + mt.software_cost) / (1 - target)) : null)
   const uplift = needed != null ? needed - mt.mrr : 0
   return (
     <Card className="flex flex-col overflow-hidden">
       <CardHeader title="Profitability" subtitle={`Monthly average, ${periodLabel}`} />
       <div className="flex-1 px-5 pt-5">
-        <MrrSplit mrr={mt.mrr} labour={mt.labour_cost} software={mt.software_cost} target={target} margin={mt.margin} />
+        {known && <MrrSplit mrr={mt.mrr} labour={mt.labour_cost} software={mt.software_cost} target={target} margin={mt.margin} />}
         <dl className="divide-y divide-line-soft">
-          <LedgerRow label="MRR" value={money(mt.mrr)} />
+          <LedgerRow label="Recurring revenue (agreement)" value={money(mt.mrr)} />
           <LedgerRow label="Estimated labour" sub={`${hours(mt.avg_monthly_hours)} at ${money(labourRate)}/h`} swatch="bg-ink-4" value={`− ${money(mt.labour_cost)}`} />
           <LedgerRow label="Software" swatch="bg-ink-3" value={`− ${money(mt.software_cost)}`} />
-          <LedgerRow label="Gross contribution" swatch={mt.contribution > 0 ? 'bg-ink' : 'bg-transparent'} value={<span className={mt.contribution < 0 ? 'text-danger' : undefined}>{money(mt.contribution)}</span>} strong />
-          <LedgerRow label="Gross margin" sub={`target ${pct(target)}`} value={<MarginValue margin={mt.margin} target={target} mark={false} className="font-semibold" />} strong />
+          <LedgerRow label="Gross contribution" swatch={mt.contribution > 0 ? 'bg-ink' : 'bg-transparent'} value={<span className={known && mt.contribution < 0 ? 'text-danger' : undefined}>{money(mt.contribution)}</span>} strong />
+          <LedgerRow label="Gross margin" sub={`target ${pct(target)}`} value={<MarginValue margin={mt.margin} target={target} known={known} mark={false} className="font-semibold" />} strong />
           <LedgerRow label="Support hours" sub={avgHours > 0 ? `client average ${hours(avgHours)}` : undefined} value={`${hours(mt.avg_monthly_hours)} / month`} />
           <LedgerRow label="Revenue per technician hour" value={mt.revenue_per_hour ? money(mt.revenue_per_hour) : '—'} />
         </dl>
@@ -245,7 +261,7 @@ export function ProfitabilityCard({ mt, target, periodLabel, avgHours, labourRat
         </div>
       ) : (
         <p className="mt-3 border-t border-line-soft px-5 py-3.5 text-caption text-ink-3">
-          {mt.mrr <= 0
+          {!known
             ? 'Add MRR for this client to measure margin.'
             : below
               ? `Margin is just below your ${pct(target)} target at current pricing.`
@@ -256,85 +272,7 @@ export function ProfitabilityCard({ mt, target, periodLabel, avgHours, labourRat
   )
 }
 
-function CompareRow({ label, contracted, actual, unit = '' }: { label: string; contracted: number | null; actual: number; unit?: string }) {
-  const over = contracted != null && actual > contracted ? actual - contracted : 0
-  const fmt = (n: number) => `${num(n, unit ? 1 : 0)}${unit}`
-  return (
-    <tr>
-      <th scope="row" className="py-2.5 pr-3 text-left text-body font-normal text-ink-2">
-        {label}
-      </th>
-      <td className="tnum px-3 py-2.5 text-right text-body text-ink-2">{contracted != null ? fmt(contracted) : <span className="text-ink-3">Not set</span>}</td>
-      <td className="tnum py-2.5 pl-3 text-right text-body">
-        {actual ? (
-          <span className={cx('inline-flex items-center gap-1', over ? 'font-semibold text-ink' : 'text-ink')}>
-            {over > 0 && <ArrowUp className="size-3.5 text-ink-3" aria-hidden />}
-            {fmt(actual)}
-          </span>
-        ) : (
-          <span className="text-ink-3">—</span>
-        )}
-        {over > 0 && <span className="block text-caption font-normal text-ink-3">{fmt(over)} above contract</span>}
-      </td>
-    </tr>
-  )
-}
-
-// 3b. What the agreement covers against what is actually supported, and the
-//     recurring lines billed for it.
-export function AgreementCard({ client, mt, billing }: { client: Client; mt: ClientMetrics; billing: BillingItem[] }) {
-  return (
-    <Card className="overflow-hidden">
-      <CardHeader title="Agreement vs actual" subtitle="What the agreement covers against what you support" />
-      <div className="px-5 pb-2 pt-3">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-line-soft">
-              <th className="pb-2 pr-3 text-left text-label font-semibold uppercase text-ink-3">
-                <span className="sr-only">Measure</span>
-              </th>
-              <th className="px-3 pb-2 text-right text-label font-semibold uppercase text-ink-3">Contracted</th>
-              <th className="pb-2 pl-3 text-right text-label font-semibold uppercase text-ink-3">Actual</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-line-soft">
-            <CompareRow label="Users" contracted={client.contracted_users} actual={mt.users} />
-            <CompareRow label="Devices" contracted={client.contracted_devices} actual={mt.devices} />
-            {client.included_hours != null && <CompareRow label="Support hours / month" contracted={client.included_hours} actual={mt.avg_monthly_hours} unit="h" />}
-          </tbody>
-        </table>
-      </div>
-      <div className="border-t border-line-soft px-5 py-4">
-        <h4 className="text-small font-medium text-ink-2">Billed each month</h4>
-        {billing.length ? (
-          <ul className="mt-2 divide-y divide-line-soft">
-            {billing.map((b) => (
-              <li key={b.id} className="flex items-baseline justify-between gap-4 py-2">
-                <span className="min-w-0 text-small text-ink-2">
-                  {b.service}
-                  <span className="tnum block text-caption text-ink-3 sm:ml-2 sm:inline">
-                    {num(b.quantity)} × {money(b.unit_price, { decimals: true })}
-                  </span>
-                </span>
-                <span className="tnum shrink-0 text-small text-ink">{money(b.monthly_value)}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-1.5 text-small text-ink-3">
-            No billing lines uploaded.{' '}
-            <Link to="/app/data" className="font-medium text-ink-2 underline-offset-4 hover:text-ink hover:underline">
-              Upload billing
-            </Link>{' '}
-            to check charges against the agreement.
-          </p>
-        )}
-      </div>
-    </Card>
-  )
-}
-
-// 4a. Support hours by month, against the allowance when there is one.
+// 4b. Support hours by month, against the allowance when there is one.
 export function HoursCard({ data, includedHours, labourRate }: { data: { label: string; value: number }[]; includedHours: number | null; labourRate: number }) {
   return (
     <Card>
@@ -346,7 +284,7 @@ export function HoursCard({ data, includedHours, labourRate }: { data: { label: 
   )
 }
 
-// 4b. The client's agreements and the scope clauses found in them.
+// 5. The client's agreements and the scope clauses found in them.
 export function ContractsCard({ contracts }: { contracts: Contract[] }) {
   const Doc = ICONS.contracts
   return (
@@ -381,7 +319,7 @@ export function ContractsCard({ contracts }: { contracts: Contract[] }) {
         ) : (
           <p className="px-5 py-5 text-small text-ink-3">
             No contract uploaded.{' '}
-            <Link to="/app/data" className="font-medium text-ink-2 underline-offset-4 hover:text-ink hover:underline">
+            <Link to="/app/analyses" className="font-medium text-ink-2 underline-offset-4 hover:text-ink hover:underline">
               Upload a PDF
             </Link>{' '}
             to check tickets against its scope.

@@ -191,15 +191,15 @@ The system refuses the grey admin panel with a coloured pill on every row, and t
 - Ink canvas, graphite steps and hairlines; depth without shadows on anything that sits on the page.
 - One family (Host Grotesk), semibold for headings and figures, tabular numerals throughout.
 - Lime means money. Everything else is neutral.
-- The GapBar (billed in neutral, unbilled gap in lime) is the signature form, repeated from hero to client row.
-- Severity and health are quiet marks plus words, never pills.
+- The GapBar (billed in neutral, the potential leakage in lime) is the signature form, repeated from hero to client row.
+- Confidence and health are quiet marks plus words, never pills. Severity is shown as Priority, on the opportunity page only.
 
 ## Colors
 
 A near-monochrome dark scale with one energetic accent and four restrained signal hues.
 
 ### Primary
-- **Recovery Lime** (`recovery-lime`): the unbilled gap in a GapBar and its figure, recurring or recovered money figures ("£356 a month", resolved value), the one money action per screen, positive trends on money found, LeakBar fills in client rows, the matched phrase in evidence (soft fill plus lime underline), the active nav icon, the page spinner, and system accents (focus ring, caret, selection, checkbox). Hover lifts to **Lime Hover** (`recovery-lime-hover`). Text on lime is ink.
+- **Recovery Lime** (`recovery-lime`): the potential-leakage gap in a GapBar and its figure, recurring money figures ("£356 a month"), the price-for-target uplift on a client, the one money action per screen, positive trends on money found, LeakBar fills in client rows, the matched phrase in evidence (soft fill plus lime underline), the active nav icon, the page spinner, and system accents (focus ring, caret, selection, checkbox). Hover lifts to **Lime Hover** (`recovery-lime-hover`). Text on lime is ink.
 - **Deep Lime** (`recovery-lime-deep`): the accent on paper, where lime is unreadable. Print and PDF only.
 
 ### Neutral
@@ -220,7 +220,7 @@ A near-monochrome dark scale with one energetic accent and four restrained signa
 ### Named Rules
 **The Lime Means Money Rule.** Lime appears only on money found or recoverable, the one money action per screen, and the system accents listed above. A lime heading, lime body text, a lime card border or lime on a download button is a bug. The full allowed inventory is §8.4 of the brand guidelines.
 
-**The One Lime Button Rule.** At most one accent button per viewport. The landing top bar's "Find My Lost Revenue" is bone primary so the hero's lime button stays the only one.
+**The One Lime Button Rule.** At most one accent button per viewport. The landing top bar's "Get free audit" is bone primary so the hero's lime "Get a Free Revenue Leakage Audit" stays the only one; in the pricing section only Growth's button is lime, and the close's "Get My Free Audit" sits a section away from it. Stage totals, download buttons and Actioned values stay ink.
 
 **The Calm Problems Rule.** Danger is a mark, not a field: three small bars, a 6px dot, a caption-size error. No row, card or banner is filled with a signal colour at full strength.
 
@@ -232,7 +232,7 @@ A near-monochrome dark scale with one energetic accent and four restrained signa
 **Character:** One grotesk doing every job; hierarchy comes from size, weight 600 against 400/500, and tight negative tracking on large sizes. Figures are tabular so columns of money align.
 
 ### Hierarchy
-- **Display** (600, fluid 44 to 80px, 0.98): the landing hero question; section titles step down to a fluid 30 to 48px at 1.06 and -0.032em.
+- **Display** (600, fluid 44 to 80px, 0.98): the landing hero line ("Find the work your MSP is doing for free.") and the close; section titles step down to a fluid 30 to 48px at 1.06 and -0.032em.
 - **Data XL** (600, fluid 48 to 72px, 0.95, tabular): the one headline figure per screen (£4,281).
 - **Data LG / Data MD** (600, 28px / 18px, tabular): KPI figures and inline figures.
 - **Headline** (600, 28px, 1.15): page titles via PageHeader.
@@ -254,7 +254,7 @@ The Overview reads in one fixed order: the money hero, then critical findings be
 
 Spacing runs on a 4px base. Card internals are 20px horizontal, 12 to 16px vertical per row; card headers 20px by 16px; gaps between related controls 8px, between panels 16 to 24px. Rows are divided by hairlines, not gaps.
 
-The landing page uses a 1240px wrap (16/24/32px gutters), sections divided by a soft hairline with 80 to 112px vertical padding, and a 12-column intro grid where the heading spans seven columns and the lead sits at columns 9 to 12.
+The landing page uses a 1240px wrap (16/24/32px gutters), sections divided by a soft hairline with 80 to 112px vertical padding, and a 12-column intro grid where the heading spans seven columns and the lead sits at columns 9 to 12. Its order is fixed: hero, the problem, how it works (four numbered steps), the product, the client example, built for MSPs, how your data is handled, planned pricing, FAQ, the close and the footer. The security page shares its top bar, section frame and footer.
 
 ## Elevation & Depth
 
@@ -278,7 +278,7 @@ Controls are crisp and containers are soft: badges 4px, icon buttons and small c
 Quiet, solid and decisive.
 - **Shape:** gently rounded (8px); heights 32 / 36 / 44px for sm / md / lg, 500 weight.
 - **Primary:** bone fill, ink text, hover to white. The default action.
-- **Accent:** lime fill, ink text, hover to lime hover. One per screen, only for money (Review findings, Find My Lost Revenue, Upload your data, Create action, Run analysis).
+- **Accent:** lime fill, ink text, hover to lime hover. One per screen, only for money (on the landing page "Get a Free Revenue Leakage Audit", Growth's pricing button and "Get My Free Audit"; in the app the Overview's review button, Upload your data, a stage's next step, Run analysis).
 - **Secondary:** raised graphite with a hairline; hover strengthens the hairline. **Ghost:** bone-secondary text until hovered. **Danger:** soft coral fill, coral text, coral hairline.
 - **States:** 150ms colour transition; disabled at 45% opacity; loading adds a spinner and keeps the label. Focus is the global 2px lime outline at 2px offset.
 
@@ -299,18 +299,18 @@ Quiet, solid and decisive.
 
 ### Navigation
 - **App rail:** 14px medium items, 8px radius, 6px by 10px padding, bone-secondary at rest. Active item takes the raised fill, bone text and a lime icon. Counts sit in a small hairline-filled tag. The workspace block sits at the foot above a soft hairline.
-- **Landing top bar:** logo, section links, Sign in, and a bone primary CTA.
+- **Landing top bar:** logo, five section links (Product, How it works, Pricing, Security, FAQ), Sign in, and the bone primary "Get free audit". In a demo session Sign in becomes "Back to the demo"; on a real workspace the CTA becomes "Open dashboard". Below 1024px the links move into a "Menu" disclosure under the header, with 44px rows; it closes on a link, Escape or a click outside.
 
-### Severity and Health
-- **SeverityBadge:** a caption-size word beside three tiny ascending bars. Critical fills three bars in coral with bone text; High two bars in bone-secondary; Medium one bar in muted; Low none. No pill, no fill.
+### Confidence, Priority and Health
+- **ConfidenceLevel:** three 6px dots and a word in neutral ink: High fills three, Medium two, Low one ("High" in lists, "High confidence" with its one-line basis on an opportunity). It replaces the old percentage meter everywhere a reader sees it; the percentage survives only as `confidence_score` in the CSV. Lists, the overview and the landing page show confidence where severity used to sit.
+- **Priority (SeverityBadge):** a caption-size word beside three tiny ascending bars, shown on the opportunity page only. Critical fills three bars in coral with bone text; High two bars in bone-secondary; Medium one bar in muted; Low none. No pill, no fill.
 - **HealthDot:** a 6px mark plus the word. At risk is a coral dot; Watch a hollow muted ring; Healthy keeps an empty slot so labels align.
-- **Confidence:** a 48px, 4px-tall neutral meter (brighter at 85% and above) plus the percentage.
 
 ### Empty States
 Left-aligned in the ledger voice: a 15px title, one line of muted explanation (max 60ch), at most two actions. No icon tile.
 
 ### GapBar (signature)
-What was billed and the gap that was not. A 14px bar: billed in the neutral series colour, a 3px gap, then the unbilled share in lime (minimum 1.5% so a small gap still reads), with a 1px bone-secondary tick crossing the junction. Beneath it, "Billed" and "Unbilled" captions with the unbilled figure in semibold lime and its percentage. Used in the Overview hero, client pages, the landing audit panel and the PDF.
+What was billed and the potential leakage beside it. A 14px bar: billed in the neutral series colour, a 3px gap, then the leakage share in lime (minimum 1.5% so a small gap still reads), with a 1px bone-secondary tick crossing the junction. Beneath it, "Billed" and "Potential leakage" captions with the leakage figure in semibold lime and its percentage. It is "potential leakage", not "unbilled", because the total includes pricing estimates as well as work. Used in the Overview hero, client pages, the landing audit panel and the PDF.
 
 ### LeakBar
 The signature at row scale: a 4px lime fill on a 1px strong-hairline track, ranked against the largest value in the list, beside the figure that carries the meaning.
@@ -324,8 +324,8 @@ Monthly bars in the neutral series colour, the latest month one step brighter, 4
 - **Do** keep lime to money found or recoverable, the one money action per screen, and the system accents (focus, caret, selection, spinner, active nav icon).
 - **Do** set every changeable number in tabular figures, semibold, and give the screen's headline figure Data XL.
 - **Do** separate surfaces with a lightness step and a 1px hairline; reserve shadows for tooltips, modals, drawers and toasts.
-- **Do** show severity as a word plus bars and health as a word plus a small mark.
-- **Do** reuse the GapBar or LeakBar wherever billed is compared with unbilled.
+- **Do** show confidence as a word plus dots, priority as a word plus bars (opportunity page only) and health as a word plus a small mark.
+- **Do** reuse the GapBar or LeakBar wherever billed is compared with potential leakage.
 - **Do** build landing imagery from the real components and real demo figures, labelled as demo data.
 - **Do** use the 11px uppercase label only as a table or ledger column header.
 

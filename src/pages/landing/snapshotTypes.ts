@@ -1,4 +1,4 @@
-import type { Category, Health, Severity } from '../../engine/types'
+import type { Category, ConfidenceLevel, FindingStatus, Health, Severity } from '../../engine/types'
 
 // The shape of the landing page's demo snapshot. The figures are produced by
 // running the real engine on the demo dataset (see buildSnapshot.ts), written
@@ -11,6 +11,10 @@ export interface SnapshotFinding {
   category: Category
   severity: Severity
   confidence: number
+  // The level the app shows; the percentage above never reaches the page.
+  level: ConfidenceLevel
+  // true when this overlaps another finding's value (disclosed, not netted)
+  overlaps: boolean
   value: number
   monthly: number
   ticketRef: string | null
@@ -54,10 +58,16 @@ export interface LandingSnapshot {
   data: { clients: number; tickets: number; timeEntries: number; usersAndDevices: number; billingLines: number; contracts: number }
   settings: { labourRate: number; billableRate: number; targetMargin: number }
   categories: { category: Category; value: number; count: number; clients: number }[]
-  // The ledger in the hero: the highest-value findings, in the engine's order.
+  // Opportunities by confidence level, High first.
+  levels: { level: ConfidenceLevel; count: number; value: number }[]
+  // Opportunities by stage, as the demo workspace opens (see demo/stages.ts).
+  stages: { status: FindingStatus; count: number; value: number }[]
+  // The ledger in the hero: the highest-value findings, in the engine's order,
+  // leaving out any that overlap another (so no pound is shown twice).
   topFindings: SnapshotFinding[]
-  // How many findings recur every month, and the largest agreement corrections among them.
-  recurring: { count: number; rows: SnapshotFinding[] }
+  // How many findings recur every month, the largest agreement corrections
+  // among them, and the recurring findings those rows leave out.
+  recurring: { count: number; rows: SnapshotFinding[]; restCount: number; restMonthly: number }
   // The four leak types, each with one concrete demo example.
   leaks: {
     scope: TicketExample
@@ -67,7 +77,8 @@ export interface LandingSnapshot {
   }
   // The product section: the out-of-scope findings table and one finding's evidence.
   outOfScope: { count: number; value: number; rows: SnapshotFinding[] }
-  spotlight: TicketExample & { recommendedAction: string }
+  // The calculation is precomputed so the page never loads lib/calculation.
+  spotlight: TicketExample & { recommendedAction: string; basis: string; calculation: { lines: string[]; result: string } }
   // The client example, with the contract value its costs call for.
   client: {
     name: string
@@ -91,5 +102,7 @@ export interface LandingSnapshot {
     driftMonthly: number
     mrrAfterDrift: number
     marginAfterDrift: number
+    // true when the margin finding overlaps the client's agreement drift
+    overlapNote: boolean
   }
 }

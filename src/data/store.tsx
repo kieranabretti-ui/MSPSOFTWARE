@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { analyse, liveClientHealth } from '../engine/analyse'
+import { liveClientHealth } from '../engine/health'
 import type {
   Action,
   ActionStatus,
@@ -119,8 +119,10 @@ const dataset = (ws: Workspace, d: WorkspaceData): Dataset => ({
 })
 
 // Runs the engine and carries ids, stages and AI notes over to findings that
-// still apply. Pure: nothing is saved here.
-const analyseFor = (ws: Workspace, d: WorkspaceData) => {
+// still apply. Pure: nothing is saved here. The engine loads on first use, so
+// the landing page doesn't ship it.
+const analyseFor = async (ws: Workspace, d: WorkspaceData) => {
+  const { analyse } = await import('../engine/analyse')
   const { summary, findings } = analyse(dataset(ws, d))
   const analysis: Analysis = { id: uuid(), workspace_id: ws.id, period_start: summary.period_start, period_end: summary.period_end, summary, created_at: now() }
   const prev = new Map(d.findings.map((f) => [f.finding_key, f]))
@@ -238,7 +240,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const fresh = await b.loadAll(ws.id)
     onStage?.('checking')
     await paint()
-    const { analysis, findings } = analyseFor(updated, fresh)
+    const { analysis, findings } = await analyseFor(updated, fresh)
     // The demo opens part-way through the workflow (see demo/stages.ts). The
     // stages are set before saving, so the first load already shows them.
     const names = new Map(fresh.clients.map((c) => [c.id, c.name]))
@@ -404,7 +406,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       await paint()
       onStage?.('checking')
       await paint()
-      const { analysis, findings } = analyseFor(ws, dataRef.current)
+      const { analysis, findings } = await analyseFor(ws, dataRef.current)
       onStage?.('saving')
       await backend.saveAnalysis(ws.id, analysis, findings)
       setData(await backend.loadAll(ws.id))

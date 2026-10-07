@@ -3,13 +3,13 @@ import { Figure, HealthDot, cx } from '../../components/ui'
 import { money, pct } from '../../lib/format'
 import { CATEGORY_META } from '../../lib/labels'
 import { DEMO } from './demoSnapshot'
-import { Section, sectionTitleCls } from './primitives'
+import { Section, inWords, sectionTitleCls } from './primitives'
 
-// One client from the demo, worked through like a client review: what it pays,
-// what it costs to serve, the contract value its costs call for, and what was
-// found. Every figure comes from the engine's run on the demo data.
-
-const WORDS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve']
+// Client profitability, shown on one client from the demo and worked through
+// like a client review: what it pays, what it costs to serve, the contract
+// value its costs call for, and what was found. Every figure comes from the
+// engine's run on the demo data, and an overlap between two of its
+// opportunities is disclosed rather than netted.
 
 function Line({ label, sub, value, strong, className }: { label: ReactNode; sub?: ReactNode; value: ReactNode; strong?: boolean; className?: string }) {
   return (
@@ -30,18 +30,23 @@ export function ClientExample() {
   const first = c.monthlyHours[0]
   const last = c.monthlyHours[c.monthlyHours.length - 1]
   const extraUsers = c.users - (c.contractedUsers ?? c.users)
-  const monthsWord = WORDS[DEMO.period.months] ?? String(DEMO.period.months)
+  const months = inWords(DEMO.period.months)
+  const margin = c.findings.find((f) => f.category === 'UNDERPRICED_CLIENT')
+  const overlapping = c.findings.filter((f) => f.overlaps)
+  const overlapValue = overlapping.reduce((a, f) => a + f.value, 0)
 
   return (
     <Section id="example" label="example-title">
       <div className="grid grid-cols-1 gap-x-12 gap-y-12 lg:grid-cols-12">
         <div className="lg:col-span-5">
           <h2 id="example-title" className={sectionTitleCls}>
-            One client. {monthsWord} months. {money(c.leakage)} of potential leakage.
+            Client profitability. <span className="text-ink-3">Which clients are worth keeping?</span>
           </h2>
-          <p className="mt-5 max-w-[52ch] text-lead text-ink-2">
-            {c.name} pays {money(c.mrr)} a month{c.package ? ` on ${c.package}` : ''}. Its support has grown from {first.hours} to {last.hours} hours a month, and{' '}
-            {extraUsers > 0 ? `${extraUsers} new starters were never added to the agreement` : 'its agreement has not moved'}.
+          <p className="mt-5 max-w-[52ch] text-lead text-ink-2">Headroom sets each client's revenue against its delivery effort and estimated margin, so an unprofitable client can't stay hidden.</p>
+          <p className="mt-4 max-w-[52ch] text-body text-ink-2">
+            Take {c.name}. It pays {money(c.mrr)} a month{c.package ? ` on ${c.package}` : ''}. Its support has grown from {first.hours} to {last.hours} hours a month, and{' '}
+            {extraUsers > 0 ? `${extraUsers} new starters were never added to the agreement` : 'its agreement has not moved'}. Over {months} months, that is{' '}
+            {money(c.leakage)} of potential leakage.
           </p>
 
           <dl className="mt-8 grid grid-cols-2 border-y border-line-soft">
@@ -95,15 +100,19 @@ export function ClientExample() {
             <div className="border-t-[3px] border-double border-line-strong bg-sunken px-5 py-5 sm:px-7">
               <div className="flex items-baseline justify-between gap-4">
                 <p className="text-small font-medium text-ink">Recommended contract value</p>
-                <p className="tnum shrink-0 text-right">
-                  <Figure>{money(c.recommended)}</Figure>
-                  <span className="ml-1.5 text-small text-ink-3">a month</span>
-                </p>
+                <div className="tnum shrink-0 text-right">
+                  <p>
+                    <Figure>{money(c.recommended)}</Figure>
+                    <span className="ml-1.5 text-small text-ink-3">a month</span>
+                  </p>
+                  <p className="text-small font-semibold text-accent">+{money(c.uplift)} a month</p>
+                </div>
               </div>
-              <div className="mt-1 flex items-baseline justify-between gap-4">
-                <p className="max-w-[40ch] text-caption text-ink-3">The monthly price at which its labour and software cost leave a {pct(targetMargin)} margin.</p>
-                <p className="tnum shrink-0 text-small font-semibold text-accent">+{money(c.uplift)} a month</p>
-              </div>
+              <p className="tnum mt-2 max-w-[62ch] text-caption text-ink-3">
+                {margin
+                  ? `The margin opportunity's ${money(margin.monthly)} a month is the average shortfall across the ${months} months; repricing to ${money(c.recommended)} (+${money(c.uplift)}) restores ${pct(targetMargin)} at average cost.`
+                  : `The monthly price at which its labour and software cost leave a ${pct(targetMargin)} margin.`}
+              </p>
             </div>
 
             <div className="border-t border-line-soft px-5 pb-5 pt-4 sm:px-7">
@@ -117,15 +126,21 @@ export function ClientExample() {
                         {CATEGORY_META[f.category].short}
                         {f.ticketRef ? ` · Ticket #${f.ticketRef}` : ''}
                       </span>
+                      {f.overlaps && extraUsers > 0 && (
+                        <span className="mt-1 block max-w-[52ch] text-caption text-ink-2">
+                          Overlaps with the user drift: billing the {extraUsers} extra users restores the {pct(targetMargin)} target.
+                        </span>
+                      )}
                     </span>
                     <span className="tnum shrink-0 text-small font-semibold text-ink">{money(f.value)}</span>
                   </li>
                 ))}
               </ul>
               <div className="flex items-baseline justify-between gap-4 border-t border-line pt-3">
-                <span className="text-small font-medium text-ink">Potential leakage, {monthsWord.toLowerCase()} months</span>
+                <span className="text-small font-medium text-ink">Potential leakage, {months} months</span>
                 <Figure size="md">{money(c.leakage)}</Figure>
               </div>
+              {c.overlapNote && overlapValue > 0 && <p className="tnum mt-1 text-right text-caption text-ink-3">Includes {money(overlapValue)} that overlaps with the user drift.</p>}
             </div>
           </div>
           {c.driftMonthly > 0 && (

@@ -1,17 +1,23 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Download, FileText, Play, Upload as UploadIcon } from 'lucide-react'
+import type { AnalysisSummary } from '../../engine/types'
 import { useStore } from '../../data/store'
 import { Button, Card, CardHeader, Modal, PageHeader, cx } from '../../components/ui'
 import { useToast } from '../../components/toast'
 import { KIND_ORDER, SCHEMAS, type CsvKind } from '../../data/importers'
 import { downloadFile, num, plural, relative, toCsv } from '../../lib/format'
+import { mapError } from '../../lib/errors'
 import { ICONS } from '../../brand/icons'
 import { CsvImportModal } from './data/CsvImportModal'
 import { ContractModal } from './data/ContractModal'
 import { SourceRow } from './data/SourceRow'
 import { UploadHistory } from './data/UploadHistory'
+import { Callout } from './data/kit'
 import { CONTRACT_CHECKS } from './data/sources'
+import { AnalysisProgress } from './analyses/AnalysisProgress'
+import { AnalysisResult } from './analyses/AnalysisResult'
+import { AnalysisHistory } from './analyses/AnalysisHistory'
 
 const COUNT_KEY: Record<CsvKind, 'clients' | 'tickets' | 'time_entries' | 'assets' | 'billing_items'> = {
   clients: 'clients',
@@ -29,30 +35,22 @@ async function demoRows(kind: CsvKind) {
 
 const linkBtn = 'inline-flex items-center gap-1 rounded-sm text-caption font-medium text-ink-3 underline-offset-4 transition-colors duration-150 hover:text-ink hover:underline'
 
-export default function DataPage() {
-  const { data, analysis, runAnalysis, loadDemoData, resetData, workspace } = useStore()
+// Where data comes in and analyses go out: the run and its result, the exports
+// it reads, and every past run with what it found.
+export default function AnalysesPage() {
+  const { data, analysis, loadDemoData, resetData, workspace, backend } = useStore()
   const toast = useToast()
   const nav = useNavigate()
-  const [importKind, setImportKind] = useState<CsvKind | null>(null)
+  // A file that arrived in the wrong slot travels with it to the right one.
+  const [importing, setImporting] = useState<{ kind: CsvKind; file?: File } | null>(null)
   const [contractOpen, setContractOpen] = useState(false)
   const [confirmDemo, setConfirmDemo] = useState(false)
   const [confirmReset, setConfirmReset] = useState(false)
-  const [running, setRunning] = useState(false)
+  const [clearing, setClearing] = useState(false)
+  // The run replaces the status panel: its progress, then its result.
+  const [run, setRun] = useState<'running' | AnalysisSummary | null>(null)
   const hasData = data.clients.length > 0 || data.tickets.length > 0
   const stale = analysis && data.uploads.some((u) => u.created_at > analysis.created_at)
-
-  const run = async () => {
-    setRunning(true)
-    try {
-      await runAnalysis()
-      toast('Analysis complete.')
-      nav('/app')
-    } catch (e) {
-      toast(e instanceof Error ? e.message : 'Analysis failed.', 'error')
-    } finally {
-      setRunning(false)
-    }
-  }
 
   const loadDemo = async () => {
     setConfirmDemo(false)
@@ -61,7 +59,22 @@ export default function DataPage() {
       toast('Demo MSP loaded and analysed.')
       nav('/app')
     } catch (e) {
-      toast(e instanceof Error ? e.message : 'Could not load demo data.', 'error')
+      toast(mapError(e, 'demo'), 'error')
+    }
+  }
+
+  const clearAll = async () => {
+    setClearing(true)
+    try {
+      await resetData()
+      setRun(null)
+      setConfirmReset(false)
+      toast('All data cleared.')
+    } catch (e) {
+      setConfirmReset(false)
+      toast(mapError(e, 'save'), 'error')
+    } finally {
+      setClearing(false)
     }
   }
 
@@ -101,8 +114,8 @@ export default function DataPage() {
   return (
     <>
       <PageHeader
-        title="Data"
-        subtitle="Upload the exports you already have from your PSA, RMM and billing system. No integrations needed."
+        title="Analyses"
+        subtitle="Upload the exports you already have, run the analysis, and see every past run."
         actions={
           <Button variant="secondary" size="sm" onClick={() => (hasData ? setConfirmDemo(true) : loadDemo())}>
             <Demo className="size-4 shrink-0" aria-hidden /> Load demo data
@@ -110,27 +123,45 @@ export default function DataPage() {
         }
       />
 
-      <section
-        aria-label="Analysis status"
-        className={cx(
-          'mb-6 flex flex-col gap-4 rounded-lg border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5',
-          state === 'stale' ? 'border-warning-line bg-warning-soft' : 'border-line bg-surface',
+      {backend.mode === 'local' && workspace && !workspace.is_demo && (
+        <Callout tone="warning" className="mb-6">
+          <strong className="font-semibold">Evaluation mode:</strong> data stays in this browser and isn't protected by a server login. Don't upload client data here.
+        </Callout>
+      )}
+
+      <div className="mb-6">
+        {run === 'running' ? (
+          <AnalysisProgress source="manual" onDone={setRun} onCancel={() => setRun(null)} />
+        ) : run ? (
+          <AnalysisResult summary={run} onClose={() => setRun(null)} onUploadContracts={() => setContractOpen(true)} />
+        ) : (
+          <section
+            aria-label="Analysis status"
+            className={cx(
+              'flex flex-col gap-4 rounded-lg border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5',
+              state === 'stale' ? 'border-warning-line bg-warning-soft' : 'border-line bg-surface',
+            )}
+          >
+            <div className="flex min-w-0 items-start gap-3">
+              <span className={cx('mt-[7px] size-2 shrink-0 rounded-full', STATUS.dot)} aria-hidden />
+              <div className="min-w-0">
+                <p className={cx('text-body font-medium', state === 'stale' ? 'text-warning' : 'text-ink')}>{STATUS.title}</p>
+                <p className={cx('tnum mt-0.5 text-small', state === 'stale' ? 'text-ink' : 'text-ink-3')}>{STATUS.body}</p>
+              </div>
+            </div>
+            <div className="flex shrink-0 items-center gap-4 pl-5 sm:pl-0">
+              {!data.clients.length && <span className="text-caption text-ink-3">Upload clients first</span>}
+              <Button variant={state === 'ready' || state === 'stale' ? 'accent' : 'secondary'} onClick={() => setRun('running')} disabled={!data.clients.length} data-testid="run-analysis">
+                <Play className="size-4 shrink-0" aria-hidden /> {analysis ? 'Run analysis again' : 'Run analysis'}
+              </Button>
+            </div>
+          </section>
         )}
-      >
-        <div className="flex min-w-0 items-start gap-3">
-          <span className={cx('mt-[7px] size-2 shrink-0 rounded-full', STATUS.dot)} aria-hidden />
-          <div className="min-w-0">
-            <p className={cx('text-body font-medium', state === 'stale' ? 'text-warning' : 'text-ink')}>{STATUS.title}</p>
-            <p className={cx('tnum mt-0.5 text-small', state === 'stale' ? 'text-ink' : 'text-ink-3')}>{STATUS.body}</p>
-          </div>
-        </div>
-        <div className="flex shrink-0 items-center gap-4 pl-5 sm:pl-0">
-          {!data.clients.length && <span className="text-caption text-ink-3">Upload clients first</span>}
-          <Button onClick={run} loading={running} disabled={!data.clients.length} data-testid="run-analysis">
-            {!running && <Play className="size-4 shrink-0" aria-hidden />} {analysis ? 'Run analysis again' : 'Run analysis'}
-          </Button>
-        </div>
-      </section>
+      </div>
+
+      {/* Once there are runs, the history sits with the run; before then the
+          sources come first, since uploading is the next step. */}
+      {data.analyses.length > 0 && <AnalysisHistory analyses={data.analyses} className="mb-6" />}
 
       <Card className="mb-6">
         <CardHeader
@@ -157,7 +188,7 @@ export default function DataPage() {
                 updated={count > 0 ? lastUpload(kind) : null}
                 actions={
                   <>
-                    <Button size="sm" variant={next === kind ? 'primary' : 'secondary'} className="lg:w-full" onClick={() => setImportKind(kind)} data-testid={`upload-${kind}`}>
+                    <Button size="sm" variant={next === kind ? 'primary' : 'secondary'} className="lg:w-full" onClick={() => setImporting({ kind })} data-testid={`upload-${kind}`}>
                       <UploadIcon className="size-4 shrink-0" aria-hidden /> Upload CSV
                     </Button>
                     <span className="flex items-center gap-2">
@@ -197,9 +228,20 @@ export default function DataPage() {
         </ul>
       </Card>
 
+      {!data.analyses.length && <AnalysisHistory analyses={data.analyses} className="mb-6" />}
+
       <UploadHistory uploads={data.uploads} onClear={hasData ? () => setConfirmReset(true) : undefined} />
 
-      {importKind && <CsvImportModal kind={importKind} onClose={() => setImportKind(null)} onTemplate={(k) => template(k, false)} />}
+      {importing && (
+        <CsvImportModal
+          key={importing.kind}
+          kind={importing.kind}
+          initialFile={importing.file}
+          onClose={() => setImporting(null)}
+          onTemplate={(k) => template(k, false)}
+          onSwitchKind={(kind, file) => setImporting({ kind, file })}
+        />
+      )}
       {contractOpen && <ContractModal onClose={() => setContractOpen(false)} />}
       <Modal
         open={confirmDemo}
@@ -214,31 +256,26 @@ export default function DataPage() {
           </>
         }
       >
-        <p className="text-body text-ink-2">This clears everything in {workspace?.name} (clients, uploads, findings and actions) and loads Northlight IT, a fictional MSP with 15 clients.</p>
+        <p className="text-body text-ink-2">This clears everything in {workspace?.name} (clients, uploads, opportunities and tasks) and loads Northlight IT, a fictional MSP with 15 clients.</p>
       </Modal>
       <Modal
         open={confirmReset}
-        onClose={() => setConfirmReset(false)}
+        onClose={() => !clearing && setConfirmReset(false)}
         title="Clear all data?"
         footer={
           <>
-            <Button variant="secondary" onClick={() => setConfirmReset(false)}>
+            <Button variant="secondary" onClick={() => setConfirmReset(false)} disabled={clearing}>
               Cancel
             </Button>
-            <Button
-              variant="danger"
-              onClick={async () => {
-                setConfirmReset(false)
-                await resetData()
-                toast('All data cleared.')
-              }}
-            >
+            <Button variant="danger" onClick={clearAll} loading={clearing}>
               Clear data
             </Button>
           </>
         }
       >
-        <p className="text-body text-ink-2">This removes every client, upload, finding and action in {workspace?.name}. It can't be undone.</p>
+        <p className="text-body text-ink-2">
+          This removes every client, upload, opportunity, task and report in {workspace?.name}, and any stored contract files. It can't be undone.
+        </p>
       </Modal>
     </>
   )

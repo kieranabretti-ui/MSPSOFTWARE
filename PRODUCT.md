@@ -14,7 +14,7 @@ Owners and commercial leads of Managed Service Providers (MSPs): IT support busi
 
 ## Product Purpose
 
-Headroom reads the exports an MSP already has (tickets, time entries, users and devices, billing lines, contracts and SOWs) and finds revenue leakage: out-of-scope work done for free, billable time never invoiced, clients who have grown past their agreement, unbilled licences and recurring charges, underpriced clients, and support use beyond allowances. Every finding shows its evidence, a confidence score, an estimated value and a recommended action. Success is an owner who recovers money, reprices a client or tightens an agreement because of what they saw.
+Headroom reads the exports an MSP already has (tickets, time entries, users and devices, billing lines, contracts and SOWs) and finds revenue leakage: out-of-scope work done for free, billable time never invoiced, clients who have grown past their agreement, unbilled licences and recurring charges, underpriced clients, and support use beyond allowances. Every opportunity shows its evidence, how its value was calculated, a confidence level (High, Medium, Low) with its basis, an estimated value and a recommended action. Success is an owner who recovers money, reprices a client or tightens an agreement because of what they saw.
 
 ## Positioning
 
@@ -26,10 +26,10 @@ Data arrives as CSV exports from a PSA, RMM and billing system, plus contract PD
 
 ## Capabilities and Constraints
 
-- Local mode (browser storage) when Supabase keys are absent; Supabase Auth, Postgres with Row Level Security, and private storage when present. An optional AI review explains one finding at a time.
+- Local mode (browser storage) when Supabase keys are absent; Supabase Auth, Postgres with Row Level Security, and private storage when present. An optional AI explanation covers one opportunity at a time, only when asked.
 - Figures are always presented as potential leakage to review, never as money definitely recoverable.
 - Demo headline figures are pinned by tests: £4,281 identified, £356 a month recurring, £4,272 annualised.
-- Pricing (£99 / £249 / £499 a month) is planned, not live.
+- Pricing (Starter £99, Growth £249, Pro £499 a month) is planned, not live; the tier limits shown on the landing page are proposals. The free audit is a self-serve account plus its first analysis.
 
 ## Brand Commitments
 

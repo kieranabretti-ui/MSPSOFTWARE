@@ -1,14 +1,29 @@
-import { useState, type FormEvent } from 'react'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useState, type FormEvent } from 'react'
+import { Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { Mail } from 'lucide-react'
 import { useStore } from '../data/store'
 import { Button, Field, TextLink, inputCls } from '../components/ui'
+import { mapError } from '../lib/errors'
+import { track } from '../lib/track'
 import { AuthShell, DemoProof, FormError } from './auth/AuthShell'
 
 const EMAIL = /^\S+@\S+\.\S+$/
 
 const WHAT_IT_DOES =
-  'Headroom reads the exports your PSA, RMM and billing system already produce, then shows the out-of-scope work, unbilled time and agreement drift behind every pound.'
+  'Headroom reads the exports your PSA, RMM and billing system already produce, then shows the out-of-scope work, unbilled work and agreement drift behind every pound.'
+
+// The planned tiers a pricing button can carry through to sign-up.
+const PLAN_NAMES: Record<string, string> = { starter: 'Starter', growth: 'Growth', pro: 'Pro' }
+
+function useTitle(title: string) {
+  useEffect(() => {
+    const before = document.title
+    document.title = `${title} · Headroom`
+    return () => {
+      document.title = before
+    }
+  }, [title])
+}
 
 export function Login() {
   const { signIn, sendMagicLink, backend, user, workspace, ready } = useStore()
@@ -19,6 +34,7 @@ export function Login() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [magicSent, setMagicSent] = useState(false)
+  useTitle('Sign in')
   if (ready && user) return <Navigate to={workspace ? ((loc.state as { from?: string } | null)?.from ?? '/app') : '/onboarding'} replace />
 
   const submit = async (e: FormEvent) => {
@@ -31,7 +47,7 @@ export function Login() {
       await signIn(email, password)
       nav('/app')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign in failed.')
+      setError(mapError(err, 'signin'))
     } finally {
       setLoading(false)
     }
@@ -45,7 +61,7 @@ export function Login() {
       await sendMagicLink(email)
       setMagicSent(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not send the link.')
+      setError(mapError(err, 'magic_link'))
     } finally {
       setLoading(false)
     }
@@ -78,12 +94,12 @@ export function Login() {
   return (
     <AuthShell
       title="Sign in"
-      subtitle="Your workspace, findings and reports are where you left them."
+      subtitle="Your workspace, opportunities and reports are where you left them."
       asideBody={WHAT_IT_DOES}
       aside={<DemoProof />}
       footer={
         <>
-          New here? <TextLink to="/signup">Create an account</TextLink> or <TextLink to="/demo">view the demo</TextLink>
+          New here? <TextLink to="/signup">Create an account</TextLink> or <TextLink to="/demo">explore the demo</TextLink>
         </>
       }
     >
@@ -109,15 +125,34 @@ export function Login() {
 }
 
 export function Signup() {
-  const { signUp, user, ready } = useStore()
+  const { signUp, signOut, user, ready, isDemoSession } = useStore()
   const nav = useNavigate()
+  const [params] = useSearchParams()
+  const intent = params.get('intent') ?? undefined
+  const plan = params.get('plan') ?? undefined
+  const planName = plan ? PLAN_NAMES[plan] : undefined
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [leaving, setLeaving] = useState(false)
   const [confirm, setConfirm] = useState(false)
-  if (ready && user && !loading) return <Navigate to="/onboarding" replace />
+  useTitle('Create account')
+  // Someone in the demo keeps their place here: the account starts once they choose to end it.
+  if (ready && user && !loading && !isDemoSession) return <Navigate to="/onboarding" replace />
+
+  const endDemo = async () => {
+    setError(null)
+    setLeaving(true)
+    try {
+      await signOut()
+    } catch (err) {
+      setError(mapError(err, 'signout'))
+    } finally {
+      setLeaving(false)
+    }
+  }
 
   const submit = async (e: FormEvent) => {
     e.preventDefault()
@@ -127,11 +162,12 @@ export function Signup() {
     if (password.length < 8) return setError('Use at least 8 characters for your password.')
     setLoading(true)
     try {
-      const r = await signUp(email, password, name)
+      const r = await signUp(email, password, name, intent ? { intent } : undefined)
+      if (intent === 'audit') track('audit_request', planName ? { plan: plan! } : {})
       if (r.needsConfirmation) setConfirm(true)
       else nav('/onboarding')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign up failed.')
+      setError(mapError(err, 'signup'))
     } finally {
       setLoading(false)
     }
@@ -155,31 +191,47 @@ export function Signup() {
 
   return (
     <AuthShell
-      title="Run a free revenue audit"
-      subtitle="Upload a ticket export and a contract. No PSA integration or card needed."
+      title="Get your free revenue leakage audit"
+      subtitle="Start with your client list (MRR, users and devices) and a ticket export. No PSA integration or card needed."
       asideBody="Upload the exports you already have. Headroom checks every ticket, device and billing line against the agreement, then shows what you could be charging for."
       aside={<DemoProof />}
       footer={
-        <>
-          Already have an account? <TextLink to="/login">Sign in</TextLink>
-        </>
+        isDemoSession ? undefined : (
+          <>
+            Already have an account? <TextLink to="/login">Sign in</TextLink>
+          </>
+        )
       }
     >
-      <form onSubmit={submit} className="space-y-4" noValidate>
-        <Field label="Your name">
-          <input className={inputCls} autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
-        </Field>
-        <Field label="Work email">
-          <input className={inputCls} type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@yourmsp.co.uk" />
-        </Field>
-        <Field label="Password" hint="At least 8 characters.">
-          <input className={inputCls} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        </Field>
-        {error && <FormError>{error}</FormError>}
-        <Button type="submit" className="w-full" loading={loading}>
-          Create account
-        </Button>
-      </form>
+      {isDemoSession ? (
+        <div className="space-y-4">
+          <p className="rounded-md border border-line bg-sunken px-3.5 py-3 text-small text-ink-2">You're in the demo. Creating an account ends the demo.</p>
+          {error && <FormError>{error}</FormError>}
+          <Button className="w-full" loading={leaving} onClick={endDemo}>
+            End the demo and create an account
+          </Button>
+          <p className="text-small text-ink-3">
+            Or <TextLink to="/app">go back to the demo</TextLink>.
+          </p>
+        </div>
+      ) : (
+        <form onSubmit={submit} className="space-y-4" noValidate>
+          {planName && <p className="text-small text-ink-3">You picked {planName}. Pricing isn't live yet, so nothing is charged.</p>}
+          <Field label="Your name">
+            <input className={inputCls} autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
+          </Field>
+          <Field label="Work email">
+            <input className={inputCls} type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@yourmsp.co.uk" />
+          </Field>
+          <Field label="Password" hint="At least 8 characters.">
+            <input className={inputCls} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          </Field>
+          {error && <FormError>{error}</FormError>}
+          <Button type="submit" className="w-full" loading={loading}>
+            Create account
+          </Button>
+        </form>
+      )}
     </AuthShell>
   )
 }

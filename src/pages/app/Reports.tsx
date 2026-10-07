@@ -1,16 +1,21 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { Download, FileSpreadsheet, Printer } from 'lucide-react'
 import { useMetrics, useStore } from '../../data/store'
-import { Badge, Button, Figure, HealthDot, Logo, LogoMark, PageHeader, cx } from '../../components/ui'
-import { GapBar } from '../../components/charts'
+import { Badge, Button, Figure, Logo, LogoMark, PageHeader, cx } from '../../components/ui'
+import { GapBar } from '../../components/bars'
+import { ConfidenceLevel } from '../../components/ConfidenceLevel'
 import { useToast } from '../../components/toast'
 import { GetStarted } from './Overview'
 import { findingsCsv } from './Opportunities'
-import { buildReport, reportPdf, DISCLAIMER } from '../../lib/report'
+import { buildReport, reportPdf, DISCLAIMER, type ReportModel } from '../../lib/report'
 import { downloadFile, hours, money, pct, plural, relative } from '../../lib/format'
 import { IS_PREVIEW } from '../../lib/env'
-import { MarginValue } from './clients/parts'
+import { CONFIDENCE } from '../../lib/labels'
+import { mapError } from '../../lib/errors'
+import { track } from '../../lib/track'
+import { ClientHealth, MarginValue } from './clients/parts'
 
+const opportunities = (n: number) => plural(n, 'opportunity', 'opportunities')
 
 function Section({ id, title, figure, intro, children }: { id: string; title: string; figure?: string; intro?: ReactNode; children: ReactNode }) {
   return (
@@ -94,6 +99,29 @@ function Quiet({ children }: { children: ReactNode }) {
   return <p className="border-y border-line-soft py-4 text-body text-ink-3">{children}</p>
 }
 
+// What each confidence level means, and how many opportunities sit at it. The
+// PDF draws the same box after its breakdown.
+function ReadingConfidence({ levels }: { levels: ReportModel['levels'] }) {
+  return (
+    <div className="mt-8 rounded-lg bg-sunken px-5 py-4 sm:px-6 print:break-inside-avoid">
+      <h4 className="text-small font-semibold text-ink">How to read confidence</h4>
+      <dl className="mt-2 divide-y divide-line-soft">
+        {levels.map((l) => (
+          <div key={l.level} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1 py-2.5 sm:grid-cols-[6.5rem_minmax(0,1fr)_auto]">
+            <dt>
+              <ConfidenceLevel level={l.level} short />
+            </dt>
+            <dd className="col-span-2 row-start-2 text-small text-ink-2 sm:col-span-1 sm:row-start-auto">{CONFIDENCE[l.level].definition}</dd>
+            <dd className="tnum whitespace-nowrap text-right text-small text-ink-3">
+              {opportunities(l.count)} · {money(l.value)}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  )
+}
+
 export default function Reports() {
   const { workspace, analysis, data, recordReport } = useStore()
   const m = useMetrics()
@@ -118,13 +146,20 @@ export default function Reports() {
         toast('Report downloaded.')
       }
     } catch (e) {
-      toast(e instanceof Error ? e.message : 'Could not generate the PDF.', 'error')
+      toast(mapError(e, 'report'), 'error')
     } finally {
       setPdfBusy(false)
     }
   }
   const csv = () => {
-    if (downloadFile(`headroom-findings-${slug}.csv`, findingsCsv(data.findings.filter((f) => f.status !== 'dismissed'), m.clientName), 'text/csv')) toast('Findings CSV downloaded.')
+    if (downloadFile(`headroom-opportunities-${slug}.csv`, findingsCsv(data.findings.filter((f) => f.status !== 'dismissed'), m.clientName), 'text/csv')) {
+      track('report_downloaded', { format: 'csv' })
+      toast('Opportunities CSV downloaded.')
+    }
+  }
+  const print = () => {
+    track('report_downloaded', { format: 'print' })
+    window.print()
   }
 
   const maxShare = Math.max(0, ...r.breakdown.map((b) => b.share))
@@ -142,7 +177,7 @@ export default function Reports() {
           actions={
             <>
               {!IS_PREVIEW && (
-                <Button variant="ghost" size="sm" onClick={() => window.print()}>
+                <Button variant="ghost" size="sm" onClick={print}>
                   <Printer className="size-4" /> Print
                 </Button>
               )}
@@ -179,7 +214,7 @@ export default function Reports() {
                 <Figure size="xl">{money(r.total)}</Figure>
               </dd>
               <dd className="tnum mt-2.5 text-small text-ink-3">
-                {plural(r.findingCount, 'finding')} in {r.period}
+                {opportunities(r.findingCount)} in {r.period}
               </dd>
             </div>
             <div className="sm:row-span-3 sm:grid sm:grid-rows-subgrid">
@@ -188,7 +223,16 @@ export default function Reports() {
                 <Figure tone={r.monthly > 0 ? 'accent' : 'muted'}>{money(r.monthly)}</Figure>
                 <span className="text-small text-ink-3">a month</span>
               </dd>
-              <dd className="mt-2.5 text-caption text-ink-3">Potential MRR to recover</dd>
+              <dd className="tnum mt-2.5 text-caption text-ink-3">
+                {r.recurringAgreement > 0 && r.recurringPricing > 0 ? (
+                  <>
+                    <span className="block">{money(r.recurringAgreement)} agreement and billing</span>
+                    <span className="block">{money(r.recurringPricing)} pricing below target</span>
+                  </>
+                ) : (
+                  'Potential MRR to recover'
+                )}
+              </dd>
             </div>
             <div className="sm:row-span-3 sm:grid sm:grid-rows-subgrid">
               <dt className="text-small text-ink-3">Annualised</dt>
@@ -221,11 +265,11 @@ export default function Reports() {
             <Section id="rp-breakdown" title="Revenue leakage breakdown" figure={money(r.total)}>
               <Ledger
                 caption="Revenue leakage by category"
-                cols={[{ label: 'Category' }, { label: 'Findings', num: true, wide: true }, { label: 'Potential value', num: true }, { label: 'Share', num: true }]}
+                cols={[{ label: 'Category' }, { label: 'Opportunities', num: true, wide: true }, { label: 'Potential value', num: true }, { label: 'Share', num: true }]}
                 rows={r.breakdown.map((b) => [
                   <>
                     {b.label}
-                    <span className="tnum mt-0.5 block text-caption font-normal text-ink-3 sm:hidden">{plural(b.count, 'finding')}</span>
+                    <span className="tnum mt-0.5 block text-caption font-normal text-ink-3 sm:hidden">{opportunities(b.count)}</span>
                   </>,
                   b.count,
                   money(b.value),
@@ -233,6 +277,7 @@ export default function Reports() {
                 ])}
                 foot={['Total', r.findingCount, money(r.total), r.total > 0 ? '100%' : '0%']}
               />
+              {r.findingCount > 0 && <ReadingConfidence levels={r.levels} />}
             </Section>
 
             <Section id="rp-risk" title="Highest risk clients">
@@ -244,13 +289,13 @@ export default function Reports() {
                     <>
                       {c.name}
                       <span className="mt-1 block sm:hidden">
-                        <HealthDot health={c.status} />
+                        <ClientHealth health={c.status} known={c.known} />
                       </span>
                       {c.reason && <span className="mt-1 block text-caption font-normal text-ink-3 sm:hidden">{c.reason}</span>}
                     </>,
                     money(c.leakage),
-                    <MarginValue margin={c.margin} target={r.targetMargin} />,
-                    <HealthDot health={c.status} />,
+                    <MarginValue margin={c.margin} target={r.targetMargin} known={c.known} />,
+                    <ClientHealth health={c.status} known={c.known} />,
                     c.reason,
                   ])}
                 />
@@ -264,17 +309,18 @@ export default function Reports() {
                 {s.rows.length > 0 && (
                   <Ledger
                     caption={s.title}
-                    cols={[{ label: 'Client', wide: true }, { label: 'Finding' }, { label: 'Confidence', num: true, wide: true }, { label: 'Value', num: true }]}
+                    cols={[{ label: 'Client', wide: true }, { label: 'Opportunity' }, { label: 'Confidence', wide: true }, { label: 'Value', num: true }]}
                     rows={s.rows.map((x) => [
                       x.client,
                       <>
                         <span className="block text-ink">{x.title}</span>
-                        <span className="tnum mt-0.5 block text-caption text-ink-3 sm:hidden">
-                          {[x.client, x.detail].filter(Boolean).join(' · ')} · <span className="whitespace-nowrap">{x.confidence}% confidence</span>
+                        <span className="tnum mt-0.5 block text-caption text-ink-3 sm:hidden">{[x.client, x.detail].filter(Boolean).join(' · ')}</span>
+                        <span className="mt-1 block sm:hidden">
+                          <ConfidenceLevel level={x.level} short />
                         </span>
                         {x.detail && <span className="tnum mt-0.5 hidden text-caption text-ink-3 sm:block">{x.detail}</span>}
                       </>,
-                      `${x.confidence}%`,
+                      <ConfidenceLevel level={x.level} short />,
                       money(x.value),
                     ])}
                   />
@@ -298,20 +344,20 @@ export default function Reports() {
                   <>
                     {c.name}
                     <span className="mt-1 block sm:hidden">
-                      <HealthDot health={c.health} />
+                      <ClientHealth health={c.health} known={c.known} />
                     </span>
                   </>,
                   money(c.mrr),
                   money(c.labour_cost),
                   money(c.contribution),
-                  <MarginValue margin={c.margin} target={r.targetMargin} />,
+                  <MarginValue margin={c.margin} target={r.targetMargin} known={c.known} />,
                   hours(c.avg_monthly_hours),
-                  <HealthDot health={c.health} />,
+                  <ClientHealth health={c.health} known={c.known} />,
                 ])}
               />
             </Section>
 
-            <Section id="rp-actions" title="Recommended actions" intro="Open findings, largest opportunity first.">
+            <Section id="rp-actions" title="Recommended actions" intro="Opportunities not yet actioned, largest first.">
               {r.actions.length > 0 ? (
                 <ol className="divide-y divide-line-soft border-y border-line-soft">
                   {r.actions.map((a, i) => (
@@ -325,7 +371,7 @@ export default function Reports() {
                   ))}
                 </ol>
               ) : (
-                <Quiet>Every finding in this report has been resolved. Run a new analysis when fresh exports arrive.</Quiet>
+                <Quiet>Every opportunity in this report has been actioned. Run a new analysis when fresh exports arrive.</Quiet>
               )}
             </Section>
 

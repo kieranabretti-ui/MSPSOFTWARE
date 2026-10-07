@@ -4,12 +4,39 @@ import { useStore } from '../../../data/store'
 import { Badge, Button, Field, Modal, cx, inputCls } from '../../../components/ui'
 import { useToast } from '../../../components/toast'
 import { extractClauses, CLAUSE_LABELS } from '../../../engine/contractTerms'
+import { mapError } from '../../../lib/errors'
 import { AddClientModal } from '../Clients'
 import { Callout, Dropzone, Select } from './kit'
 import { CONTRACT_CHECKS } from './sources'
 
+// Words that stay lower case mid-title, and company suffixes that keep their
+// usual form. Any other word of three letters or fewer reads as initials.
+const MINOR = new Set(['a', 'an', 'and', 'at', 'by', 'for', 'in', 'of', 'on', 'or', 'the', 'to', 'with', '&'])
+const SUFFIX: Record<string, string> = { ltd: 'Ltd', plc: 'Plc', llp: 'LLP', llc: 'LLC', inc: 'Inc', co: 'Co', cic: 'CIC' }
+
+// A readable title from a file name: 'abc ltd.pdf' becomes 'ABC Ltd'.
+function titleFromFileName(name: string) {
+  const words = name
+    .replace(/\.(pdf|txt)$/i, '')
+    .replace(/[_-]+/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean)
+  return words
+    .map((w, i) => {
+      const lower = w.toLowerCase()
+      if (SUFFIX[lower]) return SUFFIX[lower]
+      if (i > 0 && MINOR.has(lower)) return lower
+      const letters = w.replace(/[^a-z]/gi, '')
+      if (letters.length > 0 && letters.length <= 3 && !MINOR.has(lower)) return w.toUpperCase()
+      // Leave mixed case as typed (McKenzie, iPhone); capitalise the rest.
+      if (/[a-z]/.test(w) && /[A-Z]/.test(w.slice(1))) return w
+      return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+    })
+    .join(' ')
+}
+
 export function ContractModal({ onClose }: { onClose: () => void }) {
-  const { data, addContract } = useStore()
+  const { data, addContract, backend } = useStore()
   const toast = useToast()
   const [clientId, setClientId] = useState('')
   const [title, setTitle] = useState('')
@@ -23,18 +50,20 @@ export function ContractModal({ onClose }: { onClose: () => void }) {
 
   const onFile = async (f: File) => {
     setError(null)
-    if (f.size > 20 * 1024 * 1024) return setError('This PDF is over 20 MB.')
+    if (f.size > 20 * 1024 * 1024) return setError('This PDF is over 20 MB. Upload a smaller copy or just the schedule that covers scope.')
+    const isPdf = /\.pdf$/i.test(f.name) || f.type === 'application/pdf'
+    if (!isPdf && !/\.txt$/i.test(f.name)) return setError('Upload the contract as a PDF, or as a .txt file.')
     setExtracting(true)
     try {
-      const isPdf = /\.pdf$/i.test(f.name) || f.type === 'application/pdf'
-      if (!isPdf && !/\.txt$/i.test(f.name)) throw new Error('Upload a PDF (or a .txt file).')
       const { extractPdfText } = await import('../../../lib/pdf')
       const t = isPdf ? await extractPdfText(f) : await f.text()
+      // A scanned PDF is a picture of text, so there is nothing to read.
+      if (t.trim().length < 40) return setError("We couldn't find any text in this file. If it's a scanned PDF, try a text-based PDF.")
       setText(t)
       setFile(f)
-      if (!title) setTitle(f.name.replace(/\.(pdf|txt)$/i, '').replace(/[_-]+/g, ' '))
+      if (!title) setTitle(titleFromFileName(f.name))
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not read this file.')
+      setError(mapError(e, 'contract'))
     } finally {
       setExtracting(false)
     }
@@ -49,7 +78,7 @@ export function ContractModal({ onClose }: { onClose: () => void }) {
       toast('Contract saved. Re-run the analysis to check tickets against it.')
       onClose()
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not save the contract.')
+      setError(mapError(e, 'save'))
     } finally {
       setSaving(false)
     }
@@ -102,7 +131,8 @@ export function ContractModal({ onClose }: { onClose: () => void }) {
           <div className="space-y-3">
             <Dropzone accept=".pdf,application/pdf,.txt" onFile={onFile} label="Upload contract PDF" busy={extracting} busyLabel="Extracting text…" hint="PDF or plain text, up to 20 MB" />
             <p className="text-caption text-ink-3">
-              Headroom reads the scope and exclusions so tickets can be checked against them. It looks for: {CONTRACT_CHECKS.charAt(0).toLowerCase() + CONTRACT_CHECKS.slice(1)} The original file is stored privately.
+              Headroom reads the scope and exclusions so tickets can be checked against them. It looks for: {CONTRACT_CHECKS.charAt(0).toLowerCase() + CONTRACT_CHECKS.slice(1)}{' '}
+              {backend.mode === 'supabase' ? "The original PDF is kept in your workspace's private storage." : 'Only the extracted text is kept, in this browser.'}
             </p>
           </div>
         ) : (

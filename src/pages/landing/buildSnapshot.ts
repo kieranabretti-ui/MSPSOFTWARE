@@ -1,5 +1,9 @@
 import { analyse } from '../../engine/analyse'
 import { buildDemoDataset } from '../../demo/dataset'
+import { demoStageOf } from '../../demo/stages'
+import { confidenceOf } from '../../lib/confidence'
+import { formatCalculation } from '../../lib/calculation'
+import { LEVEL_ORDER, STAGE_ORDER } from '../../lib/labels'
 import type { Evidence, FindingDraft } from '../../engine/types'
 import type { LandingSnapshot, SnapshotFinding, SnapshotTime, TicketExample } from './snapshotTypes'
 
@@ -49,6 +53,8 @@ export function buildLandingSnapshot(): LandingSnapshot {
     category: f.category,
     severity: f.severity,
     confidence: f.confidence,
+    level: confidenceOf(f).level,
+    overlaps: !!f.meta.overlaps?.length,
     value: f.estimated_value,
     monthly: f.monthly_value,
     ticketRef: f.meta.ticket_ref ?? null,
@@ -137,6 +143,15 @@ export function buildLandingSnapshot(): LandingSnapshot {
   const mrrAfterDrift = ex.mrr + driftMonthly
 
   const recurring = findings.filter((f) => f.monthly_value > 0).sort((a, b) => b.monthly_value - a.monthly_value)
+  // Rows are the agreement and billing corrections; repricing is told through the client example.
+  const recurringRows = recurring.filter((f) => f.category !== 'UNDERPRICED_CLIENT').slice(0, 4)
+  const recurringRest = recurring.filter((f) => !recurringRows.includes(f))
+  const spotlightCalc = must(formatCalculation(spotlightFinding), `calculation for #${PICKS.spotlightTicket}`)
+  const sumBy = <K extends string>(keys: readonly K[], keyOf: (f: FindingDraft) => K) =>
+    keys.map((k) => {
+      const xs = findings.filter((f) => keyOf(f) === k)
+      return { count: xs.length, value: xs.reduce((a, f) => a + f.estimated_value, 0) }
+    })
   const [first, last] = [s.months[0], s.months[s.months.length - 1]]
   const monthName = (m: string) => MONTHS[Number(m.slice(5, 7)) - 1]
 
@@ -170,14 +185,17 @@ export function buildLandingSnapshot(): LandingSnapshot {
     categories: Object.entries(s.by_category)
       .map(([category, v]) => ({ category: category as SnapshotFinding['category'], value: v.value, count: v.count, clients: v.clients }))
       .sort((a, b) => b.value - a.value),
-    topFindings: findings.slice(0, 5).map(lite),
-    // Rows are the agreement and billing corrections; repricing is told through the client example.
+    levels: sumBy(LEVEL_ORDER, (f) => confidenceOf(f).level).map((x, i) => ({ level: LEVEL_ORDER[i], ...x })),
+    stages: sumBy(STAGE_ORDER, (f) => demoStageOf(f, clientName)).map((x, i) => ({ status: STAGE_ORDER[i], ...x })),
+    topFindings: findings
+      .filter((f) => !f.meta.overlaps?.length)
+      .slice(0, 5)
+      .map(lite),
     recurring: {
       count: recurring.length,
-      rows: recurring
-        .filter((f) => f.category !== 'UNDERPRICED_CLIENT')
-        .slice(0, 4)
-        .map(lite),
+      rows: recurringRows.map(lite),
+      restCount: recurringRest.length,
+      restMonthly: recurringRest.reduce((a, f) => a + f.monthly_value, 0),
     },
     leaks: {
       scope: ticketExample(PICKS.scopeTicket),
@@ -191,7 +209,12 @@ export function buildLandingSnapshot(): LandingSnapshot {
       underpriced: { finding: lite(underFinding), mrr: underMetrics.mrr, avgHours: underMetrics.avg_monthly_hours, margin: Math.round(underMetrics.margin * 1000) / 1000 },
     },
     outOfScope: { count: oos.length, value: oos.reduce((a, f) => a + f.estimated_value, 0), rows: oosRows.map(lite) },
-    spotlight: { ...ticketExample(PICKS.spotlightTicket), recommendedAction: spotlightFinding.recommended_action },
+    spotlight: {
+      ...ticketExample(PICKS.spotlightTicket),
+      recommendedAction: spotlightFinding.recommended_action,
+      basis: confidenceOf(spotlightFinding).basis,
+      calculation: { lines: spotlightCalc.lines, result: spotlightCalc.result },
+    },
     client: {
       name: ex.name,
       package: ex.package,
@@ -214,6 +237,7 @@ export function buildLandingSnapshot(): LandingSnapshot {
       driftMonthly,
       mrrAfterDrift,
       marginAfterDrift: Math.round(((mrrAfterDrift - ex.labour_cost - ex.software_cost) / mrrAfterDrift) * 1000) / 1000,
+      overlapNote: exFindings.some((f) => !!f.meta.overlaps?.length),
     },
   }
 }

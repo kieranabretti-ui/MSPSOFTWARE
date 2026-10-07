@@ -61,6 +61,10 @@ export function Highlighted({ text, highlights }: { text: string; highlights?: s
   )
 }
 
+// Small counts in words for marketing prose: "six months".
+const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve']
+export const inWords = (n: number) => WORDS[n] ?? String(n)
+
 // "15 Sept 2026" from "2026-09-15".
 export function shortDate(iso: string) {
   const [y, m, d] = iso.slice(0, 10).split('-').map(Number)

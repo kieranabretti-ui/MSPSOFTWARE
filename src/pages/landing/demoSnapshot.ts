@@ -71,6 +71,50 @@ export const DEMO: LandingSnapshot = {
       "clients": 1
     }
   ],
+  "levels": [
+    {
+      "level": "HIGH",
+      "count": 18,
+      "value": 2360
+    },
+    {
+      "level": "MEDIUM",
+      "count": 11,
+      "value": 1336
+    },
+    {
+      "level": "LOW",
+      "count": 11,
+      "value": 585
+    }
+  ],
+  "stages": [
+    {
+      "status": "open",
+      "count": 35,
+      "value": 3026
+    },
+    {
+      "status": "reviewing",
+      "count": 2,
+      "value": 691
+    },
+    {
+      "status": "valid",
+      "count": 2,
+      "value": 510
+    },
+    {
+      "status": "resolved",
+      "count": 1,
+      "value": 54
+    },
+    {
+      "status": "dismissed",
+      "count": 0,
+      "value": 0
+    }
+  ],
   "topFindings": [
     {
       "title": "Support usage above the 10h monthly allowance",
@@ -78,19 +122,10 @@ export const DEMO: LandingSnapshot = {
       "category": "EXCESSIVE_USAGE",
       "severity": "HIGH",
       "confidence": 88,
+      "level": "MEDIUM",
+      "overlaps": false,
       "value": 355,
       "monthly": 0,
-      "ticketRef": null,
-      "workDate": null
-    },
-    {
-      "title": "Gross margin 28% against a 30% target",
-      "client": "ABC Ltd",
-      "category": "UNDERPRICED_CLIENT",
-      "severity": "HIGH",
-      "confidence": 82,
-      "value": 336,
-      "monthly": 56,
       "ticketRef": null,
       "workDate": null
     },
@@ -100,6 +135,8 @@ export const DEMO: LandingSnapshot = {
       "category": "AGREEMENT_DRIFT",
       "severity": "HIGH",
       "confidence": 95,
+      "level": "HIGH",
+      "overlaps": false,
       "value": 324,
       "monthly": 72,
       "ticketRef": null,
@@ -111,6 +148,8 @@ export const DEMO: LandingSnapshot = {
       "category": "AGREEMENT_DRIFT",
       "severity": "HIGH",
       "confidence": 95,
+      "level": "HIGH",
+      "overlaps": false,
       "value": 270,
       "monthly": 54,
       "ticketRef": null,
@@ -122,8 +161,23 @@ export const DEMO: LandingSnapshot = {
       "category": "AGREEMENT_DRIFT",
       "severity": "HIGH",
       "confidence": 95,
+      "level": "HIGH",
+      "overlaps": false,
       "value": 240,
       "monthly": 40,
+      "ticketRef": null,
+      "workDate": null
+    },
+    {
+      "title": "Gross margin 28% against a 30% target",
+      "client": "Castle Accountancy",
+      "category": "UNDERPRICED_CLIENT",
+      "severity": "HIGH",
+      "confidence": 82,
+      "level": "MEDIUM",
+      "overlaps": false,
+      "value": 229,
+      "monthly": 38,
       "ticketRef": null,
       "workDate": null
     }
@@ -137,6 +191,8 @@ export const DEMO: LandingSnapshot = {
         "category": "AGREEMENT_DRIFT",
         "severity": "HIGH",
         "confidence": 95,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 324,
         "monthly": 72,
         "ticketRef": null,
@@ -148,6 +204,8 @@ export const DEMO: LandingSnapshot = {
         "category": "AGREEMENT_DRIFT",
         "severity": "HIGH",
         "confidence": 95,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 270,
         "monthly": 54,
         "ticketRef": null,
@@ -159,6 +217,8 @@ export const DEMO: LandingSnapshot = {
         "category": "AGREEMENT_DRIFT",
         "severity": "HIGH",
         "confidence": 95,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 240,
         "monthly": 40,
         "ticketRef": null,
@@ -170,12 +230,16 @@ export const DEMO: LandingSnapshot = {
         "category": "AGREEMENT_DRIFT",
         "severity": "HIGH",
         "confidence": 95,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 168,
         "monthly": 28,
         "ticketRef": null,
         "workDate": null
       }
-    ]
+    ],
+    "restCount": 6,
+    "restMonthly": 162
   },
   "leaks": {
     "scope": {
@@ -185,6 +249,8 @@ export const DEMO: LandingSnapshot = {
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
         "confidence": 90,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 150,
         "monthly": 0,
         "ticketRef": "18177",
@@ -215,6 +281,8 @@ export const DEMO: LandingSnapshot = {
         "category": "UNBILLED_TIME",
         "severity": "MEDIUM",
         "confidence": 92,
+        "level": "MEDIUM",
+        "overlaps": false,
         "value": 70,
         "monthly": 0,
         "ticketRef": "18094",
@@ -241,6 +309,8 @@ export const DEMO: LandingSnapshot = {
         "category": "AGREEMENT_DRIFT",
         "severity": "HIGH",
         "confidence": 95,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 270,
         "monthly": 54,
         "ticketRef": null,
@@ -257,6 +327,8 @@ export const DEMO: LandingSnapshot = {
         "category": "UNDERPRICED_CLIENT",
         "severity": "HIGH",
         "confidence": 82,
+        "level": "MEDIUM",
+        "overlaps": false,
         "value": 229,
         "monthly": 38,
         "ticketRef": null,
@@ -277,6 +349,8 @@ export const DEMO: LandingSnapshot = {
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
         "confidence": 90,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 60,
         "monthly": 0,
         "ticketRef": "18285",
@@ -288,6 +362,8 @@ export const DEMO: LandingSnapshot = {
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
         "confidence": 94,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 80,
         "monthly": 0,
         "ticketRef": "18492",
@@ -299,6 +375,8 @@ export const DEMO: LandingSnapshot = {
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
         "confidence": 90,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 150,
         "monthly": 0,
         "ticketRef": "18189",
@@ -310,6 +388,8 @@ export const DEMO: LandingSnapshot = {
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
         "confidence": 90,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 150,
         "monthly": 0,
         "ticketRef": "18177",
@@ -321,6 +401,8 @@ export const DEMO: LandingSnapshot = {
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
         "confidence": 94,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 95,
         "monthly": 0,
         "ticketRef": "18049",
@@ -332,6 +414,8 @@ export const DEMO: LandingSnapshot = {
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
         "confidence": 90,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 75,
         "monthly": 0,
         "ticketRef": "18017",
@@ -343,6 +427,8 @@ export const DEMO: LandingSnapshot = {
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
         "confidence": 90,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 120,
         "monthly": 0,
         "ticketRef": "17965",
@@ -354,6 +440,8 @@ export const DEMO: LandingSnapshot = {
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
         "confidence": 90,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 90,
         "monthly": 0,
         "ticketRef": "17872",
@@ -368,6 +456,8 @@ export const DEMO: LandingSnapshot = {
       "category": "OUT_OF_SCOPE",
       "severity": "HIGH",
       "confidence": 94,
+      "level": "HIGH",
+      "overlaps": false,
       "value": 80,
       "monthly": 0,
       "ticketRef": "18492",
@@ -391,7 +481,14 @@ export const DEMO: LandingSnapshot = {
       "duration": "1h 20m",
       "billable": false
     },
-    "recommendedAction": "Review whether this work on a personal device should be treated as out of scope and charged at your standard rate (£60/h). If it's a recurring request, agree how it will be billed with Bramley Homes."
+    "recommendedAction": "Review whether this work on a personal device should be treated as out of scope and charged at your standard rate (£60/h). If it's a recurring request, agree how it will be billed with Bramley Homes.",
+    "basis": "The contract clause and the ticket both support this.",
+    "calculation": {
+      "lines": [
+        "1h 20m non-billable × £60/h = £80"
+      ],
+      "result": "£80 one-off"
+    }
   },
   "client": {
     "name": "ABC Ltd",
@@ -441,6 +538,8 @@ export const DEMO: LandingSnapshot = {
         "category": "UNDERPRICED_CLIENT",
         "severity": "HIGH",
         "confidence": 82,
+        "level": "MEDIUM",
+        "overlaps": true,
         "value": 336,
         "monthly": 56,
         "ticketRef": null,
@@ -452,6 +551,8 @@ export const DEMO: LandingSnapshot = {
         "category": "AGREEMENT_DRIFT",
         "severity": "HIGH",
         "confidence": 95,
+        "level": "HIGH",
+        "overlaps": false,
         "value": 324,
         "monthly": 72,
         "ticketRef": null,
@@ -463,6 +564,8 @@ export const DEMO: LandingSnapshot = {
         "category": "UNBILLED_TIME",
         "severity": "MEDIUM",
         "confidence": 65,
+        "level": "LOW",
+        "overlaps": false,
         "value": 80,
         "monthly": 0,
         "ticketRef": "18110",
@@ -473,6 +576,7 @@ export const DEMO: LandingSnapshot = {
     "uplift": 47,
     "driftMonthly": 72,
     "mrrAfterDrift": 1922,
-    "marginAfterDrift": 0.309
+    "marginAfterDrift": 0.309,
+    "overlapNote": true
   }
 }

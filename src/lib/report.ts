@@ -1,9 +1,14 @@
 // One report model, rendered both on screen and as a PDF.
-import type { Analysis, ClientMetrics, Finding, Health, Workspace } from '../engine/types'
+import type { Analysis, ClientMetrics, ConfidenceLevel, Finding, Health, Workspace } from '../engine/types'
+import { DEFAULT_SETTINGS } from '../engine/types'
+import { liveClientHealth } from '../engine/health'
 import type { WorkspaceData } from '../data/backend'
-import { CATEGORY_META, HEALTH } from './labels'
+import { CATEGORY_META, CONFIDENCE, HEALTH, LEVEL_ORDER, recurringKind } from './labels'
+import { confidenceOf } from './confidence'
 import { money, pct, hours, plural } from './format'
 import { color, paper, rgb, viz } from '../brand/tokens'
+
+const opportunities = (n: number) => plural(n, 'opportunity', 'opportunities')
 
 export interface ReportModel {
   title: string
@@ -13,6 +18,9 @@ export interface ReportModel {
   isDemo: boolean
   total: number
   monthly: number
+  /** The recurring part from agreement and billing gaps, and from pricing below target. */
+  recurringAgreement: number
+  recurringPricing: number
   annual: number
   /** Agreement revenue over the analysed period: the billed side of the gap. */
   billed: number
@@ -22,9 +30,12 @@ export interface ReportModel {
   targetMargin: number
   executiveSummary: string[]
   breakdown: { label: string; count: number; value: number; share: number }[]
-  riskClients: { name: string; leakage: number; margin: number; health: string; status: Health; reason: string }[]
-  sections: { key: 'OUT_OF_SCOPE' | 'AGREEMENT_DRIFT' | 'UNBILLED_TIME'; title: string; intro: string; value: number; rows: { client: string; title: string; detail: string; confidence: number; value: number }[] }[]
-  profitability: (ClientMetrics & { leakage: number })[]
+  /** Opportunities by confidence level, for the "How to read confidence" box. */
+  levels: { level: ConfidenceLevel; count: number; value: number }[]
+  /** health and status are live: they follow the opportunities still counted. known is false without MRR. */
+  riskClients: { name: string; leakage: number; margin: number; known: boolean; health: string; status: Health; reason: string }[]
+  sections: { key: 'OUT_OF_SCOPE' | 'AGREEMENT_DRIFT' | 'UNBILLED_TIME'; title: string; intro: string; value: number; rows: { client: string; title: string; detail: string; level: ConfidenceLevel; value: number }[] }[]
+  profitability: (ClientMetrics & { leakage: number; known: boolean })[]
   actions: { client: string; action: string; value: number }[]
   clientName: (id: string) => string
 }
@@ -35,8 +46,34 @@ export function buildReport(ws: Workspace, analysis: Analysis, data: WorkspaceDa
   const total = live.reduce((a, f) => a + f.estimated_value, 0)
   const monthly = live.reduce((a, f) => a + f.monthly_value, 0)
   const s = analysis.summary
+  // The settings the analysis ran with, so targets match its opportunities.
+  const settings = { ...DEFAULT_SETTINGS, ...ws.settings, ...s.settings }
   const leak = new Map<string, number>()
-  live.forEach((f) => leak.set(f.client_id, (leak.get(f.client_id) ?? 0) + f.estimated_value))
+  const liveByClient = new Map<string, Finding[]>()
+  live.forEach((f) => {
+    leak.set(f.client_id, (leak.get(f.client_id) ?? 0) + f.estimated_value)
+    liveByClient.set(f.client_id, [...(liveByClient.get(f.client_id) ?? []), f])
+  })
+
+  // Recurring money splits into gaps billing can close and pricing below target.
+  let recurringAgreement = 0
+  let recurringPricing = 0
+  const pricedBelow = new Set<string>()
+  for (const f of live) {
+    if (!f.monthly_value) continue
+    if (recurringKind(f.category) === 'pricing') {
+      recurringPricing += f.monthly_value
+      pricedBelow.add(f.client_id)
+    } else recurringAgreement += f.monthly_value
+  }
+
+  const byLevel = new Map<ConfidenceLevel, { count: number; value: number }>(LEVEL_ORDER.map((l) => [l, { count: 0, value: 0 }]))
+  for (const f of live) {
+    const l = byLevel.get(confidenceOf(f).level)!
+    l.count++
+    l.value += f.estimated_value
+  }
+  const levels = LEVEL_ORDER.map((level) => ({ level, ...byLevel.get(level)! }))
 
   const byCat = new Map<string, { count: number; value: number }>()
   live.forEach((f) => {
@@ -49,12 +86,17 @@ export function buildReport(ws: Workspace, analysis: Analysis, data: WorkspaceDa
     .map(([k, v]) => ({ label: CATEGORY_META[k as Finding['category']].label, ...v, share: total ? v.value / total : 0 }))
     .sort((a, b) => b.value - a.value)
 
-  const metrics = s.client_metrics.map((c) => ({ ...c, leakage: leak.get(c.client_id) ?? 0 }))
+  // Health, reasons and margin follow the opportunities still counted, as on
+  // screen. A client without MRR has no margin to measure.
+  const metrics = s.client_metrics.map((c) => {
+    const h = liveClientHealth(c, liveByClient.get(c.client_id) ?? [], settings, s.average_monthly_hours, s.months.length)
+    return { ...c, leakage: leak.get(c.client_id) ?? 0, health: h.health, reasons: h.reasons, recommendation: h.recommendation, known: c.margin_known ?? c.mrr > 0 }
+  })
   const riskClients = [...metrics]
     .filter((c) => c.leakage > 0 || c.health === 'at_risk')
     .sort((a, b) => b.leakage - a.leakage)
     .slice(0, 6)
-    .map((c) => ({ name: c.name, leakage: c.leakage, margin: c.margin, health: HEALTH[c.health].label, status: c.health, reason: c.reasons[0] ?? '' }))
+    .map((c) => ({ name: c.name, leakage: c.leakage, margin: c.margin, known: c.known, health: c.known ? HEALTH[c.health].label : 'Needs MRR', status: c.health, reason: c.reasons[0] ?? '' }))
 
   const section = (key: ReportModel['sections'][number]['key'], title: string, intro: string) => {
     const fs = live.filter((f) => f.category === key).sort((a, b) => b.estimated_value - a.estimated_value)
@@ -62,25 +104,31 @@ export function buildReport(ws: Workspace, analysis: Analysis, data: WorkspaceDa
     return {
       key,
       title,
-      intro: fs.length ? `${intro} ${plural(fs.length, 'finding')} worth ${money(value)}.` : 'Nothing found in this period.',
+      intro: fs.length ? `${intro} ${opportunities(fs.length)} worth ${money(value)}.` : 'Nothing found in this period.',
       value,
       rows: fs.slice(0, 10).map((f) => ({
         client: clientName(f.client_id),
         title: f.title,
         detail: f.meta.ticket_ref ? `Ticket #${f.meta.ticket_ref}` : f.monthly_value ? `${money(f.monthly_value)} a month` : '',
-        confidence: f.confidence,
+        level: confidenceOf(f).level,
         value: f.estimated_value,
       })),
     }
   }
 
   const top = breakdown[0]
-  const worst = [...metrics].sort((a, b) => a.margin - b.margin)[0]
+  const worst = metrics.filter((c) => c.known).sort((a, b) => a.margin - b.margin)[0]
+  const target = settings.target_margin
+  // What recurs, and why: gaps that billing can close, and pricing below target.
+  const recurs = [
+    recurringAgreement > 0 ? `${money(recurringAgreement)} a month from agreement and billing gaps that will continue until agreements or billing are updated` : '',
+    recurringPricing > 0 ? `${money(recurringPricing)} a month from ${plural(pricedBelow.size, 'client')} priced below your target margin` : '',
+  ].filter(Boolean)
   const executiveSummary = [
-    `We analysed ${plural(s.data_counts.tickets, 'ticket')}, ${plural(s.data_counts.time_entries, 'time entry', 'time entries')} and ${plural(s.data_counts.clients, 'client agreement')} for ${s.period_label}, and identified ${money(total)} of potential revenue leakage across ${plural(live.length, 'finding')}.`,
+    `We analysed ${plural(s.data_counts.tickets, 'ticket')}, ${plural(s.data_counts.time_entries, 'time entry', 'time entries')} and ${plural(s.data_counts.clients, 'client agreement')} for ${s.period_label}, and identified ${money(total)} of potential revenue leakage across ${opportunities(live.length)}.`,
     top ? `The largest source is ${top.label.toLowerCase()} (${money(top.value)}, ${pct(top.share)} of the total).` : '',
-    monthly > 0 ? `${money(monthly)} a month is recurring: charges that will keep being missed until agreements or billing are updated. That is ${money(monthly * 12)} a year.` : '',
-    worst && worst.margin < ws.settings.target_margin ? `${worst.name} has the weakest margin at ${pct(worst.margin)}, below the ${pct(ws.settings.target_margin)} target, with ${hours(worst.avg_monthly_hours)} of support a month.` : '',
+    monthly > 0 ? `${money(monthly)} a month recurs: ${recurs.join(', and ')}. That is ${money(monthly * 12)} a year.` : '',
+    worst && worst.margin < target ? `${worst.name} has the weakest margin at ${pct(worst.margin)}, below the ${pct(target)} target, with ${hours(worst.avg_monthly_hours)} of support a month.` : '',
   ].filter(Boolean)
 
   const actions = [...live]
@@ -97,27 +145,31 @@ export function buildReport(ws: Workspace, analysis: Analysis, data: WorkspaceDa
     isDemo: ws.is_demo,
     total,
     monthly,
+    recurringAgreement,
+    recurringPricing,
     annual: monthly * 12,
     billed: s.client_metrics.reduce((a, c) => a + c.mrr, 0) * s.months.length,
     months: s.months.length,
     findingCount: live.length,
-    targetMargin: ws.settings.target_margin,
+    targetMargin: target,
     executiveSummary,
     breakdown,
+    levels,
     riskClients,
     sections: [
       section('OUT_OF_SCOPE', 'Out-of-scope work', 'Work that client agreements exclude or make chargeable, delivered without a charge.'),
       section('AGREEMENT_DRIFT', 'Agreement drift', 'Users and devices supported beyond what agreements cover.'),
       section('UNBILLED_TIME', 'Unbilled work', 'Time logged as non-billable on work that appears billable.'),
     ],
-    profitability: metrics.sort((a, b) => a.margin - b.margin),
+    // Weakest margin first; clients without MRR go last.
+    profitability: metrics.sort((a, b) => Number(b.known) - Number(a.known) || a.margin - b.margin),
     actions,
     clientName,
   }
 }
 
 export const DISCLAIMER =
-  'All figures are estimates of potential revenue based on the data provided and the assumptions configured in Headroom. They are not guaranteed to be recoverable. Review each finding against the client agreement before taking action.'
+  'All figures are estimates of potential revenue based on the data provided and the assumptions configured in Headroom. They are not guaranteed to be recoverable. Review each opportunity against the client agreement before taking action.'
 
 
 type RGB = [number, number, number]
@@ -319,7 +371,7 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
   type(9, 'normal', boneMuted).text('Potential revenue leakage identified', M, LABEL)
   const bigSize = fit(money(r.total), COL1 - M - 24, 48, 28)
   type(bigSize, 'bold', bone).text(money(r.total), M, BASE, { charSpace: -bigSize * 0.03 })
-  type(9, 'normal', bone2).text(`${plural(r.findingCount, 'finding')} in ${r.period}`, M, NOTE)
+  type(9, 'normal', bone2).text(`${opportunities(r.findingCount)} in ${r.period}`, M, NOTE)
 
   const stat = (x: number, maxW: number, label: string, value: string, c: RGB, unit: string | null, note: string) => {
     type(9, 'normal', boneMuted).text(label, x, LABEL)
@@ -357,7 +409,7 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
     )
     runs(
       [
-        { t: 'Unbilled ', size: 8, c: boneMuted },
+        { t: 'Potential leakage ', size: 8, c: boneMuted },
         { t: money(r.total), size: 8, weight: 'bold', c: lime },
         { t: `   ${(share * 100).toFixed(1)}%`, size: 8, c: boneMuted },
       ],
@@ -382,21 +434,43 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
   h2('Revenue leakage breakdown', money(r.total), tableH(r.breakdown.length, true))
   const maxShare = Math.max(0.0001, ...r.breakdown.map((b) => b.share))
   table(
-    [{ head: 'Category' }, { head: 'Findings', right: true, width: 56 }, { head: 'Potential value', right: true, width: 86 }, { head: 'Share', right: true, width: 120 }],
+    [{ head: 'Category' }, { head: 'Opportunities', right: true, width: 72 }, { head: 'Potential value', right: true, width: 86 }, { head: 'Share', right: true, width: 120 }],
     r.breakdown.map((b) => [b.label, String(b.count), money(b.value), pct(b.share)]),
     { foot: ['Total', String(r.findingCount), money(r.total), r.total ? '100%' : '0%'], bar: { col: 3, share: (i) => r.breakdown[i].share / maxShare } },
   )
+
+  // How to read confidence: each level's marks, word and definition, with
+  // how many opportunities sit at it, on a sunken panel as on screen.
+  {
+    const PX = 16
+    const ROW = 17
+    const boxH = 22 + 12 + r.levels.length * ROW + 6
+    y += 12
+    ensure(boxH + 8)
+    doc.setFillColor(...sunken).roundedRect(M, y, CW, boxH, 6, 6, 'F')
+    type(9.5, 'bold', ink).text('How to read confidence', M + PX, y + 22)
+    let base = y + 22 + 12 + 9
+    for (const l of r.levels) {
+      const c = CONFIDENCE[l.level]
+      for (let i = 0; i < 3; i++) doc.setFillColor(...(i < c.marks ? ink2 : rule)).circle(M + PX + 2 + i * 5.5, base - 2.8, 1.7, 'F')
+      type(8.5, 'bold', ink).text(c.short, M + PX + 22, base)
+      type(8.5, 'normal', ink2).text(c.definition, M + PX + 68, base)
+      type(8.5, 'normal', muted).text(`${opportunities(l.count)}  ·  ${money(l.value)}`, W - M - PX, base, { align: 'right' })
+      base += ROW
+    }
+    y += boxH + 4
+  }
 
   h2('Highest risk clients', undefined, tableH(r.riskClients.length))
   table(
     [
       { head: 'Client', width: 128 },
       { head: 'Leakage', right: true },
-      { head: 'Margin', right: true, flag: (i) => r.riskClients[i].margin < r.targetMargin },
-      { head: 'Status', width: 64, health: (i) => r.riskClients[i].status },
+      { head: 'Margin', right: true, flag: (i) => r.riskClients[i].known && r.riskClients[i].margin < r.targetMargin },
+      { head: 'Status', width: 64, health: (i) => (r.riskClients[i].known ? r.riskClients[i].status : 'healthy') },
       { head: 'Main reason' },
     ],
-    r.riskClients.map((c) => [c.name, money(c.leakage), pct(c.margin), c.health, c.reason]),
+    r.riskClients.map((c) => [c.name, money(c.leakage), c.known ? pct(c.margin) : '—', c.health, c.reason]),
   )
 
   for (const s of r.sections) {
@@ -404,8 +478,8 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
     para(s.intro, { size: 9.5, space: 8 })
     if (s.rows.length)
       table(
-        [{ head: 'Client', width: 128 }, { head: 'Finding' }, { head: 'Reference', width: 80, c: muted }, { head: 'Confidence', right: true }, { head: 'Value', right: true }],
-        s.rows.map((x) => [x.client, x.title, x.detail, `${x.confidence}%`, money(x.value)]),
+        [{ head: 'Client', width: 128 }, { head: 'Opportunity' }, { head: 'Reference', width: 80, c: muted }, { head: 'Confidence', right: true }, { head: 'Value', right: true }],
+        s.rows.map((x) => [x.client, x.title, x.detail, CONFIDENCE[x.level].short, money(x.value)]),
       )
   }
 
@@ -417,11 +491,20 @@ export async function reportPdf(r: ReportModel): Promise<Blob> {
       { head: 'Labour', right: true },
       { head: 'Software', right: true },
       { head: 'Contribution', right: true },
-      { head: 'Margin', right: true, flag: (i) => r.profitability[i].margin < r.targetMargin },
+      { head: 'Margin', right: true, flag: (i) => r.profitability[i].known && r.profitability[i].margin < r.targetMargin },
       { head: 'Hours/mo', right: true },
-      { head: 'Status', width: 58, health: (i) => r.profitability[i].health },
+      { head: 'Status', width: 58, health: (i) => (r.profitability[i].known ? r.profitability[i].health : 'healthy') },
     ],
-    r.profitability.map((c) => [c.name, money(c.mrr), money(c.labour_cost), money(c.software_cost), money(c.contribution), pct(c.margin), hours(c.avg_monthly_hours), HEALTH[c.health].label]),
+    r.profitability.map((c) => [
+      c.name,
+      money(c.mrr),
+      money(c.labour_cost),
+      money(c.software_cost),
+      money(c.contribution),
+      c.known ? pct(c.margin) : '—',
+      hours(c.avg_monthly_hours),
+      c.known ? HEALTH[c.health].label : 'Needs MRR',
+    ]),
     { size: 8 },
   )
 

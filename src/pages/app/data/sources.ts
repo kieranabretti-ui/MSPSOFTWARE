@@ -6,7 +6,7 @@ import type { CsvKind } from '../../../data/importers'
 export type SourceKind = CsvKind | 'contracts'
 
 export const SOURCES: Record<SourceKind, { from: string; finds: string; need?: 'Required' | 'Recommended' }> = {
-  clients: { from: 'From your PSA or billing system', finds: 'The baseline every finding is checked against', need: 'Required' },
+  clients: { from: 'From your PSA or billing system', finds: 'The baseline every opportunity is checked against', need: 'Required' },
   tickets: { from: 'From your PSA', finds: 'Finds out-of-scope and unbilled work', need: 'Recommended' },
   time_entries: { from: 'From your PSA', finds: 'Finds unbilled time and support over allowance' },
   assets: { from: 'From your RMM or Microsoft 365', finds: 'Finds agreement drift and unbilled licences' },

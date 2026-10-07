@@ -4,8 +4,9 @@ import { Badge, cx } from '../../../components/ui'
 import type { FieldDef } from '../../../data/importers'
 import { SOURCES, type SourceKind } from './sources'
 
-// One export in the sources ledger: what it is, the columns it needs, what is
-// loaded, and the action to load it.
+// One export in the sources ledger: what it is, the columns it needs (in plain
+// words; the template's column name is in the title), what is loaded, and the
+// action to load it.
 export function SourceRow({
   kind,
   title,
@@ -55,9 +56,9 @@ export function SourceRow({
               <dt className="w-16 shrink-0 text-caption text-ink-3">Required</dt>
               <dd className="flex flex-wrap gap-1">
                 {required.map((f) => (
-                  <code key={f.key} title={f.label} className="rounded-xs bg-raised px-1.5 py-0.5 font-mono text-[11px] leading-4 text-ink ring-1 ring-inset ring-line-strong">
-                    {f.key}
-                  </code>
+                  <span key={f.key} title={`Template column: ${f.key}`} className="rounded-xs bg-raised px-1.5 py-0.5 text-caption leading-4 text-ink ring-1 ring-inset ring-line-strong">
+                    {f.label}
+                  </span>
                 ))}
               </dd>
             </div>
@@ -66,9 +67,9 @@ export function SourceRow({
                 <dt className="w-16 shrink-0 text-caption text-ink-3">Optional</dt>
                 <dd className="flex flex-wrap gap-1">
                   {optional.map((f) => (
-                    <code key={f.key} title={f.label} className="rounded-xs px-1.5 py-0.5 font-mono text-[11px] leading-4 text-ink-3 ring-1 ring-inset ring-line-soft">
-                      {f.key}
-                    </code>
+                    <span key={f.key} title={`Template column: ${f.key}`} className="rounded-xs px-1.5 py-0.5 text-caption leading-4 text-ink-3 ring-1 ring-inset ring-line-soft">
+                      {f.label}
+                    </span>
                   ))}
                 </dd>
               </div>
