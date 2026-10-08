@@ -209,6 +209,23 @@ select pg_temp.expect_value($q$select count(*) from public.ai_take_quota('aaaaaa
 select pg_temp.expect_value($q$select count(*) from public.ai_take_quota('bbbbbbbb-0000-4000-8000-0000000000bb', 'aaaaaaaa-0000-4000-8000-000000000001', null, 100, 100, 100) where reason = 'not_member'$q$, 1, 'quota: refused for a workspace the user is not in');
 reset role;
 
+-- ------------------------------------------------------------ stale AI text (wording and client name)
+
+-- Text shown as AI-assisted must describe the finding as it stands now. A
+-- rewrite of the title or claims, or a rename of the client, clears it.
+update public.findings set ai_explanation = 'Written by the AI function', ai_meta = '{"model":"m"}' where id = 'aaaaaaaa-0000-4000-8000-0000000000e1';
+set local role authenticated;
+select pg_temp.act_as('aaaaaaaa-0000-4000-8000-000000000001');
+select pg_temp.expect_rows($s$update public.findings set title = 'Client owes £50,000', classification = 'confirmed' where id = 'aaaaaaaa-0000-4000-8000-0000000000e1'$s$, 1, 'A rewrites the title of its own finding');
+select pg_temp.expect_value($q$select count(*) from public.findings where id = 'aaaaaaaa-0000-4000-8000-0000000000e1' and ai_explanation is null and ai_meta is null$q$, 1, 'a rewritten finding clears the AI explanation');
+reset role;
+update public.findings set ai_explanation = 'Written by the AI function', ai_meta = '{"model":"m"}' where id = 'aaaaaaaa-0000-4000-8000-0000000000e1';
+set local role authenticated;
+select pg_temp.act_as('aaaaaaaa-0000-4000-8000-000000000001');
+select pg_temp.expect_rows($s$update public.clients set name = 'Other Client Ltd' where id = 'aaaaaaaa-0000-4000-8000-0000000000c1'$s$, 1, 'A renames its own client');
+select pg_temp.expect_value($q$select count(*) from public.findings where id = 'aaaaaaaa-0000-4000-8000-0000000000e1' and ai_explanation is null and ai_meta is null$q$, 1, 'renaming the client clears its findings'' AI explanations');
+reset role;
+
 select 'All isolation checks passed' as result;
 
 rollback;

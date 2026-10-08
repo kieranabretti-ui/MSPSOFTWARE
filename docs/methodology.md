@@ -38,9 +38,9 @@ All rules run over the analysis period: the months spanned by the ticket and tim
 | `out_of_scope.<work>` | Out of scope | A ticket's wording matches a kind of work (personal device, hardware repair, third-party application, project, onsite, new user, new device, out of hours) and the client's agreement has a clause excluding it or making it chargeable, and the time was logged as non-billable | One-off: non-billable time × hourly rate |
 | `unbilled.billing_mismatch` | Unbilled time | The ticket is marked billable but time against it is non-billable | One-off: non-billable time × hourly rate |
 | `unbilled.<work>` | Unbilled time | The wording matches typically chargeable work, no agreement clause says it is included, and the time is non-billable | One-off: non-billable time × hourly rate |
-| `mismatch.user` / `mismatch.device` | Recurring charge mismatch | The per-unit billing line bills fewer than the contracted quantity | Recurring: (contracted − billed) × line price |
+| `mismatch.user` / `mismatch.device` | Recurring charge mismatch | The per-unit billing lines, added together, bill fewer than the contracted quantity | Recurring: (contracted − billed) × line price (the lowest, when several lines could apply) |
 | `recurring.missing_user` / `recurring.missing_device` | Recurring charge mismatch | A contracted quantity exists, the client has billing lines, but none is a per-unit charge | Recurring, as a guide only: contracted × Settings default price |
-| `drift.user` / `drift.device` | Agreement drift | More active users or devices than contracted (or billed, when no contracted figure exists) | Recurring: (active − contracted) × unit price |
+| `drift.user` / `drift.device` | Agreement drift | More active users or devices than both the contracted figure and the quantity billed across the per-unit lines (only the billed quantity when no contracted figure exists). Nothing is raised when billing already covers every active unit | Recurring: (active − max(contracted, billed)) × unit price |
 | `license.unbilled` | Missing licence | More users are assigned a licence than the matching billing line bills | Recurring: (assigned − billed) × line price |
 | `usage.over_allowance` | Excessive usage | Non-billable hours in a month exceed the included hours by more than the Settings tolerance | One-off per month: (hours − included) × hourly rate |
 | `margin.below_target` | Underpriced client | No included hours, the client has MRR, and its modelled margin is below target | Estimate: monthly shortfall against the target margin |
@@ -50,12 +50,14 @@ Details that matter:
 - **Ticket time.** Time entries linked to a ticket are used; a ticket without entries uses its own minutes and billable flag. A ticket imported twice is counted once.
 - **Hourly rate.** The rate stated in the client's agreement when it states exactly one rate (and, for out-of-hours work, one multiplier); otherwise the Settings billable rate and multiplier. If the agreement states two different rates, neither is used.
 - **Support hours.** Out-of-hours work is judged against the agreement's support window when its clause states the same hours as Settings; otherwise against Settings alone.
-- **Contracted quantity.** The figure stated in an uploaded agreement ("based on 39 supported users") when the agreement states exactly one; otherwise the clients file; otherwise, for drift only, the billed quantity. When the agreement and clients file disagree, the agreement's figure is used and the disagreement is recorded.
-- **Per-unit price line.** Lines named per user or seat (or per device, endpoint, workstation), excluding any line named exactly like a licence your users hold. If several remain, lines named support, managed or monitoring are preferred. If several still remain, the lowest price is used and the price is marked ambiguous.
+- **Contracted quantity.** The figure stated in an uploaded agreement ("based on 39 supported users") when the agreement states exactly one, ignoring numbers of named people with a special role ("covers 5 named users at director level for priority escalation"); otherwise the clients file; otherwise, for drift only, the billed quantity. When the agreement and clients file disagree, the agreement's figure is used and the disagreement is recorded.
+- **Per-unit price line.** Lines named per user or seat (or per device, endpoint, workstation), excluding any line named exactly like a licence your users hold. If several remain, lines named support, managed or monitoring are preferred. If several still remain, their quantities are added together as the billed quantity, the lowest price is used, and the price is marked ambiguous.
 - **Licence matching.** A licence matches a billing line when the names are identical once case and punctuation are ignored. A partial match (one name contains the other) is used only when it is the single candidate for that line and that licence; otherwise no finding is raised.
 - **Drift timing.** Only assets present by the end of the period count. Each month counts the assets first seen by that month's end; an asset with no first-seen date counts from the first month, and is disclosed.
-- **Usage.** Only non-billable time counts against the allowance, because billable time is charged separately.
-- **Margin.** Contribution = MRR − all logged hours × labour cost − software cost (clients file, or users × the Settings default per user). Shortfall per month = target margin × MRR − contribution, where positive. The target price is average cost ÷ (1 − target margin). When billing the client's agreement gaps alone would restore the target margin, the overlap is disclosed and neither figure is netted.
+- **Usage.** Only non-billable time counts against the allowance, because billable time is charged separately. The allowance is the agreement's when it states one, otherwise the clients file's; a disagreement between them is recorded and shown. Hours over the allowance are not rounded up to any billing increment, so the value is the lower figure.
+- **Exclusion clauses.** A sentence that says the work is not chargeable, or is included or covered, is never read as an exclusion. If another sentence in the agreement says the kind of work is included, the out-of-scope finding stays at Medium.
+- **Time zones.** Timestamps with a zone (Z or ±hh:mm) are converted to UK time at import, and business hours are judged on UK wall-clock time, so results don't depend on the browser's time zone. Timestamps without a zone are taken as UK time.
+- **Margin.** Contribution = MRR − all logged hours × labour cost − software cost (clients file, or users × the Settings default per user). Shortfall per month = target margin × MRR − contribution, where positive. The target price is average cost ÷ (1 − target margin). When billing the client's agreement gaps alone would restore the target margin, the overlap is disclosed and neither figure is netted. Months above target are not netted against months below it; the calculation note gives the shortfall measured on the period average for comparison.
 
 ## 3. Calculations and rounding
 
@@ -87,12 +89,12 @@ Per rule:
 
 | Rule | High when | Otherwise |
 | --- | --- | --- |
-| Out of scope | Agreement clause matched, strong wording match, hourly rate from the agreement, and (out of hours) support hours from the agreement | Medium |
+| Out of scope | Agreement clause matched with no other wording saying the work is included, strong wording match, hourly rate from the agreement, and (out of hours) support hours from the agreement | Medium |
 | Unbilled, billing mismatch | Never: the time may be a deliberate write-off | Medium |
 | Unbilled, chargeable-looking work | Never: nothing confirms it is chargeable | Low |
 | Recurring mismatch | Contracted quantity stated in an agreement, and one unambiguous per-unit line | Medium |
 | Missing recurring charge | Never: it may be bundled in another line | Low |
-| Drift | Contracted quantity from an agreement that the clients file does not contradict, priced at one unambiguous billing line, all assets dated | Medium |
+| Drift | Contracted quantity from an agreement that the clients file does not contradict, priced at one unambiguous billing line, the billed quantity below the active count, all assets dated | Medium |
 | Licence | Licence and billing line names identical | Medium |
 | Usage | Never: invoices are not in the data, so the overage may already be billed | Medium when the allowance is in the agreement; Low when it comes from the clients file only |
 | Margin | Never: a modelled estimate | Low |
@@ -140,6 +142,7 @@ AI may:
 AI may not:
 
 - produce, change or round any figure, total, percentage, annualisation or comparison;
+- write a figure in words, a fraction or multiple ("a fifth", "twice") or a yearly figure, unless that exact wording is in the data (the server rejects the explanation otherwise);
 - create, dismiss or reclassify a finding, or change its confidence;
 - be shown without an "AI-assisted" label.
 

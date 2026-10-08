@@ -1,4 +1,5 @@
 import type { Asset, BillingItem, Client, Provenance, Ticket, TimeEntry } from '../engine/types'
+import { toWorkspaceWallClock } from '../engine/classify'
 
 export type CsvKind = 'clients' | 'tickets' | 'time_entries' | 'assets' | 'billing'
 type FieldType = 'string' | 'number' | 'date' | 'datetime' | 'boolean'
@@ -174,6 +175,12 @@ export function parseDate(v: string | undefined, withTime: boolean): string | nu
   if (!s) return null
   let y: number, m: number, d: number
   let rest = ''
+  // An ISO timestamp with a zone (Z or ±hh:mm) is converted to UK wall-clock
+  // time, so 08:00Z in summer is read as 09:00, not 08:00.
+  if (/^\d{4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?\s*(?:Z|[+-]\d{2}:?\d{2})$/i.test(s)) {
+    const wall = toWorkspaceWallClock(s.replace(/\s+/g, ''))
+    if (wall) return withTime ? wall : wall.slice(0, 10)
+  }
   let match = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(.*)$/)
   if (match) {
     ;[y, m, d] = [Number(match[1]), Number(match[2]), Number(match[3])]

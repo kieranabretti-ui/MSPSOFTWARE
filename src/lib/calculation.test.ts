@@ -32,7 +32,7 @@ describe('formatCalculation on the demo', () => {
   it('shows the drift sum at the billing line price', () => {
     const f = findings.find((x) => x.client_id === clientId('ABC Ltd') && x.meta.rule === 'drift.user')!
     expect(formatCalculation(f)).toEqual({
-      lines: ['39 active users − 35 contracted = 4 users', '4 × £18 = £72 a month, priced as Managed User Support (per user)', '£72 × 12 = £864 a year'],
+      lines: ['39 active users − 35 contracted and billed = 4 users', '4 × £18 = £72 a month, priced as Managed User Support (per user)', '£72 × 12 = £864 a year'],
       result: '£72 a month',
       note: '£324 across the period as users were added. See value by month.',
       total: 324,
@@ -50,7 +50,7 @@ describe('formatCalculation on the demo', () => {
     expect(calc.lines.some((l) => l.startsWith('Shortfall in the 4 months below target: ') && l.endsWith('= £336'))).toBe(true)
     expect(calc.result).toBe('£56 a month, estimated')
     expect(calc.basis).toBe('estimate')
-    expect(calc.note).toBe('Price that restores 30% at average cost: £1,897 a month (+\u2060£47). An estimate from your cost settings, not a count of records.')
+    expect(calc.note).toBe('Price that restores 30% at average cost: £1,897 a month (+\u2060£47). Months above target are not netted off; measured on the period average the shortfall is £33 a month. An estimate from your cost settings, not a count of records.')
   })
 
   it('shows one line per month over the allowance', () => {

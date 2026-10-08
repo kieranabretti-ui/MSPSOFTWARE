@@ -6,7 +6,7 @@ import { Card, HealthDot, TextLink, cx } from '../../../components/ui'
 import { LeakBar } from '../../../components/bars'
 import { TrendChart } from '../../../components/charts'
 import { ConfidenceLevel } from '../../../components/ConfidenceLevel'
-import type { TrustMetrics } from '../../../lib/audit'
+import { trustRates, type TrustMetrics } from '../../../lib/audit'
 import { money, plural } from '../../../lib/format'
 import { CATEGORY_META, CLASSIFICATION, FINDING_STATUS } from '../../../lib/labels'
 
@@ -184,8 +184,6 @@ export function PriorityFindings({ rows, clientName }: { rows: PriorityRow[]; cl
 
 const RECOVERY_STAGES: FindingStatus[] = ['open', 'reviewing', 'valid', 'resolved']
 
-const pctText = (n: number) => `${Math.round(n)}%`
-
 // Where recovery stands: every opportunity by stage, from New to Actioned, each
 // opening its tab in the recovery queue, then the review record: how much of
 // what the software flagged has been opened, reviewed, approved, actioned or
@@ -194,35 +192,12 @@ const pctText = (n: number) => `${Math.round(n)}%`
 export function RecoveryPanel({ byStage, topFindingId, trust }: { byStage: Record<FindingStatus, { count: number; value: number }>; topFindingId?: string; trust: TrustMetrics }) {
   const moving = byStage.reviewing.count + byStage.valid.count + byStage.resolved.count > 0
   const dismissed = byStage.dismissed.count
-  const record: { label: string; value: string; title: string }[] = [
-    {
-      label: 'Opened',
-      value: pctText(trust.opened_pct),
-      title: 'Share of current opportunities opened at least once',
-    },
-    {
-      label: 'Reviewed',
-      value: pctText(trust.reviewed_pct),
-      title: 'Share moved past New',
-    },
-    {
-      label: 'Approved or actioned',
-      value: pctText(trust.approved_pct),
-      title: 'Share the MSP confirmed as valid',
-    },
-    {
-      label: 'Dismissed',
-      value: pctText(trust.dismissed_pct),
-      title: 'Share dismissed, for any reason',
-    },
-    {
-      label: 'False-positive rate',
-      value: trust.false_positive_rate == null ? 'No decisions yet' : pctText(trust.false_positive_rate),
-      title: 'Dismissed because the data was wrong or the agreement covers it, out of every approved, actioned or dismissed opportunity',
-    },
+  const record: { label: string; value: string; detail?: string; title: string }[] = [
+    ...trustRates(trust).map((r) => ({ label: r.label, value: r.value, detail: r.detail, title: r.hint })),
     {
       label: 'Recovered (actioned)',
       value: money(trust.recovered_value),
+      detail: plural(trust.counts.actioned, 'opportunity', 'opportunities'),
       title: 'Value of opportunities marked Actioned',
     },
   ]
@@ -274,6 +249,7 @@ export function RecoveryPanel({ byStage, topFindingId, trust }: { byStage: Recor
               <div key={r.label} className="min-w-0" title={r.title}>
                 <dt className="text-caption text-ink-3">{r.label}</dt>
                 <dd className="tnum mt-0.5 text-small font-semibold text-ink">{r.value}</dd>
+                {r.detail && <dd className="tnum text-caption text-ink-3">{r.detail}</dd>}
               </div>
             ))}
           </dl>

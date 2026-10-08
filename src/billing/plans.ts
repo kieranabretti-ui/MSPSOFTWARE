@@ -191,7 +191,7 @@ const signupFor = (plan?: PlanId) => `/signup?intent=audit${plan && plan !== 'au
 const proCta = (): Cta =>
   COMPANY.contactEmail
     ? { label: 'Talk to Sales', href: `mailto:${COMPANY.contactEmail}?subject=${encodeURIComponent('Headroom Pro')}`, note: 'A 20-minute call to check Pro fits. No deck.' }
-    : { label: 'Talk to us', to: signupFor('pro'), note: "Start with your free audit. We'll use your sign-up email to arrange a 20-minute call. No deck." }
+    : { label: 'Start with a free audit', to: signupFor('pro'), note: "Pro isn't on sale online yet. Start with the free audit; Pro opens to founding MSPs first." }
 
 export const PLANS: Record<PlanId, Plan> = {
   audit: {
@@ -227,7 +227,7 @@ export const PLANS: Record<PlanId, Plan> = {
       available('Contract vs reality for every client'),
       available('Contract and SOW checks against your uploaded PDFs'),
       available('PDF and CSV reports for client reviews'),
-      available(`${ENTITLEMENTS.growth.historyMonths} months of analysis history`),
+      available('Your analysis history, with what changed since the last run'),
       planned('Direct PSA connection'),
       planned('Automatic monitoring and alerts'),
     ],
@@ -243,8 +243,10 @@ export const PLANS: Record<PlanId, Plan> = {
     usersPlanned: true,
     features: [
       available('Everything in Growth'),
-      available('Unlimited clients and analysis history'),
-      available('Priority support from a named contact, with a reply within one business day'),
+      available('Unlimited clients'),
+      // A support promise needs a published support channel. Until one exists it is planned, and once it does the
+      // wording is a target, not a service level (the Terms offer none).
+      COMPANY.contactEmail ? available('Priority support from a named contact. We aim to reply within one business day') : planned('Priority support from a named contact'),
       available('A quarterly commercial review: we go through your findings with you and run custom analysis on request'),
       planned('Multiple PSA environments and entities'),
       planned('Advanced reporting'),

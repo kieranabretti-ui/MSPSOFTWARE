@@ -1,5 +1,5 @@
 import { classifyText, isOutsideHours, CATEGORY_NOUNS, OUT_OF_SCOPE_TITLES, type Classification, type WorkCategory } from './classify'
-import { clauseCitation, extractClauses, statedValue, type Clause, type ClauseType } from './contractTerms'
+import { clauseCitation, extractClauses, segmentContract, statedValue, type Clause, type ClauseType } from './contractTerms'
 import { confidenceOf, SCORE_FOR_LEVEL } from './confidence'
 import { liveClientHealth } from './health'
 import { fmtMinutes, monthLabel, periodLabel, signed } from './format'
@@ -155,6 +155,16 @@ const INCLUSION_WORDS: Partial<Record<WorkCategory, RegExp>> = {
   third_party_app: /(third[- ]party|line[- ]of[- ]business)[^.]{0,80}(are |is )?(included|covered|supported)/i,
   hardware_repair: /(hardware)[^.]{0,60}(are |is )?(included|covered)/i,
   after_hours: /(24\/7|24x7|out of hours)[^.]{0,60}(included|covered)/i,
+}
+
+// A sentence in the agreement that says this kind of work is included. A
+// sentence that also excludes it, charges for it or limits it to best
+// endeavours is an exclusion, not an inclusion.
+const EXCLUSION_WORDING = /(excluded|exclud(es|ing)|not (covered|included|supported)|chargeable|charged|best[- ]endeavou?rs?|separately|additional (charge|cost|fee)|standard hourly rate)/i
+function inclusionSentence(text: string, category: WorkCategory): string | null {
+  const re = INCLUSION_WORDS[category]
+  if (!re) return null
+  return segmentContract(text).find((seg) => re.test(seg.sentence) && !EXCLUSION_WORDING.test(seg.sentence))?.sentence ?? null
 }
 
 const BILLABLE_TYPE: WorkCategory[] = [
@@ -400,6 +410,9 @@ export function analyse(input: Dataset): AnalysisOutput {
       const conf = Math.min(97, round(c.confidence * 0.7 + 30))
       if (!best || conf > best.conf) best = { c, clause, conf }
     }
+    // The agreement may also say this kind of work is included elsewhere: then
+    // the clause alone can't settle it, and the finding can't be HIGH.
+    const inclusionConflict = !!(best && contract && inclusionSentence(contract.text, best.c.category))
     if (best && best.conf >= 60) {
       const noun = CATEGORY_NOUNS[best.c.category]
       const citation = clauseCitation(best.clause)
@@ -419,10 +432,13 @@ export function analyse(input: Dataset): AnalysisOutput {
         claims: claimsOf({
           facts: [`${citation} says: "${best.clause.sentence}"`, timeFact],
           observations: [...outsideObs, calcObs],
-          interpretations: [`The ticket's wording${words} suggests ${noun}, which that clause excludes or makes chargeable. This is a keyword match, so read the ticket before charging.`],
+          interpretations: [
+            `The ticket's wording${words} suggests ${noun}, which that clause excludes or makes chargeable. This is a keyword match, so read the ticket before charging.`,
+            ...(inclusionConflict ? [`Other wording in the agreement says this kind of work is included, so read both clauses before charging.`] : []),
+          ],
           recommendation: action,
         }),
-        meta: { ...meta, rule: `out_of_scope.${best.c.category}`, calc: { ...baseCalc, match: best.conf >= 90 ? 'strong' : 'loose' } },
+        meta: { ...meta, rule: `out_of_scope.${best.c.category}`, calc: { ...baseCalc, match: best.conf >= 90 ? 'strong' : 'loose', clause_conflict: inclusionConflict } },
       })
       continue
     }
@@ -438,7 +454,7 @@ export function analyse(input: Dataset): AnalysisOutput {
     const noun = billableCls ? CATEGORY_NOUNS[billableCls.category] : ''
     const why = mismatch
       ? `The ticket is marked billable but ${fmtMinutes(item.nonBillableMinutes)} of time against it was logged as non-billable.`
-      : `This reads like ${noun}, which MSPs commonly charge for, but all ${fmtMinutes(item.nonBillableMinutes)} was logged as non-billable. ${contract ? "The agreement doesn't say this work is included." : 'No contract has been uploaded for this client, so coverage could not be checked.'}`
+      : `This reads like ${noun}, which MSPs commonly charge for, but all ${fmtMinutes(item.nonBillableMinutes)} was logged as non-billable. ${contract ? 'Our keyword check found no clause in the agreement saying this work is included; read it to confirm.' : 'No contract has been uploaded for this client, so coverage could not be checked.'}`
     const action = mismatch
       ? 'Check whether the non-billable time was a deliberate write-off. If not, correct the time entries to billable and include them on the next invoice.'
       : `Check with the technician whether this work was agreed as included. If not, consider billing it at ${gbp(rate)}/h and tagging similar tickets as billable going forward.`
@@ -454,11 +470,14 @@ export function analyse(input: Dataset): AnalysisOutput {
       annual_value: 0,
       recommended_action: action,
       claims: claimsOf({
-        facts: mismatch ? [`Ticket #${t.external_id} is marked billable in your PSA.`, timeFact] : [timeFact, contract ? `${poss(client.name)} agreement was checked and no clause says this work is included or chargeable.` : `No agreement has been uploaded for ${client.name}.`],
+        facts: mismatch ? [`Ticket #${t.external_id} is marked billable in your PSA.`, timeFact] : [timeFact, ...(contract ? [] : [`No agreement has been uploaded for ${client.name}.`])],
         observations: [...outsideObs, calcObs],
         interpretations: mismatch
           ? ['Your PSA records disagree about whether this work is billable. It may be a deliberate write-off.']
-          : [`The ticket's wording suggests ${noun}, which is often chargeable. Whether it was agreed as included, or done as goodwill, isn't in the data.`],
+          : [
+              `The ticket's wording suggests ${noun}, which is often chargeable. Whether it was agreed as included, or done as goodwill, isn't in the data.`,
+              ...(contract ? [`Our keyword check found no clause in ${poss(client.name)} agreement saying this work is included or chargeable. Read the agreement to confirm.`] : []),
+            ],
         recommendation: action,
       }),
       meta: {
@@ -496,7 +515,10 @@ export function analyse(input: Dataset): AnalysisOutput {
       }
       if (!cands.length) return null
       const line = cands.reduce((a, b) => (b.unit_price < a.unit_price ? b : a))
-      return { line, ambiguous: cands.length > 1, candidates: cands }
+      // Everything billed per unit across the candidate lines: a split such as
+      // Premium 4 + Standard 6 bills 10, not the cheaper line's 6.
+      const billed = cands.reduce((a, b) => a + b.quantity, 0)
+      return { line, ambiguous: cands.length > 1, candidates: cands, billed }
     }
 
     for (const kind of ['user', 'device'] as const) {
@@ -557,8 +579,10 @@ export function analyse(input: Dataset): AnalysisOutput {
       if (!list.length) continue
 
       // Billing quantity below contracted quantity
-      if (line && contracted != null && line.quantity < contracted) {
-        const gap = contracted - line.quantity
+      const billedQty = unit?.billed ?? null
+      const billedText = unit?.ambiguous ? `${unit.candidates.map((b) => `"${b.service}" bills ${b.quantity}`).join(' and ')}, ${billedQty} in total` : line ? `the recurring charge "${line.service}" bills ${line.quantity}` : ''
+      if (line && contracted != null && billedQty != null && billedQty < contracted) {
+        const gap = contracted - billedQty
         const monthlyExact = gap * price
         const monthly = pence(monthlyExact)
         const pv = Object.fromEntries(months.map((m) => [m, monthly]))
@@ -568,37 +592,42 @@ export function analyse(input: Dataset): AnalysisOutput {
           client_id: client.id,
           category: 'RECURRING_CHARGE_MISMATCH',
           title: `Billing for ${plural(gap, kind)} below contracted quantity`,
-          description: `${contractedSource === 'contract' ? `${poss(client.name)} agreement` : `Your clients file for ${client.name}`} covers ${contracted} ${kind}s but the recurring charge "${line.service}" bills ${line.quantity}.`,
+          description: `${contractedSource === 'contract' ? `${poss(client.name)} agreement` : `Your clients file for ${client.name}`} covers ${contracted} ${kind}s but ${billedText}.`,
           evidence: [...contractedEvidence, ...(unit!.ambiguous ? unit!.candidates.map(lineEvidence) : [lineEvidence(line)])],
           estimated_value: sumPence(Object.values(pv)),
           monthly_value: monthly,
           annual_value: pence(monthlyExact * 12),
           recommended_action: action,
           claims: claimsOf({
-            facts: [contractedFact!, `The recurring charge "${line.service}" bills ${line.quantity} × ${gbp(line.unit_price)}.`],
-            observations: [`${contracted} − ${line.quantity} = ${plural(gap, kind)} contracted but not billed. ${gap} × ${gbp(price)} = ${gbp(monthly)} a month (${gbp(pence(monthlyExact * 12))} a year).`],
-            interpretations: unit!.ambiguous ? [`More than one billing line could be the per-${kind} charge; the lowest-priced was used.`] : [],
+            facts: [contractedFact!, ...(unit!.ambiguous ? unit!.candidates.map((b) => `The recurring charge "${b.service}" bills ${b.quantity} × ${gbp(b.unit_price)}.`) : [`The recurring charge "${line.service}" bills ${line.quantity} × ${gbp(line.unit_price)}.`])],
+            observations: [`${contracted} − ${billedQty} = ${plural(gap, kind)} contracted but not billed. ${gap} × ${gbp(price)} = ${gbp(monthly)} a month (${gbp(pence(monthlyExact * 12))} a year).`],
+            interpretations: unit!.ambiguous ? [`More than one billing line could be the per-${kind} charge; their quantities are added together and the gap is valued at the lowest price.`] : [],
             recommendation: action,
           }),
           meta: {
             rule: `mismatch.${kind}`,
             period_values: pv,
-            calc: { kind: 'mismatch', unit: kind, contracted, contracted_source: contractedSource!, billed: line.quantity, unit_price: price, price_label: line.service, price_ambiguous: unit!.ambiguous },
+            calc: { kind: 'mismatch', unit: kind, contracted, contracted_source: contractedSource!, billed: billedQty, unit_price: price, price_label: line.service, price_ambiguous: unit!.ambiguous },
           },
         })
       }
 
-      // Drift: actual above contracted (or billed when no contract figure)
-      const baseline = contracted ?? line?.quantity ?? null
+      // Drift: active above what is contracted and what is billed. The baseline
+      // is the contracted figure (or the billed quantity when there is none);
+      // units already billed are never a gap, so the value counts only the
+      // active units beyond max(contracted, billed).
+      const billedNow = line ? billedQty : null
+      const baseline = contracted ?? billedNow ?? null
       if (baseline == null) continue
+      const floor = Math.max(baseline, billedNow ?? 0)
       const pv: Record<string, number> = {}
       for (const m of months) {
         const end = monthEnd(m)
         const active = list.filter((a) => !a.first_seen || a.first_seen <= end).length
-        const extra = Math.max(0, active - baseline)
+        const extra = Math.max(0, active - floor)
         if (extra) pv[m] = pence(extra * price)
       }
-      const extraNow = list.length - baseline
+      const extraNow = list.length - floor
       if (extraNow <= 0) continue
       const monthlyExact = extraNow * price
       const monthly = pence(monthlyExact)
@@ -610,20 +639,23 @@ export function analyse(input: Dataset): AnalysisOutput {
       // With no contracted figure the comparison is with what's billed, and the
       // wording says so rather than claiming a contract.
       const byContract = contracted != null
-      const versus = byContract ? 'contracted' : 'billed'
+      // Compared with the billed quantity when no contracted figure exists, or
+      // when more is billed than the contract states (the contract is out of date).
+      const versus = byContract && floor === baseline ? 'contracted' : 'billed'
+      const billedClause = billedNow != null ? (byContract ? `, billed for ${billedNow}` : '') : ''
       const gapNote = `${monthsAffected > 1 ? `, and the gap has existed for ${monthsAffected} months of the period analysed` : ''}.`
       const action = `Review the agreement with ${client.name}. If the extra ${kind}s are confirmed, update the recurring charge to ${list.length} ${kind}s (${signed(gbp(monthly))}/month). ${monthsAffected > 1 ? `Consider whether the ${gbp(identified)} already delivered in the period can be back-billed.` : ''}`.trim()
       const priceEvidence: Evidence[] = line
         ? unit!.ambiguous
-          ? [ev('billing', 'billing', 'Price used', `More than one line could be the per-${kind} charge: ${unit!.candidates.map((b) => `${b.service} (${gbp(b.unit_price)})`).join(', ')}. The lowest price, ${gbp(price)}, was used.`, unit!.candidates.map(ref.billing))]
-          : [ev('billing', 'billing', 'Price used', `${line.service}: ${gbp(line.unit_price)} per ${kind}`, [ref.billing(line)])]
+          ? [ev('billing', 'billing', 'Billed quantity and price used', `More than one line could be the per-${kind} charge: ${unit!.candidates.map((b) => `${b.service} (${b.quantity} × ${gbp(b.unit_price)})`).join(', ')}. ${billedNow} billed in total; the lowest price, ${gbp(price)}, was used.`, unit!.candidates.map(ref.billing))]
+          : [ev('billing', 'billing', 'Billed quantity and price used', `${line.service}: ${line.quantity} × ${gbp(line.unit_price)} per ${kind}`, [ref.billing(line)])]
         : [settingsEv('Default price', `${gbp(price)} per ${kind} (no matching billing line)`, [kind === 'user' ? 'default_user_price' : 'default_device_price'])]
       drafts.push({
         finding_key: `AGREEMENT_DRIFT:${client.id}:${kind}`,
         client_id: client.id,
         category: 'AGREEMENT_DRIFT',
         title: `${extraNow} more ${kind}${extraNow === 1 ? '' : 's'} than ${versus}`,
-        description: `${client.name} is ${versus} for ${baseline} ${kind}s${byContract ? (contractedSource === 'contract' ? ' in its agreement' : ' in your clients file') : ''} and ${list.length} active ${kind}s are listed. At ${gbp(price)} per ${kind} the difference is ${gbp(monthly)} a month${gapNote}`,
+        description: `${client.name} is ${byContract ? 'contracted' : 'billed'} for ${baseline} ${kind}s${byContract ? (contractedSource === 'contract' ? ' in its agreement' : ' in your clients file') : ''}${billedClause} and ${list.length} active ${kind}s are listed. At ${gbp(price)} per ${kind} the ${plural(extraNow, kind)} not ${versus === 'billed' || billedNow != null ? 'billed' : 'contracted'} come to ${gbp(monthly)} a month${gapNote}`,
         evidence: [
           ...(byContract ? contractedEvidence : [lineEvidence(line!)]),
           ev(
@@ -642,11 +674,15 @@ export function analyse(input: Dataset): AnalysisOutput {
         claims: claimsOf({
           facts: [
             `Your ${kind}s list shows ${list.length} active ${kind}s for ${client.name}.`,
-            contractedFact ?? `"${line!.service}" bills ${baseline} ${kind}s. No contracted figure was found.`,
-            line ? `"${line.service}" is billed at ${gbp(line.unit_price)} per ${kind}.` : `No per-${kind} billing line was found; your Settings default is ${gbp(price)} per ${kind}.`,
+            ...(contractedFact ? [contractedFact] : []),
+            ...(line
+              ? unit!.candidates.map((b) => `"${b.service}" bills ${b.quantity} × ${gbp(b.unit_price)} per ${kind}.`)
+              : [`No per-${kind} billing line was found; your Settings default is ${gbp(price)} per ${kind}.`]),
+            ...(contractedFact ? [] : [`No contracted figure was found.`]),
           ],
           observations: [
-            `${list.length} − ${baseline} = ${plural(extraNow, kind)} more than ${versus}.`,
+            `${list.length} − ${floor} = ${plural(extraNow, kind)} more than ${versus}.`,
+            ...(byContract && billedNow != null && billedNow > baseline ? [`More ${kind}s are billed (${billedNow}) than the contract states (${baseline}), so the contract may be out of date. Only the ${kind}s beyond those billed are counted.`] : []),
             `${extraNow} × ${gbp(price)} = ${gbp(monthly)} a month, ${gbp(annual)} a year.`,
             ...(monthsAffected > 1 ? [`Counting each ${kind} from its first-seen date, the gap totals ${gbp(identified)} across ${monthsAffected} months of the period.`] : []),
           ],
@@ -662,6 +698,7 @@ export function analyse(input: Dataset): AnalysisOutput {
             baseline,
             baseline_source: byContract ? contractedSource! : 'billing',
             baseline_conflict: conflict,
+            billed: billedNow,
             actual: list.length,
             unit_price: price,
             price_source: line ? 'billing_line' : 'default',
@@ -734,7 +771,10 @@ export function analyse(input: Dataset): AnalysisOutput {
     const nb = nbHours.get(client.id) ?? {}
     const hoursStated = statedValue(clauses, 'included_hours')
     const contractHours = hoursStated?.value ?? null
-    const included = client.included_hours ?? contractHours
+    // The agreement's allowance wins over the clients file, as for contracted
+    // quantities; a disagreement is recorded and lowers confidence.
+    const included = contractHours ?? client.included_hours
+    const includedConflict = contractHours != null && client.included_hours != null && client.included_hours !== contractHours ? client.included_hours : null
     if (included != null) {
       const rb = rateBasis(cc, s)
       const pv: Record<string, number> = {}
@@ -745,7 +785,7 @@ export function analyse(input: Dataset): AnalysisOutput {
         const used = nb[m] ?? 0
         if (used > included * (1 + s.excessive_usage_threshold)) {
           pv[m] = round((used - included) * rb.base)
-          over.push(`${monthLabel(m, 'long')}: ${r1(used)}h non-billable time logged (${r1(used - included)}h over)`)
+          over.push(`${monthLabel(m, 'long')}: ${fmtMinutes(Math.round(used * 60))} non-billable time logged (${fmtMinutes(Math.round((used - included) * 60))} over)`)
           overByMonth.push({ month: m, used: r2(used), over: r2(used - included), value: pv[m] })
           monthRefs.push(...(nbRefs.get(client.id)?.[m] ?? []))
         }
@@ -759,14 +799,14 @@ export function analyse(input: Dataset): AnalysisOutput {
             : `Check whether the agreement allows overage and whether it was invoiced, then bill it at ${gbp(rb.base)}/h, or move ${client.name} to a tier with more included hours.`
         const allowanceEv: Evidence[] = [
           ...(hoursStated ? [clauseEv('Agreement', hoursStated.clause)] : []),
-          ...(client.included_hours != null ? [clientRecordEv(`Included support: ${client.included_hours} hours/month`)] : []),
+          ...(client.included_hours != null ? [clientRecordEv(`Included support: ${client.included_hours} hours/month${includedConflict != null ? ` (the agreement states ${contractHours})` : ''}`)] : []),
         ]
         drafts.push({
           finding_key: `EXCESSIVE_USAGE:${client.id}`,
           client_id: client.id,
           category: 'EXCESSIVE_USAGE',
           title: `Support usage above the ${included}h monthly allowance`,
-          description: `${hoursStated ? `${poss(client.name)} agreement` : `Your clients file for ${client.name}`} includes ${included} hours of support a month. Non-billable time went over that in ${overMonths} of the ${months.length} months analysed. Your invoices aren't in the data provided, so check whether an overage charge was raised.`,
+          description: `${hoursStated ? `${poss(client.name)} agreement` : `Your clients file for ${client.name}`} includes ${included} hours of support a month. Non-billable time went over that in ${overMonths} of the ${months.length} months analysed. Your invoices aren't in the data provided, so check whether an overage charge was raised.${includedConflict != null ? ` Your clients file records ${includedConflict} hours instead; the agreement's figure was used.` : ''}`,
           evidence: [
             ...allowanceEv,
             ev('derived', 'metric', 'Monthly usage', over.join('\n'), monthRefs),
@@ -779,10 +819,14 @@ export function analyse(input: Dataset): AnalysisOutput {
           claims: claimsOf({
             facts: [
               hoursStated ? `${clauseCitation(hoursStated.clause)} states ${contractHours} included hours a month.` : `Your clients file records ${included} included hours a month.`,
-              ...overByMonth.map((m) => `${monthLabel(m.month, 'long')}: ${m.used}h of non-billable time logged.`),
+              ...(includedConflict != null ? [`Your clients file records ${includedConflict} included hours a month, which differs from the agreement.`] : []),
+              ...overByMonth.map((m) => `${monthLabel(m.month, 'long')}: ${fmtMinutes(Math.round(m.used * 60))} of non-billable time logged.`),
             ],
-            observations: overByMonth.map((m) => `${monthLabel(m.month, 'long')}: ${m.used}h − ${included}h = ${m.over}h over × ${gbp(rb.base)} = ${gbp(m.value)}.`),
-            interpretations: ['No overage charge appears in the data provided, but invoices are not part of it, so the overage may already have been billed.'],
+            observations: overByMonth.map((m) => `${monthLabel(m.month, 'long')}: ${fmtMinutes(Math.round(m.used * 60))} − ${included}h = ${fmtMinutes(Math.round(m.over * 60))} over × ${gbp(rb.base)} = ${gbp(m.value)}.`),
+            interpretations: [
+              'No overage charge appears in the data provided, but invoices are not part of it, so the overage may already have been billed.',
+              ...(includedConflict != null ? [`The agreement's ${contractHours} hours were used. Check which allowance is current.`] : []),
+            ],
             recommendation: action,
           }),
           meta: {
@@ -791,8 +835,9 @@ export function analyse(input: Dataset): AnalysisOutput {
             calc: {
               kind: 'usage',
               included,
-              included_source: client.included_hours != null ? 'client' : 'contract',
-              included_confirmed: contractHours != null && contractHours === included,
+              included_source: contractHours != null ? 'contract' : 'client',
+              included_confirmed: contractHours != null && (client.included_hours == null || client.included_hours === contractHours),
+              included_conflict: includedConflict,
               rate: rb.base,
               rate_source: rb.baseClause ? 'contract' : 'settings',
               non_billable_only: true,
@@ -858,13 +903,15 @@ export function analyse(input: Dataset): AnalysisOutput {
           annual_value: monthly * 12,
           recommended_action: action,
           claims: claimsOf({
-            facts: [`${client.name} pays ${gbp(mrr)} a month (clients file).`, `${r1(avgHours)} support hours a month were logged on average over ${months.length} months.`],
+            facts: [`${client.name} pays ${gbp(mrr)} a month (clients file).`],
             observations: [
+              `${r1(avgHours)} support hours a month were logged on average over ${months.length} months.`,
               `Estimated average contribution: ${gbp(round(avgContribution))} a month, against ${gbp(targetContribution)} for a ${pct} margin.`,
               `Shortfall in the ${belowMonths} month${belowMonths === 1 ? '' : 's'} below target: ${gbp(identified)}, an average of ${gbp(monthly)} a month.`,
             ],
             interpretations: [
               `This is a model, not a count: it depends on the labour cost, software cost and target margin you set, and treats all logged time as cost against the monthly fee.`,
+              ...(belowMonths < months.length ? [`Months above target are not netted off. Measured on the period average instead, the shortfall is ${gbp(Math.max(0, targetContribution - round(avgContribution)))} a month.`] : []),
               ...(overlaps.length ? [`Billing the agreement gaps for ${client.name} would restore the target margin on its own, so this overlaps with them.`] : []),
             ],
             recommendation: action,

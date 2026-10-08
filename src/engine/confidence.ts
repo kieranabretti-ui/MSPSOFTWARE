@@ -39,6 +39,7 @@ export type CriterionId =
   | 'billing_visible'
   | 'not_goodwill'
   | 'cost_from_record'
+  | 'billed_below_active'
   | 'deterministic'
 
 export interface Criterion {
@@ -67,7 +68,7 @@ export const CONFIDENCE_DEFINITIONS: Record<ConfidenceLevel, string> = {
 }
 
 export const CLASSIFICATION_DEFINITIONS: Record<FindingClass, string> = {
-  confirmed: 'Confirmed discrepancy: two of your own records disagree and the difference is calculated directly from them.',
+  confirmed: 'Confirmed discrepancy: two of your own records disagree, including what you bill, and the difference is calculated directly from them. It confirms the records disagree, not that money is owed.',
   potential: 'Potential opportunity: the evidence supports it, but it needs your review before billing or contractual changes.',
   investigate: 'Investigation required: the evidence is incomplete, or the value is an estimate.',
 }
@@ -114,13 +115,18 @@ export function confidenceOf(f: Pick<FindingDraft, 'confidence' | 'meta'>): Conf
       ? [c('hours_from_agreement', hoursOk, hoursOk ? 'The support hours are stated in the agreement.' : 'The support hours come from your Settings, not the agreement.')]
       : []
     if (prefix === 'out_of_scope') {
+      const clauseOk = !calc.clause_conflict
       const criteria = [
-        c('agreement_clause', true, 'An agreement clause excludes or charges for this kind of work.'),
+        c(
+          'agreement_clause',
+          clauseOk,
+          clauseOk ? 'An agreement clause excludes or charges for this kind of work, and no other wording in it says the work is included.' : 'An agreement clause excludes or charges for this kind of work, but other wording in the agreement says it is included.',
+        ),
         c('strong_text_match', strong, strong ? "The ticket's wording clearly matches that kind of work." : "The ticket's wording is a looser match for that kind of work."),
         c('rate_from_agreement', rateOk, rateText),
         ...hoursCrit,
-        c('deterministic', true, 'Value is non-billable time × hourly rate.'),
       ]
+      if (!clauseOk) return reading(rule, 'MEDIUM', 'One clause in the agreement excludes this kind of work but other wording says it is included. Read both before charging.', criteria)
       if (!hoursOk) return reading(rule, 'MEDIUM', 'Compared with your default support hours in Settings, not hours stated in the contract.', criteria)
       if (!strong) return reading(rule, 'MEDIUM', "The contract excludes this kind of work, but the ticket's wording is a looser match. Check the ticket first.", criteria)
       if (!rateOk) return reading(rule, 'MEDIUM', 'The contract clause and the ticket both support this, but the hourly rate comes from your Settings, not the agreement.', criteria)
@@ -131,7 +137,6 @@ export function confidenceOf(f: Pick<FindingDraft, 'confidence' | 'meta'>): Conf
         c('baseline_consistent', false, 'The ticket is marked billable but time against it is marked non-billable: your own records disagree.'),
         c('not_goodwill', false, 'The non-billable time may be a deliberate write-off.'),
         c('rate_from_agreement', rateOk, rateText),
-        c('deterministic', true, 'Value is non-billable time × hourly rate.'),
       ]
       return reading(rule, 'MEDIUM', 'Your PSA marks the ticket billable but the time non-billable. It may be a deliberate write-off, so check before invoicing.', criteria)
     }
@@ -140,7 +145,6 @@ export function confidenceOf(f: Pick<FindingDraft, 'confidence' | 'meta'>): Conf
       c('strong_text_match', strong, strong ? "The ticket's wording clearly matches chargeable work." : "The ticket's wording is a looser match for chargeable work."),
       c('not_goodwill', false, 'The work may have been agreed as included or done as goodwill.'),
       c('rate_from_agreement', rateOk, rateText),
-      c('deterministic', true, 'Value is non-billable time × hourly rate.'),
     ]
     return reading(
       rule,
@@ -160,7 +164,6 @@ export function confidenceOf(f: Pick<FindingDraft, 'confidence' | 'meta'>): Conf
       c('baseline_from_agreement', fromAgreement, fromAgreement ? `The agreement states ${calc.contracted} ${calc.unit}s.` : `The contracted figure (${calc.contracted}) comes from your clients file, not an uploaded agreement.`),
       c('price_from_billing_line', true, `Valued at the billing line's own price (${calc.price_label}).`),
       c('price_line_unambiguous', unambiguous, unambiguous ? 'Exactly one billing line is the per-unit charge.' : 'More than one billing line could be the per-unit charge.'),
-      c('deterministic', true, 'Value is (contracted − billed) × unit price.'),
     ]
     if (!fromAgreement) return reading(rule, 'MEDIUM', `The contracted quantity is from your clients file, not an uploaded agreement, and your billing line disagrees with it. Check the agreement first.`, criteria)
     if (!unambiguous) return reading(rule, 'MEDIUM', 'More than one billing line could be the per-unit charge. Check which line applies.', criteria)
@@ -182,6 +185,8 @@ export function confidenceOf(f: Pick<FindingDraft, 'confidence' | 'meta'>): Conf
     const lineOk = calc.price_source === 'billing_line'
     const unambiguous = !calc.price_ambiguous
     const dated = !calc.undated
+    // Older rows have no billed quantity: they can't show the gap is unbilled.
+    const billedKnown = calc.billed != null && calc.billed < calc.actual
     const criteria = [
       c(
         'baseline_from_agreement',
@@ -196,7 +201,13 @@ export function confidenceOf(f: Pick<FindingDraft, 'confidence' | 'meta'>): Conf
       c('price_from_billing_line', lineOk, lineOk ? `Valued at your billing line price (${calc.price_label}).` : `No per-${calc.unit} billing line was found, so this uses your default price in Settings.`),
       ...(lineOk ? [c('price_line_unambiguous', unambiguous, unambiguous ? 'Exactly one billing line is the per-unit charge.' : `More than one billing line could be the per-unit charge (${(calc.price_candidates ?? []).join(', ')}); the lowest price was used.`)] : []),
       c('assets_dated', dated, dated ? `Every active ${calc.unit} has a first-seen date.` : `${calc.undated} active ${calc.unit}${calc.undated === 1 ? ' has' : 's have'} no first-seen date, so they are counted for the whole period.`),
-      c('deterministic', true, `Value is (active − contracted) × unit price.`),
+      c(
+        'billed_below_active',
+        billedKnown,
+        billedKnown
+          ? `Your billing lines bill ${calc.billed} ${calc.unit}${calc.billed === 1 ? '' : 's'}, fewer than the ${calc.actual} active, and only the ${calc.unit}s beyond those billed are counted.`
+          : `No per-${calc.unit} billing line shows how many ${calc.unit}s are billed now.`,
+      ),
     ]
     if (calc.baseline_source === 'billing') return reading(rule, 'MEDIUM', 'No contracted figure on the client record, so this compares with the quantity you bill.', criteria)
     if (calc.baseline_source === 'client_record') return reading(rule, 'MEDIUM', `Your clients file says ${calc.baseline} ${calc.unit}s; your ${calc.unit}s list shows ${calc.actual} active. No uploaded agreement states the contracted figure, so check it first.`, criteria)
@@ -204,7 +215,8 @@ export function confidenceOf(f: Pick<FindingDraft, 'confidence' | 'meta'>): Conf
     if (!lineOk) return reading(rule, 'MEDIUM', `No per-${calc.unit} billing line was found, so this uses your default price in Settings.`, criteria)
     if (!unambiguous) return reading(rule, 'MEDIUM', 'More than one billing line could be the per-unit charge, so the lowest price was used. Check which line applies.', criteria)
     if (!dated) return reading(rule, 'MEDIUM', `Some ${calc.unit}s have no first-seen date, so the months affected are assumed. Check when they were added.`, criteria)
-    return reading(rule, 'HIGH', `Contracted for ${calc.baseline} ${calc.unit}s; your ${calc.unit}s list shows ${calc.actual} active. Valued at your own billing line price.`, criteria)
+    if (!billedKnown) return reading(rule, 'MEDIUM', `The billed quantity isn't recorded on this opportunity, so it can't show the extra ${calc.unit}s are unbilled. Run the analysis again.`, criteria)
+    return reading(rule, 'HIGH', `Contracted for ${calc.baseline} ${calc.unit}s and billed for ${calc.billed}; your ${calc.unit}s list shows ${calc.actual} active. Valued at your own billing line price.`, criteria)
   }
 
   if (rule === 'license.unbilled' && calc.kind === 'licence') {
@@ -212,7 +224,6 @@ export function confidenceOf(f: Pick<FindingDraft, 'confidence' | 'meta'>): Conf
     const criteria = [
       c('licence_name_exact', exact, exact ? `The licence name in your users export and the billing line name are the same.` : `The licence name and the billing line name only partly match.`),
       c('price_from_billing_line', true, `Valued at the billing line's own price (${calc.price_label}).`),
-      c('deterministic', true, 'Value is (assigned − billed) × unit price.'),
     ]
     if (!exact) return reading(rule, 'MEDIUM', 'Licence names in your users export were matched to a billing line by a partial name match. Check the match before billing.', criteria)
     return reading(rule, 'HIGH', `${calc.assigned} users are assigned ${calc.licence} and your billing line of the same name bills ${calc.billed}.`, criteria)
@@ -221,13 +232,15 @@ export function confidenceOf(f: Pick<FindingDraft, 'confidence' | 'meta'>): Conf
   if (rule === 'usage.over_allowance' && calc.kind === 'usage') {
     const fromAgreement = calc.included_source === 'contract' || !!calc.included_confirmed
     const rateOk = calc.rate_source === 'contract'
+    const allowanceConsistent = calc.included_conflict == null
     const criteria = [
       c('allowance_from_agreement', fromAgreement, fromAgreement ? `The agreement states ${calc.included} included hours a month.` : 'The included hours come from your clients file only.'),
+      ...(fromAgreement ? [c('baseline_consistent', allowanceConsistent, allowanceConsistent ? 'Your clients file does not contradict the agreement.' : `Your clients file says ${calc.included_conflict} hours, the agreement says ${calc.included}.`)] : []),
       c('rate_from_agreement', rateOk, rateOk ? 'The overage rate is the hourly rate stated in the agreement.' : 'The overage rate is your Settings billable rate.'),
       c('billing_visible', false, "Your invoices aren't in the data, so an overage charge may already have been billed."),
-      c('deterministic', true, 'Value is hours over the allowance × hourly rate, month by month.'),
     ]
     if (!fromAgreement) return reading(rule, 'LOW', 'The allowance comes from your clients file only, and no overage charge was found in the data provided. Check the agreement and your invoices.', criteria)
+    if (!allowanceConsistent) return reading(rule, 'MEDIUM', "The agreement's allowance was used, but your clients file gives a different one. Check which is current, and whether an overage was invoiced.", criteria)
     return reading(rule, 'MEDIUM', 'Hours come from your time entries. No overage charge was found in the data provided, so check whether it was invoiced.', criteria)
   }
 

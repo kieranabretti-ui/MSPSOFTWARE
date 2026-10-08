@@ -189,14 +189,25 @@ function sameJson(a: unknown, b: unknown): boolean {
 // hosted database clears the explanation when the evidence, values,
 // calculation or client change (migration 20261008000100,
 // findings_clear_stale_ai); this mirrors it so both modes show the same.
-export function aiStillApplies(prev: Pick<Finding, 'evidence' | 'estimated_value' | 'monthly_value' | 'annual_value' | 'meta' | 'client_id'>, next: Pick<FindingDraft, 'evidence' | 'estimated_value' | 'monthly_value' | 'annual_value' | 'meta' | 'client_id'>): boolean {
+// Mirrors findings_clear_stale_ai: an explanation applies only while the
+// finding's figures, evidence, wording, claims and classification are unchanged.
+type AiScope = 'evidence' | 'estimated_value' | 'monthly_value' | 'annual_value' | 'meta' | 'client_id' | 'title' | 'description' | 'recommended_action' | 'category' | 'claims' | 'classification' | 'severity' | 'confidence'
+export function aiStillApplies(prev: Partial<Pick<Finding, AiScope>> & Pick<Finding, 'evidence' | 'estimated_value' | 'monthly_value' | 'annual_value' | 'meta' | 'client_id'>, next: Partial<Pick<FindingDraft, AiScope>> & Pick<FindingDraft, 'evidence' | 'estimated_value' | 'monthly_value' | 'annual_value' | 'meta' | 'client_id'>): boolean {
   return (
     prev.client_id === next.client_id &&
     Number(prev.estimated_value) === Number(next.estimated_value) &&
     Number(prev.monthly_value) === Number(next.monthly_value) &&
     Number(prev.annual_value) === Number(next.annual_value) &&
     sameJson(prev.meta?.calc ?? null, next.meta?.calc ?? null) &&
-    sameJson(prev.evidence, next.evidence)
+    sameJson(prev.evidence, next.evidence) &&
+    (prev.title ?? null) === (next.title ?? null) &&
+    (prev.description ?? null) === (next.description ?? null) &&
+    (prev.recommended_action ?? null) === (next.recommended_action ?? null) &&
+    (prev.category ?? null) === (next.category ?? null) &&
+    (prev.classification ?? null) === (next.classification ?? null) &&
+    (prev.severity ?? null) === (next.severity ?? null) &&
+    Number(prev.confidence ?? 0) === Number(next.confidence ?? 0) &&
+    sameJson(prev.claims ?? [], next.claims ?? [])
   )
 }
 
@@ -408,20 +419,27 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const names = new Map(fresh.clients.map((c) => [c.id, c.name]))
     const daysAgo = (n: number, h = 10) => new Date(Date.now() - n * 864e5 - h * 36e5).toISOString()
     const stages = new Map(applyDemoStages(findings, (id) => names.get(id) ?? '').map((s) => [s.id, s]))
+    // The history runs in order: imports, then the analysis that found the
+    // opportunities, then the decisions. The run and its findings are dated a
+    // day before the earliest decision, never after it.
+    const start = Math.max(...[...stages.values()].map((s) => s.days_ago), 0) + 1
+    const importedAt = daysAgo(start, 12)
+    const runAt = daysAgo(start, 11.5)
     const staged = findings.map((f) => {
       const s = stages.get(f.id)
-      return s ? { ...f, status: s.status, owner: s.owner, decision_note: s.note, decided_at: daysAgo(s.days_ago), first_viewed_at: daysAgo(s.days_ago, 11) } : f
+      const dated = { ...f, created_at: runAt, updated_at: runAt }
+      return s ? { ...dated, status: s.status, owner: s.owner, decision_note: s.note, decided_at: daysAgo(s.days_ago), first_viewed_at: daysAgo(s.days_ago, 11), updated_at: daysAgo(s.days_ago) } : dated
     })
     onStage?.('opening')
-    await b.saveAnalysis(ws.id, analysis, staged)
+    await b.upsert(ws.id, { uploads: uploads.map((u) => ({ ...u, created_at: importedAt })) })
+    await b.saveAnalysis(ws.id, { ...analysis, created_at: runAt }, staged)
     // The activity the demo's history implies: the imports, the first run and
     // the decisions above, oldest first.
     const demoActor = { id: userRef.current?.id ?? null, email: userRef.current?.email ?? null }
-    const start = Math.max(...[...stages.values()].map((s) => s.days_ago), 0) + 1
     const events: AuditEvent[] = [
-      ...uploads.map((u) => auditEvent(ws.id, demoActor, 'upload.created', { type: 'upload', id: u.id }, { kind: u.kind, rows: u.row_count }, daysAgo(start, 12))),
-      auditEvent(ws.id, demoActor, 'analysis.run', { type: 'analysis', id: analysis.id }, { findings: findings.length, new: findings.length, stale: 0, removed: 0, source: 'demo' }, daysAgo(start, 11.5)),
-      auditEvent(ws.id, demoActor, 'finding.created', { type: 'analysis', id: analysis.id }, { count: findings.length }, daysAgo(start, 11.5)),
+      ...uploads.map((u) => auditEvent(ws.id, demoActor, 'upload.created', { type: 'upload', id: u.id }, { kind: u.kind, rows: u.row_count }, importedAt)),
+      auditEvent(ws.id, demoActor, 'analysis.run', { type: 'analysis', id: analysis.id }, { findings: findings.length, new: findings.length, stale: 0, removed: 0, source: 'demo' }, runAt),
+      auditEvent(ws.id, demoActor, 'finding.created', { type: 'analysis', id: analysis.id }, { count: findings.length }, runAt),
     ]
     for (const s of [...stages.values()].sort((a, b) => b.days_ago - a.days_ago)) {
       const target = { type: 'finding', id: s.id }

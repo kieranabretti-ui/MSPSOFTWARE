@@ -41,6 +41,8 @@ const annualLine = (monthly: number, annual: number) => `${gbp(monthly)} × 12 =
 // Names the price used without nesting brackets, as labels often carry their own.
 const priceFrom = (label: string | null | undefined) => (label ? `, priced as ${label}` : ', at the default price in Settings')
 const hrs = (n: number) => `${num(n, 2)}h`
+// Hours as hours and minutes ("12h 55m"), as time is logged.
+const hm = (h: number) => fmtMinutes(Math.round(h * 60))
 const s = (n: number) => (n === 1 ? '' : 's')
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0)
 
@@ -66,12 +68,18 @@ export function formatCalculation(f: Pick<FindingDraft, 'meta' | 'estimated_valu
       return { lines: [`${fmtMinutes(c.minutes)} non-billable × ${rate} = ${money(total)}`], result: `${money(total)} one-off`, total, monthly: 0, annual: 0, basis: 'one_off' }
     }
     case 'seats': {
-      const extra = c.actual - c.baseline
+      // Units already billed are never a gap: the floor is max(contracted, billed).
+      const billed = c.billed ?? null
+      const floor = Math.max(c.baseline, billed ?? 0)
+      const extra = c.actual - floor
       const { monthly, annual } = recurring(extra, c.unit_price)
       const { total, note } = periodNote(f, monthly, `${c.unit}s were added`)
+      const both = c.baseline_source !== 'billing' && billed != null
+      const versus = both && billed === c.baseline ? 'contracted and billed' : c.baseline_source === 'billing' || floor > c.baseline ? 'billed' : 'contracted'
+      const basis = both && billed !== c.baseline ? ` (${c.baseline} contracted, ${billed} billed)` : ''
       return {
         lines: [
-          `${c.actual} active ${c.unit}s − ${c.baseline} ${c.baseline_source === 'billing' ? 'billed' : 'contracted'} = ${extra} ${c.unit}${s(extra)}`,
+          `${c.actual} active ${c.unit}s − ${floor} ${versus} = ${extra} ${c.unit}${s(extra)}${basis}`,
           `${extra} × ${gbp(c.unit_price)} = ${gbp(monthly)} a month${priceFrom(c.price_label)}`,
           annualLine(monthly, annual),
         ],
@@ -127,8 +135,9 @@ export function formatCalculation(f: Pick<FindingDraft, 'meta' | 'estimated_valu
     case 'usage': {
       const total = sum(c.months.map((m) => m.value))
       return {
-        lines: c.months.map((m) => `${monthLabel(m.month, 'long')}: ${hrs(m.used)} ${c.non_billable_only ? 'non-billable ' : ''}used − ${hrs(c.included)} included = ${hrs(m.over)} × ${gbp(c.rate)} = ${money(m.value)}`),
+        lines: c.months.map((m) => `${monthLabel(m.month, 'long')}: ${hm(m.used)} ${c.non_billable_only ? 'non-billable ' : ''}used − ${hm(c.included)} included = ${hm(m.over)} × ${gbp(c.rate)} = ${money(m.value)}`),
         result: `${money(total)} one-off across ${c.months.length} month${s(c.months.length)}`,
+        note: 'Hours over the allowance are not rounded up to any billing increment in the agreement, so this is the lower figure.',
         total,
         monthly: 0,
         annual: 0,
@@ -148,7 +157,11 @@ export function formatCalculation(f: Pick<FindingDraft, 'meta' | 'estimated_valu
           `${money(total)} ÷ ${c.months} month${s(c.months)} = ${money(monthly)} a month on average`,
         ],
         result: `${money(monthly)} a month, estimated`,
-        note: `Price that restores ${pct} at average cost: ${money(c.target_price)} a month (${signed(money(c.target_price - c.mrr))}). An estimate from your cost settings, not a count of records.`,
+        note: `Price that restores ${pct} at average cost: ${money(c.target_price)} a month (${signed(money(c.target_price - c.mrr))}).${
+          c.shortfall.length < c.months
+            ? ` Months above target are not netted off; measured on the period average the shortfall is ${money(Math.max(0, c.target_contribution - c.avg_contribution))} a month.`
+            : ''
+        } An estimate from your cost settings, not a count of records.`,
         total,
         monthly,
         annual: monthly * 12,

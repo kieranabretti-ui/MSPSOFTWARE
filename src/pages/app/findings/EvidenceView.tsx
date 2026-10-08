@@ -11,6 +11,8 @@ import { CLASS_LABEL, classDefinition, SETTING_LABEL, SOURCE_META, allRefs, file
 
 export const CONFIDENCE_LINE = 'Confidence reflects the strength and completeness of the underlying evidence.'
 export const AI_LINE = 'AI assists with interpretation. Financial calculations are deterministic.'
+// Where no AI was involved, say that instead of describing what AI might do.
+export const NO_AI_LINE = 'Every figure, interpretation and classification here comes from deterministic rules. No AI was used.'
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -153,8 +155,9 @@ export default function EvidenceView({ finding: f, open, onClose }: { finding: F
 
         <Section title="AI">
           <p className="max-w-[72ch]">
-            {AI_LINE} This opportunity was found and valued by the fixed rules above.
-            {f.ai_explanation ? ' The explanation on the page is labelled AI-assisted and is not used in any figure.' : ' No AI was used.'}
+            {f.ai_explanation
+              ? `${AI_LINE} This opportunity was found and valued by the fixed rules above. The explanation on the page is labelled AI-assisted and is not used in any figure.`
+              : `This opportunity was found and valued by the fixed rules above. ${NO_AI_LINE}`}
           </p>
           <p className="mt-1.5 text-caption text-ink-3">Recommendations require MSP review before action.</p>
         </Section>

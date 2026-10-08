@@ -28,7 +28,7 @@ describe('landing demo snapshot', () => {
   it('shows the engine output for the brief drift example, with no numeric confidence', () => {
     const x = DEMO.evidenceExample
     expect([x.monthly, x.annual, x.level, x.classification]).toEqual([656, 7872, 'HIGH', 'confirmed'])
-    expect(x.calculation.lines).toEqual(['47 active users − 39 contracted = 8 users', '8 × £82 = £656 a month, priced as Managed Support (per user)', '£656 × 12 = £7,872 a year'])
+    expect(x.calculation.lines).toEqual(['47 active users − 39 contracted and billed = 8 users', '8 × £82 = £656 a month, priced as Managed Support (per user)', '£656 × 12 = £7,872 a year'])
     expect(x.evidence.map((e) => e.reference)).toEqual(['Acme Managed Services Agreement, section 1.2', 'clients.csv, row 2', 'users.csv, rows 2 to 48', 'billing.csv, row 2'])
     expect(JSON.stringify(DEMO)).not.toMatch(/"confidence":/)
   })

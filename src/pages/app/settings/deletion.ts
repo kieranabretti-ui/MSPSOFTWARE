@@ -23,9 +23,33 @@ const DOWNLOADS = 'Files you have already downloaded, such as PDF reports and CS
 const BACKUPS = "Copies in the hosting provider's backups, until they expire on its schedule"
 const LOG_KEPT = 'The activity log entry for this deletion (counts only, no client data)'
 
-export function uploadDeletion(u: Upload, mode: Mode, data: Pick<WorkspaceData, 'analyses'>): DeletionCopy {
+// Rows imported before file tracking (provenance) was added carry no source,
+// so deleting their upload can't find them. Say so rather than promise it.
+export function legacyUpload(u: Upload, data: Partial<Pick<WorkspaceData, 'clients' | 'tickets' | 'time_entries' | 'billing_items' | 'assets'>>): boolean {
+  if (u.kind === 'contract' || !u.row_count) return false
+  const rows = [...(data.clients ?? []), ...(data.tickets ?? []), ...(data.time_entries ?? []), ...(data.billing_items ?? []), ...(data.assets ?? [])]
+  if (!rows.length) return false
+  return !rows.some((r) => r.source?.upload_id === u.id)
+}
+
+export function uploadDeletion(u: Upload, mode: Mode, data: Pick<WorkspaceData, 'analyses'> & Partial<Pick<WorkspaceData, 'clients' | 'tickets' | 'time_entries' | 'billing_items' | 'assets'>>): DeletionCopy {
   const contract = u.kind === 'contract'
   const what = u.kind === 'contract' ? 'contract' : `${SCHEMAS[u.kind].title.toLowerCase()} file`
+  if (legacyUpload(u, data)) {
+    return {
+      title: `Delete this ${what}?`,
+      intro: `${u.file_name} was imported before Headroom recorded which file each record came from, so its records can't be picked out.`,
+      removes: [`The upload record for ${u.file_name}`],
+      keeps: [
+        `The records this file imported (${plural(u.row_count, 'row')}). To remove them, use Clear all data in Settings.`,
+        'Every other upload and its records',
+        'Decisions, notes and owners on opportunities',
+        LOG_KEPT,
+        ...(mode === 'supabase' ? [BACKUPS] : []),
+      ],
+      confirm: 'Delete upload record',
+    }
+  }
   const removes = contract
     ? ['The contract text and its upload record', ...(mode === 'supabase' && u.storage_path ? ['The original file in private storage'] : [])]
     : [

@@ -92,12 +92,12 @@ const SECTIONS = [
 
 // Per-rule confidence criteria, as docs/methodology.md section 4 and src/engine/confidence.ts set them.
 const RULE_CONFIDENCE: [string, string, string][] = [
-  ['Out-of-scope work', 'Agreement clause matched, strong wording match, hourly rate from the agreement and, for out-of-hours work, support hours from the agreement', 'Medium'],
+  ['Out-of-scope work', 'Agreement clause matched with no other wording saying the work is included, strong wording match, hourly rate from the agreement and, for out-of-hours work, support hours from the agreement', 'Medium'],
   ['Billable ticket, non-billable time', 'Never: the time may be a deliberate write-off', 'Medium'],
   ['Chargeable-looking work', 'Never: nothing confirms it is chargeable', 'Low'],
   ['Recurring charge below agreement', 'Contracted quantity stated in an agreement, and one unambiguous per-unit billing line', 'Medium'],
   ['Missing recurring charge', 'Never: it may be bundled into another line', 'Low'],
-  ['Agreement drift', 'Contracted quantity from an agreement the clients file does not contradict, priced at one unambiguous billing line, every asset dated', 'Medium'],
+  ['Agreement drift', 'Contracted quantity from an agreement the clients file does not contradict, fewer billed than active, priced at one unambiguous billing line, every asset dated', 'Medium'],
   ['Unbilled licences', 'Licence and billing line names identical', 'Medium'],
   ['Usage over allowance', 'Never: invoices are not in the data, so the overage may already be billed', 'Medium or Low'],
   ['Underpriced client', 'Never: the margin is a modelled estimate', 'Low'],
@@ -109,7 +109,7 @@ export default function TrustCentre() {
 
   const security: Fact[] = HOSTED
     ? [
-        { text: 'Sign-in uses Supabase Auth: email and password, or a one-time email link. New passwords need at least 10 characters, with upper and lower case letters and a number.', tag: 'hosted' },
+        { text: 'Sign-in uses Supabase Auth: email and password, or a one-time email link. The sign-up form requires a password of at least 10 characters, with upper and lower case letters and a number.', tag: 'hosted' },
         { text: 'Postgres row-level security is on for every table. Every row carries its workspace ID, and the database returns rows only to signed-in members of that workspace.', tag: 'hosted' },
         { text: "Links between records are keyed on the workspace as well as the record, so a row in one workspace can't point at a record in another. Signed-out visitors have no access to any table.", tag: 'hosted' },
         { text: 'The isolation checks ship with the code (supabase/tests/rls.sql): reads, writes, deletes and cross-workspace references from a second account are all refused.', tag: 'hosted' },
@@ -151,11 +151,18 @@ export default function TrustCentre() {
         <Sub>Who can access your data</Sub>
         <Facts
           items={[
-            { text: 'Inside Headroom: only signed-in members of your workspace. Each workspace has one user today.' },
-            {
-              text: "Headroom's operators can technically reach stored data through the hosting provider's administration tools. That access is used only to run, secure and support the service, as the Terms set out.",
-            },
-            { text: 'Nobody can add themselves to another workspace: workspaces are created only through a database function that makes the creator its owner.', tag: 'hosted' },
+            ...(HOSTED
+              ? ([
+                  { text: 'Inside Headroom: only signed-in members of your workspace. Each workspace has one user today.', tag: 'hosted' },
+                  {
+                    text: "Headroom's operators can technically reach stored data through the hosting provider's administration tools. That access is used only to run, secure and support the service, as the Terms set out.",
+                    tag: 'hosted',
+                  },
+                  { text: 'Nobody can add themselves to another workspace: workspaces are created only through a database function that makes the creator its owner.', tag: 'hosted' },
+                ] satisfies Fact[])
+              : ([
+                  { text: 'Anyone with access to this browser profile can read the data stored in it. Nothing is sent to a Headroom server, so Headroom staff cannot see it.', tag: 'evaluation' },
+                ] satisfies Fact[])),
           ]}
         />
         <Sub>If something goes wrong</Sub>
@@ -218,9 +225,13 @@ export default function TrustCentre() {
           items={[
             { text: 'The website is static files served by Netlify. It holds no workspace data.' },
             { text: 'CSV files are read and contract PDF text is extracted in your browser. The analysis runs in your browser and the results are saved to your workspace.' },
-            { text: 'The database, sign-in and file storage run on Supabase in its London region.', tag: 'hosted' },
-            { text: <>Supabase encrypts stored data at rest. This is the provider's control, described in {ext('https://supabase.com/security', "Supabase's security documentation")}.</>, tag: 'provider' },
-            { text: 'Supabase manages database backups on the schedule of our plan. Data you delete can remain in those backups until they expire.', tag: 'provider' },
+            ...(HOSTED
+              ? ([
+                  { text: 'The database, sign-in and file storage run on Supabase in its London region.', tag: 'hosted' },
+                  { text: <>Supabase encrypts stored data at rest. This is the provider's control, described in {ext('https://supabase.com/security', "Supabase's security documentation")}.</>, tag: 'provider' },
+                  { text: 'Data you delete can remain in any database backups our provider keeps, until they expire. The backup schedule is not yet stated here (see Not in place yet).', tag: 'provider' },
+                ] satisfies Fact[])
+              : ([{ text: 'In evaluation mode nothing is stored on a server: the data lives in this browser and is gone when you clear it.', tag: 'evaluation' }] satisfies Fact[])),
             { text: 'Traffic between your browser and Headroom is encrypted with HTTPS.' },
           ]}
         />
@@ -253,8 +264,8 @@ export default function TrustCentre() {
                   { text: "Clicking Explain sends one opportunity to Anthropic's API from our server: the client name, the opportunity's title, description, value and recommended action, and its evidence, which can include ticket text, technician names and quoted contract sentences. This data is processed in the United States.", tag: 'hosted' },
                   { text: 'Nothing is sent unless you click. The API key stays on the server, and the request runs with your own sign-in, so the same access rules apply.' },
                   { text: "Quotes are checked word for word against your evidence. An explanation that introduces a number not in your data, or words such as \"owes\" or \"guaranteed\", is rejected and not saved." },
-                  { text: 'Only the server can write the explanation. It is cleared when the evidence behind the opportunity changes.' },
-                  { text: 'Explanations are limited per user and per workspace, by the hour and by the day.' },
+                  { text: 'Only the server can write the explanation. It is cleared when the opportunity it describes changes: its evidence, figures, wording or classification, or the client name.' },
+                  { text: 'Explanations are limited per workspace each day, and per user each hour and each day.' },
                   { text: <>How Anthropic handles API data is set out in {ext('https://www.anthropic.com/legal/commercial-terms', "Anthropic's commercial terms")}.</>, tag: 'provider' },
                 ]
               : [{ text: 'AI explanations are not available in evaluation mode or in the demo. Nothing is sent to an AI provider.', tag: 'evaluation' }]
@@ -283,7 +294,11 @@ export default function TrustCentre() {
           caption="Deletion controls"
           head={['Control', 'Deletes', 'Keeps']}
           rows={[
-            ['Delete a source file', 'The upload record, its stored file, and the records imported from it', 'Clients that still have other records or opportunities you have decided on'],
+            [
+              'Delete a source file',
+              `The upload record${HOSTED ? ', its stored file' : ''} and the records imported from it`,
+              'Clients that still have other records or opportunities you have decided on. Records imported before Headroom tracked which file each record came from (before 8 October 2026) stay; Clear all data removes them',
+            ],
             ['Delete an analysis', 'That analysis run, its opportunities and its reports', 'Your data, other analyses and your tasks (unlinked)'],
             ['Clear all data', 'Every client, upload, contract file, analysis, opportunity, task and report', 'Your account, workspace name, settings and audit log'],
             ['Delete workspace', 'The workspace and everything in it, including the audit log', 'Your account'],
@@ -294,7 +309,9 @@ export default function TrustCentre() {
         <Facts
           items={[
             { text: 'Each deletion asks you to confirm, and says what will go.' },
-            { text: 'Deleted data can remain in our database provider\'s backups until they expire, and in provider request logs for the period they keep them. Backups are not used to restore deleted data except to recover from a fault.', tag: 'provider' },
+            HOSTED
+              ? { text: "Deleted data can remain in any backups our database provider keeps until they expire, and in provider request logs for the period they keep them. Backups are not used to restore deleted data except to recover from a fault.", tag: 'provider' }
+              : { text: 'In evaluation mode a deletion removes the data from this browser. There is no server copy.', tag: 'evaluation' },
             { text: <>Before deleting, you can export opportunities as CSV and reports as PDF or CSV.</> },
           ]}
         />
@@ -328,6 +345,8 @@ export default function TrustCentre() {
             { text: 'Multi-factor authentication and single sign-on.' },
             { text: 'More than one user per workspace.' },
             { text: 'An automatic retention schedule.' },
+            { text: 'A published database backup schedule and retention window.' },
+            ...(COMPANY.contactEmail || COMPANY.securityEmail ? [] : [{ text: 'A support, privacy or security email address. Until one is listed, contact is by post to the registered office.' }]),
             { text: 'Analysis on the server. Figures are calculated in your browser and saved to your workspace, so a member could alter the stored figures of their own workspace (not anyone else\'s).' },
           ]}
         />

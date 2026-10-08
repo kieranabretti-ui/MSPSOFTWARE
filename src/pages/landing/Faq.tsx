@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Plus } from 'lucide-react'
 import { TextLink } from '../../components/ui'
-import { HOSTED, TRUST_COPY } from '../../brand/brand'
+import { COMPANY, HOSTED, TRUST_COPY } from '../../brand/brand'
 import { CONFIDENCE } from '../../lib/labels'
 import { money } from '../../lib/format'
 import { ENTITLEMENTS, PLANS, READ_ONLY_DAYS_AFTER_END, formatLimit } from '../../billing/plans'
@@ -62,7 +62,7 @@ const QUESTIONS: { q: string; a: ReactNode }[] = [
   },
   {
     q: 'What if my audit finds very little?',
-    a: `We'll say so. If it finds less than ${PLANS.growth.name} costs, ${PLANS.growth.name} probably isn't worth it for you yet.`,
+    a: `Then the audit shows you that before you pay anything. If it finds less than ${PLANS.growth.name} costs, ${PLANS.growth.name} probably isn't worth it for you yet.`,
   },
   {
     q: "Why don't you charge per endpoint or per user?",
@@ -70,12 +70,16 @@ const QUESTIONS: { q: string; a: ReactNode }[] = [
   },
   {
     q: 'Can I change plan or cancel?',
-    a: `You can upgrade at any time, and the cost is prorated. Downgrades and cancellations take effect at the end of the period you've paid for, and you keep read-only access to past reports for ${READ_ONLY_DAYS_AFTER_END} days after that.`,
+    a: `You can move to a higher plan at any time. Downgrades and cancellations take effect at the end of the period you've paid for, and you keep read-only access to past reports for ${READ_ONLY_DAYS_AFTER_END} days after that.`,
   },
-  {
-    q: `Why does ${PLANS.pro.name} start with a call?`,
-    a: `Part of ${PLANS.pro.name} is delivered by people: the quarterly review and priority support. A short call confirms it fits and shows which planned items matter to you.`,
-  },
+  ...(COMPANY.contactEmail
+    ? [
+        {
+          q: `Why does ${PLANS.pro.name} start with a call?`,
+          a: `Part of ${PLANS.pro.name} is delivered by people: the quarterly review and priority support. A short call confirms it fits and shows which planned items matter to you.`,
+        },
+      ]
+    : []),
 ]
 
 export function Faq() {

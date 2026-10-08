@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { Check, ChevronRight, Minus } from 'lucide-react'
 import { Badge, Figure, cx } from '../../components/ui'
 import { ConfidenceLevel } from '../../components/ConfidenceLevel'
-import { TRUST_COPY } from '../../brand/brand'
+import { HOSTED, TRUST_COPY } from '../../brand/brand'
 import { money } from '../../lib/format'
 import { CATEGORY_META, CLASSIFICATION, FINDING_STATUS } from '../../lib/labels'
 import type { ClaimType, EvidenceSource } from '../../engine/types'
@@ -196,7 +196,9 @@ export function CheckTheEvidence() {
         <div className="lg:col-span-7">
           <h3 className="text-h1 text-balance text-ink">{TRUST_COPY.freeAudit}</h3>
           <p className="mt-3 max-w-[56ch] text-body text-ink-2">
-            The first audit is free. Upload your own exports and you see every opportunity, its evidence and its calculation before you decide whether Headroom is worth paying for.
+            {HOSTED
+              ? 'The first audit is free. Upload your own exports and you see every opportunity, its evidence and its calculation before you decide whether Headroom is worth paying for.'
+              : 'The first audit is free. This site runs in evaluation mode, so data stays in your browser: try it with the demo or anonymised sample exports, and see every opportunity, its evidence and its calculation before you decide whether Headroom is worth paying for.'}
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row lg:col-span-5 lg:justify-end">

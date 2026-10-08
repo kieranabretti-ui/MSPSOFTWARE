@@ -144,7 +144,7 @@ async function handle(req: Request, cors: Record<string, string>, json: Json): P
   // RLS returns the row only if the caller is a member of its workspace.
   const { data: finding, error } = await asUser
     .from('findings')
-    .select('id, workspace_id, category, title, description, evidence, estimated_value, monthly_value, annual_value, meta, recommended_action, ai_explanation, ai_meta, updated_at, client_id')
+    .select('id, workspace_id, category, title, description, evidence, estimated_value, monthly_value, annual_value, meta, recommended_action, claims, classification, severity, confidence, ai_explanation, ai_meta, updated_at, client_id')
     .eq('id', findingId)
     .maybeSingle()
   if (error) {

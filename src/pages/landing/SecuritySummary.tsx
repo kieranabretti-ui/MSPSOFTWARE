@@ -28,10 +28,15 @@ const FACTS: { title: string; body: string }[] = [
     title: 'Rules, not guesswork',
     body: 'A deterministic rules engine finds every opportunity and calculates its value. The same data always gives the same result, and every calculation is shown.',
   },
-  {
-    title: 'AI only when you ask',
-    body: "An optional explanation sends one opportunity and its evidence to Anthropic's API (United States) from our server. AI never produces a figure, and its text is labelled AI-assisted.",
-  },
+  HOSTED
+    ? {
+        title: 'AI only when you ask',
+        body: "An optional explanation sends one opportunity and its evidence to Anthropic's API (United States) from our server. AI never produces a figure, and its text is labelled AI-assisted.",
+      }
+    : {
+        title: 'No AI in evaluation mode',
+        body: 'This site uses no AI: nothing is sent to an AI provider. On the hosted service, an optional explanation of one opportunity is AI-assisted and labelled, and AI never produces a figure.',
+      },
   {
     title: 'Not certified yet',
     body: "Headroom isn't SOC 2 or ISO 27001 certified and hasn't had a penetration test. The Trust Centre lists what is and isn't in place, and who our providers are.",

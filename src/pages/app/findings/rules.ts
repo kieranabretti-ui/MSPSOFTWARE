@@ -17,7 +17,7 @@ const RULES: Record<string, RuleInfo> = {
   out_of_scope: {
     name: 'Out-of-scope work',
     fires:
-      "The ticket's wording matches a kind of work (such as personal devices, hardware repair, projects or out-of-hours support), the client's agreement has a clause excluding that work or making it chargeable, and the time was logged as non-billable.",
+      "The ticket's wording matches a kind of work (such as personal devices, hardware repair, projects or out-of-hours support), the client's agreement has a clause excluding that work or making it chargeable (a clause that says the work is not chargeable or is included never counts), and the time was logged as non-billable.",
     value: 'One-off: non-billable time × hourly rate.',
   },
   'unbilled.billing_mismatch': {
@@ -32,7 +32,7 @@ const RULES: Record<string, RuleInfo> = {
   },
   mismatch: {
     name: 'Recurring charge mismatch',
-    fires: 'The per-unit billing line bills fewer users or devices than the contracted quantity.',
+    fires: 'The per-unit billing lines, added together, bill fewer users or devices than the contracted quantity.',
     value: 'Recurring: (contracted − billed) × the billing line price.',
   },
   recurring: {
@@ -42,8 +42,8 @@ const RULES: Record<string, RuleInfo> = {
   },
   drift: {
     name: 'Agreement drift',
-    fires: 'More active users or devices than contracted (or than billed, when no contracted figure exists).',
-    value: 'Recurring: (active − contracted) × unit price.',
+    fires: 'More active users or devices than both the contracted figure and the quantity billed (only the billed quantity when no contracted figure exists). Nothing is flagged when billing already covers every active user or device.',
+    value: 'Recurring: (active − the larger of contracted and billed) × unit price.',
   },
   license: {
     name: 'Licence not billed',
@@ -52,7 +52,7 @@ const RULES: Record<string, RuleInfo> = {
   },
   usage: {
     name: 'Support above the included hours',
-    fires: 'Non-billable hours in a month exceed the included hours by more than the tolerance in Settings.',
+    fires: "Non-billable hours in a month exceed the included hours (the agreement's, when it states them) by more than the tolerance in Settings.",
     value: 'One-off per month: (hours − included hours) × hourly rate.',
   },
   margin: {

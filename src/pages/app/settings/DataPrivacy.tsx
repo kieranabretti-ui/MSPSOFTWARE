@@ -207,7 +207,7 @@ export function DataPrivacy() {
           </ButtonLink>
         </div>
         <p className="tnum mt-2 text-caption text-ink-3">
-          {data.findings.length ? `${plural(data.findings.length, 'opportunity', 'opportunities')} in every stage, dismissed included, with the evidence, calculation, confidence and decision for each.` : 'Nothing to export until you run an analysis.'}
+          {data.findings.length ? `The CSV holds ${plural(data.findings.length, 'opportunity', 'opportunities')} in every stage, dismissed included, with the evidence, calculation, confidence and decision for each. The PDF report leaves dismissed opportunities out.` : 'Nothing to export until you run an analysis.'}
         </p>
       </Section>
 

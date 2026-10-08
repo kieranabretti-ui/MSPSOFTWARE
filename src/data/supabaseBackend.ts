@@ -17,6 +17,15 @@ const toSession = (u: User): SessionUser => ({ id: u.id, email: u.email ?? '', n
 
 const FILE_PAGE = 100
 
+// The database schema this build needs. The hosted service's published
+// controls (composite tenant keys, append-only audit log, server-written AI
+// text, AI rate limits, deletion functions, storage limits) come from
+// migrations 20261008000000 and 20261008000100. If the project hasn't had
+// them applied, this build refuses to open a workspace rather than run with
+// controls the Trust Centre describes but the database doesn't have.
+export const REQUIRED_SCHEMA = '20261008000100'
+export const SCHEMA_NOT_READY = 'Headroom is being updated and your workspace is not available just now. Nothing has been changed. Please try again later.'
+
 type RawError = { message: string; code?: string | number; status?: number }
 
 // Every failure leaves as an AppError: a message that's safe to show, with the
@@ -70,7 +79,20 @@ export class SupabaseBackend implements Backend {
     return () => data.subscription.unsubscribe()
   }
 
+  private schemaChecked: Promise<void> | null = null
+  private ensureSchema(): Promise<void> {
+    this.schemaChecked ??= (async () => {
+      const { data, error } = await this.sb.rpc('schema_version')
+      if (error || typeof data !== 'string' || data < REQUIRED_SCHEMA) {
+        this.schemaChecked = null
+        throw new AppError(SCHEMA_NOT_READY, { code: 'schema_not_ready', detail: error?.message ?? `schema ${String(data)}` })
+      }
+    })()
+    return this.schemaChecked
+  }
+
   async getWorkspace(user: SessionUser) {
+    await this.ensureSchema()
     const rows = check(await this.sb.from('workspace_members').select('workspace:workspaces(*)').eq('user_id', user.id).limit(1))
     const ws = (rows?.[0] as unknown as { workspace: Workspace } | undefined)?.workspace
     return ws ? { ...ws, settings: { ...DEFAULT_SETTINGS, ...ws.settings } } : null

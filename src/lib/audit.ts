@@ -18,8 +18,12 @@ export const DISMISS_REASONS: Record<DismissReason, { label: string; hint: strin
 export const DISMISS_REASON_ORDER: DismissReason[] = ['data_wrong', 'contract_allows', 'already_billed', 'goodwill', 'relationship', 'other']
 
 // Reasons that mean the finding itself was wrong (a false positive), as
-// opposed to valid but not pursued.
-export const FALSE_POSITIVE_REASONS: readonly DismissReason[] = ['data_wrong', 'contract_allows']
+// opposed to valid but not pursued. "Already billed" is wrong too: a finding
+// that says work or users are unbilled is mistaken if they were billed.
+export const FALSE_POSITIVE_REASONS: readonly DismissReason[] = ['data_wrong', 'contract_allows', 'already_billed']
+
+// Below this many decisions a false-positive rate is noise, so none is shown.
+export const MIN_DECISIONS_FOR_RATE = 5
 
 // ---------------------------------------------------------------- building events
 
@@ -146,9 +150,11 @@ export interface TrustMetrics {
   actioned_pct: number
   // Confirmed valid: Approved or Actioned.
   approved_pct: number
-  // Dismissed as wrong (data_wrong or contract_allows) over decided findings,
-  // 0..100. null until something has been decided.
+  // Dismissed as wrong (data_wrong, contract_allows or already_billed) over
+  // decided findings, 0..100. null until MIN_DECISIONS_FOR_RATE decisions.
   false_positive_rate: number | null
+  // The counts behind each rate, so a screen can show "5 of 40".
+  counts: { opened: number; reviewed: number; dismissed: number; actioned: number; approved: number; false_positives: number }
   // Mean value of the findings still counted (not dismissed, not stale).
   avg_opportunity: number
   high_confidence_value: number
@@ -177,18 +183,55 @@ export function trustMetrics(findings: Finding[], audit: Pick<AuditEvent, 'actio
   }
   const total = current.length
   const count = (p: (f: Finding) => boolean) => current.filter(p).length
+  const counts = {
+    opened: count((f) => !!f.first_viewed_at || viewed.has(f.id)),
+    reviewed: count((f) => f.status !== 'open'),
+    dismissed: count((f) => f.status === 'dismissed'),
+    actioned: count((f) => f.status === 'resolved'),
+    approved: count((f) => f.status === 'valid' || f.status === 'resolved'),
+    false_positives: wrong.length,
+  }
   return {
     total,
     decided: decided.length,
-    opened_pct: pct(count((f) => !!f.first_viewed_at || viewed.has(f.id)), total),
-    reviewed_pct: pct(count((f) => f.status !== 'open'), total),
-    dismissed_pct: pct(count((f) => f.status === 'dismissed'), total),
-    actioned_pct: pct(count((f) => f.status === 'resolved'), total),
-    approved_pct: pct(count((f) => f.status === 'valid' || f.status === 'resolved'), total),
-    false_positive_rate: decided.length ? pct(wrong.length, decided.length) : null,
+    opened_pct: pct(counts.opened, total),
+    reviewed_pct: pct(counts.reviewed, total),
+    dismissed_pct: pct(counts.dismissed, total),
+    actioned_pct: pct(counts.actioned, total),
+    approved_pct: pct(counts.approved, total),
+    false_positive_rate: decided.length >= MIN_DECISIONS_FOR_RATE ? pct(wrong.length, decided.length) : null,
+    counts,
     avg_opportunity: counted.length ? (high + review) / counted.length : 0,
     high_confidence_value: high,
     requires_review_value: review,
     recovered_value: findings.filter((f) => f.status === 'resolved').reduce((a, f) => a + f.estimated_value, 0),
   }
+}
+
+// The review-record rates, worded once so the overview and Settings show the
+// same names, each with the count and denominator behind it.
+export interface TrustRate {
+  label: string
+  value: string
+  detail: string
+  hint: string
+}
+export function trustRates(t: TrustMetrics): TrustRate[] {
+  const p = (n: number) => `${Math.round(n)}%`
+  const of = (n: number) => `${n.toLocaleString('en-GB')} of ${t.total.toLocaleString('en-GB')}`
+  return [
+    { label: 'Opened', value: p(t.opened_pct), detail: of(t.counts.opened), hint: 'Current opportunities opened at least once' },
+    { label: 'Reviewed', value: p(t.reviewed_pct), detail: of(t.counts.reviewed), hint: 'Current opportunities moved past New' },
+    { label: 'Approved or actioned', value: p(t.approved_pct), detail: of(t.counts.approved), hint: 'Current opportunities you confirmed as valid' },
+    { label: 'Dismissed', value: p(t.dismissed_pct), detail: of(t.counts.dismissed), hint: 'Current opportunities dismissed, for any reason' },
+    {
+      label: 'False-positive rate',
+      value: t.false_positive_rate == null ? 'Too few decisions' : p(t.false_positive_rate),
+      detail:
+        t.false_positive_rate == null
+          ? `${t.decided.toLocaleString('en-GB')} decided, rate shown from ${MIN_DECISIONS_FOR_RATE}`
+          : `${t.counts.false_positives.toLocaleString('en-GB')} of ${t.decided.toLocaleString('en-GB')} decided`,
+      hint: 'Dismissed because the data was wrong, the agreement covers it or it was already billed, out of every approved, actioned or dismissed opportunity',
+    },
+  ]
 }

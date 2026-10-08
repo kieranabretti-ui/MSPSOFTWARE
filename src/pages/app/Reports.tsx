@@ -410,7 +410,7 @@ export default function Reports() {
             <p className="max-w-[40ch] text-balance text-[clamp(1.125rem,2.4vw,1.375rem)] font-medium leading-[1.4] tracking-[-0.015em] text-ink">
               {r.split.high.count && r.split.review.count ? (
                 <>
-                  <span className="tnum font-semibold text-accent">{money(r.split.high.value)}</span> is high-confidence opportunity, backed by direct evidence on both sides of each comparison. A further{' '}
+                  <span className="tnum font-semibold text-accent">{money(r.split.high.value)}</span> is high-confidence opportunity, the strongest evidence in your data, still subject to your review. A further{' '}
                   <span className="tnum font-semibold">{money(r.split.review.value)}</span> requires review before action.
                 </>
               ) : (

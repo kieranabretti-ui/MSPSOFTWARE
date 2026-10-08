@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { Badge, Button, ButtonLink, Disclaimer, Logo, cx, type Tone } from '../../components/ui'
 import { useToast } from '../../components/toast'
-import { BRAND, COMPANY, TRUST_COPY } from '../../brand/brand'
+import { BRAND, COMPANY, HOSTED, TRUST_COPY } from '../../brand/brand'
 import { useStore } from '../../data/store'
 import { money } from '../../lib/format'
 import { track } from '../../lib/track'
@@ -172,7 +172,7 @@ const FACTS: { title: string; body: string; status: string; tone: Tone }[] = [
   },
   {
     title: 'Evidence on every opportunity',
-    body: 'Deterministic rules tie each opportunity to the ticket, time entry, device, charge or clause behind it, and to the file and row it came from. An optional AI explanation puts one opportunity into plain English when you ask. It never produces a figure.',
+    body: 'Deterministic rules tie each opportunity to the ticket, time entry, device, charge or clause behind it, and to the file and row it came from. ' + (HOSTED ? 'On the hosted service, an optional AI explanation puts one opportunity into plain English when you ask. It never produces a figure.' : 'No AI is used in evaluation mode.'),
     status: 'Works today',
     tone: 'neutral',
   },
@@ -256,7 +256,7 @@ export function Close() {
         </div>
         <p className="tnum mt-4 max-w-[64ch] text-small text-ink-3">
           The demo found {money(DEMO.totals.identified)} of potential opportunity in {DEMO.period.months} months of {DEMO.msp}'s data: {money(DEMO.totals.highConfidence)} high confidence and{' '}
-          {money(DEMO.totals.requiresReview)} requiring review. Upload your own exports to see yours.
+          {money(DEMO.totals.requiresReview)} requiring review. {HOSTED ? 'Upload your own exports to see yours.' : 'Try it on anonymised sample exports to see how it reads yours.'}
         </p>
       </div>
     </section>

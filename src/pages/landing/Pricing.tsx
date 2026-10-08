@@ -205,7 +205,7 @@ export function Pricing() {
             For scale: the fictional demo MSP has {DEMO.totals.clients} clients with agreements worth {money(DEMO.totals.billed)} over {inWords(DEMO.period.months)} months. Headroom found{' '}
             {money(DEMO.totals.identified)} of potential opportunity there ({money(DEMO.totals.highConfidence)} high confidence), {money(DEMO.totals.monthly)} a month of it recurring.
           </p>
-          <p className="text-ink-3">If your audit finds less than {growth.name} costs, we'll tell you plainly.</p>
+          <p className="text-ink-3">If your audit finds less than {growth.name} costs, {growth.name} isn't worth it for you yet, and the audit shows you that before you pay.</p>
         </div>
       </div>
 

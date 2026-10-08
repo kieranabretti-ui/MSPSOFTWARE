@@ -42,7 +42,7 @@ We do not sell personal data, use it for advertising, or build marketing profile
 - We don't connect to your PSA, RMM or accounting system. Headroom works only from files you choose to export and upload.
 - We don't ask for admin accounts, API credentials or agents on your systems.
 - When you import a CSV, it is read in your browser and only the columns you map are saved. The original CSV file is not uploaded.
-- When you add a contract PDF, its text is extracted in your browser. The text and the PDF file itself are then stored (see section 5).
+- When you add a contract PDF, its text is extracted in your browser. On the hosted service, the text and the PDF file itself are then stored (see section 5). In evaluation mode only the extracted text is kept, in your browser.
 - We don't use advertising or third-party tracking cookies.
 
 ## 5. Data you upload about your clients (we act as processor) {#uploads}
@@ -126,7 +126,7 @@ Where personal data is transferred outside the UK to a country without UK adequa
 - **Logs** held by Supabase and Netlify are kept for the periods those providers set.
 - **Billing records**, once paid plans exist, are kept for as long as UK tax and company law requires.
 - **Correspondence** is kept for as long as needed to deal with the matter.
-- **Backups**: data you delete may remain in our database provider's backups until those backups expire in the provider's normal cycle. Backups are not used to restore deleted data except to recover from a fault.
+- **Backups**: data you delete may remain in any backups our database provider keeps until they expire. We will state the backup schedule in the Trust Centre once it is confirmed. Backups are not used to restore deleted data except to recover from a fault.
 
 ## 11. Your rights {#rights}
 
@@ -155,8 +155,8 @@ What is in place today on the hosted service:
 - Workspaces can only be created through a database function that makes the creator the owner. Nobody can add themselves to another workspace.
 - Contract files are kept in a private storage bucket, in a folder for each workspace that only its members can read, limited to PDF and plain text files up to 20 MB.
 - Key actions are recorded in an append-only activity log that members can't edit or delete.
-- The AI service key is held on the server and never sent to the browser. AI explanations are written by the server, checked against your evidence, and limited per user and per workspace.
-- Passwords are handled by Supabase Auth and are not visible to us. New passwords need at least 10 characters, with upper and lower case letters and a number.
+- The AI service key is held on the server and never sent to the browser. AI explanations are written by the server, checked against your evidence, and limited per workspace each day and per user each hour and each day.
+- Passwords are handled by Supabase Auth and are not visible to us. The sign-up form requires at least 10 characters, with upper and lower case letters and a number.
 - Supabase, our database provider, encrypts stored data at rest. This is the provider's control.
 - CSV files are read in the browser and only mapped columns are saved.
 
@@ -233,11 +233,12 @@ The Customer gives general authorisation for Headroom to use the following subpr
 | Supabase, Inc. | Authentication, database, file storage, server functions | UK (London region) for stored data; the AI server function may run outside the UK; US-based company whose staff may access data from outside the UK to support the service |
 | Netlify, Inc. | Website hosting and content delivery (request logs only; no workspace data stored) | Global edge network; US-based company |
 | Anthropic, PBC | AI explanation of a single opportunity, only when the Customer requests it | United States |
-| Email delivery provider | Account emails (sign-up confirmation, sign-in links) | To be confirmed; Headroom will name it before it processes Customer personal data |
 
 Headroom will tell the Customer by email before adding or replacing a subprocessor that processes Customer personal data. If the Customer objects on reasonable data protection grounds, the parties will discuss it in good faith; if it cannot be resolved, the Customer may terminate the affected service and receive a pro rata refund of prepaid fees for the unused period.
 
-Headroom remains responsible to the Customer for its subprocessors' performance of their data protection obligations.
+Headroom will engage each subprocessor under a written contract that imposes data protection obligations no less protective than those in this annex, to the extent they apply to the service the subprocessor provides. Headroom remains responsible to the Customer for its subprocessors' performance of their data protection obligations.
+
+Account emails (sign-up confirmation and sign-in links) are sent for Headroom as controller and are covered by the privacy policy, not this annex.
 
 Transfers outside the UK are covered by the safeguards described in section 9 of the privacy policy.
 
@@ -250,11 +251,11 @@ These are the measures that exist today on the hosted service:
 - Workspace creation only through a server-side function that assigns ownership; users cannot join workspaces they don't own.
 - Private file storage, with access policies limiting each workspace's folder to its members, and file type and size limits.
 - An append-only activity log of key actions, holding IDs, counts and stage names rather than client data.
-- Authentication by Supabase Auth (password of at least 10 characters with upper and lower case letters and a number, or a one-time email link). Passwords are stored by Supabase as one-way hashes.
+- Authentication by Supabase Auth (email and password, or a one-time email link), with the password rule applied on the sign-in service: at least 10 characters with upper and lower case letters and a number. Passwords are stored by Supabase as one-way hashes.
 - AI provider key held as a server secret, never exposed to the browser. AI requests run under the user's own session, so row-level security still applies; explanations are written by the server and rate limited.
 - Data minimisation: CSV files are parsed in the browser and only mapped columns are stored; original CSV files are not uploaded. Only the single opportunity selected is sent for AI explanation, and nothing is sent unless the user asks.
 - Product analytics, where enabled, carry no personal data or file contents.
-- Encryption at rest and database backups are provided by Supabase as provider controls.
+- Encryption at rest is provided by Supabase as a provider control. Database backups are whatever the provider's plan includes; their schedule is not yet stated.
 
 Not in place: SOC 2 or ISO 27001 certification, independent penetration testing, in-app multi-factor authentication, single sign-on.
 
@@ -265,7 +266,7 @@ Headroom will notify the Customer without undue delay after becoming aware of a 
 ## 9. Deletion and return {#dpa-9}
 
 - **During the service:** the Customer can export opportunities and reports as CSV or PDF at any time, and can delete a source file, an analysis, all workspace data (including stored contract files), the workspace or the account.
-- **At the end of the service:** the Customer may export its data before closing the account. Deleting the account deletes the workspace and the Customer personal data in it, including stored contract files. If the service ends in another way, Headroom will delete the workspace and remaining Customer personal data without undue delay, unless UK law requires it to be kept.
+- **At the end of the service, at the Customer's choice:** Headroom will either delete the Customer personal data or return it and then delete it. The Customer keeps its own original exports and contract files. If the Customer asks in writing within 30 days of the service ending, Headroom will return the workspace's stored records (clients, tickets, time entries, users and devices, billing lines, contract text, opportunities and decisions) as CSV files, with any stored contract files, and then delete them. Deleting the account deletes the workspace and the Customer personal data in it, including stored contract files; a Customer that wants a copy should ask for it, or export what it needs, first. If the service ends in another way and no return is requested, Headroom will delete the workspace and remaining Customer personal data without undue delay, unless UK law requires it to be kept.
 - **Backups:** deleted data may remain in the database provider's backups until they expire in the normal cycle, and will not be restored except to recover from a fault.
 - On request, Headroom will confirm deletion in writing.
 

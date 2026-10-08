@@ -71,7 +71,7 @@ describe('confidenceOf', () => {
 
   it('reads the drift basis from its calculation', () => {
     const f = findings.find((x) => x.meta.calc?.kind === 'seats' && x.meta.calc.baseline === 40)!
-    expect(confidenceOf(f).basis).toBe('Contracted for 40 users; your users list shows 43 active. Valued at your own billing line price.')
+    expect(confidenceOf(f).basis).toBe('Contracted for 40 users and billed for 40; your users list shows 43 active. Valued at your own billing line price.')
   })
 
   const time = (over: Partial<Extract<NonNullable<FindingDraft['meta']['calc']>, { kind: 'time' }>>) => ({
@@ -118,7 +118,7 @@ describe('confidenceOf', () => {
   })
 
   it('drops drift on the clients file, an ambiguous price line or undated assets to Medium', () => {
-    const seats = { kind: 'seats' as const, unit: 'device' as const, baseline: 10, actual: 12, unit_price: 8, price_label: 'Per device' }
+    const seats = { kind: 'seats' as const, unit: 'device' as const, baseline: 10, actual: 12, unit_price: 8, price_label: 'Per device', billed: 10 }
     const read = (over: object) => confidenceOf({ confidence: 95, meta: { rule: 'drift.device', period_values: {}, calc: { ...seats, baseline_source: 'contract' as const, price_source: 'billing_line' as const, ...over } } })
     expect(read({})).toMatchObject({ level: 'HIGH', classification: 'confirmed' })
     expect(read({ baseline_source: 'client_record' })).toMatchObject({ level: 'MEDIUM', classification: 'potential' })

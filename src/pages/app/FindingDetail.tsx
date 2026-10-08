@@ -12,7 +12,7 @@ import { EvidenceLedger } from './findings/EvidenceLedger'
 import { DataSources } from './findings/DataSources'
 import { DecisionPanel } from './findings/DecisionPanel'
 import { AiExplanation } from './findings/AiExplanation'
-import EvidenceView, { AI_LINE } from './findings/EvidenceView'
+import EvidenceView, { AI_LINE, NO_AI_LINE } from './findings/EvidenceView'
 import { CLASS_LABEL, classDefinition } from './findings/rules'
 import { Select } from './data/kit'
 import { dateTime, money } from '../../lib/format'
@@ -402,7 +402,7 @@ export default function FindingDetail() {
       </div>
 
       <p className="mt-8 max-w-[72ch] text-caption leading-relaxed text-ink-3">
-        Figures are potential revenue based on the data provided, not amounts a client owes. {AI_LINE} Recommendations require MSP review before action.
+        Figures are potential revenue based on the data provided, not amounts a client owes. {f.ai_explanation ? AI_LINE : NO_AI_LINE} Recommendations require MSP review before action.
       </p>
 
       <EvidenceView finding={f} open={whyOpen} onClose={() => setWhyOpen(false)} />

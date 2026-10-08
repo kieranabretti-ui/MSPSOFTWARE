@@ -480,7 +480,7 @@ export const DEMO: LandingSnapshot = {
     "annual": 7872,
     "level": "HIGH",
     "classification": "confirmed",
-    "basis": "Contracted for 39 users; your users list shows 47 active. Valued at your own billing line price.",
+    "basis": "Contracted for 39 users and billed for 39; your users list shows 47 active. Valued at your own billing line price.",
     "checks": [
       {
         "text": "The agreement states 39 users.",
@@ -503,7 +503,7 @@ export const DEMO: LandingSnapshot = {
         "met": true
       },
       {
-        "text": "Value is (active − contracted) × unit price.",
+        "text": "Your billing lines bill 39 users, fewer than the 47 active, and only the users beyond those billed are counted.",
         "met": true
       }
     ],
@@ -518,7 +518,7 @@ export const DEMO: LandingSnapshot = {
       },
       {
         "type": "fact",
-        "text": "\"Managed Support (per user)\" is billed at £82 per user."
+        "text": "\"Managed Support (per user)\" bills 39 × £82 per user."
       },
       {
         "type": "observation",
@@ -563,15 +563,15 @@ export const DEMO: LandingSnapshot = {
       },
       {
         "source": "billing",
-        "label": "Price used",
-        "text": "Managed Support (per user): £82 per user",
+        "label": "Billed quantity and price used",
+        "text": "Managed Support (per user): 39 × £82 per user",
         "highlights": [],
         "reference": "billing.csv, row 2"
       }
     ],
     "calculation": {
       "lines": [
-        "47 active users − 39 contracted = 8 users",
+        "47 active users − 39 contracted and billed = 8 users",
         "8 × £82 = £656 a month, priced as Managed Support (per user)",
         "£656 × 12 = £7,872 a year"
       ],

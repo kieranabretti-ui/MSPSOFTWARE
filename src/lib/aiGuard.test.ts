@@ -107,6 +107,22 @@ describe('output checks', () => {
   })
 })
 
+describe('figures written in words', () => {
+  const check = (explanation: string, over: Partial<FindingForPrompt> = {}) => checkOutput({ explanation, quotes: [], caveat: '' }, finding(over))
+  it('rejects spelled-out numbers, fractions, multiples and annualising', () => {
+    const r = check('Left uncorrected this is roughly eight thousand pounds a year, about a fifth more than the agreement, and nearly twenty thousand over a contract term.')
+    expect(r.ok).toBe(false)
+    expect(r.problems.some((p) => p.startsWith('unsupported_quantity_words'))).toBe(true)
+  })
+  it.each(['The gap is twice what the agreement allows.', 'Half of the users are not billed.', 'That is an annual shortfall.', 'Ten users are not on the bill.', 'It amounts to fifty percent more.'])('rejects "%s"', (text) => {
+    expect(check(text).ok).toBe(false)
+  })
+  it('allows words that are in the data and idioms that are not figures', () => {
+    expect(check('This is a one-off charge for third-party software support, and no one has billed it.').ok).toBe(true)
+    expect(check('The agreement says onboarding takes two days.', { evidence: [{ kind: 'contract', label: 'Agreement', text: 'Onboarding takes two days.' }] }).ok).toBe(true)
+  })
+})
+
 describe('evidence hash', () => {
   it('changes when the evidence or values change, not otherwise', async () => {
     const base = { estimated_value: 656, monthly_value: 656, annual_value: 7872, evidence: finding().evidence, meta: { calc: { kind: 'drift' } } }
@@ -115,6 +131,9 @@ describe('evidence hash', () => {
     expect(await sha256Hex(evidenceFingerprint({ ...base }))).toBe(a)
     expect(await sha256Hex(evidenceFingerprint({ ...base, monthly_value: 700 }))).not.toBe(a)
     expect(await sha256Hex(evidenceFingerprint({ ...base, evidence: [] }))).not.toBe(a)
+    expect(await sha256Hex(evidenceFingerprint({ ...base, title: 'Rewritten' }))).not.toBe(a)
+    expect(await sha256Hex(evidenceFingerprint({ ...base, claims: [{ type: 'fact', text: 'x' }] }))).not.toBe(a)
+    expect(await sha256Hex(evidenceFingerprint({ ...base, classification: 'confirmed' }))).not.toBe(a)
   })
 })
 

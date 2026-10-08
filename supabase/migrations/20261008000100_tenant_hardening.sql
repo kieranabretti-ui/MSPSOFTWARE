@@ -7,10 +7,15 @@
 --    workspace A could insert a ticket with workspace_id = A that pointed at
 --    workspace B's client: the policy passed (they belong to A) and the
 --    foreign key passed (the client exists). B deleting that client would
---    then cascade into A's rows, and the error code told A whether any UUID
---    existed in another tenant. Every child -> parent reference is now a
---    composite foreign key on (workspace_id, <parent id>), so a reference can
---    only point inside the row's own workspace. workspace_id can't be changed
+--    then cascade into A's rows, and the foreign key error told A whether a
+--    referenced UUID existed in another tenant. Every child -> parent
+--    reference is now a composite foreign key on (workspace_id, <parent id>),
+--    so a reference can only point inside the row's own workspace. This does
+--    not hide whether a UUID exists at all: inserting a row whose primary key
+--    is another tenant's id still fails with a unique violation (or, with ON
+--    CONFLICT, an RLS error). Closing that would need composite primary keys;
+--    ids are random v4 UUIDs and are never shown outside their workspace, so
+--    the remaining signal needs an id the caller can't otherwise learn. workspace_id can't be changed
 --    once a row exists, and stored file paths must sit in the row's own
 --    workspace folder.
 -- 2. Grants. The anon role (signed-out callers holding the public anon key)
@@ -32,6 +37,8 @@
 --    whatever the browser does.
 -- 7. One workspace per user (the product has no multi-workspace support), so
 --    per-workspace limits can't be multiplied by creating workspaces.
+-- 8. Schema version. public.schema_version() lets the app refuse to open a
+--    workspace on a database that hasn't had these migrations applied.
 
 -- ---------------------------------------------------------------- 1. tenant consistency
 
@@ -240,9 +247,11 @@ begin
 end $$;
 grant select, insert, update, delete on public.findings to service_role;
 
--- An explanation describes the evidence and values it was written for. If
--- the engine changes any of them, the old text is cleared rather than left
--- next to different figures.
+-- An explanation describes the finding it was written for: its evidence,
+-- values, calculation, wording, claims, classification, severity and client.
+-- If any of them changes, the old text is cleared rather than left next to a
+-- different finding. supabase/functions/ai-review/guard.ts evidenceFingerprint
+-- covers the same fields, so the function's cache misses too.
 create or replace function public.findings_clear_stale_ai()
 returns trigger language plpgsql set search_path = '' as $$
 begin
@@ -251,7 +260,15 @@ begin
     or new.monthly_value is distinct from old.monthly_value
     or new.annual_value is distinct from old.annual_value
     or (new.meta -> 'calc') is distinct from (old.meta -> 'calc')
-    or new.client_id is distinct from old.client_id then
+    or new.client_id is distinct from old.client_id
+    or new.title is distinct from old.title
+    or new.description is distinct from old.description
+    or new.recommended_action is distinct from old.recommended_action
+    or new.category is distinct from old.category
+    or new.claims is distinct from old.claims
+    or new.classification is distinct from old.classification
+    or new.severity is distinct from old.severity
+    or new.confidence is distinct from old.confidence then
     new.ai_explanation := null;
     new.ai_meta := null;
   end if;
@@ -262,6 +279,25 @@ revoke execute on function public.findings_clear_stale_ai() from authenticated;
 drop trigger if exists findings_clear_stale_ai on public.findings;
 create trigger findings_clear_stale_ai before update on public.findings
   for each row execute function public.findings_clear_stale_ai();
+
+-- Renaming a client changes what its findings' explanations describe. Members
+-- can't write the AI columns, so this runs as the table owner.
+create or replace function public.clients_clear_stale_ai()
+returns trigger language plpgsql security definer set search_path = '' as $$
+begin
+  if new.name is distinct from old.name then
+    update public.findings
+      set ai_explanation = null, ai_meta = null
+      where client_id = new.id and workspace_id = new.workspace_id
+        and (ai_explanation is not null or ai_meta is not null);
+  end if;
+  return new;
+end $$;
+revoke execute on function public.clients_clear_stale_ai() from public, anon, authenticated;
+
+drop trigger if exists clients_clear_stale_ai on public.clients;
+create trigger clients_clear_stale_ai after update of name on public.clients
+  for each row execute function public.clients_clear_stale_ai();
 
 -- ---------------------------------------------------------------- 4. audit log
 
@@ -434,3 +470,15 @@ $$;
 -- Covers every function above: nothing in public is callable by signed-out
 -- callers. Signed-in callers keep only what was granted explicitly.
 revoke execute on all functions in schema public from public, anon;
+
+-- ---------------------------------------------------------------- 8. schema version
+
+-- The app checks this before opening a workspace (src/data/supabaseBackend.ts
+-- REQUIRED_SCHEMA), so a build that relies on the controls above refuses to
+-- run against a database that doesn't have them. Bump it in any later
+-- migration a new build depends on.
+create or replace function public.schema_version()
+returns text language sql immutable set search_path = '' as $$ select '20261008000100'::text $$;
+revoke execute on function public.schema_version() from public, anon;
+grant execute on function public.schema_version() to authenticated, service_role;
+

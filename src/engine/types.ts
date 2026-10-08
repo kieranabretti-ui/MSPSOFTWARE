@@ -220,6 +220,9 @@ export type FindingCalc =
       rate_source?: 'contract' | 'settings'
       // How closely the ticket wording matched the kind of work.
       match?: 'strong' | 'loose'
+      // Out of scope only: the agreement also has wording that says this kind
+      // of work is included, so the excluding clause alone can't settle it.
+      clause_conflict?: boolean
     }
   | {
       kind: 'seats'
@@ -231,6 +234,9 @@ export type FindingCalc =
       baseline_source: 'contract' | 'client_record' | 'billing'
       // The clients file states a different contracted figure from the agreement.
       baseline_conflict?: number | null
+      // Quantity billed across the per-unit lines (null when none). The gap is
+      // active − max(baseline, billed): units already billed are never a gap.
+      billed?: number | null
       actual: number
       unit_price: number
       price_source: 'billing_line' | 'default'
@@ -276,6 +282,8 @@ export type FindingCalc =
       included_source: 'client' | 'contract'
       // The agreement states the same allowance as the clients file.
       included_confirmed?: boolean
+      // The clients file states a different allowance from the agreement (the agreement's is used).
+      included_conflict?: number | null
       rate: number
       rate_source?: 'contract' | 'settings'
       // true when only non-billable time is counted against the allowance.

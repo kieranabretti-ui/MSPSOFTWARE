@@ -23,7 +23,7 @@ function finding(over: Partial<Finding> = {}): Finding {
     recommended_action: 'r',
     source_data: [],
     // drift.user valued at a billing line against a contracted baseline: HIGH
-    meta: { rule: 'drift.user', period_values: {}, calc: { kind: 'seats', unit: 'user', baseline: 39, baseline_source: 'contract', actual: 47, unit_price: 82, price_source: 'billing_line', price_label: 'Per user' } },
+    meta: { rule: 'drift.user', period_values: {}, calc: { kind: 'seats', unit: 'user', baseline: 39, baseline_source: 'contract', actual: 47, unit_price: 82, price_source: 'billing_line', price_label: 'Per user', billed: 39 } },
     status: 'open',
     ai_explanation: null,
     created_at: '2026-10-01T00:00:00Z',
@@ -52,6 +52,7 @@ describe('trustMetrics', () => {
       finding({ status: 'dismissed', dismiss_reason: 'data_wrong' }),
       finding({ status: 'dismissed', dismiss_reason: 'goodwill' }),
       finding(),
+      finding({ stale: true, status: 'valid' }),
     ]
     const m = trustMetrics(fs, [{ action: 'finding.viewed', target_id: 'seen-in-log' }, { action: 'finding.note', target_id: fs[7].id }])
     expect(m.total).toBe(8)
@@ -60,9 +61,10 @@ describe('trustMetrics', () => {
     expect(m.dismissed_pct).toBe(25)
     expect(m.actioned_pct).toBe(12.5)
     expect(m.approved_pct).toBe(25) // Approved or Actioned
-    expect(m.decided).toBe(4)
-    // one of four decided was dismissed as wrong; goodwill is valid-but-waived
-    expect(m.false_positive_rate).toBe(25)
+    expect(m.decided).toBe(5)
+    // one of five decided was dismissed as wrong; goodwill is valid-but-waived
+    expect(m.false_positive_rate).toBe(20)
+    expect(m.counts).toMatchObject({ opened: 2, reviewed: 5, false_positives: 1 })
     expect(m.recovered_value).toBe(300)
   })
 
@@ -79,9 +81,18 @@ describe('trustMetrics', () => {
     const m = trustMetrics(fs, [])
     expect(m.total).toBe(1)
     expect(m.decided).toBe(2)
-    expect(m.false_positive_rate).toBe(50)
+    // Too few decisions for a rate to mean anything.
+    expect(m.false_positive_rate).toBeNull()
+    expect(m.counts.false_positives).toBe(1)
     expect(m.recovered_value).toBe(200)
     expect(m.high_confidence_value).toBe(50)
+  })
+})
+
+describe('false positives', () => {
+  it('counts "Already billed" as a false positive', () => {
+    const fs = Array.from({ length: 5 }, (_, i) => finding({ id: `d${i}`, status: 'dismissed', dismiss_reason: i < 2 ? 'already_billed' : 'goodwill' }))
+    expect(trustMetrics(fs, []).false_positive_rate).toBe(40)
   })
 })
 

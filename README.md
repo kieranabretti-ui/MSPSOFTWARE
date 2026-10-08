@@ -255,6 +255,22 @@ A static single-page app. Build with `npm run build` and serve `dist/` from any 
 `VITE_SUPABASE_*` variables in the host's environment to enable accounts; leave them unset to deploy
 in local mode.
 
+**Before deploying a hosted build (the two `VITE_SUPABASE_*` variables set), all of these must be
+true of the production Supabase project.** The Trust Centre, privacy policy and data processing annex
+describe these controls as in place on the hosted service, so they are preconditions, not follow-ups:
+
+1. Every migration in `supabase/migrations/` is applied, including `20261008000000_evidence_and_audit.sql`
+   and `20261008000100_tenant_hardening.sql`. The app enforces this: it calls `public.schema_version()`
+   and refuses to open a workspace if it is missing or older than `REQUIRED_SCHEMA` in
+   `src/data/supabaseBackend.ts`.
+2. `supabase/tests/rls.sql` has been run against production (or a staging copy with the same
+   migrations) and printed `All isolation checks passed`. Keep the output.
+3. The password policy in **Authentication** matches step 5 above (10 characters, upper and lower case
+   letters and digits, leaked password protection on). The sign-up form checks the same rule, but only
+   the dashboard setting stops a direct API sign-up.
+4. The email sender for Auth emails (Supabase's built-in sender or a custom SMTP provider) is named in
+   the subprocessor table on the Trust Centre and in the privacy policy.
+
 ## Project layout
 
 ```

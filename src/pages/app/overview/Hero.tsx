@@ -100,7 +100,15 @@ export function Hero({ f }: { f: HeroFigures }) {
           {money(f.annual)}
         </Figure>
       ),
-      sub: ['Recurring items × 12, if confirmed and left uncorrected'],
+      sub:
+        f.monthly > 0
+          ? [
+              `${money(f.high.monthly * 12)} of it high confidence`,
+              ...(f.recurringPricing > 0 ? [`${money(f.recurringPricing * 12)} of it a pricing estimate`] : []),
+              ...(f.overlap.monthly > 0 ? [`${money(f.overlap.monthly * 12)} of it overlaps at ${names(f.overlap.clients)}`] : []),
+              'Recurring items × 12, if confirmed and left uncorrected',
+            ]
+          : ['Recurring items × 12, if confirmed and left uncorrected'],
     },
     {
       label: 'Clients affected',

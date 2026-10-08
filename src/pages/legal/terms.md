@@ -105,9 +105,9 @@ Headroom is early-stage software and we will keep improving it. We may change fe
 
 **What we're not liable for.** Subject to that, neither of us is liable to the other, whether in contract, tort (including negligence) or otherwise, for: loss of profits, revenue, business or goodwill; loss of anticipated savings; or any indirect or consequential loss. In particular, we are not liable for revenue you don't recover, or for decisions you make about billing, pricing or contracts based on Headroom's findings or AI explanations.
 
-**Cap.** Subject to the two paragraphs above, each party's total liability arising out of or in connection with these terms in any 12-month period is limited to the total fees you paid to us in the 12 months before the event giving rise to the claim. If you are on the free plan and have paid nothing, our total liability is limited to £100.
+**Our cap.** Subject to the two paragraphs above, our total liability to you arising out of or in connection with these terms in any 12-month period is limited to the greater of £100 and the total fees you paid to us in the 12 months before the event giving rise to the claim. This applies whatever plan you are on and whether or not you have paid anything, including during any free period.
 
-This cap doesn't apply to your obligation to pay fees, or to the indemnity in section 14.
+**Your cap.** Subject to the same two paragraphs, your total liability to us in any 12-month period is limited to the greater of £100 and the total fees you paid or owed to us in the 12 months before the event giving rise to the claim. Your cap doesn't apply to your obligation to pay fees, to the indemnity in section 14, or to your breach of section 7 (acceptable use), section 10 (confidentiality) or section 11 (intellectual property).
 
 **Data.** We take care of your data as described in our privacy policy, but you should keep your own copies of the source data you upload. Headroom is not a backup service.
 

@@ -99,16 +99,39 @@ export function classifyText(text: string): Classification[] {
   return out
 }
 
+// The workspace's time zone. Business hours are judged on UK wall-clock time,
+// never the browser's own zone, so the same data gives the same findings
+// wherever it is analysed.
+export const WORKSPACE_TIME_ZONE = 'Europe/London'
+const TZ_SUFFIX = /(?:Z|[+-]\d{2}:?\d{2})$/i
+const wallClockFmt = new Intl.DateTimeFormat('en-GB', { timeZone: WORKSPACE_TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+
+/**
+ * A timestamp as UK wall-clock time, "YYYY-MM-DDTHH:MM:00". A timestamp with a
+ * zone (Z or ±hh:mm) is converted; one without is already wall-clock time and
+ * is returned unchanged. Null when it can't be read.
+ */
+export function toWorkspaceWallClock(iso: string): string | null {
+  const s = iso.trim()
+  if (!TZ_SUFFIX.test(s)) return s
+  const t = Date.parse(s.replace(/([+-]\d{2})(\d{2})$/, '$1:$2'))
+  if (Number.isNaN(t)) return null
+  const p = Object.fromEntries(wallClockFmt.formatToParts(new Date(t)).map((x) => [x.type, x.value]))
+  return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}:00`
+}
+
 export function isOutsideHours(iso: string, start: string, end: string): boolean {
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return false
   if (!/T\d{2}:\d{2}/.test(iso)) return false // date only: can't tell
-  const day = d.getDay()
+  const wall = toWorkspaceWallClock(iso)
+  const m = wall?.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/)
+  if (!m) return false
+  const day = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]))).getUTCDay()
+  if (Number.isNaN(day)) return false
   if (day === 0 || day === 6) return true
-  const mins = d.getHours() * 60 + d.getMinutes()
+  const mins = Number(m[4]) * 60 + Number(m[5])
   const toMins = (s: string) => {
-    const [h, m] = s.split(':').map(Number)
-    return h * 60 + (m || 0)
+    const [h, mm] = s.split(':').map(Number)
+    return h * 60 + (mm || 0)
   }
   return mins < toMins(start) || mins >= toMins(end)
 }

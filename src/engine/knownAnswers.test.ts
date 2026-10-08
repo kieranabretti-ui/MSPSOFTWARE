@@ -102,7 +102,7 @@ describe('known answer: agreement drift (brief example)', () => {
     expect(f.annual_value).toBe(7872)
     expect(f.estimated_value).toBe(656) // one month analysed
     expect(formatCalculation(f)).toMatchObject({
-      lines: ['47 active users − 39 contracted = 8 users', '8 × £82 = £656 a month, priced as Managed Support (per user)', '£656 × 12 = £7,872 a year'],
+      lines: ['47 active users − 39 contracted and billed = 8 users', '8 × £82 = £656 a month, priced as Managed Support (per user)', '£656 × 12 = £7,872 a year'],
       monthly: 656,
       annual: 7872,
       basis: 'recurring',
@@ -297,7 +297,7 @@ describe('known answer: prices with pence are rounded once, after annualising', 
   it('keeps the pence', () => {
     expect(f.monthly_value).toBe(25.5)
     expect(f.annual_value).toBe(306)
-    expect(formatCalculation(f)!.lines).toEqual(['13 active users − 10 contracted = 3 users', '3 × £8.50 = £25.50 a month, priced as Managed support per user', '£25.50 × 12 = £306 a year'])
+    expect(formatCalculation(f)!.lines).toEqual(['13 active users − 10 contracted and billed = 3 users', '3 × £8.50 = £25.50 a month, priced as Managed support per user', '£25.50 × 12 = £306 a year'])
   })
 })
 
@@ -358,5 +358,164 @@ describe('every finding is evidence-backed', () => {
       // Clients-file figures are never labelled as the agreement.
       for (const e of f.evidence.filter((x) => x.source === 'client_record')) expect(e.label).not.toMatch(/^Agreement/)
     }
+  })
+})
+
+// Negative and edge cases: each one is a situation where an earlier version
+// overstated a finding. The right answer is no value, or a lower level.
+describe('known answer: drift never counts units that are already billed', () => {
+  it('raises nothing when the per-user line already bills every active user', () => {
+    const c = client('Billed Ltd', { contracted_users: 39 })
+    const agreement = contract(c, 'Billed MSA', '1. Services\n\n1.2 The monthly charge is based on 39 supported users.')
+    const { findings } = analyse(dataset({ clients: [c], contracts: [agreement], assets: users(c, 47), billing_items: [line(c, 'Managed Support (per user)', 47, 82)], time_entries: [window(c)] }))
+    expect(findings.filter((f) => f.category === 'AGREEMENT_DRIFT' || f.category === 'RECURRING_CHARGE_MISMATCH')).toHaveLength(0)
+  })
+
+  it('values only the users beyond those billed when more are billed than contracted', () => {
+    // 39 contracted, 44 billed, 47 active: 47 − 44 = 3; 3 × £82 = £246 a month.
+    const c = client('Partly Ltd', { contracted_users: 39 })
+    const agreement = contract(c, 'Partly MSA', '1. Services\n\n1.2 The monthly charge is based on 39 supported users.')
+    const { findings } = analyse(dataset({ clients: [c], contracts: [agreement], assets: users(c, 47), billing_items: [line(c, 'Managed Support (per user)', 44, 82)], time_entries: [window(c)] }))
+    const f = byRule(findings, 'drift.user')
+    expect(f.monthly_value).toBe(246)
+    expect(formatCalculation(f)!.lines[0]).toBe('47 active users − 44 billed = 3 users (39 contracted, 44 billed)')
+  })
+
+  it('does not read named escalation contacts as the contracted quantity', () => {
+    const c = client('Director Ltd')
+    const agreement = contract(c, 'Director MSA', '5. Escalation\n\n5.1 Priority escalation covers 5 named users at director level.')
+    const { findings } = analyse(dataset({ clients: [c], contracts: [agreement], assets: users(c, 40), billing_items: [line(c, 'Managed Support (per user)', 40, 50)], time_entries: [window(c)] }))
+    expect(findings.filter((f) => f.category === 'AGREEMENT_DRIFT')).toHaveLength(0)
+  })
+
+  it('adds split per-user lines together before comparing', () => {
+    const c = client('Split Ltd')
+    const agreement = contract(c, 'Split MSA', '1. Services\n\n1.2 The monthly charge is based on 10 supported users.')
+    const split = [line(c, 'Managed support per user (Premium)', 4, 82), line(c, 'Managed support per user (Standard)', 6, 60, 3)]
+    const none = analyse(dataset({ clients: [c], contracts: [agreement], assets: users(c, 10), billing_items: split, time_entries: [window(c)] }))
+    expect(none.findings.filter((f) => f.category === 'RECURRING_CHARGE_MISMATCH' || f.category === 'AGREEMENT_DRIFT')).toHaveLength(0)
+    // 12 active, 10 billed across both lines: 2 × £60 (lowest price) = £120, Medium as the price line is ambiguous.
+    const c2 = client('Split Two Ltd')
+    const two = analyse(dataset({ clients: [c2], assets: users(c2, 12), billing_items: [line(c2, 'Managed support per user (Premium)', 4, 82), line(c2, 'Managed support per user (Standard)', 6, 60, 3)], time_entries: [window(c2)] }))
+    const f = byRule(two.findings, 'drift.user')
+    expect(f.monthly_value).toBe(120)
+    expect(confidenceOf(f).level).toBe('MEDIUM')
+  })
+})
+
+describe('known answer: device drift and device mismatch', () => {
+  it('values 3 extra devices at the per-device line price, High', () => {
+    // 20 contracted, 20 billed, 23 active: 3 × £10 = £30 a month, £360 a year.
+    const c = client('Devices Ltd')
+    const agreement = contract(c, 'Devices MSA', '1. Services\n\n1.2 The Service covers 20 managed devices.')
+    const devices: Asset[] = Array.from({ length: 23 }, (_, i) => ({ id: id('asset'), workspace_id: WS, client_id: c.id, asset_type: 'device' as const, name: `PC-${i + 1}`, ownership: null, license: null, status: 'active' as const, first_seen: '2025-06-01' }))
+    const { findings } = analyse(dataset({ clients: [c], contracts: [agreement], assets: devices, billing_items: [line(c, 'Device monitoring (per device)', 20, 10)], time_entries: [window(c)] }))
+    const f = byRule(findings, 'drift.device')
+    expect([f.monthly_value, f.annual_value]).toEqual([30, 360])
+    expect(confidenceOf(f)).toMatchObject({ level: 'HIGH', classification: 'confirmed' })
+  })
+
+  it('values 2 contracted devices that are not billed, and raises no drift for them', () => {
+    // 20 contracted, 18 billed, 18 active: 20 − 18 = 2; 2 × £10 = £20 a month.
+    const c = client('Under Ltd')
+    const agreement = contract(c, 'Under MSA', '1. Services\n\n1.2 The Service covers 20 managed devices.')
+    const devices: Asset[] = Array.from({ length: 18 }, (_, i) => ({ id: id('asset'), workspace_id: WS, client_id: c.id, asset_type: 'device' as const, name: `PC-${i + 1}`, ownership: null, license: null, status: 'active' as const, first_seen: '2025-06-01' }))
+    const { findings } = analyse(dataset({ clients: [c], contracts: [agreement], assets: devices, billing_items: [line(c, 'Device monitoring (per device)', 18, 10)], time_entries: [window(c)] }))
+    const f = byRule(findings, 'mismatch.device')
+    expect(f.monthly_value).toBe(20)
+    expect(confidenceOf(f).level).toBe('HIGH')
+    expect(findings.filter((x) => x.meta.rule === 'drift.device')).toHaveLength(0)
+  })
+})
+
+describe('known answer: clauses that say the work is included', () => {
+  it('does not read "not chargeable and included" as an exclusion', () => {
+    const c = client('Neg Ltd')
+    const agreement = contract(c, 'Neg MSA', '2. Scope\n\n2.1 New user setup is not chargeable and is included in the monthly fee.\n\n3. Rates\n\n3.1 The standard hourly rate is £75 per hour.')
+    const t = ticket(c, '501', '2026-09-15T10:00:00', 'New starter account setup for Jane', 90)
+    const { findings } = analyse(dataset({ clients: [c], contracts: [agreement], tickets: [t] }))
+    expect(findings.filter((f) => f.meta.rule === 'out_of_scope.new_user')).toHaveLength(0)
+    expect(findings.filter((f) => f.meta.rule === 'unbilled.new_user')).toHaveLength(0)
+  })
+
+  it('drops out-of-scope work to Medium when other wording says it is included', () => {
+    const c = client('Both Ltd')
+    const agreement = contract(
+      c,
+      'Both MSA',
+      '2. Scope\n\n2.1 New user setup is chargeable at the standard rate.\n\n2.2 Onboarding of new starters is included for the first five each year.\n\n3. Rates\n\n3.1 The standard hourly rate is £75 per hour.',
+    )
+    const t = ticket(c, '502', '2026-09-15T10:00:00', 'New starter account setup for Jane', 60)
+    const f = byRule(analyse(dataset({ clients: [c], contracts: [agreement], tickets: [t] })).findings, 'out_of_scope.new_user')
+    expect(f.estimated_value).toBe(75)
+    const r = confidenceOf(f)
+    expect(r.level).toBe('MEDIUM')
+    expect(r.criteria.find((x) => x.id === 'agreement_clause')?.met).toBe(false)
+  })
+})
+
+describe('known answer: included hours, agreement against clients file', () => {
+  const setup = (usedMinutes: number) => {
+    const c = client('Hours Ltd', { included_hours: 10 })
+    const agreement = contract(c, 'Hours MSA', '3. Support\n\n3.1 The Service includes up to 20 hours of remote support per month.')
+    return analyse(dataset({ clients: [c], contracts: [agreement], time_entries: [entry(c, '2026-09-10T10:00:00', usedMinutes, false)] })).findings
+  }
+  it("uses the agreement's 20 hours, so 15 hours used is no overage", () => {
+    expect(setup(15 * 60).filter((f) => f.meta.rule === 'usage.over_allowance')).toHaveLength(0)
+  })
+  it('values 25 hours used as 5 over the agreement allowance, Medium, with the conflict recorded', () => {
+    // 25h − 20h = 5h × £60 = £300.
+    const f = byRule(setup(25 * 60), 'usage.over_allowance')
+    expect(f.estimated_value).toBe(300)
+    expect(f.description).toContain('includes 20 hours')
+    const r = confidenceOf(f)
+    expect(r.level).toBe('MEDIUM')
+    expect(r.criteria.find((x) => x.id === 'baseline_consistent')?.met).toBe(false)
+  })
+})
+
+describe('known answer: billing mismatch and out-of-hours rates', () => {
+  it('values a billable ticket with non-billable time at the Settings rate, Medium', () => {
+    // 60 min × £60 = £60.
+    const c = client('Mismatch Ltd')
+    const t = ticket(c, '601', '2026-09-15T10:00:00', 'Printer offline', 60, true)
+    const e = entry(c, '2026-09-15T10:00:00', 60, false, '601')
+    const f = byRule(analyse(dataset({ clients: [c], tickets: [t], time_entries: [e] })).findings, 'unbilled.billing_mismatch')
+    expect(f.estimated_value).toBe(60)
+    expect(confidenceOf(f)).toMatchObject({ level: 'MEDIUM', classification: 'potential' })
+  })
+
+  it('values Saturday work at the agreement rate × its out-of-hours multiplier', () => {
+    // 60 min × (£60 × 1.5) = £90.
+    const c = client('Weekend Ltd')
+    const agreement = contract(
+      c,
+      'Weekend MSA',
+      '2. Hours\n\n2.1 Support hours are 08:30 to 17:30, Monday to Friday. Work outside these hours is chargeable.\n\n3. Rates\n\n3.1 The standard hourly rate is £60 per hour.\n\n3.2 Work outside business hours is charged at 1.5 times the standard rate.',
+    )
+    const t = ticket(c, '602', '2026-09-12T10:00:00', 'Server restart after power cut', 60)
+    const f = byRule(analyse(dataset({ clients: [c], contracts: [agreement], tickets: [t] })).findings, 'out_of_scope.after_hours')
+    expect(f.estimated_value).toBe(90)
+    expect(f.meta.calc).toMatchObject({ kind: 'time', base_rate: 60, multiplier: 1.5, rate: 90, rate_source: 'contract', hours_source: 'contract' })
+    expect(confidenceOf(f).level).toBe('HIGH')
+  })
+})
+
+describe('known answer: time zones', () => {
+  it('reads zoned timestamps as UK wall-clock time at import', async () => {
+    const { parseDate } = await import('../data/importers')
+    expect(parseDate('2026-09-15T08:00:00Z', true)).toBe('2026-09-15T09:00:00')
+    expect(parseDate('2026-09-15T08:00:00+01:00', true)).toBe('2026-09-15T08:00:00')
+    expect(parseDate('2026-12-15T08:00:00Z', true)).toBe('2026-12-15T08:00:00')
+    expect(parseDate('2026-09-15 08:00', true)).toBe('2026-09-15T08:00:00')
+  })
+  it('judges business hours in the workspace zone, not the browser zone', async () => {
+    const { isOutsideHours } = await import('./classify')
+    // 17:00Z in September is 18:00 in London: outside 08:30 to 17:30.
+    expect(isOutsideHours('2026-09-15T17:00:00Z', '08:30', '17:30')).toBe(true)
+    // 08:00Z in September is 09:00 in London: inside.
+    expect(isOutsideHours('2026-09-15T08:00:00Z', '08:30', '17:30')).toBe(false)
+    expect(isOutsideHours('2026-09-15T08:00:00', '08:30', '17:30')).toBe(true)
+    expect(isOutsideHours('2026-09-12T10:00:00', '08:30', '17:30')).toBe(true) // Saturday
   })
 })

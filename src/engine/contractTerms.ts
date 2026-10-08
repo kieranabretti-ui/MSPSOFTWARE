@@ -44,9 +44,18 @@ const PATTERNS: { type: ClauseType; re: RegExp }[] = [
   { type: 'included_hours', re: /(includes?|inclusive of|up to)\s+(\d{1,3})\s+hours?[^.]{0,60}(support|per month|each month|monthly)/i },
 ]
 
+// Clause types that say a kind of work is excluded or chargeable. A sentence
+// that also says the work is not chargeable, or is included or covered, is the
+// opposite of an exclusion, so it is never read as one.
+const EXCLUSION_TYPES: ClauseType[] = ['company_devices_only', 'excludes_hardware', 'excludes_projects', 'onsite_chargeable', 'third_party_excluded', 'new_user_chargeable', 'new_device_chargeable']
+export const NEGATED_EXCLUSION = /\bnot\s+(?:be\s+)?(?:chargeable|charged|excluded|billed|billable|separately)|\bno\s+(?:additional\s+|extra\s+|further\s+)?(?:charge|cost|fee)|(?<!not\s)(?:is|are|be)\s+included\b|(?<!not\s)\bincluded\s+(?:in|within|as part of)\b|(?<!not\s)\bcovered\s+(?:by|under|within)\b|at no (?:additional|extra|further) (?:charge|cost)|free of charge|without (?:additional |extra |further )?charge/i
+
 // Quantities and rates the agreement states. Each needs a commercial context in
 // the same sentence so "10 users reported the outage" is never read as a term.
 const QUANTITY_CONTEXT = /(monthly charge|monthly fee|based on|covers?|contracted|this agreement|supported|licensed|the service)/i
+// A number of named people with a special role ("covers 5 named users at
+// director level for priority escalation") is not the contracted quantity.
+const QUANTITY_QUALIFIER = /(priority|escalat|vip|director|executive|key contacts?|authori[sz]ed (contacts?|users?)|named contacts?|administrators?|admins?)/i
 const USERS_RE = /(\d{1,5})\s+(?:supported\s+|named\s+|licensed\s+|managed\s+)?(?:users?|seats?)\b/i
 const DEVICES_RE = /(\d{1,5})\s+(?:supported\s+|managed\s+|monitored\s+)?(?:devices?|endpoints?|workstations?)\b/i
 // "£60 per hour", "£60/h", "£60 an hour", "hourly rate is £60".
@@ -109,9 +118,11 @@ export function extractClauses(text: string, contract?: { id: string; title: str
     }
     for (const { type, re } of PATTERNS) {
       const m = sentence.match(re)
-      if (m) push(type, m[0], type === 'included_hours' ? Number(m[2]) : undefined)
+      if (!m) continue
+      if (EXCLUSION_TYPES.includes(type) && NEGATED_EXCLUSION.test(sentence)) continue
+      push(type, m[0], type === 'included_hours' ? Number(m[2]) : undefined)
     }
-    if (QUANTITY_CONTEXT.test(sentence)) {
+    if (QUANTITY_CONTEXT.test(sentence) && !QUANTITY_QUALIFIER.test(sentence)) {
       const u = sentence.match(USERS_RE)
       if (u) push('contracted_users', u[0], Number(u[1]))
       const d = sentence.match(DEVICES_RE)
