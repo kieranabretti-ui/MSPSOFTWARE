@@ -3,11 +3,11 @@
   "buys": false,
   "purchases_first_month": 0,
   "reason_code": "trust",
-  "reason": "I know we give away some work, that's how we keep clients, and I don't need a stranger telling me which goodwill to claw back. Nobody in my peer group has used this, and I'm not handing a one-man startup our PSA export and client contracts to be one of his first ten guinea pigs.",
-  "objection": "It's an unknown founder with no track record asking for our full ticket history and client contracts. A DPA is just paper if the company folds, and I'd want proof it finds real money rather than a list of things I already chose not to bill.",
-  "would_change_my_mind": "Two or three owners in my peer group telling me it found real, billable money in their book without upsetting clients, ideally with benchmark numbers I can compare against.",
-  "price_too_cheap": 20,
-  "price_cheap": 50,
-  "price_expensive": 200,
-  "price_too_expensive": 400
+  "reason": "I know we give away some free work, that's how we keep clients sweet, and I don't need an outside firm I've never heard of going through my PSA and contracts to tell me so. Nobody in my peer group has mentioned these people, so I'm not paying £240 a month on the strength of an ad.",
+  "objection": "A brand-new company with no MSP owners vouching for it wants my full ticket history and client contracts, and half of what it 'finds' will be goodwill I chose to give or stuff my account managers already know about.",
+  "would_change_my_mind": "Two or three owners in my peer group saying it found real money they actually billed without losing a client, with benchmark numbers to back it up.",
+  "price_too_cheap": 40,
+  "price_cheap": 100,
+  "price_expensive": 250,
+  "price_too_expensive": 450
 }

@@ -1,0 +1,13 @@
+{
+  "id": "P005",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "trust",
+  "reason": "I might take the free audit because it costs me nothing, but I already know which two clients are underpaying, and I'm not handing my PSA export and contracts to a brand-new outfit with no customers and no reviews, then paying £99 a month on top of the billing I already do myself.",
+  "objection": "No integrations, no reviews, no customers yet. It's my clients' data and my contracts going to someone I've never heard of, and a monthly check I could mostly do myself in the spreadsheet if I sat down for an afternoon.",
+  "would_change_my_mind": "Another UK MSP owner I know telling me it found real money they actually billed, and that the founder handled the data properly.",
+  "price_too_cheap": 15,
+  "price_cheap": 40,
+  "price_expensive": 99,
+  "price_too_expensive": 175
+}

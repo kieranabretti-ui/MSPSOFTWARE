@@ -1,0 +1,13 @@
+{
+  "id": "P001",
+  "buys": true,
+  "purchases_first_month": 1,
+  "reason_code": "need",
+  "reason": "My PSA already flags the loss-making agreements, but it doesn't catch unbilled licences or time that never made it onto an invoice, and at our size that leak is real. A free audit where I only pay £99 a month if they find £1,000 I agree is billable is an easy yes on the numbers, so I'd do the audit and see what it turns up.",
+  "objection": "I doubt a one-person outfit will find much my service desk manager and our PSA reports don't already show, and I'm wary of handing a founder-run startup our full ticket history and client contracts, DPA or not.",
+  "would_change_my_mind": "If the audit only comes back with things we already knew from our own PSA reports, I wouldn't keep the monthly subscription.",
+  "price_too_cheap": 25,
+  "price_cheap": 75,
+  "price_expensive": 300,
+  "price_too_expensive": 600
+}

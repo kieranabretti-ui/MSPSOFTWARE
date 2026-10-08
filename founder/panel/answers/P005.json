@@ -3,11 +3,11 @@
   "buys": false,
   "purchases_first_month": 0,
   "reason_code": "trust",
-  "reason": "I might take the free audit because it costs me nothing, but I already know which two clients are underpaying, and I'm not handing my PSA export and contracts to a brand-new outfit with no customers and no reviews, then paying £99 a month on top of the billing I already do myself.",
-  "objection": "No integrations, no reviews, no customers yet. It's my clients' data and my contracts going to someone I've never heard of, and a monthly check I could mostly do myself in the spreadsheet if I sat down for an afternoon.",
-  "would_change_my_mind": "Another UK MSP owner I know telling me it found real money they actually billed, and that the founder handled the data properly.",
-  "price_too_cheap": 15,
-  "price_cheap": 40,
-  "price_expensive": 99,
-  "price_too_expensive": 175
+  "reason": "I might take the free audit because I already know two clients are underpaying, but I do billing myself every month and I'm not paying £240 a month to a company with no customers, no reviews and no integrations to tell me what my spreadsheet mostly already does.",
+  "objection": "Handing my whole PSA export and client contracts to an unknown startup with no track record, DPA or not. And once I've fixed the two problem clients, what's left for the monthly fee to find?",
+  "would_change_my_mind": "If the free audit actually found well over £2,880 a year I'd missed beyond those two clients, plus a couple of UK MSP owners I could ring who use it.",
+  "price_too_cheap": 20,
+  "price_cheap": 60,
+  "price_expensive": 120,
+  "price_too_expensive": 200
 }

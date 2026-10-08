@@ -3,11 +3,11 @@
   "buys": false,
   "purchases_first_month": 0,
   "reason_code": "habit",
-  "reason": "I do the billing myself every month and I sit in front of my bigger clients every quarter, so I reckon I already know where the leakage is. A free audit might be worth a look one quiet week, but I'm not signing up to another £99 a month on top of a PSA I already pay for.",
-  "objection": "Even with you holding my hand on the exports, it's still 45 minutes plus digging out contracts, and then a report telling me things I half know and haven't had the nerve to bill for. Finding the money isn't the hard bit, having the conversation with a client I've known ten years is.",
-  "would_change_my_mind": "If the free audit actually turned up a few grand I'd genuinely missed, with the tickets to prove it, I'd pay the £99 to keep it running. A recommendation from another MSP owner I trust would get me to book the call in the first place.",
-  "price_too_cheap": 15,
-  "price_cheap": 40,
-  "price_expensive": 99,
-  "price_too_expensive": 175
+  "reason": "I already go through the PSA and the billing spreadsheet myself every month-end and I know my bigger clients from doing their QBRs, so I doubt you'd find much I don't already half-know. A free audit still costs me a 45-minute call plus an afternoon of exports, and I don't have that afternoon.",
+  "objection": "It's my time and my client data for a free report that's really there to sell me £240 a month. Most of what it would flag I've let slide on purpose to keep clients sweet, and that won't change because a report says so.",
+  "would_change_my_mind": "If you pulled the data straight from my PSA yourselves with read-only access, with no export work on my side, and another small MSP owner I trust told me it found them real money.",
+  "price_too_cheap": 30,
+  "price_cheap": 75,
+  "price_expensive": 150,
+  "price_too_expensive": 240
 }

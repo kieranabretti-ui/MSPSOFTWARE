@@ -3,11 +3,11 @@
   "buys": false,
   "purchases_first_month": 0,
   "reason_code": "trust",
-  "reason": "I'm not handing a full Autotask export and my client contracts to a one-person outfit I've never heard of, DPA or not. And I've paid for a reporting tool before that nobody opened after the first month, so a free audit that turns into a £99 monthly habit doesn't excite me.",
-  "objection": "It's my clients' ticket data and contracts. If something leaks it's my reputation with them, not the founder's, and a signed DPA from a company with no track record doesn't really protect me.",
-  "would_change_my_mind": "Another UK MSP owner I know telling me they did the audit, it actually found real money, and it didn't become another report nobody reads. Better still if it ran inside my own Autotask without the data leaving.",
-  "price_too_cheap": 15,
-  "price_cheap": 40,
-  "price_expensive": 150,
+  "reason": "I'm not handing my clients' Autotask tickets and contracts to a company I've never heard of, DPA or not. And I've paid for a reporting tool before that nobody opened after the first month, so £240 a month for another one isn't happening this week.",
+  "objection": "It's my clients' data and my reputation if it leaks or gets misused. A signed DPA from an unknown startup doesn't mean much if they fold or get breached, and my client contracts may not even let me share it.",
+  "would_change_my_mind": "Another UK MSP owner I know and trust telling me they ran the audit, it found real money they actually billed, and it took under an hour of their time.",
+  "price_too_cheap": 30,
+  "price_cheap": 80,
+  "price_expensive": 180,
   "price_too_expensive": 300
 }

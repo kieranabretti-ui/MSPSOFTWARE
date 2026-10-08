@@ -3,11 +3,11 @@
   "buys": true,
   "purchases_first_month": 1,
   "reason_code": "need",
-  "reason": "The audit is free, there's a DPA, and if it finds less than £1,000 I don't pay, so as a numbers person I'd book the call and let the report make the case. I'd only keep the £99 a month if the first report turns up real money I'm prepared to bill, not just goodwill I already know about.",
-  "objection": "I already know we do some free work and that's partly how we keep clients. My worry is the report mostly lists stuff I'll choose not to bill, and I've handed client ticket data and contracts to a one-person outfit I've never heard of.",
-  "would_change_my_mind": "If the first report's billable findings that I'd actually invoice come in under a few hundred pounds a month, I'd cancel and not take the subscription.",
-  "price_too_cheap": 20,
-  "price_cheap": 50,
-  "price_expensive": 200,
+  "reason": "The audit costs me nothing but 45 minutes and an export, and I watch margin per client anyway, so I'd book it to see the number. I'd only pay the £240 a month if the report shows billable money I actually believe I can collect without upsetting clients.",
+  "objection": "A lot of the free work is deliberate, it's how we keep clients, so I suspect half of what you flag I'll just mark as goodwill and the real recoverable figure will be small. And my contracts are a mess of old PDFs, so I doubt you can read the scope clauses properly.",
+  "would_change_my_mind": "",
+  "price_too_cheap": 40,
+  "price_cheap": 100,
+  "price_expensive": 240,
   "price_too_expensive": 400
 }

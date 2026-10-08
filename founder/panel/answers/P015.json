@@ -2,12 +2,12 @@
   "id": "P015",
   "buys": false,
   "purchases_first_month": 0,
-  "reason_code": "values",
-  "reason": "I already know roughly where the leakage is; a lot of it is deliberate goodwill with clients I've had for fifteen years. A report telling me I could bill more doesn't help when the hard part is having that conversation, and I'd rather not have it.",
-  "objection": "Potential leakage isn't money in the bank. Every line on that report means me picking up the phone to a long-standing client and asking for more, and I'm not going to risk those relationships over a few hundred quid here and there.",
-  "would_change_my_mind": "If it showed big, clear-cut cases like unbilled licences we're paying for out of our own pocket, where the client couldn't reasonably argue, and nothing that touches the small favours I do on purpose.",
-  "price_too_cheap": 20,
-  "price_cheap": 50,
+  "reason_code": "habit",
+  "reason": "The freebies I do for clients are on purpose, it's how I've kept them for fifteen years. A report telling me I'm leaving money on the table doesn't change the fact that I'd have to go and have those awkward conversations myself, and I'm not going to put £240 a month behind something I'd mostly leave in a drawer.",
+  "objection": "Potential leakage isn't money in the bank. Every pound on that report means me ringing a long-standing client and asking for more, and I'd rather keep the goodwill than risk the relationship over a few hundred quid of licences.",
+  "would_change_my_mind": "If it only flagged hard, no-argument items like unbilled licences we're paying for ourselves and fed them straight into the next Autotask/Xero invoice, so there's no conversation to have, I might take the free audit and see.",
+  "price_too_cheap": 30,
+  "price_cheap": 75,
   "price_expensive": 150,
-  "price_too_expensive": 300
+  "price_too_expensive": 250
 }

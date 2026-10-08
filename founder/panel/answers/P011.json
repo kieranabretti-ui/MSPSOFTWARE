@@ -3,11 +3,11 @@
   "buys": false,
   "purchases_first_month": 0,
   "reason_code": "trust",
-  "reason": "I do the billing myself every month, so I reckon I already know where most of the leakage is. Handing my whole PSA export and client contracts to a one-man outfit with no integrations, no reviews and no customers isn't something I'd do in a normal week, free or not.",
-  "objection": "It's my client data and my contracts going to someone nobody's heard of. A DPA is just paper if the company folds in six months, and after that I'd be paying £99 a month for something I mostly do in a spreadsheet already.",
-  "would_change_my_mind": "A couple of MSP owners I know or trust, say from a peer group or forum, telling me it found real money they actually billed, and a direct read-only integration with my PSA so I'm not emailing exports around.",
-  "price_too_cheap": 20,
-  "price_cheap": 49,
+  "reason": "I do the billing myself every month, so I reckon I already know where most of the leakage is, and I'm not handing my PSA export and client contracts to a company with no customers, no reviews and no integration just because the audit is free. If it ever went past free, £240 a month for something I half-do in a spreadsheet already is a hard sell.",
+  "objection": "Who are these people? No track record, no other MSPs I can ring for a reference, and they want my client data and contracts. A DPA is just paper if they fold in six months.",
+  "would_change_my_mind": "A couple of MSPs my size I actually know, or someone in a peer group, telling me the audit found real money they billed and the clients didn't walk.",
+  "price_too_cheap": 30,
+  "price_cheap": 75,
   "price_expensive": 150,
   "price_too_expensive": 250
 }

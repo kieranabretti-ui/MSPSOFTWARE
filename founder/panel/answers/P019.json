@@ -2,12 +2,12 @@
   "id": "P019",
   "buys": false,
   "purchases_first_month": 0,
-  "reason_code": "need",
-  "reason": "I already know we do free bits for clients, and that's deliberate; it's how we've kept them for years. A report telling me to go and have uplift conversations is the exact thing I avoid, so I'd struggle to justify even the hour, let alone £99 a month.",
-  "objection": "Finding the money isn't my problem, asking for it is. Scripts won't make me comfortable sending a long-standing client an uplift email, and I don't want a list that makes me feel guilty about goodwill I chose to give.",
-  "would_change_my_mind": "If it was mostly about unbilled licences and plain mistakes, things I could quietly put right on the invoice without a conversation, and it actually made my month-end invoicing quicker.",
-  "price_too_cheap": 15,
-  "price_cheap": 35,
-  "price_expensive": 80,
-  "price_too_expensive": 150
+  "reason_code": "habit",
+  "reason": "I already know we do some free work, that's how we keep clients. A report listing every freebie doesn't change the fact that I'm not going to ring a client of ten years and tell them their bill's going up. I might take the free audit out of curiosity, but I wouldn't pay £240 a month for it.",
+  "objection": "Finding the money is the easy bit. Asking for it is what I hate, and a script won't make me do it. Paying every month to be reminded of money I'm choosing not to bill feels like a waste.",
+  "would_change_my_mind": "If the free audit turned up a lot of clearly unbilled licences or contracted time, say £10k or more, that I could invoice without it feeling like a price rise, rather than goodwill work I'd have to argue about.",
+  "price_too_cheap": 30,
+  "price_cheap": 75,
+  "price_expensive": 150,
+  "price_too_expensive": 250
 }

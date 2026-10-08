@@ -3,11 +3,11 @@
   "buys": false,
   "purchases_first_month": 0,
   "reason_code": "need",
-  "reason": "I already pay for a reconciliation/BI tool that flags unbilled licences and over-serviced clients, so this mostly looks like overlap. Even the free audit costs me a 45-minute call and an export in a week I don't have, and a list of 'potential' money still means me going cap in hand to every client.",
-  "objection": "Potential leakage isn't money in the bank. I'd have to chase every client and risk the relationship, and most of the licence side my existing tool already catches.",
-  "would_change_my_mind": "Seeing a peer MSP on r/msp or a LinkedIn group show it found billable time and outgrown agreements that Gradient/BrightGauge-style tools missed, and that they actually got paid for it.",
-  "price_too_cheap": 20,
-  "price_cheap": 49,
-  "price_expensive": 99,
-  "price_too_expensive": 199
+  "reason": "I already pay for a reconciliation and reporting tool that flags licence mismatches, so £240 a month for another monthly checker looks like overlap. I might take the free audit out of curiosity, but a list of potential leakage isn't money in the bank; I'd still have to chase every client myself.",
+  "objection": "Most of what it finds will be stuff I already know about or have chosen to let slide as goodwill, and the bit that's actually new means awkward conversations with clients I don't want to lose over a few hundred quid.",
+  "would_change_my_mind": "If the free audit turned up real billable money my current tool missed, and at least a few clients actually paid the uplift, I'd think about it.",
+  "price_too_cheap": 30,
+  "price_cheap": 75,
+  "price_expensive": 150,
+  "price_too_expensive": 240
 }

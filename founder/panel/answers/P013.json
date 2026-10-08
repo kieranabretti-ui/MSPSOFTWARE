@@ -3,11 +3,11 @@
   "buys": false,
   "purchases_first_month": 0,
   "reason_code": "need",
-  "reason": "I'd probably take the free audit because it costs me a 45-minute call and someone else does the export, but I wouldn't commit to the monthly. Once you've found the outgrown agreements and the unbilled licences and I've fixed them, I can't see what's left for you to find every month.",
-  "objection": "It finds the money once, then I'm paying £99 a month for a report that mostly says nothing's changed. Also, half my contracts are old PDFs, and I doubt a one-person outfit can read those properly enough for me to take the findings to a client.",
-  "would_change_my_mind": "If the free audit showed new leakage turning up month after month, like unbilled time and licence drift since the last check, with tickets behind it, I'd keep the £99 on without thinking about it.",
-  "price_too_cheap": 25,
-  "price_cheap": 79,
-  "price_expensive": 250,
-  "price_too_expensive": 500
+  "reason": "I'd probably take the free audit because 45 minutes is cheap if it turns up real money. But once I've fixed the gaps and moved clients onto the new template, I can't see what I'm paying £500 a month for, so I wouldn't commit to a subscription off the back of it.",
+  "objection": "It finds the money once and then what? After the first clean-up the monthly check will mostly tell me what my service desk lead should already be catching, and at our size we're on Pro, not Growth.",
+  "would_change_my_mind": "Proof from the audit that leakage keeps coming back every month, e.g. it finds new unbilled time and licence drift on clients we'd already sorted, plus it running off the PSA with no setup work from my team.",
+  "price_too_cheap": 50,
+  "price_cheap": 150,
+  "price_expensive": 350,
+  "price_too_expensive": 600
 }

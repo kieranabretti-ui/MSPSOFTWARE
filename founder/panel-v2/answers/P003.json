@@ -1,0 +1,13 @@
+{
+  "id": "P003",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "need",
+  "reason": "HaloPSA already tells me which agreements are underwater, and my service manager and I go through it before renewals. I'm not handing our full PSA export and client contracts to a one-man startup nobody in my peer group has used, just to be told things I mostly already know.",
+  "objection": "It's a free audit to get me onto a £99 subscription, and the finds will probably be mostly things I've chosen to write off as goodwill. Meanwhile it's another outsider holding my client data, and I'd have to explain that to clients.",
+  "would_change_my_mind": "Two or three owners in my peer group saying it found real money their HaloPSA reports had missed, ideally with the benchmark numbers to prove it.",
+  "price_too_cheap": 20,
+  "price_cheap": 49,
+  "price_expensive": 199,
+  "price_too_expensive": 400
+}

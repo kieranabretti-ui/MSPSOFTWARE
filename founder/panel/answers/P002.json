@@ -1,13 +1,13 @@
 {
   "id": "P002",
-  "buys": true,
-  "purchases_first_month": 1,
-  "reason_code": "need",
-  "reason": "We've grown fast and I know some older clients are on agreements priced for half the users they've got now. If it's 45 minutes with someone else doing the exports, and it's free unless it finds a grand I agree with, I'll book it. I'd only keep paying the £99 a month if the first report actually holds up.",
-  "objection": "Our ticket categories are a mess, so I expect half the 'unbilled time' to be wrong or stuff we deliberately give away. If I have to spend an afternoon arguing with the report line by line, it's dead to me.",
-  "would_change_my_mind": "If the report comes back full of false positives from our miscategorised tickets, or if the DPA and data handling look flimsy when I read them, I'd walk away before the subscription starts.",
-  "price_too_cheap": 20,
-  "price_cheap": 50,
-  "price_expensive": 200,
-  "price_too_expensive": 400
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "quality",
+  "reason": "I might take the free audit if it really is one call and an export, but I'm not paying £240 a month on spec. Our ticket categories are a mess, so I'd expect half the 'unbilled time' to be stuff we deliberately wrote off or miscoded, and I'd spend my evenings arguing with the report.",
+  "objection": "The numbers will be wrong because our ticket categories are messy, so the findings won't survive me checking them, and I'm not sending a client an uplift email off a report I don't trust.",
+  "would_change_my_mind": "The free audit turning up a few clients I can actually see are over their agreement, with tickets I'd agree with, and more than the £2,880 after I've thrown out the noise. Or another UK MSP owner on r/msp saying it worked on messy PSA data.",
+  "price_too_cheap": 30,
+  "price_cheap": 100,
+  "price_expensive": 250,
+  "price_too_expensive": 450
 }

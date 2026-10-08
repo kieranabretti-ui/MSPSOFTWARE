@@ -1,0 +1,13 @@
+{
+  "id": "P009",
+  "buys": true,
+  "purchases_first_month": 1,
+  "reason_code": "need",
+  "reason": "I've already got two clients I think are getting more than they pay for, and a free audit with a DPA and the ticket evidence attached costs me 45 minutes. If it turns up a few grand a year I'd accept, £99 a month is an easy sum for my finance person to sign off.",
+  "objection": "Most of what it flags will be free work we give on purpose to keep clients, and after the first audit has picked up the obvious stuff I doubt the monthly checks keep finding £99 worth. I'm also wary of handing a full PSA export to a one-person outfit I've never heard of.",
+  "would_change_my_mind": "If the free audit only tells me what I already know about those two clients and nothing new, I wouldn't carry on with the monthly subscription.",
+  "price_too_cheap": 20,
+  "price_cheap": 50,
+  "price_expensive": 200,
+  "price_too_expensive": 400
+}

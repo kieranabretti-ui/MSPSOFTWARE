@@ -1,0 +1,13 @@
+{
+  "id": "P010",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "need",
+  "reason": "I already pay for a reconciliation/BI tool that flags unbilled licences and over-serviced clients, so this mostly looks like overlap. Even the free audit costs me a 45-minute call and an export in a week I don't have, and a list of 'potential' money still means me going cap in hand to every client.",
+  "objection": "Potential leakage isn't money in the bank. I'd have to chase every client and risk the relationship, and most of the licence side my existing tool already catches.",
+  "would_change_my_mind": "Seeing a peer MSP on r/msp or a LinkedIn group show it found billable time and outgrown agreements that Gradient/BrightGauge-style tools missed, and that they actually got paid for it.",
+  "price_too_cheap": 20,
+  "price_cheap": 49,
+  "price_expensive": 99,
+  "price_too_expensive": 199
+}

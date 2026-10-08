@@ -4,45 +4,45 @@
  "dealt": 20,
  "answered": 20,
  "skipped": [],
- "buys": 5,
- "passes": 15,
- "buy_rate": 0.25,
+ "buys": 2,
+ "passes": 18,
+ "buy_rate": 0.1,
  "by_segment": [
-  [
-   "Owner or commercial director of a larger UK MSP (31 to 50 staff, roughly £3m to £5m revenue)",
-   4,
-   0.5
-  ],
   [
    "Owner of a mid-sized UK MSP (11 to 30 staff, roughly £1m to £3m revenue)",
    8,
-   0.25
+   0.125
   ],
   [
    "Owner of a small UK MSP (5 to 10 staff, roughly £400k to £1m revenue)",
    8,
    0.125
+  ],
+  [
+   "Owner or commercial director of a larger UK MSP (31 to 50 staff, roughly £3m to £5m revenue)",
+   4,
+   0.0
   ]
  ],
  "by_behaviour": [
   [
    "Numbers-driven owner",
    3,
-   1.0
+   0.6666666666666666
   ],
   [
    "Time-poor and growing",
    2,
-   0.5
-  ],
-  [
-   "Burned by dashboards",
-   3,
-   0.3333333333333333
+   0.0
   ],
   [
    "Peer-group member",
    2,
+   0.0
+  ],
+  [
+   "Burned by dashboards",
+   3,
    0.0
   ],
   [
@@ -63,19 +63,19 @@
  ],
  "by_income": [
   [
-   "$110,000 and up",
-   7,
-   0.2857142857142857
+   "under $70,000",
+   6,
+   0.16666666666666666
   ],
   [
    "$70,000 to $110,000",
    7,
-   0.2857142857142857
+   0.14285714285714285
   ],
   [
-   "under $70,000",
-   6,
-   0.16666666666666666
+   "$110,000 and up",
+   7,
+   0.0
   ]
  ],
  "why_not": [
@@ -83,20 +83,20 @@
    "need",
    6,
    [
-    "HaloPSA already tells me which agreements are underwater, and my service manager and I go through it before renewals. I'm not handing our full PSA export and client contracts to a one-man startup nobody in my peer group has used, just to be told things I mostly already know.",
-    "I already pay for a reconciliation/BI tool that flags unbilled licences and over-serviced clients, so this mostly looks like overlap. Even the free audit costs me a 45-minute call and an export in a week I don't have, and a list of 'potential' money still means me going cap in hand to every client."
+    "My PSA reporting and finance person already flag the agreements that lose money, and I go through it all at the QBRs. I might take the free audit out of curiosity, but I wouldn't pay £500 a month for something I think we mostly cover already.",
+    "Halo already tells me which agreements are underwater, and my service manager reviews it before renewals. I might take the free audit out of curiosity, but I'm not paying £240 a month for something my PSA and a decent quarterly review mostly cover."
    ],
    [
-    "P003",
-    "P010"
+    "P001",
+    "P003"
    ]
   ],
   [
    "trust",
    6,
    [
-    "I might take the free audit because it costs me nothing, but I already know which two clients are underpaying, and I'm not handing my PSA export and contracts to a brand-new outfit with no customers and no reviews, then paying £99 a month on top of the billing I already do myself.",
-    "I'm not handing my clients' ticket data and contracts to a one-person outfit I've never heard of, DPA or not. And Gradient already catches my unbilled licences, so at best this is half a tool I already pay for."
+    "I might take the free audit because I already know two clients are underpaying, but I do billing myself every month and I'm not paying £240 a month to a company with no customers, no reviews and no integrations to tell me what my spreadsheet mostly already does.",
+    "I'm not sending my clients' ticket data and contracts to a company I've never heard of, DPA or not. And I already pay for a reconciliation/BI tool that's meant to catch unbilled licences, so £240 a month on top looks like overlap."
    ],
    [
     "P005",
@@ -105,57 +105,62 @@
   ],
   [
    "habit",
-   2,
+   4,
    [
-    "I might take the free audit if someone nagged me, but I already know there's leakage. I just choose not to chase it because my clients have been with us for years and goodwill is how we keep them. A monthly list of things I'm not going to bill isn't worth £99 to me, even though £99 is nothing at our size.",
-    "I do the billing myself every month and I sit in front of my bigger clients every quarter, so I reckon I already know where the leakage is. A free audit might be worth a look one quiet week, but I'm not signing up to another £99 a month on top of a PSA I already pay for."
+    "Most of the 'unbilled' work it would find is stuff I do for free on purpose to keep long-standing clients happy, so a report telling me to go and charge for it isn't something I'd act on. Even with them doing the exports with me, it's still a call, a DPA and handing client contracts to a company I've never heard of, all to tell me something I already half know.",
+    "The freebies I do for clients are on purpose, it's how I've kept them for fifteen years. A report telling me I'm leaving money on the table doesn't change the fact that I'd have to go and have those awkward conversations myself, and I'm not going to put £240 a month behind something I'd mostly leave in a drawer."
    ],
    [
     "P007",
-    "P016"
+    "P015"
    ]
   ],
   [
-   "values",
-   1,
+   "quality",
+   2,
    [
-    "I already know roughly where the leakage is; a lot of it is deliberate goodwill with clients I've had for fifteen years. A report telling me I could bill more doesn't help when the hard part is having that conversation, and I'd rather not have it."
+    "I might take the free audit if it really is one call and an export, but I'm not paying £240 a month on spec. Our ticket categories are a mess, so I'd expect half the 'unbilled time' to be stuff we deliberately wrote off or miscoded, and I'd spend my evenings arguing with the report.",
+    "I'd probably take the free audit because I've got two clients I'm fairly sure are underpaying, but I'm not signing up to a monthly subscription off the back of a pitch. I've paid for a reporting tool before that nobody opened after setup, so I'll judge it on whether the audit report holds up when my service manager goes through it."
    ],
    [
-    "P015"
+    "P002",
+    "P004"
    ]
   ]
  ],
  "why_yes": [
   [
    "need",
-   5,
+   2,
    [
-    "My PSA already flags the loss-making agreements, but it doesn't catch unbilled licences or time that never made it onto an invoice, and at our size that leak is real. A free audit where I only pay £99 a month if they find £1,000 I agree is billable is an easy yes on the numbers, so I'd do the audit and see what it turns up.",
-    "We've grown fast and I know some older clients are on agreements priced for half the users they've got now. If it's 45 minutes with someone else doing the exports, and it's free unless it finds a grand I agree with, I'll book it. I'd only keep paying the £99 a month if the first report actually holds up."
+    "The audit costs me nothing but 45 minutes and an export, and I watch margin per client anyway, so I'd book it to see the number. I'd only pay the £240 a month if the report shows billable money I actually believe I can collect without upsetting clients.",
+    "I've already got two clients I think are taking the mick, and a free audit with a DPA and UK hosting costs me 45 minutes, so I'll take it. Whether I pay £240 a month afterwards depends entirely on whether the number it finds is real money I'd actually bill, not goodwill I've chosen to give."
    ],
    [
-    "P001",
-    "P002"
+    "P006",
+    "P009"
    ]
   ]
  ],
  "flip": [
-  "Two or three owners in my peer group saying it found real money their HaloPSA reports had missed, ideally with the benchmark numbers to prove it.",
-  "Another UK MSP owner I know telling me it found real money they actually billed, and that the founder handled the data properly.",
-  "A peer MSP of our size telling me it recovered real money without damaging client relationships, and my account managers, not me, actually using the scripts to do it.",
-  "A couple of UK MSP owners I actually recognise from r/msp or LinkedIn saying it found real money they'd missed, and it running inside my own PSA so the data never leaves my tenant.",
-  "Seeing a peer MSP on r/msp or a LinkedIn group show it found billable time and outgrown agreements that Gradient/BrightGauge-style tools missed, and that they actually got paid for it.",
-  "A couple of MSP owners I know or trust, say from a peer group or forum, telling me it found real money they actually billed, and a direct read-only integration with my PSA so I'm not emailing exports around.",
-  "Another UK MSP owner I know telling me they did the audit, it actually found real money, and it didn't become another report nobody reads. Better still if it ran inside my own Autotask without the data leaving.",
-  "If the free audit showed new leakage turning up month after month, like unbilled time and licence drift since the last check, with tickets behind it, I'd keep the £99 on without thinking about it.",
-  "If the free audit came back with real, specific items, with the ticket or clause attached, that I could invoice that month and it actually cut the time my month-end invoicing takes, I'd pay the £99.",
-  "If it showed big, clear-cut cases like unbilled licences we're paying for out of our own pocket, where the client couldn't reasonably argue, and nothing that touches the small favours I do on purpose.",
-  "If the free audit actually turned up a few grand I'd genuinely missed, with the tickets to prove it, I'd pay the £99 to keep it running. A recommendation from another MSP owner I trust would get me to book the call in the first place.",
-  "Seeing the free audit actually turn up a few thousand a year I'd missed, and then a couple of months where the monthly check kept catching new stuff before I invoiced.",
-  "Two or three owners in my peer group telling me it found real, billable money in their book without upsetting clients, ideally with benchmark numbers I can compare against.",
-  "If it was mostly about unbilled licences and plain mistakes, things I could quietly put right on the invoice without a conversation, and it actually made my month-end invoicing quicker.",
-  "Another MSP owner I know telling me it found unbilled licences, not just goodwill time, and that it plugs straight into my PSA without me doing the exports."
+  "If the free audit found a real recurring number, well beyond the subscription cost, that our own reporting had missed and that the clients actually accepted at renewal.",
+  "The free audit turning up a few clients I can actually see are over their agreement, with tickets I'd agree with, and more than the £2,880 after I've thrown out the noise. Or another UK MSP owner on r/msp saying it worked on messy PSA data.",
+  "Two or three owners in my peer group showing me their audit turned up well over the £2,880 in billable money they'd missed despite running Halo properly.",
+  "The free audit flagging my two suspect clients correctly, with tickets and contract clauses that my team checks and agrees with, and a total well above the £2,880 without us having to clean up our PSA first.",
+  "If the free audit actually found well over £2,880 a year I'd missed beyond those two clients, plus a couple of UK MSP owners I could ring who use it.",
+  "A peer MSP owner I trust telling me it found real leakage they'd genuinely missed, like licences we're paying for and never recharging, rather than goodwill work, and that raising it didn't cost them a client.",
+  "Several MSP owners I know of on r/msp or in the LinkedIn groups vouching for it, plus Cyber Essentials Plus or ISO 27001. Then I'd try the free audit to see whether it finds anything my current tool misses.",
+  "If the free audit turned up real billable money my current tool missed, and at least a few clients actually paid the uplift, I'd think about it.",
+  "A couple of MSPs my size I actually know, or someone in a peer group, telling me the audit found real money they billed and the clients didn't walk.",
+  "Another UK MSP owner I know and trust telling me they ran the audit, it found real money they actually billed, and it took under an hour of their time.",
+  "Proof from the audit that leakage keeps coming back every month, e.g. it finds new unbilled time and licence drift on clients we'd already sorted, plus it running off the PSA with no setup work from my team.",
+  "If the audit turned up real money I could bill, with the tickets behind it, and the monthly check dropped straight into my invoicing run without me logging into anything new, I'd pay.",
+  "If it only flagged hard, no-argument items like unbilled licences we're paying for ourselves and fed them straight into the next Autotask/Xero invoice, so there's no conversation to have, I might take the free audit and see.",
+  "If you pulled the data straight from my PSA yourselves with read-only access, with no export work on my side, and another small MSP owner I trust told me it found them real money.",
+  "If the free audit found well over £2,880 a year I genuinely accept, and a couple of MSP owners on r/msp I trust said it kept finding real money month after month, not just the first time.",
+  "Two or three owners in my peer group saying it found real money they actually billed without losing a client, with benchmark numbers to back it up.",
+  "If the free audit turned up a lot of clearly unbilled licences or contracted time, say £10k or more, that I could invoice without it feeling like a price rise, rather than goodwill work I'd have to argue about.",
+  "If the free audit turned up real unbilled licences or forgotten billable time, not goodwill, worth well over the £2,880, with the tickets to prove it, I'd consider the monthly check."
  ],
  "purchases_first_month_per_buyer": 1.0,
  "price_answers": 20

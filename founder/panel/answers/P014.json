@@ -3,11 +3,11 @@
   "buys": false,
   "purchases_first_month": 0,
   "reason_code": "trust",
-  "reason": "I've paid for a reporting tool before that took weeks to set up and then nobody opened it, so I'm not signing up for another monthly thing off a landing page. If I'm honest I might book the free call when month end is hurting, but I wouldn't be paying £99 a month in the first month.",
-  "objection": "It's another report I have to read and act on, and I don't believe a stranger will understand our agreements well enough to tell me what's billable without me spending my evenings arguing with their list.",
-  "would_change_my_mind": "If the free audit came back with real, specific items, with the ticket or clause attached, that I could invoice that month and it actually cut the time my month-end invoicing takes, I'd pay the £99.",
-  "price_too_cheap": 20,
-  "price_cheap": 50,
-  "price_expensive": 150,
-  "price_too_expensive": 300
+  "reason": "I might take the free audit if a 45-minute call really covers the exports, but I'm not signing up for another monthly reporting tool off the back of it. I've paid for one of those before and after the first month nobody opened it.",
+  "objection": "It's another dashboard. The audit will look great once, then it turns into a report I don't read at month end, while I'm still raising invoices by hand.",
+  "would_change_my_mind": "If the audit turned up real money I could bill, with the tickets behind it, and the monthly check dropped straight into my invoicing run without me logging into anything new, I'd pay.",
+  "price_too_cheap": 40,
+  "price_cheap": 100,
+  "price_expensive": 250,
+  "price_too_expensive": 450
 }

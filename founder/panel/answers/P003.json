@@ -3,11 +3,11 @@
   "buys": false,
   "purchases_first_month": 0,
   "reason_code": "need",
-  "reason": "HaloPSA already tells me which agreements are underwater, and my service manager and I go through it before renewals. I'm not handing our full PSA export and client contracts to a one-man startup nobody in my peer group has used, just to be told things I mostly already know.",
-  "objection": "It's a free audit to get me onto a £99 subscription, and the finds will probably be mostly things I've chosen to write off as goodwill. Meanwhile it's another outsider holding my client data, and I'd have to explain that to clients.",
-  "would_change_my_mind": "Two or three owners in my peer group saying it found real money their HaloPSA reports had missed, ideally with the benchmark numbers to prove it.",
-  "price_too_cheap": 20,
-  "price_cheap": 49,
-  "price_expensive": 199,
-  "price_too_expensive": 400
+  "reason": "Halo already tells me which agreements are underwater, and my service manager reviews it before renewals. I might take the free audit out of curiosity, but I'm not paying £240 a month for something my PSA and a decent quarterly review mostly cover.",
+  "objection": "It's mostly repackaging data I already have, and nobody in my peer group has used it or vouched for it. Unbilled time and licence drift are real, but I'd want proof it finds things Halo reporting doesn't before I hand over exports and contracts.",
+  "would_change_my_mind": "Two or three owners in my peer group showing me their audit turned up well over the £2,880 in billable money they'd missed despite running Halo properly.",
+  "price_too_cheap": 50,
+  "price_cheap": 100,
+  "price_expensive": 200,
+  "price_too_expensive": 350
 }

@@ -3,11 +3,11 @@
   "buys": false,
   "purchases_first_month": 0,
   "reason_code": "habit",
-  "reason": "I might take the free audit if someone nagged me, but I already know there's leakage. I just choose not to chase it because my clients have been with us for years and goodwill is how we keep them. A monthly list of things I'm not going to bill isn't worth £99 to me, even though £99 is nothing at our size.",
-  "objection": "This doesn't fix my problem, which is that I won't have the awkward conversation. A report and some email templates won't change that, and I'm wary of a one-person outfit pulling our ConnectWise data and contracts, DPA or not.",
-  "would_change_my_mind": "A peer MSP of our size telling me it recovered real money without damaging client relationships, and my account managers, not me, actually using the scripts to do it.",
-  "price_too_cheap": 30,
-  "price_cheap": 99,
-  "price_expensive": 400,
-  "price_too_expensive": 1000
+  "reason": "Most of the 'unbilled' work it would find is stuff I do for free on purpose to keep long-standing clients happy, so a report telling me to go and charge for it isn't something I'd act on. Even with them doing the exports with me, it's still a call, a DPA and handing client contracts to a company I've never heard of, all to tell me something I already half know.",
+  "objection": "I won't send uplift emails to clients I've had for years over a few hours here and a licence there. The money conversation is the part I hate, and nicer wording doesn't make it less awkward or less of a risk to the relationship.",
+  "would_change_my_mind": "A peer MSP owner I trust telling me it found real leakage they'd genuinely missed, like licences we're paying for and never recharging, rather than goodwill work, and that raising it didn't cost them a client.",
+  "price_too_cheap": 50,
+  "price_cheap": 120,
+  "price_expensive": 300,
+  "price_too_expensive": 550
 }

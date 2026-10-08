@@ -1,5 +1,16 @@
 # Offer: the Headroom Agreement Audit
 
+> **Updated 8 October 2026: fitted to the locked pricing.** Kieran kept Growth at £240 a month (£2,592 a year), Pro at £500, and the founding cohort terms (first 50 MSPs, first 30 days free, 12-month price lock). The £99 tier tested below is **not** being offered. The live pitch is `founder/pitch.md` (v3). The £99 version is kept as `pitch-v2.md` for the record.
+>
+> **Re-test at £240 (same 20 owners, seed 7): 2 of 20 buy (10%)**, down from 5 (25%) at £99 and up from 1 (5%) for the original pitch. Pass reasons: need 6, trust 6, habit 4, quality 2. The three who dropped out mostly said they'd still take the free audit but wouldn't commit to £240 "on spec" before seeing their own figure. That is the moment the pricing strategy intends the £240 question to be asked. The price answers moved up with the anchor: acceptable range about £52 to £249, with £240 just inside the top. Results: `founder/panel/results.md`; the £99 run is in `founder/panel-v2/`.
+>
+> **Changes to the stack below for the locked pricing:**
+> - Paid tier: Growth £240 a month + VAT (up to 100 clients) or £2,592 a year; Pro £500 for larger MSPs.
+> - The guarantee becomes the honest-fit promise: if the audit finds less than £2,880 a year you accept as billable (a year of Growth), we tell you Growth isn't worth it for you yet.
+> - Urgency: the founding offer is the first 50 MSPs, with 30 days free and a 12-month price lock, not a lifetime £99.
+> - The line about the founder running each audit personally is dropped, because it fed the trust objection.
+> - For the £240 sale, the report should show the owner's own monthly figure next to the price. The panel's yes votes all hinge on "if the number is real".
+
 7 October 2026. Built with the Offers lens (a summary of the framework in *$100M Offers*, applied here, not quoted). Inputs: `founder/board.md`, `founder/competitors.md`, `founder/panel-v1/results.md` (the first panel). `founder/numbers.json` doesn't exist yet because `/founder-cfo` hasn't run. **Every cost below is an estimate for the CFO to check.**
 
 ## Re-test result

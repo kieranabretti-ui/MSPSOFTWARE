@@ -3,11 +3,11 @@
   "buys": false,
   "purchases_first_month": 0,
   "reason_code": "need",
-  "reason": "I do the billing myself every month, so I already know which clients get extra time for free, and mostly that's on purpose because it keeps them with us. I'm not paying £99 a month for someone to tell me what I chose to do, and I don't have a spare week to chase exports and contracts for a free audit either.",
-  "objection": "I'd be sending my whole client list, tickets and contracts to a one-man outfit I've never heard of, and at the end I'd get told to send uplift emails to clients I've kept for years by not nickel-and-diming them.",
-  "would_change_my_mind": "Another MSP owner I know telling me it found unbilled licences, not just goodwill time, and that it plugs straight into my PSA without me doing the exports.",
-  "price_too_cheap": 15,
-  "price_cheap": 40,
-  "price_expensive": 99,
-  "price_too_expensive": 175
+  "reason": "I do the billing myself every month, so I already know where the free work goes, and most of it is deliberate because it keeps clients sweet. I might take the free audit if I had a quiet afternoon, but I'm not paying £240 a month for something to tell me what I chose not to bill.",
+  "objection": "Most of what you'd flag as missed money is goodwill I chose to give, and chasing it risks the relationships that keep us going. I also don't want to hand over client contracts and PSA data to a new outfit for a report I can mostly guess myself.",
+  "would_change_my_mind": "If the free audit turned up real unbilled licences or forgotten billable time, not goodwill, worth well over the £2,880, with the tickets to prove it, I'd consider the monthly check.",
+  "price_too_cheap": 30,
+  "price_cheap": 75,
+  "price_expensive": 150,
+  "price_too_expensive": 250
 }

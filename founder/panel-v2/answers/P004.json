@@ -1,0 +1,13 @@
+{
+  "id": "P004",
+  "buys": true,
+  "purchases_first_month": 1,
+  "reason_code": "need",
+  "reason": "I've got two clients I'm fairly sure are taking the mick on usage, and a free audit with a 'don't pay unless it finds a grand' guarantee costs me one call and an export. If it puts the ticket numbers behind those two, £99 a month is nothing next to one renewal uplift.",
+  "objection": "Our ticket categories are a mess, so I expect half the 'unbilled' findings to be wrong or arguable, and then I've wasted my ops lead's week arguing with a report. I've bought reporting before that nobody looked at after month one.",
+  "would_change_my_mind": "If the first report is mostly noise from our miscategorised tickets and I have to clean it up myself, I cancel and don't come back.",
+  "price_too_cheap": 20,
+  "price_cheap": 75,
+  "price_expensive": 300,
+  "price_too_expensive": 600
+}

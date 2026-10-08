@@ -1,0 +1,13 @@
+{
+  "id": "P008",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "trust",
+  "reason": "I'm not handing my clients' ticket data and contracts to a one-person outfit I've never heard of, DPA or not. And Gradient already catches my unbilled licences, so at best this is half a tool I already pay for.",
+  "objection": "Who are you? There's no name, no reviews on r/msp, nobody I know who's used it. If something goes wrong with my clients' data it's my reputation on the line, not yours, and 'deleted after 30 days' is just a promise.",
+  "would_change_my_mind": "A couple of UK MSP owners I actually recognise from r/msp or LinkedIn saying it found real money they'd missed, and it running inside my own PSA so the data never leaves my tenant.",
+  "price_too_cheap": 20,
+  "price_cheap": 49,
+  "price_expensive": 99,
+  "price_too_expensive": 200
+}
