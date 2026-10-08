@@ -9,11 +9,13 @@ import { DEFAULT_SETTINGS } from '../../engine/types'
 import { AgreementFacts, ClientFindings, ContractsCard, HoursCard, LeakagePanel, ProfitabilityCard } from './clients/profile'
 import { ClientHealth, useLiveHealth } from './clients/parts'
 import { ContractVsReality } from './contracts/ContractVsReality'
+import { LoadFailed } from './overview/LoadFailed'
+import { opportunitySplit } from './overview/split'
 
 export default function ClientDetail() {
   const { id } = useParams()
   const { hash } = useLocation()
-  const { data, analysis, workspace } = useStore()
+  const { data, analysis, workspace, loadError } = useStore()
   const health = useLiveHealth()
   const client = data.clients.find((c) => c.id === id)
   const mt = analysis?.summary.client_metrics.find((c) => c.client_id === id)
@@ -42,7 +44,9 @@ export default function ClientDetail() {
   }, [target, ready, id])
 
   if (!client)
-    return (
+    return loadError ? (
+      <LoadFailed />
+    ) : (
       <Card>
         <EmptyState
           title="Client not found"
@@ -62,6 +66,7 @@ export default function ClientDetail() {
   const overlap = counting.some((f) => f.meta.overlaps?.some((k) => countedKeys.has(k)))
   const leakage = counting.reduce((a, f) => a + f.estimated_value, 0)
   const recurring = counting.reduce((a, f) => a + f.monthly_value, 0)
+  const split = opportunitySplit(counting)
   // The settings the analysis ran with, so the target price and margins agree
   // with the opportunities it raised.
   const settings = { ...DEFAULT_SETTINGS, ...workspace?.settings, ...analysis?.summary.settings }
@@ -88,6 +93,7 @@ export default function ClientDetail() {
           </span>
         }
       />
+      <LoadFailed />
 
       {!mt || !live ? (
         <div className="space-y-6">
@@ -104,6 +110,8 @@ export default function ClientDetail() {
         <div className="space-y-6">
           <LeakagePanel
             leakage={leakage}
+            high={split.high.value}
+            review={split.review.value}
             recurring={recurring}
             billed={client.monthly_recurring_revenue * months}
             months={months}

@@ -14,10 +14,26 @@ import { AnalysisResult } from '../analyses/AnalysisResult'
 // What each export lets the engine find. Copy follows PRODUCT.md: only the
 // checks the rules engine actually runs.
 const SOURCES = [
-  { icon: ICONS.tickets, name: 'Tickets and time entries', finds: 'Out-of-scope work done for free, billable time never invoiced, support beyond allowances' },
-  { icon: ICONS.clients, name: 'Clients, users and devices', finds: 'Clients who have grown past their agreement, licences assigned but never billed' },
-  { icon: ICONS.billing, name: 'Billing lines', finds: 'Recurring charges below the agreement, clients priced under your target margin' },
-  { icon: ICONS.contracts, name: 'Contracts and SOWs', finds: 'What each agreement covers, so out-of-scope opportunities cite the clause behind them' },
+  {
+    icon: ICONS.tickets,
+    name: 'Tickets and time entries',
+    finds: 'Work the agreement appears to exclude, time that looks billable but was logged as non-billable, support beyond allowances',
+  },
+  {
+    icon: ICONS.clients,
+    name: 'Clients, users and devices',
+    finds: 'Clients with more users or devices than the agreement covers, licences assigned with no matching billing line',
+  },
+  {
+    icon: ICONS.billing,
+    name: 'Billing lines',
+    finds: 'Recurring charges below the agreement, clients priced under your target margin (an estimate)',
+  },
+  {
+    icon: ICONS.contracts,
+    name: 'Contracts and SOWs',
+    finds: 'What each agreement covers, so out-of-scope opportunities cite the clause behind them',
+  },
 ]
 
 // The first-run state for a workspace with no analysis yet. Also shown by the
@@ -72,12 +88,12 @@ export function GetStarted({ onRunChange }: { onRunChange?: (active: boolean) =>
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
         <div className="flex flex-col justify-center px-6 py-10 sm:px-10 sm:py-14">
           <h2 id="first-run-title" className="max-w-[24ch] text-h2 text-balance text-ink sm:text-h1">
-            {hasData ? 'Your data is ready to analyse' : 'Find out where your MSP is losing money'}
+            {hasData ? 'Your data is ready to analyse' : 'See where revenue may be going unbilled'}
           </h2>
           <p className="mt-4 max-w-[52ch] text-body text-ink-2">
             {hasData
-              ? 'Run the analysis to check every ticket, time entry, device and billing line against your agreements. It takes a few seconds, and every pound links back to its evidence.'
-              : "Upload the exports your PSA, RMM and billing system already produce. Headroom checks every ticket, device and invoice line against each client's agreement figures and, where you upload them, its contract, then shows what you could be charging for."}
+              ? 'Run the analysis to check every ticket, time entry, device and billing line against your agreements. It takes a few seconds. Every opportunity shows its evidence, its calculation and a confidence level.'
+              : "Upload the exports your PSA, RMM and billing system already produce. Headroom checks every ticket, device and invoice line against each client's agreement figures and, where you upload them, its contract, then shows each potential opportunity with the evidence and calculation behind it, for you to review."}
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
             {hasData ? (

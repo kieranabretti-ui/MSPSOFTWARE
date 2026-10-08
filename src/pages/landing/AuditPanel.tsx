@@ -5,7 +5,7 @@ import { Badge, Figure, cx } from '../../components/ui'
 import { GAP_SHARE_NOTE, GapBar } from '../../components/bars'
 import { ConfidenceLevel } from '../../components/ConfidenceLevel'
 import { money, plural } from '../../lib/format'
-import { CATEGORY_META } from '../../lib/labels'
+import { CATEGORY_META, SPLIT_LABEL } from '../../lib/labels'
 import { track } from '../../lib/track'
 import { DEMO } from './demoSnapshot'
 
@@ -106,6 +106,7 @@ export function AuditPanel() {
   const rows = DEMO.topFindings.slice(0, LEDGER_ROWS)
   // The first row is there from the start; the rest land one after another.
   const landAt = (i: number) => (i === 0 ? -1 : 150 + i * 200)
+  const highCount = DEMO.levels.find((l) => l.level === 'HIGH')?.count ?? 0
   const share = ((totals.identified / (totals.billed + totals.identified)) * 100).toFixed(1)
 
   return (
@@ -124,28 +125,39 @@ export function AuditPanel() {
       <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_13.5rem]">
         <div className="flex flex-col justify-between gap-6 px-4 pb-6 pt-5 sm:px-6 sm:pb-7 sm:pt-6">
           <div>
-            <p className="text-small font-medium text-ink-2">Potential revenue leakage identified</p>
+            <p className="text-small font-medium text-ink-2">Potential opportunity identified</p>
             <div className="mt-2">
               <Figure size="xl">
                 <Counting value={money(totals.identified)} shown={money(Math.round(totals.identified * count))} live={live} />
               </Figure>
             </div>
             <p className="tnum mt-2.5 text-small text-ink-3">
-              Across {plural(totals.findings, 'opportunity', 'opportunities')} at {totals.clients} clients over {period.months} months.
+              Across {plural(totals.findings, 'opportunity', 'opportunities')} at {totals.affectedClients} clients over {period.months} months.
             </p>
+            {/* Conservative split: High confidence first, the rest needs review. */}
+            <dl className="tnum mt-4 grid max-w-[26rem] grid-cols-2 border-y border-line-soft text-small" style={arrive(at(450, 400))}>
+              <div className="py-2.5 pr-3">
+                <dt className="text-caption text-ink-3">{SPLIT_LABEL.high}</dt>
+                <dd className="mt-0.5 font-semibold text-ink">{money(totals.highConfidence)}</dd>
+              </div>
+              <div className="border-l border-line-soft py-2.5 pl-4">
+                <dt className="text-caption text-ink-3">{SPLIT_LABEL.review}</dt>
+                <dd className="mt-0.5 font-semibold text-ink">{money(totals.requiresReview)}</dd>
+              </div>
+            </dl>
           </div>
           <div>
             <div style={bar < 1 ? { clipPath: `inset(0 ${(1 - bar) * 100}% 0 0)` } : undefined}>
               <GapBar billed={totals.billed} gap={totals.identified} height={16} label={false} />
             </div>
             <div className="tnum mt-2.5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-caption" style={arrive(at(650, 400))}>
-              <span className="text-ink-3">
-                Billed over {period.months} months <span className="text-ink-2">{money(totals.billed)}</span>
+              <span className="text-ink-3" title="Monthly agreement value × months, from the clients file. Not invoiced amounts.">
+                Agreement value over {period.months} months <span className="text-ink-2">{money(totals.billed)}</span>
               </span>
               <span className="text-ink-3">
-                Potential leakage <span className="font-semibold text-accent">{money(totals.identified)}</span>
+                Potential opportunity <span className="font-semibold text-accent">{money(totals.identified)}</span>
                 <span className="ml-1.5" title={GAP_SHARE_NOTE}>
-                  · {share}%<span className="sr-only"> of billed plus potential leakage</span>
+                  · {share}%<span className="sr-only"> of agreement value plus potential opportunity</span>
                 </span>
               </span>
             </div>
@@ -156,8 +168,8 @@ export function AuditPanel() {
           <Stat label="Opportunities">
             <Figure>{totals.findings}</Figure>
           </Stat>
-          <Stat label="Clients at risk" sub={`of ${totals.clients}`}>
-            <Figure>{totals.atRisk}</Figure>
+          <Stat label="High confidence" sub={`of ${totals.findings}`}>
+            <Figure>{highCount}</Figure>
           </Stat>
           <Stat label="Recurring" sub={`a month · ${money(totals.annual)} a year`}>
             <Figure tone="accent">{money(totals.monthly)}</Figure>
@@ -197,7 +209,7 @@ export function AuditPanel() {
         </ol>
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-line-soft bg-sunken px-4 py-3 sm:px-6">
           <p className="tnum max-w-[72ch] text-caption text-ink-3">
-            {plural(totals.findings - LEDGER_ROWS, 'more opportunity', 'more opportunities')}. Fictional MSP, real engine: every figure comes from running Headroom on demo data. Potential, never promised.
+            {plural(totals.findings - LEDGER_ROWS, 'more opportunity', 'more opportunities')}. Fictional MSP, real engine: every figure comes from running Headroom on demo data. Potential, not promised: each one requires MSP review.
           </p>
           <Link
             to="/demo"

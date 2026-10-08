@@ -9,6 +9,7 @@ import { money, plural } from '../../lib/format'
 import { LeakBar } from '../../components/bars'
 import { SeatCount } from './clients/parts'
 import { billedTotal, recurringGap } from './contracts/ContractVsReality'
+import { LoadFailed } from './overview/LoadFailed'
 
 // Every client's agreement on one page: what it covers and costs, what you
 // bill, what you actually support, and the recurring gap between them. Each
@@ -132,7 +133,7 @@ function Notice({ children, action }: { children: ReactNode; action: ReactNode }
 }
 
 export default function Contracts() {
-  const { data, analysis } = useStore()
+  const { data, analysis, loadError } = useStore()
   const nav = useNavigate()
 
   const rows = useMemo(() => {
@@ -212,7 +213,8 @@ export default function Contracts() {
   return (
     <>
       <PageHeader title="Contracts" subtitle={subtitle} />
-      {rows.length === 0 ? (
+      <LoadFailed />
+      {rows.length === 0 && loadError ? null : rows.length === 0 ? (
         <Card>
           <EmptyState
             title="No clients yet"

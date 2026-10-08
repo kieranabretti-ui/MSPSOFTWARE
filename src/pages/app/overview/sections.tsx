@@ -1,13 +1,14 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, ArrowUpRight } from 'lucide-react'
-import type { Category, ClientMetrics, ConfidenceLevel as Level, Finding, FindingStatus } from '../../../engine/types'
+import type { Category, ClientMetrics, ConfidenceLevel as Level, Finding, FindingClass, FindingStatus } from '../../../engine/types'
 import { Card, HealthDot, TextLink, cx } from '../../../components/ui'
 import { LeakBar } from '../../../components/bars'
 import { TrendChart } from '../../../components/charts'
 import { ConfidenceLevel } from '../../../components/ConfidenceLevel'
+import { trustRates, type TrustMetrics } from '../../../lib/audit'
 import { money, plural } from '../../../lib/format'
-import { CATEGORY_META, FINDING_STATUS } from '../../../lib/labels'
+import { CATEGORY_META, CLASSIFICATION, FINDING_STATUS } from '../../../lib/labels'
 
 // Full-width rows inside a card: the focus ring sits inside the row so the
 // card's rounded clip never cuts it off.
@@ -37,16 +38,21 @@ function Quiet({ title, body, action }: { title: string; body: ReactNode; action
   )
 }
 
-export type CategoryRow = { category: Category; value: number; sub: string; unchecked?: boolean }
+export type CategoryRow = {
+  category: Category
+  value: number
+  sub: string
+  unchecked?: boolean
+}
 
-// Where the money leaks, by category, straight under the total. Each row opens
+// Potential opportunity by type, straight under the total. Each row opens
 // the opportunities in it. Out-of-scope work can't be found without contracts,
 // so with none uploaded it reads "Not checked" rather than a reassuring £0.
 export function CategoryBreakdown({ rows }: { rows: CategoryRow[] }) {
   const max = Math.max(1, ...rows.map((r) => r.value))
   return (
     <section aria-labelledby="ov-categories" className="min-w-0">
-      <SectionHeading id="ov-categories" title="Where it leaks" sub="Potential leakage by category" />
+      <SectionHeading id="ov-categories" title="By type" sub="Potential opportunity by category" />
       <Card className="overflow-hidden">
         <ul className="divide-y divide-line-soft">
           {rows.map((r) => (
@@ -58,11 +64,7 @@ export function CategoryBreakdown({ rows }: { rows: CategoryRow[] }) {
                     <ArrowUpRight className="size-3.5 shrink-0 text-ink-4 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
                   </span>
                   <span className="tnum shrink-0">
-                    {r.unchecked ? (
-                      <span className="text-ink-3">Not checked</span>
-                    ) : (
-                      <span className={r.value > 0 ? 'font-semibold text-ink' : 'text-ink-3'}>{money(r.value)}</span>
-                    )}
+                    {r.unchecked ? <span className="text-ink-3">Not checked</span> : <span className={r.value > 0 ? 'font-semibold text-ink' : 'text-ink-3'}>{money(r.value)}</span>}
                     <span className="ml-2 text-caption text-ink-3">{r.sub}</span>
                   </span>
                 </span>
@@ -83,13 +85,13 @@ export function CategoryBreakdown({ rows }: { rows: CategoryRow[] }) {
 // A client with its health as it stands now, with dismissed opportunities left out.
 export type RiskClient = ClientMetrics & { leakage: number; billed: number }
 
-// Clients with the most leakage or the weakest margins. Each bar ranks the
-// client's leakage against the largest across all clients. A client with no
+// Clients to review: the weakest margins, then the most potential opportunity.
+// Each bar ranks the client's potential opportunity against the largest. A client with no
 // MRR has no margin to judge, so it says so instead of showing a health mark.
 export function ClientRisk({ clients, maxLeakage }: { clients: RiskClient[]; maxLeakage: number }) {
   return (
     <section aria-labelledby="ov-clients" className="min-w-0">
-      <SectionHeading id="ov-clients" title="Clients at risk" sub="Weakest health first, then leakage" right={<TextLink to="/app/clients">All clients</TextLink>} />
+      <SectionHeading id="ov-clients" title="Clients to review" sub="Weakest margin health first, then potential opportunity" right={<TextLink to="/app/clients">All clients</TextLink>} />
       <Card className="overflow-hidden">
         {clients.length > 0 ? (
           <ul className="divide-y divide-line-soft">
@@ -126,25 +128,29 @@ export function ClientRisk({ clients, maxLeakage }: { clients: RiskClient[]; max
             })}
           </ul>
         ) : (
-          <Quiet title="No clients at risk" body="Every client is healthy and has no open leakage in this period." />
+          <Quiet title="No clients to review" body="No client is below its margin target or has an open opportunity in this period." />
         )}
       </Card>
     </section>
   )
 }
 
-export type PriorityRow = { finding: Finding; level: Level }
+export type PriorityRow = {
+  finding: Finding
+  level: Level
+  classification: FindingClass
+}
 
-// The opportunities to act on first: the surest, then the largest. Stage shows
+// The opportunities to review first: the surest, then the largest. Stage shows
 // once an opportunity has moved past New.
 export function PriorityFindings({ rows, clientName }: { rows: PriorityRow[]; clientName: (id: string | null) => string }) {
   return (
     <section aria-labelledby="ov-priority" className="min-w-0">
-      <SectionHeading id="ov-priority" title="Act on these first" sub="Highest confidence first, then value" right={<TextLink to="/app/opportunities">All opportunities</TextLink>} />
+      <SectionHeading id="ov-priority" title="Review these first" sub="Highest confidence first, then value" right={<TextLink to="/app/opportunities">All opportunities</TextLink>} />
       <Card className="overflow-hidden">
         {rows.length > 0 ? (
           <ol className="divide-y divide-line-soft">
-            {rows.map(({ finding: f, level }) => (
+            {rows.map(({ finding: f, level, classification }) => (
               <li key={f.id}>
                 <Link to={`/app/opportunities/${f.id}`} className={cx(rowLink, 'flex items-start gap-4 px-4 py-3.5 sm:px-5')}>
                   <span className="hidden w-20 shrink-0 pt-0.5 sm:block">
@@ -156,7 +162,7 @@ export function PriorityFindings({ rows, clientName }: { rows: PriorityRow[]; cl
                     </span>
                     <span className="block text-body font-medium text-ink sm:truncate">{f.title}</span>
                     <span className="mt-0.5 block truncate text-caption text-ink-3">
-                      {clientName(f.client_id)} · {CATEGORY_META[f.category].short}
+                      {clientName(f.client_id)} · {CATEGORY_META[f.category].short} · {CLASSIFICATION[classification].label}
                       {f.status !== 'open' && <span className="text-ink-2"> · {FINDING_STATUS[f.status]}</span>}
                     </span>
                   </span>
@@ -179,23 +185,28 @@ export function PriorityFindings({ rows, clientName }: { rows: PriorityRow[]; cl
 const RECOVERY_STAGES: FindingStatus[] = ['open', 'reviewing', 'valid', 'resolved']
 
 // Where recovery stands: every opportunity by stage, from New to Actioned, each
-// opening its tab in the recovery queue. Stage totals are ink; lime is for the
-// money found, not for where it sits in the workflow.
-export function RecoveryPanel({
-  byStage,
-  topFindingId,
-}: {
-  byStage: Record<FindingStatus, { count: number; value: number }>
-  topFindingId?: string
-}) {
+// opening its tab in the recovery queue, then the review record: how much of
+// what the software flagged has been opened, reviewed, approved, actioned or
+// dismissed, and how often a dismissal said the finding was wrong. Stage
+// totals are ink; lime is for the money found, not the workflow.
+export function RecoveryPanel({ byStage, topFindingId, trust }: { byStage: Record<FindingStatus, { count: number; value: number }>; topFindingId?: string; trust: TrustMetrics }) {
   const moving = byStage.reviewing.count + byStage.valid.count + byStage.resolved.count > 0
   const dismissed = byStage.dismissed.count
+  const record: { label: string; value: string; detail?: string; title: string }[] = [
+    ...trustRates(trust).map((r) => ({ label: r.label, value: r.value, detail: r.detail, title: r.hint })),
+    {
+      label: 'Recovered (actioned)',
+      value: money(trust.recovered_value),
+      detail: plural(trust.counts.actioned, 'opportunity', 'opportunities'),
+      title: 'Value of opportunities marked Actioned',
+    },
+  ]
   return (
     <section aria-labelledby="ov-recovery">
       <SectionHeading
         id="ov-recovery"
         title="Recovery"
-        sub="Each opportunity by stage, from New to Actioned"
+        sub="Each opportunity by stage, from New to Actioned. The software recommends. The MSP decides."
         right={<TextLink to="/app/queue">Open the recovery queue</TextLink>}
       />
       <Card className="overflow-hidden">
@@ -231,16 +242,32 @@ export function RecoveryPanel({
             )}
           </div>
         )}
+        <div className="border-t border-line-soft bg-sunken px-4 py-3.5 sm:px-5">
+          <h3 className="text-small font-medium text-ink-2">Review record</h3>
+          <dl className="mt-2.5 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3 xl:grid-cols-6">
+            {record.map((r) => (
+              <div key={r.label} className="min-w-0" title={r.title}>
+                <dt className="text-caption text-ink-3">{r.label}</dt>
+                <dd className="tnum mt-0.5 text-small font-semibold text-ink">{r.value}</dd>
+                {r.detail && <dd className="tnum text-caption text-ink-3">{r.detail}</dd>}
+              </div>
+            ))}
+          </dl>
+          <p className="tnum mt-2.5 text-caption text-ink-3">
+            Measured over {plural(trust.total, 'current opportunity', 'current opportunities')}
+            {trust.decided > 0 ? `, ${plural(trust.decided, 'decision')} so far` : ''}. Average opportunity {money(trust.avg_opportunity)}.
+          </p>
+        </div>
       </Card>
     </section>
   )
 }
 
-// When it leaked: potential leakage attributed to each month.
+// Potential opportunity attributed to each month.
 export function LeakageTrend({ data }: { data: { label: string; value: number }[] }) {
   return (
     <section aria-labelledby="ov-trend" className="flex h-full min-w-0 flex-col">
-      <SectionHeading id="ov-trend" title="Leakage by month" sub="Potential leakage attributed to each month" />
+      <SectionHeading id="ov-trend" title="By month" sub="Potential opportunity attributed to each month" />
       <Card className="flex flex-1 flex-col justify-end px-3 pb-4 pt-5 sm:px-5">
         <TrendChart data={data} height={260} />
       </Card>

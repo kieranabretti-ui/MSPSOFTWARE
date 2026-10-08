@@ -1,6 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { Plus, RotateCcw } from 'lucide-react'
+import { Plus, RotateCcw, X } from 'lucide-react'
 import { useMetrics, useStore } from '../../data/store'
 import { Button, ButtonLink, Card, CardHeader, EmptyState, Field, Modal, PageHeader, cx, inputCls } from '../../components/ui'
 import { ConfidenceLevel } from '../../components/ConfidenceLevel'
@@ -8,11 +8,16 @@ import { useToast } from '../../components/toast'
 import { money, plural, relative } from '../../lib/format'
 import { confidenceOf } from '../../lib/confidence'
 import { mapError } from '../../lib/errors'
-import { ACTION_STATUS, CATEGORY_META, CONFIDENCE, FINDING_STATUS, LEVEL_ORDER, NEXT_STAGE, STAGE_ORDER } from '../../lib/labels'
+import { ACTION_STATUS, CATEGORY_META, CLASSIFICATION, CONFIDENCE, FINDING_STATUS, LEVEL_ORDER, NEXT_STAGE, SPLIT_LABEL, STAGE_ORDER } from '../../lib/labels'
+import { DISMISS_REASONS } from '../../lib/audit'
 import { parseNumber } from '../../data/importers'
 import type { Action, ActionStatus, Finding, FindingStatus } from '../../engine/types'
 import { Callout, Select } from './data/kit'
 import { OpportunityTabs } from './findings/OpportunityTabs'
+import DismissDialog from './findings/DismissDialog'
+import { LoadFailed } from './overview/LoadFailed'
+import { coverageLine } from './overview/copy'
+import { opportunitySplit } from './overview/split'
 import { REOPENED_TOAST } from './findings/StageControl'
 import { StageMark, TASK_STATUS_OPTIONS, TaskDot } from './findings/StatusTag'
 
@@ -22,19 +27,23 @@ const EMPTY_STAGE: Record<FindingStatus, string> = {
   reviewing: "Start a review from New when you're ready to check an opportunity.",
   valid: "Approve an opportunity once you've checked the evidence.",
   resolved: "Mark an opportunity actioned once you've billed it, updated the agreement or repriced the client.",
-  dismissed: 'Dismissed opportunities stop counting towards potential leakage.',
+  dismissed: 'Dismissed opportunities, with the reason given, stop counting towards potential opportunity.',
 }
 
 const PAGE = 100
 const isStage = (v: string | null): v is FindingStatus => !!v && (STAGE_ORDER as string[]).includes(v)
 
 // The one button on each row: the next stage, or Reopen once it's settled.
-function rowStep(status: FindingStatus): { to: FindingStatus; label: string; toast: string } {
+function rowStep(status: FindingStatus): {
+  to: FindingStatus
+  label: string
+  toast: string
+} {
   return NEXT_STAGE[status] ?? { to: 'open', label: 'Reopen', toast: REOPENED_TOAST }
 }
 
 export default function RecoveryQueue() {
-  const { data, analysis, setFindingStatus, setActionStatus, createAction } = useStore()
+  const { data, analysis, loadError, setFindingDecision, setActionStatus, createAction } = useStore()
   const m = useMetrics()
   const toast = useToast()
   const formId = useId()
@@ -44,6 +53,8 @@ export default function RecoveryQueue() {
   const refocus = useRef<number | null>(null)
   const [pending, setPending] = useState<string | null>(null)
   const [limit, setLimit] = useState(PAGE)
+  // The opportunity being dismissed: dismissing always asks for a reason.
+  const [dismissing, setDismissing] = useState<Finding | null>(null)
 
   // Opens on ?stage= when given, otherwise on the first stage with work in it.
   const [tab, setTabState] = useState<FindingStatus>(() => {
@@ -75,7 +86,10 @@ export default function RecoveryQueue() {
     () =>
       data.findings
         .filter((f) => f.status === tab)
-        .map((f) => ({ f, level: confidenceOf(f).level }))
+        .map((f) => {
+          const r = confidenceOf(f)
+          return { f, level: r.level, classification: r.classification }
+        })
         .sort((a, b) => LEVEL_ORDER.indexOf(a.level) - LEVEL_ORDER.indexOf(b.level) || b.f.estimated_value - a.f.estimated_value),
     [data.findings, tab],
   )
@@ -105,7 +119,7 @@ export default function RecoveryQueue() {
     const step = rowStep(f.status)
     setPending(f.id)
     try {
-      await setFindingStatus(f.id, step.to, 'queue')
+      await setFindingDecision(f.id, { status: step.to }, 'queue')
       refocus.current = index
       toast(step.toast)
     } catch (e) {
@@ -126,7 +140,12 @@ export default function RecoveryQueue() {
 
   // ------------------------------------------------------------ manual tasks
   const [creating, setCreating] = useState(false)
-  const [form, setForm] = useState({ title: '', client: '', value: '', notes: '' })
+  const [form, setForm] = useState({
+    title: '',
+    client: '',
+    value: '',
+    notes: '',
+  })
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
@@ -139,7 +158,12 @@ export default function RecoveryQueue() {
     if (value == null) return setError('Potential value must be a number.')
     setSaving(true)
     try {
-      await createAction({ title: form.title.trim(), notes: form.notes.trim() || undefined, value, client_id: form.client || null })
+      await createAction({
+        title: form.title.trim(),
+        notes: form.notes.trim() || undefined,
+        value,
+        client_id: form.client || null,
+      })
       setForm({ title: '', client: '', value: '', notes: '' })
       setCreating(false)
       toast('Task added.')
@@ -161,7 +185,8 @@ export default function RecoveryQueue() {
 
   const header = (
     <>
-      <PageHeader title="Recovery queue" subtitle="Work through each opportunity from review to recovery." />
+      <PageHeader title="Recovery queue" subtitle="Work through each opportunity from review to recovery. The software recommends. The MSP decides." />
+      <LoadFailed />
       <OpportunityTabs />
     </>
   )
@@ -170,19 +195,23 @@ export default function RecoveryQueue() {
     return (
       <>
         {header}
-        <Card>
-          <EmptyState
-            title="No opportunities yet"
-            body="Run your first analysis to find unbilled work, agreement drift and underpriced clients."
-            action={
-              <ButtonLink to="/app/analyses" variant="accent">
-                Start analysis
-              </ButtonLink>
-            }
-          />
-        </Card>
+        {!loadError && (
+          <Card>
+            <EmptyState
+              title="No opportunities yet"
+              body="Run your first analysis to find unbilled work, agreement drift and underpriced clients."
+              action={
+                <ButtonLink to="/app/analyses" variant="accent">
+                  Start analysis
+                </ButtonLink>
+              }
+            />
+          </Card>
+        )}
       </>
     )
+
+  const tabSplit = opportunitySplit(rows.map((r) => r.f))
 
   return (
     <>
@@ -225,6 +254,15 @@ export default function RecoveryQueue() {
 
       <Card className="overflow-hidden">
         <div ref={panelRef} id="stage-panel" role="tabpanel" aria-labelledby={`stage-tab-${tab}`}>
+          {rows.length > 0 && (
+            <p className="tnum border-b border-line-soft px-4 py-2.5 text-caption text-ink-3 sm:px-5">
+              In {FINDING_STATUS[tab]}: {SPLIT_LABEL.high} <span className="font-semibold text-ink-2">{money(tabSplit.high.value)}</span> ({tabSplit.high.count})
+              <span className="mx-1.5 text-ink-4" aria-hidden>
+                ·
+              </span>
+              {SPLIT_LABEL.review} <span className="font-semibold text-ink-2">{money(tabSplit.review.value)}</span> ({tabSplit.review.count})
+            </p>
+          )}
           {rows.length ? (
             groups.map((g) => (
               <section key={g.level} aria-labelledby={`queue-level-${g.level}`} className="border-t border-line-soft first:border-t-0">
@@ -233,15 +271,16 @@ export default function RecoveryQueue() {
                   <span className="tnum font-normal tracking-normal">{g.count}</span>
                 </h2>
                 <ul className="divide-y divide-line-soft">
-                  {g.rows.map(({ f, level, i }) => {
+                  {g.rows.map(({ f, level, classification, i }) => {
                     const step = rowStep(f.status)
                     const task = latestTask.get(f.id)
                     const titleId = `queue-row-${f.id}`
                     const settled = f.status === 'resolved' || f.status === 'dismissed'
+                    const working = f.status === 'open' || f.status === 'reviewing' || f.status === 'valid'
                     return (
                       <li
                         key={f.id}
-                        className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-3 px-4 py-4 transition-colors duration-150 hover:bg-hover sm:px-5 md:grid-cols-[minmax(0,1fr)_7rem_9.5rem]"
+                        className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-3 px-4 py-4 transition-colors duration-150 hover:bg-hover sm:px-5 md:grid-cols-[minmax(0,1fr)_7rem_14rem]"
                       >
                         <div className="col-span-2 min-w-0 md:col-span-1">
                           <Link
@@ -257,7 +296,15 @@ export default function RecoveryQueue() {
                             <span>{CATEGORY_META[f.category].short}</span>
                             <span aria-hidden>·</span>
                             <ConfidenceLevel level={level} short />
+                            <span aria-hidden>·</span>
+                            <span>{CLASSIFICATION[classification].short}</span>
                           </p>
+                          {f.status === 'dismissed' && (
+                            <p className="mt-1 text-caption text-ink-3">
+                              Reason: <span className="text-ink-2">{f.dismiss_reason ? DISMISS_REASONS[f.dismiss_reason].label : 'Not recorded'}</span>
+                              {f.decision_note && <span className="block max-w-[72ch] truncate">Note: {f.decision_note}</span>}
+                            </p>
+                          )}
                           {task && (
                             <p className="mt-1.5 flex min-w-0 items-center gap-1.5 text-caption text-ink-3">
                               <TaskDot status={task.status} />
@@ -272,19 +319,26 @@ export default function RecoveryQueue() {
                           <span className={cx('tnum block text-body font-semibold', f.status === 'dismissed' ? 'text-ink-3' : 'text-ink')}>{money(f.estimated_value)}</span>
                           {f.monthly_value > 0 && <span className="tnum mt-0.5 block text-caption text-ink-3">{money(f.monthly_value)}/mo</span>}
                         </div>
-                        <Button
-                          data-step={f.id}
-                          variant={settled ? 'ghost' : 'secondary'}
-                          size="sm"
-                          className="justify-self-end md:w-full"
-                          loading={pending === f.id}
-                          disabled={!!pending && pending !== f.id}
-                          aria-describedby={titleId}
-                          onClick={() => move(f, i)}
-                        >
-                          {settled && pending !== f.id && <RotateCcw className="size-4" aria-hidden />}
-                          {step.label}
-                        </Button>
+                        <div className="flex items-center justify-end gap-1.5">
+                          {working && (
+                            <Button variant="ghost" size="sm" disabled={!!pending} aria-describedby={titleId} onClick={() => setDismissing(f)}>
+                              <X className="size-4" aria-hidden /> Dismiss
+                            </Button>
+                          )}
+                          <Button
+                            data-step={f.id}
+                            variant={settled ? 'ghost' : 'secondary'}
+                            size="sm"
+                            className="md:min-w-[8.5rem]"
+                            loading={pending === f.id}
+                            disabled={!!pending && pending !== f.id}
+                            aria-describedby={titleId}
+                            onClick={() => move(f, i)}
+                          >
+                            {settled && pending !== f.id && <RotateCcw className="size-4" aria-hidden />}
+                            {step.label}
+                          </Button>
+                        </div>
                       </li>
                     )
                   })}
@@ -294,7 +348,7 @@ export default function RecoveryQueue() {
           ) : (
             <EmptyState
               title={`Nothing in ${FINDING_STATUS[tab]}`}
-              body={data.findings.length ? EMPTY_STAGE[tab] : 'The analysis found nothing to flag. Add more months of exports to widen the check.'}
+              body={data.findings.length ? EMPTY_STAGE[tab] : loadError ? 'Try again above. Nothing here reflects your saved data until it loads.' : coverageLine(analysis.summary)}
             />
           )}
           {rows.length > visible.length && (
@@ -358,6 +412,8 @@ export default function RecoveryQueue() {
           <p className="px-4 py-5 text-small text-ink-3 sm:px-5">No manual tasks. Add one for follow-up work such as a contract review or a pricing conversation.</p>
         )}
       </Card>
+
+      {dismissing && <DismissDialog finding={dismissing} open={!!dismissing} via="queue" onClose={() => setDismissing(null)} />}
 
       <Modal
         open={creating}

@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { Badge, Button, ButtonLink, Disclaimer, Logo, cx, type Tone } from '../../components/ui'
 import { useToast } from '../../components/toast'
-import { BRAND, COMPANY } from '../../brand/brand'
+import { BRAND, COMPANY, HOSTED, TRUST_COPY } from '../../brand/brand'
 import { useStore } from '../../data/store'
 import { money } from '../../lib/format'
 import { track } from '../../lib/track'
@@ -82,12 +82,13 @@ export function AuditCta({
   )
 }
 
-// The site's sections. Security is its own page; the rest are anchors on the landing page.
+// The site's sections. The Trust Centre is its own page; the rest are anchors on the landing page.
 const SECTIONS: { label: string; id?: string; route?: string }[] = [
   { label: 'Product', id: 'product' },
   { label: 'How it works', id: 'how' },
+  { label: 'Evidence', id: 'evidence' },
   { label: 'Pricing', id: 'pricing' },
-  { label: 'Security', route: '/security' },
+  { label: 'Trust', route: '/trust' },
   { label: 'FAQ', id: 'faq' },
 ]
 
@@ -171,7 +172,7 @@ const FACTS: { title: string; body: string; status: string; tone: Tone }[] = [
   },
   {
     title: 'Evidence on every opportunity',
-    body: 'Deterministic rules tie each pound to a ticket, time entry, device, charge or clause. An optional AI explanation puts one opportunity into plain English when you ask for it.',
+    body: 'Deterministic rules tie each opportunity to the ticket, time entry, device, charge or clause behind it, and to the file and row it came from. ' + (HOSTED ? 'On the hosted service, an optional AI explanation puts one opportunity into plain English when you ask. It never produces a figure.' : 'No AI is used in evaluation mode.'),
     status: 'Works today',
     tone: 'neutral',
   },
@@ -242,10 +243,10 @@ export function Close() {
     <section aria-labelledby="close-title" className="border-t border-line-soft">
       <div className={`${wrap} py-16 sm:py-20 lg:py-24`}>
         <h2 id="close-title" className={`${displayCls} max-w-[20ch] text-balance`}>
-          Find out what your MSP is leaving on the table.
+          See what your own data shows.
         </h2>
         <p className="mt-6 max-w-[48ch] text-balance text-[length:clamp(1.25rem,1rem+1vw,1.75rem)] font-medium leading-snug tracking-[-0.02em] text-ink-2">
-          Run a free revenue leakage audit using your existing PSA data.
+          {HOSTED ? 'Run a free audit on the exports you already have.' : 'Run a free audit on the sample exports in this evaluation version.'} {TRUST_COPY.freeAudit}
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <AuditCta location="close_primary" label="Get My Free Audit" />
@@ -254,7 +255,8 @@ export function Close() {
           </ButtonLink>
         </div>
         <p className="tnum mt-4 max-w-[64ch] text-small text-ink-3">
-          The demo found {money(DEMO.totals.identified)} of potential leakage in {DEMO.period.months} months of {DEMO.msp}'s data. Upload your own exports to see yours.
+          The demo found {money(DEMO.totals.identified)} of potential opportunity in {DEMO.period.months} months of {DEMO.msp}'s data: {money(DEMO.totals.highConfidence)} high confidence and{' '}
+          {money(DEMO.totals.requiresReview)} requiring review. {HOSTED ? 'Upload your own exports to see yours.' : 'Try it on anonymised sample exports to see how it reads yours.'}
         </p>
       </div>
     </section>
@@ -271,12 +273,12 @@ export function Footer() {
     { label: 'Create an account', href: '/signup', route: true },
     { label: 'Sign in', href: '/login', route: true },
   ]
-  // Shown only once the owner supplies them.
-  const legal = [
-    COMPANY.privacyUrl && { label: 'Privacy', href: COMPANY.privacyUrl },
-    COMPANY.termsUrl && { label: 'Terms', href: COMPANY.termsUrl },
+  // Internal pages route; the contact link appears once the owner supplies an address.
+  const legal: MenuLink[] = [
+    COMPANY.privacyUrl && { label: 'Privacy', href: COMPANY.privacyUrl, route: COMPANY.privacyUrl.startsWith('/') },
+    COMPANY.termsUrl && { label: 'Terms', href: COMPANY.termsUrl, route: COMPANY.termsUrl.startsWith('/') },
     COMPANY.contactEmail && { label: 'Contact', href: `mailto:${COMPANY.contactEmail}` },
-  ].filter((l): l is { label: string; href: string } => !!l)
+  ].filter((l): l is MenuLink => !!l)
 
   return (
     <footer className="border-t border-line-soft bg-sunken">

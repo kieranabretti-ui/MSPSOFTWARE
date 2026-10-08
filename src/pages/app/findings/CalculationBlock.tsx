@@ -35,16 +35,19 @@ export function CalculationBlock({ finding: f }: { finding: Finding }) {
   return (
     <section aria-labelledby="calc-heading">
       <h2 id="calc-heading" className="text-h3 text-ink">
-        How it's calculated
+        Calculation
       </h2>
+      <p className="mt-0.5 text-small text-ink-3">
+        {calc?.basis === 'estimate' ? 'A modelled estimate from a fixed formula, shown so you can check it.' : 'Fixed arithmetic on the records above, shown so you can check it by hand.'}
+      </p>
       {calc ? (
         <>
-          <ul className="tnum mt-2 space-y-1.5 text-small text-ink-2">
+          <ul className="tnum mt-3 space-y-1.5 text-body text-ink">
             {calc.lines.map((l, i) => (
               <li key={i}>{l}</li>
             ))}
           </ul>
-          <p className="tnum mt-2.5 border-t border-line-soft pt-2.5 text-small font-semibold text-ink">{calc.result}</p>
+          <p className="tnum mt-2.5 border-t border-line-soft pt-2.5 text-body font-semibold text-ink">{calc.result}</p>
           {calc.note && <p className="tnum mt-1.5 text-caption text-ink-3">{calc.note}</p>}
         </>
       ) : (

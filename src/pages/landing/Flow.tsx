@@ -42,7 +42,7 @@ export function Flow() {
 
   return (
     <Section id="how" label="how-title">
-      <SectionIntro id="how-title" title="Headroom finds the revenue hiding inside your existing MSP data.">
+      <SectionIntro id="how-title" title="Headroom compares your existing data with each agreement.">
         <p>No integration project. Upload the exports you already run, let the rules check them against each agreement, and act on what they find.</p>
       </SectionIntro>
 
@@ -93,9 +93,9 @@ export function Flow() {
         <Pane
           className="border-t border-line"
           n="03"
-          title="Find the leakage"
-          line="Every opportunity carries its records, its calculation and a confidence level."
-          foot={<p className="tnum text-caption text-ink-3">Each level comes from the rule that raised it and where its evidence came from.</p>}
+          title="Check the evidence"
+          line="Every opportunity carries its records, its calculation and a confidence level. Confidence reflects the strength and completeness of the evidence."
+          foot={<p className="tnum text-caption text-ink-3">Each level comes from published checks on the evidence, not from AI.</p>}
         >
           <table className="w-full text-small">
             <caption className="sr-only">Opportunities in the demo by confidence level</caption>
@@ -140,8 +140,8 @@ export function Flow() {
           title="Take action"
           line={
             <>
-              <span className="font-medium text-ink-2">Commercial opportunities: turn findings into action, prioritised by financial impact.</span> Work through each opportunity from New to Actioned:
-              correct the agreement, bill the work or reprice the client.
+              <span className="font-medium text-ink-2">The software recommends. You decide.</span> Work through each opportunity from New to Actioned, or dismiss it with a reason: correct the
+              agreement, bill the work or reprice the client.
             </>
           }
           foot={

@@ -52,6 +52,14 @@ describe('pricing config', () => {
       expect(ENTITLEMENTS[id].users).toBe(1)
     }
     expect(PLANS.growth.features.filter((f) => f.status === 'planned').map((f) => f.text)).toEqual(['Direct PSA connection', 'Automatic monitoring and alerts'])
+    // A people-delivered review can't be delivered until paid plans are on sale.
+    expect(ENTITLEMENTS.pro.quarterlyReview).toBe(false)
+    expect(PLANS.pro.features.find((f) => /quarterly/i.test(f.text))?.status).toBe('planned')
+  })
+
+  it('does not promise invoicing or a checkout that does not exist', () => {
+    for (const id of PLAN_IDS) for (const f of PLANS[id].features) expect(f.text).not.toMatch(/invoice|checkout/i)
+    expect(PLANS.growth.cta.note).toMatch(/not on sale online yet/i)
   })
 
   it('formats prices in pounds, ex VAT', () => {

@@ -101,14 +101,17 @@ export function Figure({ children, size = 'lg', tone = 'default', className, tes
   )
 }
 
-// Severity: a plain label plus a bar count, never a pill, so a column of
-// findings stays calm. Only Critical takes colour, and only in its bars.
+// Severity is shown as Impact: a review-priority hint from value and
+// confidence. Its words are not High/Medium/Low, so it never reads as a
+// confidence level, and its mark is ascending bars (confidence uses dots). All
+// neutral: impact is not alarm, so no level takes a signal colour.
 const SEV: Record<Severity, { label: string; text: string; bar: string; bars: number }> = {
-  CRITICAL: { label: 'Critical', text: 'text-ink', bar: 'bg-danger', bars: 3 },
-  HIGH: { label: 'High', text: 'text-ink-2', bar: 'bg-ink-2', bars: 2 },
-  MEDIUM: { label: 'Medium', text: 'text-ink-2', bar: 'bg-ink-3', bars: 1 },
-  LOW: { label: 'Low', text: 'text-ink-3', bar: 'bg-ink-3', bars: 0 },
+  CRITICAL: { label: 'Major', text: 'text-ink', bar: 'bg-ink', bars: 3 },
+  HIGH: { label: 'Significant', text: 'text-ink-2', bar: 'bg-ink-2', bars: 2 },
+  MEDIUM: { label: 'Moderate', text: 'text-ink-2', bar: 'bg-ink-3', bars: 1 },
+  LOW: { label: 'Minor', text: 'text-ink-3', bar: 'bg-ink-3', bars: 0 },
 }
+export const IMPACT_LABEL: Record<Severity, string> = { CRITICAL: SEV.CRITICAL.label, HIGH: SEV.HIGH.label, MEDIUM: SEV.MEDIUM.label, LOW: SEV.LOW.label }
 
 export function SeverityBadge({ severity }: { severity: Severity }) {
   const s = SEV[severity]
@@ -325,7 +328,18 @@ export function PageSkeleton() {
 export function Disclaimer({ className }: { className?: string }) {
   return (
     <p className={cx('text-caption text-ink-3', className)}>
-      Figures are estimates of potential revenue based on the data provided. They are not guaranteed to be recoverable and should be reviewed before acting.
+      Figures are potential opportunities calculated from the data provided. They are not guaranteed to be recoverable. Recommendations require MSP review before action.
+    </p>
+  )
+}
+
+// The product's boundaries in one line: where the numbers come from and who
+// decides. `ai` adds the AI sentence where AI can appear.
+export function TrustNote({ className, ai = true }: { className?: string; ai?: boolean }) {
+  return (
+    <p className={cx('text-caption text-ink-3', className)}>
+      Calculation shown on every opportunity. Confidence reflects the strength and completeness of the underlying evidence.
+      {ai && ' AI assists with interpretation. Financial calculations are deterministic.'} The software recommends. The MSP decides.
     </p>
   )
 }

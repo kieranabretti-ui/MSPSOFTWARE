@@ -194,7 +194,7 @@ export function ContractVsReality({
   }
 
   // Support window: the clause that sets support hours, against out-of-hours
-  // work found done for free.
+  // work logged as non-billable.
   const windowClause = clauses.filter((c) => c.type === 'business_hours').find((c) => supportWindow(c.sentence)) ?? clauses.find((c) => c.type === 'business_hours')
   const afterHours = findings.filter((f) => f.meta.rule === 'out_of_scope.after_hours' || f.meta.rule === 'unbilled.after_hours')
   const uncharged = afterHours.filter(live).length
@@ -208,7 +208,7 @@ export function ContractVsReality({
       <Quiet>{contracts.length ? 'Not in contract' : 'No contract uploaded'}</Quiet>
     ),
     billed: dash,
-    actual: uncharged ? `${plural(uncharged, 'out-of-hours ticket')} not charged` : <Quiet>None left uncharged</Quiet>,
+    actual: uncharged ? `${plural(uncharged, 'out-of-hours ticket')} logged as non-billable` : <Quiet>None logged as non-billable</Quiet>,
     diff: dash,
     differs: false,
     opp: <OppValue findings={afterHours} per="period" list={windowList} />,

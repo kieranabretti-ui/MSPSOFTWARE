@@ -54,7 +54,10 @@ export function AuthShell({
             {footer && <div className="mt-6 text-small text-ink-3">{footer}</div>}
             {!supabaseConfigured && (
               <p className="mt-8 border-t border-line-soft pt-5 text-caption text-ink-3">
-                Running in local mode: accounts and data are stored in this browser only.
+                Evaluation mode: accounts and data are stored in this browser only, without a server login. Use sample data, not client data.{' '}
+                <Link to="/trust" className="underline underline-offset-4 hover:text-ink">
+                  Trust Centre
+                </Link>
               </p>
             )}
           </div>
@@ -81,7 +84,7 @@ export function DemoProof() {
         <figcaption className="text-caption text-ink-3">Demo MSP, {DEMO.period}</figcaption>
         <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
           <Figure tone="accent">{money(DEMO.total)}</Figure>
-          <span className="tnum text-small text-ink-2">potential leakage across {DEMO.opportunities} opportunities</span>
+          <span className="tnum text-small text-ink-2">potential opportunity across {DEMO.opportunities} opportunities</span>
         </div>
         <GapBar billed={DEMO.billed} gap={DEMO.total} height={14} className="mt-6" />
       </figure>
@@ -94,7 +97,7 @@ export function DemoProof() {
 const NEXT = [
   { icon: ICONS.data, title: 'Upload your PSA exports', body: 'CSV exports from your PSA, RMM and billing system, plus contract PDFs.' },
   { icon: ICONS.findings, title: 'We analyse it', body: "Every ticket, time entry, device and billing line is checked against each client's agreement figures and, where you upload them, its contract." },
-  { icon: ICONS.leakage, title: 'Find the leakage', body: 'Each opportunity carries its evidence, its calculation and a confidence level.' },
+  { icon: ICONS.leakage, title: 'Check the evidence', body: 'Each opportunity carries its evidence, its calculation and a confidence level. You decide what to act on.' },
   { icon: ICONS.actions, title: 'Take action', body: 'Work through each one from New to Actioned: correct the agreement, bill the work or reprice the client.' },
 ]
 

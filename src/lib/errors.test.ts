@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { AppError, GENERIC_ERROR, mapError } from './errors'
+import { AppError, GENERIC_ERROR, mapError, NO_ACCESS, SESSION_EXPIRED } from './errors'
 
 describe('mapError', () => {
   let spy: ReturnType<typeof vi.spyOn>
@@ -27,11 +27,19 @@ describe('mapError', () => {
   })
 
   it('maps expired sessions', () => {
-    const expired = 'Your session has expired. Sign in again to continue.'
-    expect(mapError({ code: '42501' }, 'save')).toBe(expired)
-    expect(mapError({ code: 'PGRST301' }, 'load')).toBe(expired)
-    expect(mapError(new AppError('x', { status: 401 }), 'load')).toBe(expired)
-    expect(mapError(new Error('JWT expired'), 'load')).toBe(expired)
+    expect(mapError({ code: 'PGRST301' }, 'load')).toBe(SESSION_EXPIRED)
+    expect(mapError(new AppError('x', { status: 401 }), 'load')).toBe(SESSION_EXPIRED)
+    expect(mapError(new Error('JWT expired'), 'load')).toBe(SESSION_EXPIRED)
+    // A signed-out caller's permission error comes back as 401.
+    expect(mapError({ code: '42501', status: 401, message: 'permission denied for table clients' }, 'load')).toBe(SESSION_EXPIRED)
+  })
+
+  it('reports access refusals honestly, not as an expired session', () => {
+    expect(NO_ACCESS).toBe("You don't have access to that. It may belong to another workspace, or your access may have changed. Nothing was changed.")
+    expect(mapError({ code: '42501' }, 'save')).toBe(NO_ACCESS)
+    expect(mapError({ code: '42501', status: 403, message: 'new row violates row-level security policy for table "tickets"' }, 'import')).toBe(NO_ACCESS)
+    expect(mapError(new AppError('x', { status: 403 }), 'finding')).toBe(NO_ACCESS)
+    expect(mapError(new Error('permission denied for function ai_take_quota'), 'ai')).toBe(NO_ACCESS)
   })
 
   it('maps upload and auth failures', () => {
@@ -41,6 +49,7 @@ describe('mapError', () => {
     expect(mapError(new Error('Invalid login credentials'), 'signin')).toBe('Email or password is incorrect.')
     expect(mapError(new AppError('x', { code: 'user_already_exists' }), 'signup')).toBe('An account with this email already exists. Sign in instead.')
     expect(mapError(new Error('User already registered'), 'signup')).toBe('An account with this email already exists. Sign in instead.')
+    expect(mapError(new AppError('x', { code: 'weak_password' }), 'signup')).toBe('Choose a stronger password: at least 10 characters, with upper and lower case letters and a number.')
     expect(mapError({ code: 'email_not_confirmed' }, 'signin')).toBe('Confirm your email first. We sent you a link.')
     expect(mapError({ code: 'over_email_send_rate_limit' }, 'magic_link')).toBe('Too many attempts. Wait a minute and try again.')
     expect(mapError({ status: 429 }, 'signin')).toBe('Too many attempts. Wait a minute and try again.')

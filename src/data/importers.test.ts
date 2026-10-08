@@ -79,3 +79,36 @@ describe('suggestKind', () => {
     expect(suggestKind(['client', 'date', 'notes'], 'clients')).toBeNull()
   })
 })
+
+describe('importRows provenance', () => {
+  it('stamps every record with its upload, file name and row', () => {
+    const res = importRows('tickets', ticketRows, { workspaceId: 'ws', clients: [], upload_id: 'up-1', file_name: 'tickets-sept.csv' })
+    expect(res.tickets.map((t) => t.source)).toEqual([
+      { upload_id: 'up-1', file_name: 'tickets-sept.csv', row: 2 },
+      { upload_id: 'up-1', file_name: 'tickets-sept.csv', row: 3 },
+      { upload_id: 'up-1', file_name: 'tickets-sept.csv', row: 4 },
+    ])
+    // A client added because a ticket named it traces to that ticket row.
+    expect(res.clients.find((c) => c.name === 'Castle Accountancy')?.source).toEqual({ upload_id: 'up-1', file_name: 'tickets-sept.csv', row: 4 })
+  })
+
+  it('keeps the row of the version that wins, and the latest file on re-upload', () => {
+    const res = importRows('tickets', [...ticketRows, { ...ticketRows[1], subject: 'Printer offline again' }], { workspaceId: 'ws', clients: [], upload_id: 'up-1', file_name: 'a.csv' })
+    expect(res.tickets.find((t) => t.external_id === '502')?.source).toMatchObject({ row: 5 })
+    const existing = { tickets: res.tickets, time_entries: [], assets: [], billing_items: [] }
+    const again = importRows('tickets', ticketRows, { workspaceId: 'ws', clients: res.clients, existing, upload_id: 'up-2', file_name: 'b.csv' })
+    expect(again.tickets[0].source).toEqual({ upload_id: 'up-2', file_name: 'b.csv', row: 2 })
+  })
+
+  it('records clients, time entries, assets and billing lines too', () => {
+    const ctx = { workspaceId: 'ws', clients: [], upload_id: 'u', file_name: 'f.csv' }
+    expect(importRows('clients', [{ client: 'ABC Ltd', monthly_recurring_revenue: '100' }], ctx).clients[0].source).toEqual({ upload_id: 'u', file_name: 'f.csv', row: 2 })
+    expect(importRows('time_entries', [{ date: '2026-09-01 10:00', client: 'ABC Ltd', minutes: '60' }], ctx).time_entries[0].source?.row).toBe(2)
+    expect(importRows('assets', [{ client: 'ABC Ltd', type: 'user', name: 'Jo' }], ctx).assets[0].source?.row).toBe(2)
+    expect(importRows('billing', [{ client: 'ABC Ltd', service: 'X', quantity: '1', unit_price: '2' }], ctx).billing_items[0].source?.file_name).toBe('f.csv')
+  })
+
+  it('records the row even without an upload', () => {
+    expect(importRows('tickets', ticketRows, { workspaceId: 'ws', clients: [] }).tickets[0].source).toEqual({ upload_id: null, file_name: null, row: 2 })
+  })
+})

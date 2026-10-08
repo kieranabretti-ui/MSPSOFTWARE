@@ -1,53 +1,35 @@
 import { useMemo, useState } from 'react'
 import { FileText } from 'lucide-react'
 import { useMetrics, useStore, counted, openish } from '../../data/store'
-import { Button, ButtonLink, PageHeader } from '../../components/ui'
+import { ButtonLink, PageHeader } from '../../components/ui'
 import { ICONS } from '../../brand/icons'
 import { liveClientHealth } from '../../engine/health'
 import { DEFAULT_SETTINGS, type Finding, type Health } from '../../engine/types'
 import { confidenceOf } from '../../lib/confidence'
+import { trustMetrics } from '../../lib/audit'
 import { plural, relative } from '../../lib/format'
 import { ALL_CATEGORIES, LEVEL_ORDER, PRIMARY_CATEGORIES } from '../../lib/labels'
 import { Callout } from './data/kit'
 import { GetStarted } from './overview/FirstRun'
+import { LoadFailed } from './overview/LoadFailed'
+import { actionedOf, opportunitySplit } from './overview/split'
 import { Hero } from './overview/Hero'
 import { CategoryBreakdown, ClientRisk, LeakageTrend, PriorityFindings, RecoveryPanel, type CategoryRow, type PriorityRow, type RiskClient } from './overview/sections'
 
 // Imported by the Opportunities and Reports pages for their own first-run state.
-export { GetStarted }
+export { GetStarted, LoadFailed }
 
-const HEALTH_RANK: Record<Health, number> = { at_risk: 0, watch: 1, healthy: 2 }
-
-// The workspace couldn't be loaded: say so, and offer the retry.
-function LoadFailed() {
-  const { loadError, reload } = useStore()
-  const [retrying, setRetrying] = useState(false)
-  if (!loadError) return null
-  return (
-    <Callout tone="danger" alert className="mb-6">
-      <p>{loadError}</p>
-      <Button
-        size="sm"
-        variant="secondary"
-        className="mt-2.5"
-        loading={retrying}
-        onClick={async () => {
-          setRetrying(true)
-          await reload()
-          setRetrying(false)
-        }}
-      >
-        Try again
-      </Button>
-    </Callout>
-  )
+const HEALTH_RANK: Record<Health, number> = {
+  at_risk: 0,
+  watch: 1,
+  healthy: 2,
 }
 
-// The commercial picture in the order an owner reads it: the money and how it
-// splits, where it leaks and which clients, what to act on first, where
-// recovery stands, then when it leaked.
+// The commercial picture in the order an owner reads it: the money, split by
+// how strong the evidence is, then by type and which clients, what to review
+// first, where recovery stands and the review record, then the months.
 export default function Overview() {
-  const { analysis, data, workspace, loadError } = useStore()
+  const { analysis, data, workspace, loadError, backend } = useStore()
   const m = useMetrics()
   // A first run started here keeps its result on screen until the reader moves on.
   const [firstRun, setFirstRun] = useState(false)
@@ -58,10 +40,13 @@ export default function Overview() {
     const months = s.months.length
     const live = data.findings.filter(counted)
 
-    // Act on these first: the surest, then the largest, of those still being worked.
+    // Review these first: the surest, then the largest, of those still being worked.
     const ranked: PriorityRow[] = data.findings
       .filter(openish)
-      .map((f) => ({ finding: f, level: confidenceOf(f).level }))
+      .map((f) => {
+        const r = confidenceOf(f)
+        return { finding: f, level: r.level, classification: r.classification }
+      })
       .sort((a, b) => LEVEL_ORDER.indexOf(a.level) - LEVEL_ORDER.indexOf(b.level) || b.finding.estimated_value - a.finding.estimated_value)
 
     // Health as it stands now: a dismissed opportunity no longer counts against a client.
@@ -70,11 +55,22 @@ export default function Overview() {
       if (!byClient.has(f.client_id)) byClient.set(f.client_id, [])
       byClient.get(f.client_id)!.push(f)
     }
-    const settings = { ...DEFAULT_SETTINGS, ...workspace?.settings, ...s.settings }
+    const settings = {
+      ...DEFAULT_SETTINGS,
+      ...workspace?.settings,
+      ...s.settings,
+    }
     const risky: RiskClient[] = s.client_metrics
       .map((mt) => {
         const h = liveClientHealth(mt, byClient.get(mt.client_id) ?? [], settings, s.average_monthly_hours, months)
-        return { ...mt, health: h.health, reasons: h.reasons, recommendation: h.recommendation, leakage: h.leakage, billed: mt.mrr * months }
+        return {
+          ...mt,
+          health: h.health,
+          reasons: h.reasons,
+          recommendation: h.recommendation,
+          leakage: h.leakage,
+          billed: mt.mrr * months,
+        }
       })
       .filter((c) => c.health !== 'healthy' || c.leakage > 0)
       .sort((a, b) => HEALTH_RANK[a.health] - HEALTH_RANK[b.health] || b.leakage - a.leakage)
@@ -92,8 +88,20 @@ export default function Overview() {
       })
       .sort((a, b) => Number(!!a.unchecked) - Number(!!b.unchecked) || b.value - a.value)
 
-    return { s, months, ranked, risky, categories }
-  }, [analysis, data.findings, workspace, m.byCategory])
+    // The conservative split, over what still counts (dismissed left out).
+    const split = opportunitySplit(live)
+    const trust = trustMetrics([...data.findings, ...data.stale_findings], data.audit_log)
+    return {
+      s,
+      months,
+      ranked,
+      risky,
+      categories,
+      split,
+      trust,
+      actioned: actionedOf(data.findings),
+    }
+  }, [analysis, data.findings, data.stale_findings, data.audit_log, workspace, m.byCategory])
 
   if (!view || firstRun)
     return (
@@ -104,7 +112,7 @@ export default function Overview() {
       </>
     )
 
-  const { s, months, ranked, risky, categories } = view
+  const { s, months, ranked, risky, categories, split, trust, actioned } = view
   const created = analysis!.created_at
   const cov = s.coverage
   const clientCount = cov?.clients ?? s.data_counts.clients
@@ -136,6 +144,13 @@ export default function Overview() {
 
       <Hero
         f={{
+          high: split.high,
+          review: split.review,
+          medium: split.medium,
+          low: split.low,
+          byClass: split.byClass,
+          actioned,
+          ai: backend.mode === 'supabase',
           total: m.total,
           monthly: m.monthly,
           recurringAgreement: m.recurringAgreement,
@@ -147,11 +162,14 @@ export default function Overview() {
           clientCount,
           atRisk: m.atRisk,
           needMrr: cov ? cov.clients - cov.clients_with_mrr : 0,
-          byLevel: m.byLevel,
           periodLabel: s.period_label,
           billed: s.client_metrics.reduce((a, c) => a + c.mrr, 0) * months,
           months,
-          overlap: { value: m.overlap.value, monthly: m.overlap.monthly, clients: m.overlap.clients.map(m.clientName) },
+          overlap: {
+            value: m.overlap.value,
+            monthly: m.overlap.monthly,
+            clients: m.overlap.clients.map(m.clientName),
+          },
         }}
       />
 
@@ -180,7 +198,7 @@ export default function Overview() {
       </div>
 
       <div className="mt-10">
-        <RecoveryPanel byStage={m.byStage} topFindingId={ranked[0]?.finding.id} />
+        <RecoveryPanel byStage={m.byStage} topFindingId={ranked[0]?.finding.id} trust={trust} />
       </div>
 
       <div className="mt-10">

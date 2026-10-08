@@ -29,13 +29,14 @@ export function ShareBars({ rows }: { rows: { label: string; value: number; sub?
   )
 }
 
-// The signature: what you billed, and the potential leakage beside it. The
-// billed part is neutral; the gap is the accent, set off by a hairline tick at
-// the junction so the eye lands on the found money even when the gap is small.
-// The percentage is the gap's share of the whole bar (billed plus potential
-// leakage), which is what the bar draws; its label says so to anyone asking.
-export const GAP_SHARE_NOTE = 'Share of billed plus potential leakage'
-export function GapBar({ billed, gap, height = 14, label = true, billedLabel = 'Billed', className }: { billed: number; gap: number; height?: number; label?: boolean; billedLabel?: string; className?: string }) {
+// The signature: the agreement value for the period, and the potential
+// opportunity beside it. The agreement part is neutral; the gap is the accent,
+// set off by a hairline tick at the junction so the eye lands on it even when
+// it is small. The left figure is agreement revenue (MRR × months), not
+// invoiced amounts, so it is labelled that way. The percentage is the gap's
+// share of the whole bar, which is what the bar draws; its label says so.
+export const GAP_SHARE_NOTE = 'Share of agreement value plus potential opportunity'
+export function GapBar({ billed, gap, height = 14, label = true, billedLabel = 'Agreement value', className }: { billed: number; gap: number; height?: number; label?: boolean; billedLabel?: string; className?: string }) {
   const total = billed + gap
   const share = total > 0 ? gap / total : 0
   const pct = (share * 100).toFixed(1)
@@ -44,7 +45,7 @@ export function GapBar({ billed, gap, height = 14, label = true, billedLabel = '
   const tick = gap > 0 && height >= 12
   return (
     <div className={className}>
-      <div className="relative" role="img" aria-label={`${money(gap)} potential leakage beside ${money(billed)} billed: ${pct}% of the two together`}>
+      <div className="relative" role="img" aria-label={`${money(gap)} potential opportunity beside ${money(billed)} ${billedLabel.toLowerCase()}: ${pct}% of the two together`}>
         <div className="flex w-full gap-[3px]" style={{ height }}>
           <div className="h-full min-w-0 rounded-l-[3px] bg-viz-series" style={{ width: `${100 - gapPct}%` }} />
           {gap > 0 && <div className="h-full min-w-[4px] rounded-r-[3px] bg-accent" style={{ width: `${gapPct}%` }} />}
@@ -57,9 +58,9 @@ export function GapBar({ billed, gap, height = 14, label = true, billedLabel = '
             {billedLabel} <span className="tnum text-ink-2">{money(billed)}</span>
           </span>
           <span className="text-right text-ink-3">
-            Potential leakage <span className="tnum whitespace-nowrap text-small font-semibold text-accent">{money(gap)}</span>
+            Potential opportunity <span className="tnum whitespace-nowrap text-small font-semibold text-accent">{money(gap)}</span>
             <span className="tnum ml-1.5 whitespace-nowrap text-ink-3" title={GAP_SHARE_NOTE}>
-              · {pct}%<span className="sr-only"> of billed plus potential leakage</span>
+              · {pct}%<span className="sr-only"> of agreement value plus potential opportunity</span>
             </span>
           </span>
         </div>
@@ -68,7 +69,7 @@ export function GapBar({ billed, gap, height = 14, label = true, billedLabel = '
   )
 }
 
-// The signature at row scale: each client's leakage ranked against the largest,
+// The signature at row scale: each client's potential opportunity ranked against the largest,
 // as a lime fill on a hairline track. Rows read apart at a glance; the figure
 // beside it carries the value, so the bar itself is decorative to readers.
 export function LeakBar({ value, max, className }: { value: number; max: number; className?: string }) {

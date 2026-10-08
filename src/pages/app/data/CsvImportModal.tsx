@@ -6,30 +6,13 @@ import { Button, Modal, cx } from '../../../components/ui'
 import { useToast } from '../../../components/toast'
 import { applyMapping, autoMap, SCHEMAS, suggestKind, validateRows, type CsvKind, type ImportResult } from '../../../data/importers'
 import { mapError } from '../../../lib/errors'
+import { CSV_LOCAL_ROW_LIMIT, checkCsvFile, checkCsvShape } from '../../../lib/csvSafe'
 import { num, plural } from '../../../lib/format'
 import { ICONS } from '../../../brand/icons'
-import { Callout, Dropzone, Select, Steps } from './kit'
+import { Callout, Dropzone, Select, StorageNotice, Steps } from './kit'
 import { SOURCES } from './sources'
 
 const STEPS = ['Choose file', 'Map columns', 'Imported']
-const MAX_BYTES = 25 * 1024 * 1024
-// Local mode keeps everything in browser storage, which runs out well before a
-// server would. Roughly what fits for one export.
-const LOCAL_ROW_LIMIT = 6000
-
-// A CSV is text. A NUL byte, or more than one byte in ten that isn't printable
-// (tabs and line breaks aside), means a spreadsheet, PDF or other binary file.
-// Bytes from 0x80 up are UTF-8 (a £ sign, say), so they count as text.
-function looksBinary(head: Uint8Array) {
-  if (!head.length) return false
-  let odd = 0
-  for (const b of head) {
-    if (b === 0) return true
-    if ((b < 0x20 && b !== 0x09 && b !== 0x0a && b !== 0x0d) || b === 0x7f) odd++
-  }
-  return odd / head.length > 0.1
-}
-
 const day = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
 export function CsvImportModal({
@@ -47,7 +30,7 @@ export function CsvImportModal({
   initialFile?: File
 }) {
   const schema = SCHEMAS[kind]
-  const { importCsv, data, backend } = useStore()
+  const { importCsv, data, backend, isDemoSession } = useStore()
   const toast = useToast()
   const [file, setFile] = useState<File | null>(null)
   const [headers, setHeaders] = useState<string[]>([])
@@ -67,12 +50,10 @@ export function CsvImportModal({
     setParseError(null)
     setImportError(null)
     setSuggest(null)
-    if (/\.xlsx?$/i.test(f.name)) return setParseError("Excel files aren't supported yet. In Excel choose File › Save As › CSV (UTF-8), then upload that file.")
-    if (!/\.(csv|txt)$/i.test(f.name) && f.type !== 'text/csv') return setParseError("This doesn't look like a CSV export. Export the report as CSV from your PSA and try again.")
-    if (f.size > MAX_BYTES) return setParseError('This file is over 25 MB. Split it into smaller exports.')
+    // Type, size and binary checks shared with every CSV entry point.
     try {
-      if (looksBinary(new Uint8Array(await f.slice(0, 1024).arrayBuffer())))
-        return setParseError("This doesn't look like a CSV export. Export the report as CSV from your PSA and try again.")
+      const problem = await checkCsvFile(f)
+      if (problem) return setParseError(problem)
     } catch (e) {
       return setParseError(mapError(e, 'import'))
     }
@@ -83,6 +64,8 @@ export function CsvImportModal({
       complete: (res) => {
         const hs = (res.meta.fields ?? []).filter(Boolean)
         if (!hs.length || !res.data.length) return setParseError('No rows found. Check the file has a header row and data.')
+        const shape = checkCsvShape(hs, res.data.length)
+        if (shape) return setParseError(shape)
         const auto = autoMap(hs, kind)
         // Columns chosen last time win where the file still has them, so a
         // monthly export maps itself.
@@ -122,7 +105,7 @@ export function CsvImportModal({
   const mappedCount = schema.fields.filter((f) => mapping[f.key]).length
 
   const existing = { clients: data.clients, tickets: data.tickets, time_entries: data.time_entries, assets: data.assets, billing: data.billing_items }[kind].length
-  const overLimit = backend.mode === 'local' && rows.length + existing > LOCAL_ROW_LIMIT
+  const overLimit = backend.mode === 'local' && rows.length + existing > CSV_LOCAL_ROW_LIMIT
   const previous = file ? [...data.uploads].filter((u) => u.kind === kind && u.file_name === file.name).sort((a, b) => (a.created_at < b.created_at ? 1 : -1))[0] : undefined
 
   const doImport = async () => {
@@ -185,8 +168,9 @@ export function CsvImportModal({
             accept=".csv,text/csv"
             onFile={(f) => void onFile(f)}
             label={`Upload ${schema.title} CSV`}
-            hint={backend.mode === 'supabase' ? 'CSV with a header row, up to 25 MB' : 'CSV with a header row'}
+            hint="CSV with a header row, up to 25 MB"
           />
+          <StorageNotice mode={backend.mode} demo={isDemoSession} />
           {parseError && (
             <Callout tone="danger" alert>
               {parseError}
@@ -331,7 +315,7 @@ export function CsvImportModal({
           )}
           {overLimit && (
             <Callout tone="danger" alert>
-              This browser can hold about {num(LOCAL_ROW_LIMIT)} rows of each export in evaluation mode. Use an account to analyse larger exports.
+              This browser can hold about {num(CSV_LOCAL_ROW_LIMIT)} rows of each export in evaluation mode. Use an account to analyse larger exports.
             </Callout>
           )}
           {importError && (

@@ -39,10 +39,10 @@ export function ProductPreview() {
 
   return (
     <Section id="product" label="product-title">
-      <SectionIntro id="product-title" title="Every pound comes with its evidence.">
+      <SectionIntro id="product-title" title="Every opportunity shows its evidence.">
         <p>
-          Each opportunity shows its potential value, how it was calculated, a confidence level and the reason for it, the ticket, time entry or clause behind it, and what to do next. This is the
-          product, running on the demo MSP.
+          Each opportunity shows its potential value, how it was calculated, a confidence level and the reason for it, the ticket, time entry or clause behind it, and a recommended next step for you
+          to review. This is the product, running on the demo MSP.
         </p>
       </SectionIntro>
 
@@ -182,7 +182,7 @@ export function ProductPreview() {
             </div>
           </div>
         </div>
-        <figcaption className="mt-3 text-caption text-ink-3">The opportunities list and an opportunity from the app, with {DEMO.msp}'s demo data. Values are potential leakage to review.</figcaption>
+        <figcaption className="mt-3 text-caption text-ink-3">The opportunities list and an opportunity from the app, with {DEMO.msp}'s demo data. Values are potential opportunities that require your review.</figcaption>
       </figure>
     </Section>
   )

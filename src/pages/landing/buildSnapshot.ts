@@ -4,8 +4,9 @@ import { demoStageOf } from '../../demo/stages'
 import { confidenceOf } from '../../lib/confidence'
 import { formatCalculation } from '../../lib/calculation'
 import { LEVEL_ORDER, STAGE_ORDER } from '../../lib/labels'
-import type { Evidence, FindingDraft } from '../../engine/types'
-import type { LandingSnapshot, SnapshotFinding, SnapshotTime, TicketExample } from './snapshotTypes'
+import type { Evidence, FindingDraft, SourceRef } from '../../engine/types'
+import { sampleDriftFinding } from './evidenceExample'
+import type { EvidenceExample, LandingSnapshot, SnapshotFinding, SnapshotTime, TicketExample } from './snapshotTypes'
 
 // Runs the real engine on the demo dataset and keeps only what the landing
 // page shows. Used by writeSnapshot.ts (to regenerate demoSnapshot.ts) and by
@@ -52,7 +53,6 @@ export function buildLandingSnapshot(): LandingSnapshot {
     client: clientName(f.client_id),
     category: f.category,
     severity: f.severity,
-    confidence: f.confidence,
     level: confidenceOf(f).level,
     overlaps: !!f.meta.overlaps?.length,
     value: f.estimated_value,
@@ -69,7 +69,8 @@ export function buildLandingSnapshot(): LandingSnapshot {
       `finding for ticket #${ref}`,
     )
     const ticket = must(evidence(f, 'ticket'), `ticket evidence for #${ref}`)
-    const contract = evidence(f, 'contract')
+    // The clause the finding rests on, not the hourly-rate or support-hours lines it also cites.
+    const contract = f.evidence.find((e) => e.kind === 'contract' && e.source === 'agreement' && e.label.startsWith('Agreement'))
     const [subject, ...body] = ticket.text.split('\n\n')
     return {
       finding: lite(f),
@@ -171,7 +172,10 @@ export function buildLandingSnapshot(): LandingSnapshot {
       findings: s.finding_count,
       clients: s.data_counts.clients,
       atRisk: s.client_metrics.filter((c) => c.health === 'at_risk').length,
+      affectedClients: new Set(findings.map((f) => f.client_id)).size,
       billed: s.client_metrics.reduce((a, c) => a + c.mrr, 0) * s.months.length,
+      highConfidence: findings.filter((f) => confidenceOf(f).level === 'HIGH').reduce((a, f) => a + f.estimated_value, 0),
+      requiresReview: findings.filter((f) => confidenceOf(f).level !== 'HIGH').reduce((a, f) => a + f.estimated_value, 0),
     },
     data: {
       clients: s.data_counts.clients,
@@ -216,6 +220,7 @@ export function buildLandingSnapshot(): LandingSnapshot {
       basis: confidenceOf(spotlightFinding).basis,
       calculation: { lines: spotlightCalc.lines, result: spotlightCalc.result },
     },
+    evidenceExample: buildEvidenceExample(),
     client: {
       name: ex.name,
       package: ex.package,
@@ -240,6 +245,56 @@ export function buildLandingSnapshot(): LandingSnapshot {
       marginAfterDrift: Math.round(((mrrAfterDrift - ex.labour_cost - ex.software_cost) / mrrAfterDrift) * 1000) / 1000,
       overlapNote: exFindings.some((f) => !!f.meta.overlaps?.length),
     },
+  }
+}
+
+// "users.csv, rows 2 to 48" or "Acme Managed Services Agreement, section 1.2".
+export function describeRefs(refs: SourceRef[] = []): string {
+  const parts: string[] = []
+  const csv = new Map<string, number[]>()
+  for (const r of refs) {
+    if (r.table === 'contracts') {
+      const text = `${r.label}${r.page ? `, page ${r.page}` : ''}`
+      if (!parts.includes(text)) parts.push(text)
+    } else if (r.file_name) csv.set(r.file_name, [...(csv.get(r.file_name) ?? []), ...(r.row ? [r.row] : [])])
+  }
+  for (const [file, rows] of csv) {
+    const sorted = [...new Set(rows)].sort((a, b) => a - b)
+    const contiguous = sorted.length > 1 && sorted[sorted.length - 1] - sorted[0] + 1 === sorted.length
+    parts.push(
+      sorted.length === 0 ? file : sorted.length === 1 ? `${file}, row ${sorted[0]}` : contiguous ? `${file}, rows ${sorted[0]} to ${sorted[sorted.length - 1]}` : `${file}, ${sorted.length} rows`,
+    )
+  }
+  return parts.join('; ')
+}
+
+function buildEvidenceExample(): EvidenceExample {
+  const { f, ds, reading, calc } = sampleDriftFinding()
+  const c = must(calc, 'calculation for the evidence example')
+  const files = [...new Set(f.source_data.map((r) => r.file_name).filter((x): x is string => !!x))]
+  return {
+    client: must(ds.clients.find((x) => x.id === f.client_id), 'sample client').name,
+    title: f.title,
+    category: f.category,
+    rule: f.meta.rule,
+    monthly: f.monthly_value,
+    annual: f.annual_value,
+    level: reading.level,
+    classification: reading.classification,
+    basis: reading.basis,
+    checks: reading.criteria.map((x) => ({ text: x.text, met: x.met })),
+    claims: (f.claims ?? []).map((x) => ({ type: x.type, text: x.text })),
+    evidence: f.evidence.map((e) => ({
+      source: e.source ?? 'derived',
+      label: e.label,
+      // The users list names every person; the page needs only the count.
+      text: e.source === 'asset_register' ? e.text.split('. ')[0] + '.' : e.text,
+      highlights: e.highlights ?? [],
+      reference: describeRefs(e.refs),
+    })),
+    calculation: { lines: c.lines, result: c.result },
+    recommendedAction: f.recommended_action,
+    files: [...ds.contracts.map((x) => x.title), ...files],
   }
 }
 

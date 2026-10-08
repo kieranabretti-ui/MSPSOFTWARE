@@ -18,6 +18,21 @@ describe('landing demo snapshot', () => {
     expect(DEMO.totals.annual).toBe(4272)
   })
 
+  it('splits the headline into High confidence and Requires review', () => {
+    expect(DEMO.totals.highConfidence).toBe(1405)
+    expect(DEMO.totals.requiresReview).toBe(2876)
+    expect(DEMO.totals.highConfidence + DEMO.totals.requiresReview).toBe(DEMO.totals.identified)
+    expect(DEMO.totals.highConfidence).toBe(DEMO.levels.find((l) => l.level === 'HIGH')?.value)
+  })
+
+  it('shows the engine output for the brief drift example, with no numeric confidence', () => {
+    const x = DEMO.evidenceExample
+    expect([x.monthly, x.annual, x.level, x.classification]).toEqual([656, 7872, 'HIGH', 'confirmed'])
+    expect(x.calculation.lines).toEqual(['47 active users − 39 contracted and billed = 8 users', '8 × £82 = £656 a month, priced as Managed Support (per user)', '£656 × 12 = £7,872 a year'])
+    expect(x.evidence.map((e) => e.reference)).toEqual(['Acme Managed Services Agreement, section 1.2', 'clients.csv, row 2', 'users.csv, rows 2 to 48', 'billing.csv, row 2'])
+    expect(JSON.stringify(DEMO)).not.toMatch(/"confidence":/)
+  })
+
   it('prices the example client from its own costs at the target margin', () => {
     const c = DEMO.client
     const margin = (c.recommended - c.labour - c.software) / c.recommended

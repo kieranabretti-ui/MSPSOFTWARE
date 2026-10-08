@@ -43,11 +43,11 @@ export function ClientExample() {
           <h2 id="example-title" className={sectionTitleCls}>
             Client profitability. <span className="text-ink-3">Which clients are worth keeping?</span>
           </h2>
-          <p className="mt-5 max-w-[52ch] text-lead text-ink-2">Headroom sets each client's revenue against its delivery effort and estimated margin, so an unprofitable client can't stay hidden.</p>
+          <p className="mt-5 max-w-[52ch] text-lead text-ink-2">Headroom sets each client's revenue against its delivery effort and estimated margin, so you can see which clients cost more to serve than they pay. Margins are estimates from your own rates.</p>
           <p className="mt-4 max-w-[52ch] text-body text-ink-2">
             Take {c.name}. It pays {money(c.mrr)} a month{c.package ? ` on ${c.package}` : ''}. Its support has grown from {first.hours} to {last.hours} hours a month, and{' '}
-            {extraUsers > 0 ? `${extraUsers} new starters were never added to the agreement` : 'its agreement has not moved'}. Over {months} months, that is{' '}
-            {money(c.leakage)} of potential leakage.
+            {extraUsers > 0 ? `${extraUsers} more users are active than its agreement covers` : 'its agreement has not moved'}. Over {months} months, that is{' '}
+            {money(c.leakage)} of potential opportunity to review.
           </p>
 
           <dl className="mt-8 grid grid-cols-2 border-y border-line-soft">
@@ -138,7 +138,7 @@ export function ClientExample() {
                 ))}
               </ul>
               <div className="flex items-baseline justify-between gap-4 border-t border-line pt-3">
-                <span className="text-small font-medium text-ink">Potential leakage, {months} months</span>
+                <span className="text-small font-medium text-ink">Potential opportunity, {months} months</span>
                 <Figure size="md">{money(c.leakage)}</Figure>
               </div>
               {c.overlapNote && overlapValue > 0 && <p className="tnum mt-1 text-right text-caption text-ink-3">Includes {money(overlapValue)} that overlaps with the user drift.</p>}

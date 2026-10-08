@@ -7,8 +7,10 @@ import { mapError } from '../lib/errors'
 import { track } from '../lib/track'
 import { PLANS, formatAnnual, formatMonthly, parsePlanId } from '../billing/plans'
 import { AuthShell, DemoProof, FormError } from './auth/AuthShell'
+import { PASSWORD_HINT, passwordProblem } from './auth/password'
 
 const EMAIL = /^\S+@\S+\.\S+$/
+
 
 // Field checks sit under the field they refer to (Field wires aria-invalid and
 // aria-describedby); the form-level alert is kept for what the server says.
@@ -20,7 +22,7 @@ function focusFirst(errors: FieldErrors, refs: Partial<Record<keyof FieldErrors,
 }
 
 const WHAT_IT_DOES =
-  'Headroom reads the exports your PSA, RMM and billing system already produce, then shows the out-of-scope work, unbilled work and agreement drift behind every pound.'
+  'Headroom reads the exports your PSA, RMM and billing system already produce, then flags possible out-of-scope work, unbilled work and agreement drift, each with its evidence and calculation.'
 
 // What a pricing button carried to sign-up, in a sentence. Prices come from the pricing config.
 function planNote(plan: 'growth' | 'pro', annual: boolean) {
@@ -212,7 +214,8 @@ export function Signup() {
     const errs: FieldErrors = {}
     if (!name.trim()) errs.name = 'Enter your name.'
     if (!EMAIL.test(email)) errs.email = 'Enter a valid email address.'
-    if (password.length < 8) errs.password = 'Use at least 8 characters for your password.'
+    const weak = passwordProblem(password)
+    if (weak) errs.password = weak
     setFieldErrors(errs)
     if (focusFirst(errs, { name: nameRef, email: emailRef, password: passwordRef })) return
     setLoading(true)
@@ -298,7 +301,7 @@ export function Signup() {
               placeholder="you@yourmsp.co.uk"
             />
           </Field>
-          <Field label="Password" hint="At least 8 characters." error={fieldErrors.password}>
+          <Field label="Password" hint={PASSWORD_HINT} error={fieldErrors.password}>
             <input
               ref={passwordRef}
               className={cx(inputCls, fieldErrors.password && 'border-danger-line')}
@@ -315,6 +318,17 @@ export function Signup() {
           <Button type="submit" className="w-full" loading={loading}>
             Create account
           </Button>
+          <p className="text-caption text-ink-3">
+            By creating an account you agree to the{' '}
+            <TextLink to="/terms" className="text-caption underline">
+              Terms
+            </TextLink>{' '}
+            and acknowledge the{' '}
+            <TextLink to="/privacy" className="text-caption underline">
+              Privacy Policy
+            </TextLink>
+            .
+          </p>
         </form>
       )}
     </AuthShell>

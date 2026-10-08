@@ -1,4 +1,5 @@
 import { IS_PREVIEW } from './env'
+import { toSafeCsv } from './csvSafe'
 
 export const money = (n: number, opts: { decimals?: boolean } = {}) =>
   new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: opts.decimals ? 2 : 0, minimumFractionDigits: opts.decimals ? 2 : 0 }).format(n)
@@ -45,12 +46,8 @@ export function downloadFile(name: string, content: BlobPart, type: string): boo
   return true
 }
 
+// Every CSV the app writes goes through csvSafe: formula-looking cells are
+// neutralised and fields are quoted properly.
 export function toCsv(rows: Record<string, unknown>[]): string {
-  if (!rows.length) return ''
-  const headers = Object.keys(rows[0])
-  const esc = (v: unknown) => {
-    const s = v == null ? '' : String(v)
-    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
-  }
-  return [headers.join(','), ...rows.map((r) => headers.map((h) => esc(r[h])).join(','))].join('\n')
+  return toSafeCsv(rows)
 }

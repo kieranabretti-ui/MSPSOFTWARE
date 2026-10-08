@@ -1,3 +1,4 @@
+import { Trash2 } from 'lucide-react'
 import type { Analysis } from '../../../engine/types'
 import { Card, CardHeader, cx } from '../../../components/ui'
 import { dateTime, money, num, plural } from '../../../lib/format'
@@ -17,7 +18,7 @@ function newSince(run: Analysis, previous: Analysis | undefined): number | null 
 // Every past run with the figures it reported at the time, newest first. Later
 // stage changes and dismissals don't rewrite history, so the latest row can
 // differ from the overview.
-export function AnalysisHistory({ analyses, className }: { analyses: Analysis[]; className?: string }) {
+export function AnalysisHistory({ analyses, className, onDelete }: { analyses: Analysis[]; className?: string; onDelete?: (a: Analysis, latest: boolean) => void }) {
   const runs = [...analyses].sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
   return (
     <Card className={className}>
@@ -37,21 +38,26 @@ export function AnalysisHistory({ analyses, className }: { analyses: Analysis[];
                 <th scope="col" className={cx(TH, 'hidden w-48 lg:table-cell')}>
                   Period
                 </th>
-                <th scope="col" className={cx(TH, 'hidden w-48 xl:table-cell')}>
+                <th scope="col" className={cx(TH, 'hidden w-44 xl:table-cell')}>
                   Data analysed
                 </th>
                 <th scope="col" className={cx(TH, 'hidden w-32 text-right md:table-cell')}>
                   Opportunities
                 </th>
                 <th scope="col" className={cx(TH, 'w-28 text-right sm:w-32')}>
-                  Identified
+                  Potential
                 </th>
                 <th scope="col" className={cx(TH, 'hidden w-28 text-right sm:table-cell')}>
                   Recurring
                 </th>
-                <th scope="col" className={cx(TH, 'hidden w-40 whitespace-nowrap pr-5 text-right md:table-cell')}>
+                <th scope="col" className={cx(TH, 'hidden whitespace-nowrap text-right md:table-cell', onDelete ? 'w-36' : 'w-40 pr-5')}>
                   New vs previous
                 </th>
+                {onDelete && (
+                  <th scope="col" className={cx(TH, 'w-14 pr-3 sm:pr-4')}>
+                    <span className="sr-only">Actions</span>
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-line-soft">
@@ -80,14 +86,24 @@ export function AnalysisHistory({ analyses, className }: { analyses: Analysis[];
                       <span className="mt-0.5 block text-caption font-normal text-ink-3 sm:hidden">{money(s.monthly_recurring)}/mo</span>
                     </td>
                     <td className="tnum hidden px-3 py-3 text-right text-ink-2 sm:table-cell">{money(s.monthly_recurring)}/mo</td>
-                    <td className="tnum hidden py-3 pl-3 pr-5 text-right text-ink-2 md:table-cell">
+                    <td className={cx('tnum hidden py-3 pl-3 text-right text-ink-2 md:table-cell', onDelete ? 'pr-3' : 'pr-5')}>
                       {fresh == null ? (
-                        <span className="text-ink-3">
-                          <span aria-hidden>—</span>
-                          <span className="sr-only">Not recorded</span>
-                        </span>
+                        <span className="text-ink-3">Not recorded</span>
                       ) : fresh === 0 ? <span className="text-ink-3">None</span> : `+${num(fresh)}`}
                     </td>
+                    {onDelete && (
+                      <td className="py-1.5 pr-2 text-right sm:pr-3">
+                        <button
+                          type="button"
+                          onClick={() => onDelete(a, i === 0)}
+                          className="inline-flex size-9 items-center justify-center rounded-sm text-ink-3 transition-colors duration-150 hover:bg-raised hover:text-ink"
+                          aria-label={`Delete the analysis run ${dateTime(a.created_at)}`}
+                          title="Delete this analysis"
+                        >
+                          <Trash2 className="size-4" aria-hidden />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 )
               })}

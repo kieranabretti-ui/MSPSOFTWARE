@@ -57,7 +57,7 @@ export function Problem() {
     },
     {
       name: 'Scope creep',
-      def: 'Out-of-scope work: what the agreement excludes or charges for, done for free.',
+      def: 'Work the agreement excludes or charges for, logged as non-billable.',
       category: 'OUT_OF_SCOPE',
       example: (
         <Example source={`${scope.finding.client} · Ticket #${scope.finding.ticketRef}`} value={scope.finding.value} valueLabel="This ticket" quote={`“${scope.subject}”`}>
@@ -68,7 +68,7 @@ export function Problem() {
     },
     {
       name: 'Underpriced clients',
-      def: 'Support effort that has eaten into the margin.',
+      def: 'Support effort that has eaten into the margin. An estimate.',
       category: 'UNDERPRICED_CLIENT',
       example: (
         <Example
@@ -77,7 +77,7 @@ export function Problem() {
           valueLabel="This client"
           quote={`${money(underpriced.mrr)} a month for ${underpriced.avgHours} support hours a month.`}
         >
-          Gross margin {Math.round(underpriced.margin * 100)}% against a {Math.round(DEMO.settings.targetMargin * 100)}% target, an average shortfall of {money(underpriced.finding.monthly)} a month over{' '}
+          Estimated gross margin {Math.round(underpriced.margin * 100)}% against a {Math.round(DEMO.settings.targetMargin * 100)}% target, an average shortfall of {money(underpriced.finding.monthly)} a month over{' '}
           {inWords(DEMO.period.months)} months.
         </Example>
       ),
@@ -94,14 +94,14 @@ export function Problem() {
     <Section id="problem" label="problem-title">
       <SectionIntro id="problem-title" stacked title="Your MSP can be profitable on paper and still give work away every month.">
         <p>
-          Agreements are signed once. Clients change every month. New starters arrive, devices multiply and engineers do the quick favour nobody bills. None of it reaches an invoice, and nobody has
-          time to check a thousand tickets against fifteen contracts.
+          Agreements are signed once. Clients change every month. New starters arrive, devices multiply and engineers do the quick favour nobody bills. Much of it never reaches an invoice, and nobody
+          has time to check a thousand tickets against fifteen contracts.
         </p>
       </SectionIntro>
 
       <div className="mt-14 lg:mt-20">
         <div className="hidden grid-cols-[minmax(0,15rem)_minmax(0,1fr)_minmax(0,11rem)] gap-x-10 border-b border-line pb-3 lg:grid">
-          <p className="text-label uppercase text-ink-3">Leakage type</p>
+          <p className="text-label uppercase text-ink-3">Type</p>
           <p className="text-label uppercase text-ink-3">One example from {DEMO.msp}</p>
           <p className="text-right text-label uppercase text-ink-3">Across its {DEMO.totals.clients} clients</p>
         </div>

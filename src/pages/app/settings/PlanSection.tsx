@@ -76,9 +76,9 @@ export function PlanBody({ isDemo }: { isDemo: boolean }) {
         {chosen && (
           <Callout tone="info" title={`${PLANS[chosen].name} isn't available to buy online yet`}>
             Billing isn't live, so nothing is charged and your workspace keeps the whole product.{' '}
-            {PLANS[chosen].salesLed ? `${PLANS[chosen].name} is set up on a short call. ` : ''}
-            Paid plans open to founding MSPs first and are invoiced directly
-            {COMPANY.contactEmail ? `: email ${COMPANY.contactEmail} to start.` : '.'}
+            {COMPANY.contactEmail
+              ? `${PLANS[chosen].salesLed ? `${PLANS[chosen].name} is set up on a short call. ` : ''}Paid plans open to founding MSPs first and are invoiced directly: email ${COMPANY.contactEmail} to start.`
+              : "Paid plans aren't on sale yet. They open to founding MSPs first, and how to start one will be shown here when they do."}
           </Callout>
         )}
       </div>

@@ -41,6 +41,8 @@ const DEFAULTS: Partial<Record<ErrorContext, string>> = {
   contract: "We couldn't read that contract. If it's a scanned PDF, try a text-based PDF.",
   ai: "The AI explanation couldn't be generated. Try again.",
 }
+export const SESSION_EXPIRED = 'Your session has expired. Sign in again to continue.'
+export const NO_ACCESS = "You don't have access to that. It may belong to another workspace, or your access may have changed. Nothing was changed."
 export const GENERIC_ERROR = 'Something went wrong. Nothing was lost. Try again.'
 
 // Pull a code, status and raw text out of whatever was thrown: an AppError,
@@ -64,11 +66,18 @@ export function knownError(e: unknown, ctx?: ErrorContext): string | null {
   if (code === '23505') return ctx === 'import' ? 'Some of these rows were already imported.' : 'That already exists in this workspace.'
   if (code === '23503') return 'This refers to a client that no longer exists. Refresh and try again.'
   if (code === '23514') return "That change isn't allowed. Refresh the page and try again."
-  if (code === '42501' || code === 'PGRST301' || status === 401 || /jwt expired/i.test(text)) return 'Your session has expired. Sign in again to continue.'
+  // Signed out or expired: PostgREST answers 401 (an anonymous caller's
+  // permission error included) or PGRST301.
+  if (code === 'PGRST301' || status === 401 || /jwt expired/i.test(text)) return SESSION_EXPIRED
+  // Signed in but not allowed: a row-level security or grant refusal. Saying
+  // "session expired" here would send people round a sign-in loop and hide a
+  // real authorisation failure.
+  if (code === '42501' || status === 403 || /row-level security|permission denied/i.test(text)) return NO_ACCESS
   if (code === 'PGRST116') return "We couldn't find that record. It may have been removed when the analysis was re-run."
   if (status === 413 || /payload too large/i.test(text)) return 'This file is too large to upload.'
   if (code === 'invalid_credentials' || /invalid login/i.test(text)) return 'Email or password is incorrect.'
   if (code === 'user_already_exists' || /already registered/i.test(text)) return 'An account with this email already exists. Sign in instead.'
+  if (code === 'weak_password' || /password should (be|contain)/i.test(text)) return 'Choose a stronger password: at least 10 characters, with upper and lower case letters and a number.'
   if (code === 'email_not_confirmed') return 'Confirm your email first. We sent you a link.'
   if (code === 'over_email_send_rate_limit' || status === 429) return 'Too many attempts. Wait a minute and try again.'
   if (code === 'quota_exceeded') return 'This browser has run out of local storage. Clear data on the Analyses page or use an account.'

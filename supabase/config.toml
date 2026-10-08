@@ -1,11 +1,38 @@
-# Local Supabase settings (`supabase start`). Hosted projects take these from the dashboard.
+# Local Supabase settings (`supabase start`). Hosted projects take the auth
+# settings from the dashboard: mirror them there (Authentication > Sign In /
+# Providers and Authentication > Policies). See README "Security setup".
 project_id = "headroom"
 
 [auth]
 site_url = "http://localhost:5173"
 additional_redirect_urls = ["http://localhost:5173/app"]
-# Matches the sign-up form. Set the same minimum in the hosted dashboard.
-minimum_password_length = 8
+# Matches the sign-up form (src/pages/Auth.tsx). Set the same in the hosted
+# dashboard, and turn on leaked-password protection there (hosted only).
+minimum_password_length = 10
+password_requirements = "lower_upper_letters_digits"
+# Short-lived access tokens; refresh tokens rotate and a reused one is refused.
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+# New accounts must confirm their email before they can sign in.
+enable_confirmations = true
+# Changing the account email needs confirmation from both addresses.
+double_confirm_changes = true
+secure_password_change = true
+max_frequency = "60s"
+
+[auth.rate_limit]
+email_sent = 4
+sign_in_sign_ups = 30
+token_verifications = 30
+
+[storage]
+# Matches the uploads bucket limit set in migration 20261008000100.
+file_size_limit = "20MiB"
 
 [functions.ai-review]
 verify_jwt = true

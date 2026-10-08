@@ -1,8 +1,10 @@
 import { useEffect, useRef } from 'react'
 import { ArrowRight, Check, FileText } from 'lucide-react'
 import type { AnalysisSummary } from '../../../engine/types'
-import { useMetrics, useStore } from '../../../data/store'
-import { Button, ButtonLink, Disclaimer, cx } from '../../../components/ui'
+import { counted, useMetrics, useStore } from '../../../data/store'
+import { confidenceSplit } from '../../../lib/confidence'
+import { CONFIDENCE_NOTE, SPLIT_LABEL } from '../../../lib/labels'
+import { Button, ButtonLink, Disclaimer, TrustNote, cx } from '../../../components/ui'
 import { money, num, plural } from '../../../lib/format'
 import { Callout } from '../data/kit'
 
@@ -36,10 +38,13 @@ export function AnalysisResult({
   const heading = useRef<HTMLHeadingElement>(null)
   useEffect(() => heading.current?.focus({ preventScroll: true }), [])
 
+  // Conservative headline: High confidence on its own, the rest as needing
+  // review, and the total only as their labelled sum.
+  const split = confidenceSplit(data.findings.filter(counted))
   const figures = [
     { value: num(m.count), label: m.count === 1 ? 'opportunity' : 'opportunities' },
-    { value: money(m.total), label: 'potential leakage' },
-    { value: money(m.monthly), label: 'a month recurring', accent: m.monthly > 0 },
+    { value: money(split.high.value), label: SPLIT_LABEL.high.toLowerCase(), note: split.high.monthly > 0 ? `${money(split.high.monthly)} a month` : undefined, accent: split.high.value > 0 },
+    { value: money(split.review.value), label: SPLIT_LABEL.review.toLowerCase(), note: split.review.monthly > 0 ? `${money(split.review.monthly)} a month` : undefined },
     { value: num(m.clientsAffected), label: m.clientsAffected === 1 ? 'client affected' : 'clients affected' },
   ]
 
@@ -70,13 +75,19 @@ export function AnalysisResult({
       <dl className="grid grid-cols-2 gap-px border-y border-line-soft bg-line-soft sm:grid-cols-4">
         {figures.map((f) => (
           <div key={f.label} className="flex flex-col-reverse justify-end bg-surface px-5 py-4 sm:px-6">
-            <dt className="mt-1 text-small text-ink-3">{f.label}</dt>
+            <dt className="mt-1 text-small text-ink-3">
+              {f.label}
+              {f.note && <span className="tnum block text-caption">{f.note}</span>}
+            </dt>
             <dd className={cx('tnum text-data-md', f.accent ? 'text-accent' : 'text-ink')}>{f.value}</dd>
           </div>
         ))}
       </dl>
 
       <div className="space-y-4 px-5 py-5 sm:px-6">
+        <p className="tnum text-small text-ink-2">
+          {SPLIT_LABEL.total}: {money(split.total.value)} ({SPLIT_LABEL.high.toLowerCase()} plus {SPLIT_LABEL.review.toLowerCase()}). {CONFIDENCE_NOTE}
+        </p>
         {missing > 0 && cov && (
           <Callout tone="info">
             <p>
@@ -111,6 +122,7 @@ export function AnalysisResult({
           </ButtonLink>
         </div>
         <Disclaimer />
+        <TrustNote />
       </div>
     </section>
   )

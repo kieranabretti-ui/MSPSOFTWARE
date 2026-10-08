@@ -13,7 +13,8 @@ export default async function opportunities({ page, shot, expect, until, step })
   await page.locator('tbody tr').first().click()
   await page.getByTestId('finding-value').waitFor()
   expect((await page.getByTestId('finding-value').innerText()) === '£80', 'opportunity value £80')
-  expect(await page.getByText('High confidence').count(), 'high confidence')
+  // Only a keyword match links the ticket to personal-device work: Medium.
+  expect(await page.getByText('Medium confidence').count(), 'medium confidence')
   expect(await page.getByText('James Smith').count(), 'technician')
   await shot('04-opportunity')
 
