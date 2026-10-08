@@ -55,6 +55,15 @@ export interface Workspace {
   created_at: string
 }
 
+// Where an imported row came from: the upload (file) it was read from and
+// its row in that file (the header is row 1). Null for rows typed in by hand
+// or saved before provenance existed.
+export interface Provenance {
+  upload_id: string | null
+  file_name: string | null
+  row: number | null
+}
+
 export interface Client {
   id: string
   workspace_id: string
@@ -68,6 +77,7 @@ export interface Client {
   included_hours: number | null
   monthly_software_cost: number | null
   created_at: string
+  source?: Provenance | null
 }
 
 export interface Contract {
@@ -92,6 +102,7 @@ export interface Ticket {
   status: string | null
   time_spent_minutes: number
   billable: boolean
+  source?: Provenance | null
 }
 
 export interface TimeEntry {
@@ -103,6 +114,7 @@ export interface TimeEntry {
   technician: string | null
   minutes: number
   billable: boolean
+  source?: Provenance | null
 }
 
 export interface BillingItem {
@@ -113,6 +125,7 @@ export interface BillingItem {
   quantity: number
   unit_price: number
   monthly_value: number
+  source?: Provenance | null
 }
 
 export interface Asset {
@@ -125,6 +138,7 @@ export interface Asset {
   license: string | null
   status: 'active' | 'inactive'
   first_seen: string | null
+  source?: Provenance | null
 }
 
 export type UploadKind = 'clients' | 'tickets' | 'time_entries' | 'assets' | 'billing' | 'contract'
@@ -142,18 +156,49 @@ export interface Upload {
   created_at: string
 }
 
+// Which system an evidence line comes from, so the UI can group it
+// (Agreement / PSA / Billing ...). 'client_record' is the MSP's own clients
+// file, which is not the signed agreement; 'derived' is a computed figure.
+export type EvidenceSource = 'agreement' | 'psa' | 'billing' | 'asset_register' | 'client_record' | 'settings' | 'derived'
+
 export interface Evidence {
   kind: 'ticket' | 'contract' | 'time_entry' | 'billing' | 'asset' | 'metric' | 'client'
   label: string
   text: string
   highlights?: string[]
+  source?: EvidenceSource
+  // The records this line was read from.
+  refs?: SourceRef[]
 }
 
 export interface SourceRef {
   table: 'tickets' | 'time_entries' | 'contracts' | 'billing_items' | 'assets' | 'clients'
   id: string
   label: string
+  // Traceability back to the file: CSV upload and row, or contract section and page.
+  upload_id?: string | null
+  file_name?: string | null
+  row?: number | null
+  section?: string | null
+  page?: number | null
 }
+
+// A finding's statements, kept apart so a fact is never blended with an
+// interpretation. fact: read straight from a record. observation: a
+// deterministic comparison of facts. interpretation: what it may mean
+// (ai: true when AI-assisted). recommendation: what the MSP could do.
+export type ClaimType = 'fact' | 'observation' | 'interpretation' | 'recommendation'
+export interface Claim {
+  type: ClaimType
+  text: string
+  ai?: boolean
+}
+
+// How firmly a finding is stated. confirmed: a deterministic discrepancy
+// between records. potential: likely, needs the MSP to verify. investigate:
+// the evidence is incomplete or the value is modelled.
+export type FindingClass = 'confirmed' | 'potential' | 'investigate'
+
 
 // The inputs behind a finding's value, so the UI can show the sum and the
 // confidence basis without re-running the engine. One shape per rule family.
@@ -234,6 +279,8 @@ export interface FindingDraft {
   recommended_action: string
   source_data: SourceRef[]
   meta: FindingMeta
+  claims?: Claim[]
+  classification?: FindingClass
 }
 
 export interface Finding extends FindingDraft {
@@ -242,8 +289,55 @@ export interface Finding extends FindingDraft {
   analysis_id: string
   status: FindingStatus
   ai_explanation: string | null
+  // Written by the ai-review function only: which model, when, and a hash of
+  // the evidence it saw (so a changed finding shows the explanation as stale).
+  ai_meta?: { model: string; generated_at: string; evidence_hash: string } | null
+  // The MSP's decision. "The software recommends. The MSP decides."
+  dismiss_reason?: DismissReason | null
+  decision_note?: string | null
+  owner?: string | null
+  decided_at?: string | null
+  first_viewed_at?: string | null
+  // No longer reproduced by the latest analysis; kept because a person decided on it.
+  stale?: boolean
   created_at: string
   updated_at: string
+}
+
+export type DismissReason = 'goodwill' | 'already_billed' | 'data_wrong' | 'contract_allows' | 'relationship' | 'other'
+
+export type AuditAction =
+  | 'upload.created'
+  | 'upload.deleted'
+  | 'analysis.run'
+  | 'analysis.deleted'
+  | 'finding.created'
+  | 'finding.viewed'
+  | 'finding.stage_changed'
+  | 'finding.dismissed'
+  | 'finding.reopened'
+  | 'finding.note'
+  | 'finding.owner'
+  | 'ai.explained'
+  | 'export.pdf'
+  | 'export.csv'
+  | 'settings.changed'
+  | 'data.cleared'
+  | 'workspace.deleted'
+  | 'account.deleted'
+
+// Append-only record of who did what. Never holds client data values (no
+// names, ticket text or pounds); only ids, counts and stage names.
+export interface AuditEvent {
+  id: string
+  workspace_id: string
+  actor_id: string | null
+  actor_email: string | null
+  action: AuditAction
+  target_type: string | null
+  target_id: string | null
+  detail: Record<string, string | number | boolean | null>
+  created_at: string
 }
 
 export interface Action {
