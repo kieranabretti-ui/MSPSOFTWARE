@@ -74,18 +74,18 @@ export const DEMO: LandingSnapshot = {
   "levels": [
     {
       "level": "HIGH",
-      "count": 18,
-      "value": 2360
+      "count": 19,
+      "value": 2405
     },
     {
       "level": "MEDIUM",
-      "count": 11,
-      "value": 1336
+      "count": 7,
+      "value": 610
     },
     {
       "level": "LOW",
-      "count": 11,
-      "value": 585
+      "count": 14,
+      "value": 1266
     }
   ],
   "stages": [
@@ -121,7 +121,7 @@ export const DEMO: LandingSnapshot = {
       "client": "Harbour Physio",
       "category": "EXCESSIVE_USAGE",
       "severity": "HIGH",
-      "confidence": 88,
+      "confidence": 80,
       "level": "MEDIUM",
       "overlaps": false,
       "value": 355,
@@ -133,9 +133,9 @@ export const DEMO: LandingSnapshot = {
       "title": "Gross margin 28% against a 30% target",
       "client": "ABC Ltd",
       "category": "UNDERPRICED_CLIENT",
-      "severity": "HIGH",
-      "confidence": 82,
-      "level": "MEDIUM",
+      "severity": "MEDIUM",
+      "confidence": 50,
+      "level": "LOW",
       "overlaps": true,
       "value": 336,
       "monthly": 56,
@@ -244,11 +244,11 @@ export const DEMO: LandingSnapshot = {
   "leaks": {
     "scope": {
       "finding": {
-        "title": "Out-of-hours work not charged",
+        "title": "Out-of-hours work logged as non-billable",
         "client": "Meridian Logistics",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 90,
+        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 150,
@@ -265,7 +265,7 @@ export const DEMO: LandingSnapshot = {
       "clauseHighlights": [
         "Support is available between 08:30 and 17:30, Monday"
       ],
-      "contractTitle": "Managed Services Agreement – Business Pro",
+      "contractTitle": "Managed Services Agreement – Business Pro, section 2.1",
       "time": {
         "date": "2026-09-09",
         "time": "21:40",
@@ -280,7 +280,7 @@ export const DEMO: LandingSnapshot = {
         "client": "Elmfield Dental",
         "category": "UNBILLED_TIME",
         "severity": "MEDIUM",
-        "confidence": 92,
+        "confidence": 80,
         "level": "MEDIUM",
         "overlaps": false,
         "value": 70,
@@ -325,9 +325,9 @@ export const DEMO: LandingSnapshot = {
         "title": "Gross margin 28% against a 30% target",
         "client": "Castle Accountancy",
         "category": "UNDERPRICED_CLIENT",
-        "severity": "HIGH",
-        "confidence": 82,
-        "level": "MEDIUM",
+        "severity": "MEDIUM",
+        "confidence": 50,
+        "level": "LOW",
         "overlaps": false,
         "value": 229,
         "monthly": 38,
@@ -344,11 +344,11 @@ export const DEMO: LandingSnapshot = {
     "value": 1240,
     "rows": [
       {
-        "title": "Personal device supported free of charge",
+        "title": "Personal device work logged as non-billable",
         "client": "Willow & Hart Interiors",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 90,
+        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 60,
@@ -357,11 +357,11 @@ export const DEMO: LandingSnapshot = {
         "workDate": "2026-09-28T11:30:00"
       },
       {
-        "title": "Personal device supported free of charge",
+        "title": "Personal device work logged as non-billable",
         "client": "Bramley Homes",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 94,
+        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 80,
@@ -370,11 +370,11 @@ export const DEMO: LandingSnapshot = {
         "workDate": "2026-09-15T10:20:00"
       },
       {
-        "title": "Third-party application support given free",
+        "title": "Third-party application support logged as non-billable",
         "client": "Kingsbridge Architects",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 90,
+        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 150,
@@ -383,11 +383,11 @@ export const DEMO: LandingSnapshot = {
         "workDate": "2026-09-11T09:30:00"
       },
       {
-        "title": "Out-of-hours work not charged",
+        "title": "Out-of-hours work logged as non-billable",
         "client": "Meridian Logistics",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 90,
+        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 150,
@@ -396,11 +396,11 @@ export const DEMO: LandingSnapshot = {
         "workDate": "2026-09-09T21:40:00"
       },
       {
-        "title": "Hardware repair done as non-billable",
+        "title": "Hardware repair logged as non-billable",
         "client": "Bramley Homes",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 94,
+        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 95,
@@ -409,11 +409,11 @@ export const DEMO: LandingSnapshot = {
         "workDate": "2026-08-19T11:30:00"
       },
       {
-        "title": "Third-party application support given free",
+        "title": "Third-party application support logged as non-billable",
         "client": "Castle Accountancy",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 90,
+        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 75,
@@ -422,11 +422,11 @@ export const DEMO: LandingSnapshot = {
         "workDate": "2026-08-13T14:15:00"
       },
       {
-        "title": "Onsite visit not charged",
+        "title": "Onsite visit logged as non-billable",
         "client": "Pennine Engineering",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 90,
+        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 120,
@@ -435,11 +435,11 @@ export const DEMO: LandingSnapshot = {
         "workDate": "2026-08-04T12:30:00"
       },
       {
-        "title": "Out-of-hours work not charged",
+        "title": "Out-of-hours work logged as non-billable",
         "client": "Meridian Logistics",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 90,
+        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 90,
@@ -451,11 +451,11 @@ export const DEMO: LandingSnapshot = {
   },
   "spotlight": {
     "finding": {
-      "title": "Personal device supported free of charge",
+      "title": "Personal device work logged as non-billable",
       "client": "Bramley Homes",
       "category": "OUT_OF_SCOPE",
       "severity": "HIGH",
-      "confidence": 94,
+      "confidence": 95,
       "level": "HIGH",
       "overlaps": false,
       "value": 80,
@@ -473,7 +473,7 @@ export const DEMO: LandingSnapshot = {
     "clauseHighlights": [
       "applies to company-owned devices"
     ],
-    "contractTitle": "Managed Services Agreement – Business Essentials",
+    "contractTitle": "Managed Services Agreement – Business Essentials, section 3.1",
     "time": {
       "date": "2026-09-15",
       "time": "10:20",
@@ -481,8 +481,8 @@ export const DEMO: LandingSnapshot = {
       "duration": "1h 20m",
       "billable": false
     },
-    "recommendedAction": "Review whether this work on a personal device should be treated as out of scope and charged at your standard rate (£60/h). If it's a recurring request, agree how it will be billed with Bramley Homes.",
-    "basis": "The contract clause and the ticket both support this.",
+    "recommendedAction": "Review whether this work on a personal device should be treated as out of scope and charged at the agreement rate (£60/h). If it's a recurring request, agree how it will be billed with Bramley Homes.",
+    "basis": "The contract clause and the ticket both support this, and the rate is the one in the agreement.",
     "calculation": {
       "lines": [
         "1h 20m non-billable × £60/h = £80"
@@ -536,9 +536,9 @@ export const DEMO: LandingSnapshot = {
         "title": "Gross margin 28% against a 30% target",
         "client": "ABC Ltd",
         "category": "UNDERPRICED_CLIENT",
-        "severity": "HIGH",
-        "confidence": 82,
-        "level": "MEDIUM",
+        "severity": "MEDIUM",
+        "confidence": 50,
+        "level": "LOW",
         "overlaps": true,
         "value": 336,
         "monthly": 56,
@@ -562,8 +562,8 @@ export const DEMO: LandingSnapshot = {
         "title": "Potentially billable project work logged as non-billable",
         "client": "ABC Ltd",
         "category": "UNBILLED_TIME",
-        "severity": "MEDIUM",
-        "confidence": 65,
+        "severity": "LOW",
+        "confidence": 50,
         "level": "LOW",
         "overlaps": false,
         "value": 80,

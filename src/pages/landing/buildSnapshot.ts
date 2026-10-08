@@ -69,7 +69,8 @@ export function buildLandingSnapshot(): LandingSnapshot {
       `finding for ticket #${ref}`,
     )
     const ticket = must(evidence(f, 'ticket'), `ticket evidence for #${ref}`)
-    const contract = evidence(f, 'contract')
+    // The clause the finding rests on, not the hourly-rate or support-hours lines it also cites.
+    const contract = f.evidence.find((e) => e.kind === 'contract' && e.source === 'agreement' && e.label.startsWith('Agreement'))
     const [subject, ...body] = ticket.text.split('\n\n')
     return {
       finding: lite(f),

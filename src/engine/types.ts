@@ -169,6 +169,8 @@ export interface Evidence {
   source?: EvidenceSource
   // The records this line was read from.
   refs?: SourceRef[]
+  // For source 'settings': the WorkspaceSettings keys the line reports.
+  setting_keys?: (keyof WorkspaceSettings)[]
 }
 
 export interface SourceRef {
@@ -213,24 +215,71 @@ export type FindingCalc =
       // Where the support window came from; null unless the work was after hours.
       hours_source: 'contract' | 'settings' | null
       contract_checked: boolean
+      // Where the hourly rate (and out-of-hours multiplier) came from: stated in
+      // the client's agreement, or the Settings default. Optional for old rows.
+      rate_source?: 'contract' | 'settings'
+      // How closely the ticket wording matched the kind of work.
+      match?: 'strong' | 'loose'
     }
   | {
       kind: 'seats'
       unit: 'user' | 'device'
       baseline: number
-      baseline_source: 'contract' | 'billing'
+      // contract: stated in an uploaded agreement. client_record: only the
+      // contracted column of the clients file. billing: no contracted figure,
+      // so the billed quantity.
+      baseline_source: 'contract' | 'client_record' | 'billing'
+      // The clients file states a different contracted figure from the agreement.
+      baseline_conflict?: number | null
       actual: number
       unit_price: number
       price_source: 'billing_line' | 'default'
       price_label: string | null
+      // More than one billing line could be the per-unit charge; the lowest was used.
+      price_ambiguous?: boolean
+      price_candidates?: string[]
+      // Active assets with no first-seen date (counted as present all period).
+      undated?: number
     }
-  | { kind: 'mismatch'; unit: 'user' | 'device'; contracted: number; billed: number; unit_price: number; price_label: string }
-  | { kind: 'licence'; licence: string; assigned: number; billed: number; unit_price: number; price_label: string }
+  | {
+      kind: 'mismatch'
+      unit: 'user' | 'device'
+      contracted: number
+      contracted_source?: 'contract' | 'client_record'
+      billed: number
+      unit_price: number
+      price_label: string
+      price_ambiguous?: boolean
+    }
+  | {
+      kind: 'missing'
+      unit: 'user' | 'device'
+      contracted: number
+      contracted_source: 'contract' | 'client_record'
+      unit_price: number
+      price_source: 'default'
+    }
+  | {
+      kind: 'licence'
+      licence: string
+      assigned: number
+      billed: number
+      unit_price: number
+      price_label: string
+      // exact: the licence name and billing line name are the same once
+      // normalised. partial: one contains the other.
+      match?: 'exact' | 'partial'
+    }
   | {
       kind: 'usage'
       included: number
       included_source: 'client' | 'contract'
+      // The agreement states the same allowance as the clients file.
+      included_confirmed?: boolean
       rate: number
+      rate_source?: 'contract' | 'settings'
+      // true when only non-billable time is counted against the allowance.
+      non_billable_only?: boolean
       // used and over are rounded to 2dp; value matches period_values
       months: { month: string; used: number; over: number; value: number }[]
     }

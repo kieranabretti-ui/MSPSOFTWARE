@@ -14,6 +14,7 @@ describe('formatCalculation on the demo', () => {
       const calc = formatCalculation(f)!
       expect(calc.total, f.finding_key).toBe(f.estimated_value)
       expect(calc.monthly, f.finding_key).toBe(f.monthly_value)
+      expect(calc.annual, f.finding_key).toBe(f.annual_value)
       expect(calc.lines.length).toBeGreaterThan(0)
     }
   })
@@ -31,11 +32,13 @@ describe('formatCalculation on the demo', () => {
   it('shows the drift sum at the billing line price', () => {
     const f = findings.find((x) => x.client_id === clientId('ABC Ltd') && x.meta.rule === 'drift.user')!
     expect(formatCalculation(f)).toEqual({
-      lines: ['39 active users − 35 contracted = 4 users', '4 × £18 (Managed User Support (per user)) = £72 a month'],
+      lines: ['39 active users − 35 contracted = 4 users', '4 × £18 (Managed User Support (per user)) = £72 a month', '£72 × 12 = £864 a year'],
       result: '£72 a month',
       note: '£324 across the period as users were added. See value by month.',
       total: 324,
       monthly: 72,
+      annual: 864,
+      basis: 'recurring',
     })
   })
 
@@ -45,20 +48,21 @@ describe('formatCalculation on the demo', () => {
     expect(calc.lines).toContain('Target contribution: 30% × £1,850 = £555 a month')
     expect(calc.lines).toContain('£336 ÷ 6 months = £56 a month on average')
     expect(calc.lines.some((l) => l.startsWith('Shortfall in the 4 months below target: ') && l.endsWith('= £336'))).toBe(true)
-    expect(calc.result).toBe('£56 a month')
-    expect(calc.note).toBe('Price that restores 30% at average cost: £1,897 a month (+\u2060£47).')
+    expect(calc.result).toBe('£56 a month, estimated')
+    expect(calc.basis).toBe('estimate')
+    expect(calc.note).toBe('Price that restores 30% at average cost: £1,897 a month (+\u2060£47). An estimate from your cost settings, not a count of records.')
   })
 
   it('shows one line per month over the allowance', () => {
     const f = findings.find((x) => x.meta.rule === 'usage.over_allowance')!
     const calc = formatCalculation(f)!
-    expect(calc.lines[0]).toBe('August 2026: 13h used − 10h included = 3h × £60 = £180')
+    expect(calc.lines[0]).toBe('August 2026: 13h non-billable used − 10h included = 3h × £60 = £180')
     expect(calc.result).toBe('£355 one-off across 2 months')
   })
 
   it('shows the licence sum', () => {
     const f = findings.find((x) => x.meta.rule === 'license.unbilled')!
-    expect(formatCalculation(f)!.lines).toEqual(['22 assigned − 21 billed = 1 licence', '1 × £15 (Microsoft 365 Business Standard) = £15 a month'])
+    expect(formatCalculation(f)!.lines).toEqual(['22 assigned − 21 billed = 1 licence', '1 × £15 (Microsoft 365 Business Standard) = £15 a month', '£15 × 12 = £180 a year'])
   })
 
   it('returns null for findings saved before calculations were recorded', () => {

@@ -1,4 +1,4 @@
-import type { Asset, BillingItem, Client, Ticket, TimeEntry } from '../engine/types'
+import type { Asset, BillingItem, Client, Provenance, Ticket, TimeEntry } from '../engine/types'
 
 export type CsvKind = 'clients' | 'tickets' | 'time_entries' | 'assets' | 'billing'
 type FieldType = 'string' | 'number' | 'date' | 'datetime' | 'boolean'
@@ -215,6 +215,11 @@ export interface ImportContext {
   // Rows already in the workspace. A row with the same natural key reuses the
   // existing id, so the upsert replaces it instead of adding a duplicate.
   existing?: { tickets: Ticket[]; time_entries: TimeEntry[]; assets: Asset[]; billing_items: BillingItem[] }
+  // The upload (file) these rows come from. Every record written carries it as
+  // its source, with its row in the file (the header is row 1), so a finding
+  // can cite "users.csv, row 31". Omitted: the row is still recorded.
+  upload_id?: string | null
+  file_name?: string | null
 }
 
 export interface ImportResult {
@@ -328,7 +333,8 @@ export function importRows(kind: CsvKind, rows: MappedRow[], ctx: ImportContext)
     const k = clientKey(name)
     let c = byKey.get(k)
     if (!c) {
-      c = newClient(ctx.workspaceId, name.trim())
+      // Added because this row named it: its source is this row.
+      c = newClient(ctx.workspaceId, name.trim(), { source })
       byKey.set(k, c)
       res.clients.push(c)
       created.add(c.name)
@@ -336,9 +342,15 @@ export function importRows(kind: CsvKind, rows: MappedRow[], ctx: ImportContext)
     return c
   }
 
+  // A re-upload replaces a record's source with the latest file and row: a
+  // record belongs to the last file that wrote it.
+  const sourceOf = (row: number): Provenance => ({ upload_id: ctx.upload_id ?? null, file_name: ctx.file_name ?? null, row })
+  let source: Provenance = sourceOf(0)
+
   rows.forEach((r, i) => {
     if (badRows.has(i + 2)) return
     const ws = ctx.workspaceId
+    source = sourceOf(i + 2)
     switch (kind) {
       case 'clients': {
         const existing = byKey.get(clientKey(r.client))
@@ -352,6 +364,7 @@ export function importRows(kind: CsvKind, rows: MappedRow[], ctx: ImportContext)
           included_hours: parseNumber(r.included_hours),
           monthly_software_cost: parseNumber(r.monthly_software_cost),
         }
+        fields.source = source
         if (existing) {
           const updated = { ...existing, ...fields }
           byKey.set(clientKey(r.client), updated)
@@ -382,6 +395,7 @@ export function importRows(kind: CsvKind, rows: MappedRow[], ctx: ImportContext)
           status: r.status?.trim() || null,
           time_spent_minutes: Math.max(0, parseNumber(r.time_spent_minutes) ?? 0),
           billable: billable ?? false,
+          source,
         })
         break
       }
@@ -400,7 +414,7 @@ export function importRows(kind: CsvKind, rows: MappedRow[], ctx: ImportContext)
           minutes,
           billable: parseBool(r.billable) ?? false,
         }
-        res.time_entries.push({ id: idFor('time_entries', entry), ...entry })
+        res.time_entries.push({ id: idFor('time_entries', entry), ...entry, source })
         break
       }
       case 'assets': {
@@ -419,6 +433,7 @@ export function importRows(kind: CsvKind, rows: MappedRow[], ctx: ImportContext)
           license: r.license?.trim() || null,
           status: status && /^(inactive|disabled|retired|false|no|deleted|left)/.test(status) ? 'inactive' : 'active',
           first_seen: parseDate(r.first_seen, false),
+          source,
         })
         break
       }
@@ -435,6 +450,7 @@ export function importRows(kind: CsvKind, rows: MappedRow[], ctx: ImportContext)
           quantity,
           unit_price: unit,
           monthly_value: parseNumber(r.monthly_value) ?? Math.round(quantity * unit * 100) / 100,
+          source,
         })
         break
       }

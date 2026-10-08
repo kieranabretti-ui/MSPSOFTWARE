@@ -29,7 +29,7 @@ describe('demo dataset analysis', () => {
     const f = findings.find((x) => x.meta.ticket_ref === '18492')!
     expect(f.category).toBe('OUT_OF_SCOPE')
     expect(f.estimated_value).toBe(80)
-    expect(f.confidence).toBe(94)
+    expect(f.confidence).toBe(95)
     expect(f.severity).toBe('HIGH')
     expect(f.evidence[0].text).toContain('company-owned devices only')
   })

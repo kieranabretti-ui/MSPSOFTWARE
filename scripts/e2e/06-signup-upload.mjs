@@ -80,7 +80,7 @@ export default async function signupUpload({ page, BASE, SHOTS, shot, expect, un
   expect(own !== '£0', 'found leakage in uploaded data')
   await page.getByRole('link', { name: 'Opportunities' }).first().click()
   await page.getByPlaceholder('Search opportunities, clients, ticket #').waitFor()
-  expect(await page.getByText('Personal device supported free of charge').count(), 'personal device OOS from PDF contract')
+  expect(await page.getByText('Personal device work logged as non-billable').count(), 'personal device OOS from PDF contract')
   expect(await page.getByText(/Potentially billable new device setup/).count(), 'unbilled new laptop')
   await shot('12-own-findings')
   await page.getByPlaceholder('Search opportunities, clients, ticket #').fill('501')

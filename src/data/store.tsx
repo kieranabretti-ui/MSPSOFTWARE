@@ -5,11 +5,15 @@ import type {
   ActionStatus,
   Analysis,
   AnalysisSummary,
+  AuditAction,
+  AuditEvent,
   Client,
   ConfidenceLevel,
   Contract,
   Dataset,
+  DismissReason,
   Finding,
+  FindingDraft,
   FindingStatus,
   Report,
   Upload,
@@ -20,16 +24,17 @@ import type {
 import { DEFAULT_SETTINGS } from '../engine/types'
 import { useToast } from '../components/toast'
 import { applyDemoStages } from '../demo/stages'
+import { auditEvent } from '../lib/audit'
 import { confidenceOf } from '../lib/confidence'
-import { mapError } from '../lib/errors'
+import { AppError, mapError } from '../lib/errors'
 import { recurringKind } from '../lib/labels'
 import { overlapOf } from '../lib/overlap'
 import { setTrackContext, track, type AnalysisSource } from '../lib/track'
-import type { Backend, SessionUser, WorkspaceData } from './backend'
+import type { Backend, SessionUser, UploadDeletion, WorkspaceData } from './backend'
 import { emptyData } from './backend'
 import { LocalBackend } from './localBackend'
 import { LazySupabaseBackend } from './lazySupabase'
-import { importRows, newClient, uuid, type CsvKind, type ImportResult, type MappedRow } from './importers'
+import { importRows, newClient, uuid, type CsvKind, type ImportContext, type ImportResult, type MappedRow } from './importers'
 
 const SB_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined
 const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
@@ -67,7 +72,9 @@ interface Store {
   signIn(email: string, password: string): Promise<void>
   signUp(email: string, password: string, name: string, opts?: { intent?: string; plan?: string }): Promise<{ needsConfirmation: boolean }>
   sendMagicLink(email: string): Promise<void>
-  signOut(): Promise<void>
+  // clearLocalData (local mode): also remove this browser's copy of the
+  // account and its workspace data. Hosted data stays on the server.
+  signOut(opts?: { clearLocalData?: boolean }): Promise<void>
   startDemo(opts?: { onStage?: (s: DemoStage) => void }): Promise<void>
   createWorkspace(name: string): Promise<void>
   updateSettings(patch: Partial<WorkspaceSettings>, name?: string): Promise<void>
@@ -77,12 +84,38 @@ interface Store {
   addContract(clientId: string, title: string, text: string, file: File | null): Promise<void>
   createClient(fields: Partial<Client> & { name: string }): Promise<Client>
   runAnalysis(opts?: { source?: Exclude<AnalysisSource, 'demo'>; onStage?: (s: AnalysisStage) => void }): Promise<AnalysisSummary>
+  // Deprecated: use setFindingDecision. Dismissing through this records reason 'other'.
   setFindingStatus(id: string, status: FindingStatus, via?: 'detail' | 'queue'): Promise<void>
+  // The MSP's decision on a finding: stage, dismiss reason (required when
+  // dismissing), note and owner. Every change is written to the audit log.
+  setFindingDecision(id: string, decision: FindingDecision, via?: 'detail' | 'queue'): Promise<void>
+  // Records the first time a person opens a finding (once; later calls do nothing).
+  markFindingViewed(id: string): Promise<void>
   setFindingExplanation(id: string, text: string): Promise<void>
   createAction(input: { finding?: Finding; title: string; notes?: string; value?: number; client_id?: string | null }): Promise<Action>
   setActionStatus(id: string, status: ActionStatus): Promise<void>
   recordReport(): Promise<Report | null>
+  // Records a download in the audit log. PDFs go through recordReport.
+  logExport(format: 'csv' | 'pdf', opts?: { rows?: number; scope?: 'opportunities' | 'report' }): Promise<void>
+  // Deletion controls. Each says exactly what it removes; see the Backend docs.
+  deleteUpload(uploadId: string): Promise<UploadDeletion>
+  deleteAnalysis(analysisId: string): Promise<void>
+  deleteWorkspace(): Promise<void>
+  deleteAccount(): Promise<void>
 }
+
+export interface FindingDecision {
+  status?: FindingStatus
+  // Required when status is 'dismissed'.
+  dismiss_reason?: DismissReason
+  // null clears it. Up to 2,000 characters.
+  decision_note?: string | null
+  // null clears it. Up to 200 characters.
+  owner?: string | null
+}
+
+export const NOTE_MAX = 2000
+export const OWNER_MAX = 200
 
 const Ctx = createContext<Store | null>(null)
 
@@ -119,28 +152,88 @@ const dataset = (ws: Workspace, d: WorkspaceData): Dataset => ({
   assets: d.assets,
 })
 
-// Runs the engine and carries ids, stages and AI notes over to findings that
-// still apply. Pure: nothing is saved here. The engine loads on first use, so
-// the landing page doesn't ship it.
+// A person has decided something about this finding: moved it off New, or
+// given it a note or an owner. Such findings are never deleted by a re-run.
+export const isDecided = (f: Pick<Finding, 'status' | 'decision_note' | 'owner'>) => f.status !== 'open' || !!f.decision_note?.trim() || !!f.owner?.trim()
+
+export interface MergeResult {
+  // Everything to store: live findings, then stale ones kept for their decision.
+  findings: Finding[]
+  live: Finding[]
+  // live findings with a key not seen before
+  created: number
+  // findings no longer reproduced, kept as stale because a person decided on them
+  stale: number
+  // findings no longer reproduced and never decided on: removed
+  removed: number
+}
+
+// Carries ids, decisions and AI notes over to findings that still apply, by
+// finding_key. A previous finding the engine no longer produces is kept as
+// stale when a person decided on it, otherwise dropped. Pure.
+export function mergeFindings(prev: Finding[], drafts: FindingDraft[], ctx: { workspaceId: string; analysisId: string; at: string }): MergeResult {
+  const byKey = new Map(prev.map((f) => [f.finding_key, f]))
+  const seen = new Set<string>()
+  let created = 0
+  const live: Finding[] = drafts.map((f) => {
+    const p = byKey.get(f.finding_key)
+    seen.add(f.finding_key)
+    if (!p) created++
+    return {
+      ...f,
+      id: p?.id ?? uuid(),
+      workspace_id: ctx.workspaceId,
+      analysis_id: ctx.analysisId,
+      status: p?.status ?? 'open',
+      ai_explanation: p?.ai_explanation ?? null,
+      ai_meta: p?.ai_meta ?? null,
+      dismiss_reason: p?.dismiss_reason ?? null,
+      decision_note: p?.decision_note ?? null,
+      owner: p?.owner ?? null,
+      decided_at: p?.decided_at ?? null,
+      first_viewed_at: p?.first_viewed_at ?? null,
+      stale: false,
+      created_at: p?.created_at ?? ctx.at,
+      updated_at: ctx.at,
+    }
+  })
+  const gone = prev.filter((p) => !seen.has(p.finding_key))
+  const kept = gone.filter(isDecided).map((p) => (p.stale ? p : { ...p, stale: true, updated_at: ctx.at }))
+  return { findings: [...live, ...kept], live, created, stale: kept.length, removed: gone.length - kept.length }
+}
+
+// Runs the engine and merges the result with the previous findings. Pure:
+// nothing is saved here. The engine loads on first use, so the landing page
+// doesn't ship it.
 const analyseFor = async (ws: Workspace, d: WorkspaceData) => {
   const { analyse } = await import('../engine/analyse')
   const { summary, findings } = analyse(dataset(ws, d))
   const analysis: Analysis = { id: uuid(), workspace_id: ws.id, period_start: summary.period_start, period_end: summary.period_end, summary, created_at: now() }
-  const prev = new Map(d.findings.map((f) => [f.finding_key, f]))
-  const merged: Finding[] = findings.map((f) => {
-    const p = prev.get(f.finding_key)
-    return {
-      ...f,
-      id: p?.id ?? uuid(),
-      workspace_id: ws.id,
-      analysis_id: analysis.id,
-      status: p?.status ?? 'open',
-      ai_explanation: p?.ai_explanation ?? null,
-      created_at: p?.created_at ?? now(),
-      updated_at: now(),
-    }
-  })
-  return { analysis, findings: merged }
+  const merged = mergeFindings([...d.findings, ...d.stale_findings], findings, { workspaceId: ws.id, analysisId: analysis.id, at: now() })
+  return { analysis, ...merged }
+}
+
+// Contract text keeps a form feed between PDF pages so a clause can be cited
+// by page. Normalises line endings and strips other control characters.
+export function normaliseContractText(text: string): string {
+  return text
+    .replace(/\r\n?/g, '\n')
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\u0000-\u0008\u000B\u000E-\u001F\u007F]/g, '')
+}
+
+// The stage a decision moves a finding to, and the audit events it produces.
+export function decisionEvents(prev: Pick<Finding, 'status' | 'decision_note' | 'owner'>, next: Pick<Finding, 'status' | 'decision_note' | 'owner' | 'dismiss_reason'>, via: string): { action: AuditAction; detail: AuditEvent['detail'] }[] {
+  const out: { action: AuditAction; detail: AuditEvent['detail'] }[] = []
+  if (prev.status !== next.status) {
+    if (next.status === 'dismissed') out.push({ action: 'finding.dismissed', detail: { from: prev.status, reason: next.dismiss_reason ?? null, via } })
+    else if (prev.status === 'dismissed' || prev.status === 'resolved' || (next.status === 'open' && prev.status !== 'open'))
+      out.push({ action: 'finding.reopened', detail: { from: prev.status, to: next.status, via } })
+    else out.push({ action: 'finding.stage_changed', detail: { from: prev.status, to: next.status, via } })
+  }
+  if ((prev.decision_note ?? null) !== (next.decision_note ?? null)) out.push({ action: 'finding.note', detail: { cleared: !next.decision_note, length: next.decision_note?.length ?? 0 } })
+  if ((prev.owner ?? null) !== (next.owner ?? null)) out.push({ action: 'finding.owner', detail: { assigned: !!next.owner } })
+  return out
 }
 
 function levelCounts(findings: Pick<Finding, 'confidence' | 'meta'>[]) {
@@ -162,8 +255,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   dataRef.current = data
   const wsRef = useRef(workspace)
   wsRef.current = workspace
+  // Who audit events are recorded against. Set as soon as a user is known,
+  // ahead of the re-render.
+  const userRef = useRef(user)
+  userRef.current = user
 
   const loadFor = useCallback(async (b: Backend, u: SessionUser | null) => {
+    userRef.current = u
     setUser(u)
     if (!u) {
       setWorkspace(null)
@@ -220,18 +318,45 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return wsRef.current
   }
 
+  // Appends to the audit log. Best effort: a failed write is reported to the
+  // console and never undoes the action it records. Only events the backend
+  // accepted are shown.
+  const log = useCallback(async (b: Backend, wsId: string, action: AuditAction, target: { type: string; id: string } | null, detail: AuditEvent['detail'] = {}, at?: string) => {
+    const e = auditEvent(wsId, { id: userRef.current?.id ?? null, email: userRef.current?.email ?? null }, action, target, detail, at)
+    try {
+      await b.logEvent(wsId, e)
+    } catch (err) {
+      console.warn('Audit log write failed', action, err)
+      return
+    }
+    setData((d) => (d.audit_log.some((x) => x.id === e.id) ? d : { ...d, audit_log: [e, ...d.audit_log] }))
+  }, [])
+
   const loadDemoInto = useCallback(async (b: Backend, ws: Workspace, onStage?: (s: DemoStage) => void) => {
     const { buildDemoDataset } = await import('../demo/dataset')
-    const ds = buildDemoDataset(ws.id)
-    const kinds: [UploadKind, string, number][] = [
-      ['clients', 'demo-clients.csv', ds.clients.length],
-      ['tickets', 'demo-tickets.csv', ds.tickets.length],
-      ['time_entries', 'demo-time-entries.csv', ds.time_entries.length],
-      ['assets', 'demo-users-devices.csv', ds.assets.length],
-      ['billing', 'demo-billing.csv', ds.billing_items.length],
-      ['contract', `${ds.contracts.length} demo contracts`, ds.contracts.length],
+    const files: [UploadKind, string][] = [
+      ['clients', 'demo-clients.csv'],
+      ['tickets', 'demo-tickets.csv'],
+      ['time_entries', 'demo-time-entries.csv'],
+      ['assets', 'demo-users-devices.csv'],
+      ['billing', 'demo-billing.csv'],
+      ['contract', 'demo contracts'],
     ]
-    const uploads: Upload[] = kinds.map(([kind, file_name, row_count]) => ({ id: uuid(), workspace_id: ws.id, kind, file_name, row_count, status: 'imported', storage_path: null, mapping: null, warnings: [], created_at: now() }))
+    const ids = Object.fromEntries(files.map(([kind, file_name]) => [kind, { id: uuid(), file_name }]))
+    const ds = buildDemoDataset(ws.id, ids)
+    const rows: Record<UploadKind, number> = { clients: ds.clients.length, tickets: ds.tickets.length, time_entries: ds.time_entries.length, assets: ds.assets.length, billing: ds.billing_items.length, contract: ds.contracts.length }
+    const uploads: Upload[] = files.map(([kind, file_name]) => ({
+      id: ids[kind].id,
+      workspace_id: ws.id,
+      kind,
+      file_name: kind === 'contract' ? `${rows.contract} ${file_name}` : file_name,
+      row_count: rows[kind],
+      status: 'imported',
+      storage_path: null,
+      mapping: null,
+      warnings: [],
+      created_at: now(),
+    }))
     await b.clearAll(ws.id)
     const updated = { ...ws, is_demo: true, settings: { ...DEFAULT_SETTINGS } }
     await b.updateWorkspace(updated)
@@ -241,14 +366,38 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const fresh = await b.loadAll(ws.id)
     onStage?.('checking')
     await paint()
-    const { analysis, findings } = await analyseFor(updated, fresh)
-    // The demo opens part-way through the workflow (see demo/stages.ts). The
-    // stages are set before saving, so the first load already shows them.
+    // A fresh demo starts from no findings, so no earlier decision carries over.
+    const { analysis, findings } = await analyseFor(updated, { ...fresh, findings: [], stale_findings: [] })
+    // The demo opens part-way through the workflow (see demo/stages.ts), with
+    // the decisions a person would have recorded. They are set before saving,
+    // so the first load already shows them.
     const names = new Map(fresh.clients.map((c) => [c.id, c.name]))
-    const stages = new Map(applyDemoStages(findings, (id) => names.get(id) ?? '').map((s) => [s.id, s.status]))
-    const staged = findings.map((f) => (stages.has(f.id) ? { ...f, status: stages.get(f.id)! } : f))
+    const daysAgo = (n: number, h = 10) => new Date(Date.now() - n * 864e5 - h * 36e5).toISOString()
+    const stages = new Map(applyDemoStages(findings, (id) => names.get(id) ?? '').map((s) => [s.id, s]))
+    const staged = findings.map((f) => {
+      const s = stages.get(f.id)
+      return s ? { ...f, status: s.status, owner: s.owner, decision_note: s.note, decided_at: daysAgo(s.days_ago), first_viewed_at: daysAgo(s.days_ago, 11) } : f
+    })
     onStage?.('opening')
     await b.saveAnalysis(ws.id, analysis, staged)
+    // The activity the demo's history implies: the imports, the first run and
+    // the decisions above, oldest first.
+    const demoActor = { id: userRef.current?.id ?? null, email: userRef.current?.email ?? null }
+    const start = Math.max(...[...stages.values()].map((s) => s.days_ago), 0) + 1
+    const events: AuditEvent[] = [
+      ...uploads.map((u) => auditEvent(ws.id, demoActor, 'upload.created', { type: 'upload', id: u.id }, { kind: u.kind, rows: u.row_count }, daysAgo(start, 12))),
+      auditEvent(ws.id, demoActor, 'analysis.run', { type: 'analysis', id: analysis.id }, { findings: findings.length, new: findings.length, stale: 0, removed: 0, source: 'demo' }, daysAgo(start, 11.5)),
+      auditEvent(ws.id, demoActor, 'finding.created', { type: 'analysis', id: analysis.id }, { count: findings.length }, daysAgo(start, 11.5)),
+    ]
+    for (const s of [...stages.values()].sort((a, b) => b.days_ago - a.days_ago)) {
+      const target = { type: 'finding', id: s.id }
+      events.push(auditEvent(ws.id, demoActor, 'finding.viewed', target, {}, daysAgo(s.days_ago, 11)))
+      events.push(auditEvent(ws.id, demoActor, 'finding.owner', target, { assigned: true }, daysAgo(s.days_ago, 10.8)))
+      if (s.note) events.push(auditEvent(ws.id, demoActor, 'finding.note', target, { cleared: false, length: s.note.length }, daysAgo(s.days_ago, 10.5)))
+      const path: FindingStatus[] = ['open', 'reviewing', 'valid', 'resolved']
+      for (let i = 1; i <= path.indexOf(s.status); i++) events.push(auditEvent(ws.id, demoActor, 'finding.stage_changed', target, { from: path[i - 1], to: path[i], via: 'detail' }, daysAgo(s.days_ago, 10.2 - i * 0.1)))
+    }
+    for (const e of events) await b.logEvent(ws.id, e)
     setData(await b.loadAll(ws.id))
   }, [])
 
@@ -290,8 +439,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     async sendMagicLink(email) {
       await backend.sendMagicLink(email)
     },
-    async signOut() {
+    async signOut(opts) {
+      const leaving = user
       await backend.signOut()
+      // Local mode keeps everything in this browser; on request, remove it.
+      if (opts?.clearLocalData && leaving && backend.forgetLocalUser) await backend.forgetLocalUser(leaving.id)
       try {
         localStorage.removeItem(MODE_KEY)
       } catch {
@@ -318,6 +470,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         u = (await b.signUp(DEMO_EMAIL, DEMO_PASSWORD, 'Alex Morgan')).user!
       }
       const ws = (await b.getWorkspace(u)) ?? (await b.createWorkspace(u, 'Northlight IT', true))
+      userRef.current = u
       setUser(u)
       await loadDemoInto(b, ws, onStage)
       if (b !== backend) setBackend(b)
@@ -338,6 +491,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       await backend.updateWorkspace(updated)
       wsRef.current = updated
       setWorkspace(updated)
+      // Which settings changed, by count; never the values.
+      const changed = (Object.keys(patch) as (keyof WorkspaceSettings)[]).filter((k) => patch[k] !== ws.settings[k])
+      const renamed = name != null && name !== ws.name
+      if (changed.length || renamed) await log(backend, ws.id, 'settings.changed', { type: 'workspace', id: ws.id }, { fields: changed.length, keys: changed.slice(0, 6).join(','), renamed })
     },
     async loadDemoData() {
       await withBusy('Loading demo data…', () => loadDemoInto(backend, requireWs()))
@@ -345,25 +502,42 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     async resetData() {
       const ws = requireWs()
       await withBusy('Clearing data…', async () => {
+        const uploads = dataRef.current.uploads.length
         await backend.clearAll(ws.id)
         const updated = { ...ws, is_demo: false }
         await backend.updateWorkspace(updated)
         setWorkspace(updated)
         setData(await backend.loadAll(ws.id))
+        // The hosted backend logs this in the same transaction as the delete.
+        if (backend.mode === 'local') await log(backend, ws.id, 'data.cleared', { type: 'workspace', id: ws.id }, { uploads })
       })
     },
     async importCsv(kind, fileName, rows, mapping) {
       const ws = requireWs()
       return withBusy('Importing…', async () => {
         const d = dataRef.current
-        // Existing rows let a re-upload update records instead of duplicating them.
-        const res = importRows(kind, rows, {
+        const uploadId = uuid()
+        // Existing rows let a re-upload update records instead of duplicating
+        // them. The upload id and file name stamp each row's provenance.
+        const ctx: ImportContext = {
           workspaceId: ws.id,
           clients: d.clients,
           existing: { tickets: d.tickets, time_entries: d.time_entries, assets: d.assets, billing_items: d.billing_items },
-        })
+          upload_id: uploadId,
+          file_name: fileName,
+        }
+        const res = importRows(kind, rows, ctx)
+        // Every row written by this file names it, even if the importer gave
+        // no row number. A row belongs to the last file that wrote it.
+        const stamp = <T extends { source?: { upload_id: string | null } | null }>(r: T): T =>
+          r.source?.upload_id === uploadId ? r : { ...r, source: { upload_id: uploadId, file_name: fileName, row: null } }
+        res.clients = res.clients.map(stamp)
+        res.tickets = res.tickets.map(stamp)
+        res.time_entries = res.time_entries.map(stamp)
+        res.assets = res.assets.map(stamp)
+        res.billing_items = res.billing_items.map(stamp)
         const upload: Upload = {
-          id: uuid(),
+          id: uploadId,
           workspace_id: ws.id,
           kind,
           file_name: fileName,
@@ -376,6 +550,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }
         await backend.upsert(ws.id, { clients: res.clients, tickets: res.tickets, time_entries: res.time_entries, assets: res.assets, billing_items: res.billing_items, uploads: [upload] })
         setData(await backend.loadAll(ws.id))
+        await log(backend, ws.id, 'upload.created', { type: 'upload', id: uploadId }, { kind, rows: res.imported, added: res.added, updated: res.updated, errors: res.errors.length })
         track('upload_completed', { kind, rows: rows.length, added: res.added, updated: res.updated, errors: res.errors.length })
         return res
       })
@@ -385,9 +560,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       await withBusy('Saving contract…', async () => {
         const storage_path = file ? await backend.storeFile(ws.id, file) : null
         const upload: Upload = { id: uuid(), workspace_id: ws.id, kind: 'contract', file_name: file?.name ?? title, row_count: 1, status: 'imported', storage_path, mapping: null, warnings: [], created_at: now() }
-        const contract: Contract = { id: uuid(), workspace_id: ws.id, client_id: clientId, title, text, upload_id: upload.id, created_at: now() }
+        const contract: Contract = { id: uuid(), workspace_id: ws.id, client_id: clientId, title, text: normaliseContractText(text), upload_id: upload.id, created_at: now() }
         await backend.upsert(ws.id, { uploads: [upload], contracts: [contract] })
         setData(await backend.loadAll(ws.id))
+        await log(backend, ws.id, 'upload.created', { type: 'upload', id: upload.id }, { kind: 'contract', rows: 1, file_stored: !!storage_path, pages: text.split('\f').length })
       })
     },
     async createClient(fields) {
@@ -407,32 +583,78 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       await paint()
       onStage?.('checking')
       await paint()
-      const { analysis, findings } = await analyseFor(ws, dataRef.current)
+      const { analysis, findings, live, created, stale, removed } = await analyseFor(ws, dataRef.current)
       onStage?.('saving')
       await backend.saveAnalysis(ws.id, analysis, findings)
       setData(await backend.loadAll(ws.id))
+      const target = { type: 'analysis', id: analysis.id }
+      await log(backend, ws.id, 'analysis.run', target, { findings: live.length, new: created, stale, removed, source })
+      if (created) await log(backend, ws.id, 'finding.created', target, { count: created })
       onStage?.('done')
-      track('analysis_completed', { source, opportunities: findings.length, ...levelCounts(findings), duration_ms: Math.round(performance.now() - started) })
+      track('analysis_completed', { source, opportunities: live.length, ...levelCounts(live), duration_ms: Math.round(performance.now() - started) })
       return analysis.summary
     },
     async setFindingStatus(id, status, via = 'detail') {
+      await store.setFindingDecision(id, status === 'dismissed' ? { status, dismiss_reason: 'other' } : { status }, via)
+    },
+    async setFindingDecision(id, decision, via = 'detail') {
       const ws = requireWs()
-      const prev = dataRef.current.findings.find((f) => f.id === id)
+      const prev = [...dataRef.current.findings, ...dataRef.current.stale_findings].find((f) => f.id === id)
+      if (!prev) throw new AppError('This opportunity is no longer in the workspace. Reload and try again.', { code: 'finding_not_found' })
+      const status = decision.status ?? prev.status
+      if (status === 'dismissed' && !(decision.dismiss_reason ?? (prev.status === 'dismissed' ? prev.dismiss_reason : null)))
+        throw new AppError('Choose a reason before dismissing.', { code: 'dismiss_reason_required' })
+      const clean = (v: string | null | undefined, max: number) => (v == null ? v : v.trim().slice(0, max) || null)
       const stamp = now()
-      setData((d) => ({ ...d, findings: d.findings.map((f) => (f.id === id ? { ...f, status, updated_at: stamp } : f)) }))
+      const patch: Partial<Finding> = { updated_at: stamp }
+      if (status !== prev.status) {
+        patch.status = status
+        patch.decided_at = stamp
+        // A reason belongs to a dismissal; moving out of Dismissed clears it.
+        patch.dismiss_reason = status === 'dismissed' ? decision.dismiss_reason! : null
+      } else if (status === 'dismissed' && decision.dismiss_reason && decision.dismiss_reason !== prev.dismiss_reason) patch.dismiss_reason = decision.dismiss_reason
+      if (decision.decision_note !== undefined) patch.decision_note = clean(decision.decision_note, NOTE_MAX) ?? null
+      if (decision.owner !== undefined) patch.owner = clean(decision.owner, OWNER_MAX) ?? null
+      const next = { ...prev, ...patch }
+      const events = decisionEvents(prev, next, via)
+      if (status === prev.status && patch.dismiss_reason) events.unshift({ action: 'finding.dismissed', detail: { from: prev.status, reason: patch.dismiss_reason, via, changed_reason: true } })
+      if (!events.length) return
+      const apply = (f: Finding) => (f.id === id ? { ...f, ...patch } : f)
+      setData((d) => ({ ...d, findings: d.findings.map(apply), stale_findings: d.stale_findings.map(apply) }))
       try {
-        await backend.updateFinding(ws.id, id, { status, updated_at: stamp })
+        await backend.updateFinding(ws.id, id, patch)
       } catch (e) {
         // Put it back, unless something else has changed it since.
-        if (prev) setData((d) => ({ ...d, findings: d.findings.map((f) => (f.id === id && f.status === status ? { ...f, status: prev.status, updated_at: prev.updated_at } : f)) }))
+        const undo = (f: Finding) => (f.id === id && f.updated_at === stamp ? prev : f)
+        setData((d) => ({ ...d, findings: d.findings.map(undo), stale_findings: d.stale_findings.map(undo) }))
         throw e
       }
-      if (prev && prev.status !== status) track('finding_stage_changed', { from: prev.status, to: status, category: prev.category, via })
+      for (const ev of events) await log(backend, ws.id, ev.action, { type: 'finding', id }, ev.detail)
+      if (status !== prev.status) track('finding_stage_changed', { from: prev.status, to: status, category: prev.category, via })
     },
+    async markFindingViewed(id) {
+      const ws = wsRef.current
+      const f = dataRef.current.findings.find((x) => x.id === id) ?? dataRef.current.stale_findings.find((x) => x.id === id)
+      if (!ws || !f || f.first_viewed_at) return
+      const stamp = now()
+      const apply = (x: Finding) => (x.id === id && !x.first_viewed_at ? { ...x, first_viewed_at: stamp } : x)
+      setData((d) => ({ ...d, findings: d.findings.map(apply), stale_findings: d.stale_findings.map(apply) }))
+      dataRef.current = { ...dataRef.current, findings: dataRef.current.findings.map(apply), stale_findings: dataRef.current.stale_findings.map(apply) }
+      try {
+        // updated_at is left alone: opening a finding isn't a change to it.
+        await backend.updateFinding(ws.id, id, { first_viewed_at: stamp })
+      } catch (e) {
+        console.warn('Could not record first view', e)
+        return
+      }
+      await log(backend, ws.id, 'finding.viewed', { type: 'finding', id }, { category: f.category })
+    },
+    // The hosted ai-review function stores the explanation (and its model,
+    // time and evidence hash) and logs ai.explained itself, so the browser can't
+    // write text that looks like AI output. Here it is only shown. Local mode
+    // has no AI.
     async setFindingExplanation(id, text) {
-      const ws = requireWs()
       setData((d) => ({ ...d, findings: d.findings.map((f) => (f.id === id ? { ...f, ai_explanation: text } : f)) }))
-      await backend.updateFinding(ws.id, id, { ai_explanation: text })
     },
     // A task on an opportunity. Adding one starts the review of a New
     // opportunity; it never approves it. The value is kept on the row for
@@ -453,11 +675,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       }
       await backend.saveAction(ws.id, action)
       const current = finding && (dataRef.current.findings.find((f) => f.id === finding.id) ?? finding)
-      if (current && current.status === 'open') {
-        await backend.updateFinding(ws.id, current.id, { status: 'reviewing', updated_at: now() })
+      const moved = !!current && current.status === 'open'
+      if (moved) {
+        const stamp = now()
+        await backend.updateFinding(ws.id, current.id, { status: 'reviewing', decided_at: stamp, updated_at: stamp })
         track('finding_stage_changed', { from: 'open', to: 'reviewing', category: current.category, via: 'detail' })
       }
       setData(await backend.loadAll(ws.id))
+      // Recorded as a task, so review metrics can tell it from a deliberate review.
+      if (moved) await log(backend, ws.id, 'finding.stage_changed', { type: 'finding', id: current.id }, { from: 'open', to: 'reviewing', via: 'task' })
       return action
     },
     // Finishing a task never moves the opportunity's stage.
@@ -481,8 +707,59 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const report: Report = { id: uuid(), workspace_id: ws.id, analysis_id: an.id, title: 'MSP Revenue Leakage Report', period_label: an.summary.period_label, created_at: now() }
       await backend.saveReport(ws.id, report)
       setData((d) => ({ ...d, reports: [report, ...d.reports] }))
+      await log(backend, ws.id, 'export.pdf', { type: 'report', id: report.id }, { scope: 'report', analysis_id: an.id })
       track('report_downloaded', { format: 'pdf' })
       return report
+    },
+    async logExport(format, opts) {
+      const ws = requireWs()
+      await log(backend, ws.id, format === 'pdf' ? 'export.pdf' : 'export.csv', null, { scope: opts?.scope ?? 'opportunities', rows: opts?.rows ?? null })
+    },
+    async deleteUpload(uploadId) {
+      const ws = requireWs()
+      const kind = dataRef.current.uploads.find((u) => u.id === uploadId)?.kind ?? null
+      return withBusy('Deleting file…', async () => {
+        const res = await backend.deleteUpload(ws.id, uploadId)
+        setData(await backend.loadAll(ws.id))
+        // The hosted RPC logs this in the same transaction as the delete.
+        if (backend.mode === 'local') await log(backend, ws.id, 'upload.deleted', { type: 'upload', id: uploadId }, { kind, ...res })
+        return res
+      })
+    },
+    async deleteAnalysis(analysisId) {
+      const ws = requireWs()
+      const findings = dataRef.current.findings.filter((f) => f.analysis_id === analysisId).length + dataRef.current.stale_findings.filter((f) => f.analysis_id === analysisId).length
+      const reports = dataRef.current.reports.filter((r) => r.analysis_id === analysisId).length
+      await withBusy('Deleting analysis…', async () => {
+        await backend.deleteAnalysis(ws.id, analysisId)
+        setData(await backend.loadAll(ws.id))
+        if (backend.mode === 'local') await log(backend, ws.id, 'analysis.deleted', { type: 'analysis', id: analysisId }, { findings, reports })
+      })
+    },
+    // Removes the workspace and everything in it. The account stays, with no
+    // workspace, so the app offers to create a new one.
+    async deleteWorkspace() {
+      const ws = requireWs()
+      await withBusy('Deleting workspace…', async () => {
+        await backend.deleteWorkspace(ws.id)
+        wsRef.current = null
+        setWorkspace(null)
+        setData(emptyData())
+      })
+    },
+    async deleteAccount() {
+      await withBusy('Deleting account…', async () => {
+        await backend.deleteAccount()
+        try {
+          localStorage.removeItem(MODE_KEY)
+        } catch {
+          /* ignore */
+        }
+        wsRef.current = null
+        const next = pickBackend()
+        await loadFor(next, null)
+        if (next.mode !== backend.mode) setBackend(next)
+      })
     },
   }
 

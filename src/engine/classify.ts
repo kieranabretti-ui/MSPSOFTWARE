@@ -139,13 +139,13 @@ export const CATEGORY_NOUNS: Record<WorkCategory, string> = {
 }
 
 export const OUT_OF_SCOPE_TITLES: Record<WorkCategory, string> = {
-  personal_device: 'Personal device supported free of charge',
-  hardware_repair: 'Hardware repair done as non-billable',
-  third_party_app: 'Third-party application support given free',
-  project_work: 'Project work absorbed into the agreement',
-  new_user: 'New user setup not charged',
-  new_device: 'New device setup not charged',
-  onsite: 'Onsite visit not charged',
-  unsupported_software: 'Unsupported software work not charged',
-  after_hours: 'Out-of-hours work not charged',
+  personal_device: 'Personal device work logged as non-billable',
+  hardware_repair: 'Hardware repair logged as non-billable',
+  third_party_app: 'Third-party application support logged as non-billable',
+  project_work: 'Project work logged as non-billable',
+  new_user: 'New user setup logged as non-billable',
+  new_device: 'New device setup logged as non-billable',
+  onsite: 'Onsite visit logged as non-billable',
+  unsupported_software: 'Unsupported software work logged as non-billable',
+  after_hours: 'Out-of-hours work logged as non-billable',
 }

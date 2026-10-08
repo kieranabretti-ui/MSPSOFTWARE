@@ -422,8 +422,8 @@ export default function FindingDetail() {
           <Card>
             <CardHeader as="h2" title="Source records" subtitle="The rows this opportunity was built from" />
             <ul className="divide-y divide-line-soft">
-              {f.source_data.map((s) => (
-                <li key={`${s.table}:${s.id}`} className="flex items-baseline justify-between gap-3 px-5 py-2.5 text-small">
+              {f.source_data.map((s, i) => (
+                <li key={`${s.table}:${s.id}:${i}`} className="flex items-baseline justify-between gap-3 px-5 py-2.5 text-small">
                   <span className="min-w-0 truncate text-ink-2">{s.label}</span>
                   <span className="shrink-0 text-caption text-ink-3">{SOURCE_KIND[s.table]}</span>
                 </li>

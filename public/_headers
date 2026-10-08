@@ -1,6 +1,25 @@
+# Security headers for every response (Netlify / Cloudflare Pages format).
+# vercel.json carries the same set for Vercel; keep the two identical.
+#
+# The Content-Security-Policy is ENFORCED. It was checked against the built
+# app (landing page, /demo, the app pages, CSV and PDF export) with zero
+# violations. What each source is for:
+#   script-src 'self'          bundled JS only; no inline scripts, no eval
+#   style-src 'unsafe-inline'  React style attributes and chart libraries
+#   img-src data: blob:        icons drawn as data URIs, jsPDF and chart images
+#   font-src 'self' data:      self-hosted Host Grotesk; jsPDF's built-in fonts
+#   connect-src *.supabase.co  Supabase (REST, Auth, Storage, Edge Functions,
+#                              Realtime over wss) for hosted accounts
+#   worker-src 'self' blob:    the pdf.js worker that reads contract PDFs
+# If VITE_TRACK_ENDPOINT is set to another origin, add that origin to
+# connect-src (here and in vercel.json), or analytics beacons are blocked.
+# For a tighter policy, replace https://*.supabase.co / wss://*.supabase.co
+# with your project's own origin (https://<ref>.supabase.co).
 /*
   X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
   Strict-Transport-Security: max-age=63072000; includeSubDomains
-  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  Cross-Origin-Opener-Policy: same-origin
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; worker-src 'self' blob:; manifest-src 'self'; media-src 'self'; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'

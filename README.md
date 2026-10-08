@@ -59,43 +59,99 @@ Checkout isn't built, so paid-plan buttons record interest and every account has
 
 ### Setting up Supabase
 
-1. Create a Supabase project.
-2. Apply the schema: paste `supabase/migrations/20261006000000_init.sql` into the SQL editor, or use
-   the CLI.
+1. Create a Supabase project (the hosted project for this app is in the London region).
+2. Apply every migration in `supabase/migrations/`, in filename order. With the CLI:
    ```bash
    supabase link --project-ref <your-project-ref>
    supabase db push
    ```
-3. In **Authentication → URL configuration**, set the site URL to where the app is served and add
+   or paste each file into the SQL editor in order. `20261008000100_tenant_hardening.sql` must run
+   after `20261008000000_evidence_and_audit.sql`.
+3. Run the isolation checks: paste `supabase/tests/rls.sql` into the SQL editor (or
+   `psql "$DB_URL" -f supabase/tests/rls.sql`). It creates two throwaway users and workspaces inside
+   a transaction, prints `PASS …` for each check and rolls everything back. Any `FAIL …` aborts. Run
+   it on a staging project first, and again after every migration.
+4. In **Authentication → URL configuration**, set the site URL to where the app is served and add
    `<site>/app` as a redirect URL (used by magic links and email confirmation).
-4. Copy `.env.example` to `.env.local` and fill in the project URL and anon key from
+5. In **Authentication**, mirror `supabase/config.toml` (it only applies to a local `supabase start`):
+   - confirm email: on;
+   - minimum password length 10, with lower and upper case letters and digits;
+   - leaked password protection: on (hosted projects only);
+   - secure email change: on.
+6. Copy `.env.example` to `.env.local` and fill in the project URL and anon key from
    **Project settings → API**:
    ```
    VITE_SUPABASE_URL=https://<ref>.supabase.co
    VITE_SUPABASE_ANON_KEY=<anon key>
    ```
-5. Optional, for the **AI review** card on each finding:
+   The anon key is public by design; Row Level Security protects the data. Never put the
+   `service_role` key in a `VITE_` variable or anywhere in the frontend.
+7. Optional, for the **AI review** card on each finding:
    ```bash
    supabase functions deploy ai-review
    supabase secrets set ANTHROPIC_API_KEY=<your key>
+   supabase secrets set SITE_URL=https://<your app origin>
+   # optional limits (defaults shown)
+   supabase secrets set AI_WORKSPACE_DAILY_LIMIT=50 AI_USER_HOURLY_LIMIT=20 AI_USER_DAILY_LIMIT=60
    ```
-   The key lives only in the Edge Function. The browser never sees it.
+   `SITE_URL` may list several origins separated by commas. If it is unset, the function refuses
+   every browser origin (it allows `localhost` only when running against a local Supabase). The
+   Anthropic key and the service role key (provided to Edge Functions by Supabase) live only in the
+   function. The browser never sees them.
 
 ### What the schema does
 
 Tables: `profiles`, `workspaces`, `workspace_members`, `clients`, `contracts`, `tickets`,
 `time_entries`, `billing_items`, `assets` (users and devices), `uploads`, `analyses`, `findings`,
-`actions`, `reports`. Every table uses UUID keys and `created_at`/`updated_at` timestamps, and every
+`actions`, `reports`, `audit_log`, `ai_usage`. Every table uses UUID keys and timestamps, and every
 business table carries `workspace_id`.
 
-Row Level Security is enabled on every table: a user can only read or write rows in workspaces they
-are a member of. Workspaces are created through the `create_workspace()` function, which also adds
-the caller as owner, so nobody can insert a workspace or join one directly. Uploaded files go to a
-private `uploads` bucket under `<workspace_id>/…`, with the same membership check.
+## Security setup and controls
 
-The migration has been tested on Postgres 16 with the demo dataset loaded through RLS as a signed-in
-user, and with a second user confirmed unable to read, change, insert into or join the first user's
-workspace.
+What is enforced, and where. Each line is checked by `supabase/tests/rls.sql` unless it says
+otherwise. These controls apply to **Supabase mode only**: in local mode everything stays in the
+browser's storage, the sign-in is not a security boundary, and anyone using the same browser profile
+can read the data.
+
+- **Tenant isolation (Row Level Security).** RLS is on for every table. A user can read or write
+  rows only in workspaces they belong to. Workspaces are created through `create_workspace()` (one
+  per user), which adds the caller as owner, so nobody can insert a workspace or join one directly.
+- **References stay inside a workspace.** Foreign keys from child rows to clients, uploads,
+  analyses and findings are composite `(workspace_id, id)` keys, so a row in workspace A cannot point
+  at a record in workspace B (foreign-key checks bypass RLS, so this has to be enforced by the keys
+  themselves). A row's `workspace_id` cannot be changed after it is written.
+- **Signed-out callers get nothing.** The `anon` role has no privileges on any table or function.
+  New tables get no default grants: each migration must grant what it needs.
+- **Files.** The `uploads` bucket is private, accepts only PDF and plain text up to 20 MB, and only
+  under `<workspace_id>/…` for members of that workspace. Files cannot be overwritten.
+- **AI output is written by the server.** `findings.ai_explanation` and `ai_meta` (model, time,
+  evidence hash) can only be written by the `ai-review` function. When a finding's evidence or
+  values change, the database clears its old explanation.
+- **AI limits.** Each request is recorded in `ai_usage`; the function enforces a per-workspace daily
+  cap and per-user hourly and daily caps, and reuses a stored explanation for unchanged evidence.
+- **Audit log.** Append-only: members can read and add events for their own workspace, never edit
+  or delete them. Deletions and AI explanations are logged by the server, and members cannot add
+  those events themselves. The actor's email is taken from their account.
+- **Deletion.** `delete_upload`, `delete_analysis`, `clear_workspace_data`, `delete_workspace` and
+  `delete_my_account` run as single transactions and check membership (ownership for workspace and
+  account deletion).
+- **Browser.** `public/_headers` sets an enforced Content Security Policy (scripts
+  from this site only, no inline script, no eval), `X-Frame-Options: DENY`, HSTS, `nosniff` and a
+  strict referrer policy, verified against the built app with zero violations. `vercel.json` must
+  carry the same values for Vercel deployments. If you set `VITE_TRACK_ENDPOINT` to another origin,
+  add it to `connect-src` in both files.
+- **Exports.** Every CSV is written through `src/lib/csvSafe.ts`, which neutralises cells that a
+  spreadsheet would run as formulas.
+- **Uploads in the browser.** CSV: `.csv`/`.txt` only, at most 25 MB, binary files refused, row cap
+  in local mode. Contracts: PDF (checked by its file signature) or `.txt`, at most 20 MB and 500
+  pages; scanned PDFs without text are refused.
+
+Not in place (roadmap, not claims): MFA, SSO, multiple users per workspace in the UI, a penetration
+test, SOC 2 or ISO 27001, customer-managed keys, and running the analysis on the server (findings'
+figures are computed in the browser and stored by the signed-in user, so a member could alter their
+own workspace's stored figures through the API).
+
+Security contact: set `COMPANY.securityEmail` in `src/brand/brand.ts`; the `/security` page shows it.
 
 ## Uploading your own data
 
@@ -151,7 +207,12 @@ sends only that finding and its evidence to Claude, asks for structured JSON, th
 quoted excerpt against the evidence: any quote that does not appear verbatim is discarded, so the
 explanation cannot cite evidence that does not exist. Requests use server-side model fallback, so if
 the primary model declines a request the API retries it on Anthropic's recommended fallback model.
-The function runs with the caller's own session, so Row Level Security still applies.
+The function reads the finding with the caller's own session, so Row Level Security decides
+whether they can see it. Uploaded text is XML-escaped and wrapped in a single `<data>` element that
+the prompt marks as untrusted data, never instructions. The answer is refused if it contains a
+number that is not already in the finding or its evidence (the model may not calculate) or wording
+that claims money is owed. The checks live in `supabase/functions/ai-review/guard.ts` and are tested
+in `src/lib/aiGuard.test.ts`.
 
 ## Scripts
 
@@ -189,7 +250,8 @@ once.
 ## Deploying
 
 A static single-page app. Build with `npm run build` and serve `dist/` from any static host.
-`vercel.json` and `public/_redirects` (Netlify) send all routes to `index.html`. Set the two
+`vercel.json` and `public/_redirects` (Netlify) send all routes to `index.html`; `vercel.json` and
+`public/_headers` set the security headers (see "Security setup and controls"). Set the two
 `VITE_SUPABASE_*` variables in the host's environment to enable accounts; leave them unset to deploy
 in local mode.
 

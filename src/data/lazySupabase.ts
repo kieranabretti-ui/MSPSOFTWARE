@@ -1,4 +1,4 @@
-import type { Analysis, Action, Finding, Report, Workspace } from '../engine/types'
+import type { Analysis, Action, AuditEvent, Finding, Report, Workspace } from '../engine/types'
 import type { Backend, DataPatch, SessionUser } from './backend'
 import type { SupabaseBackend } from './supabaseBackend'
 
@@ -116,6 +116,21 @@ export class LazySupabaseBackend implements Backend {
   }
   saveReport(workspaceId: string, report: Report) {
     return this.load().then((b) => b.saveReport(workspaceId, report))
+  }
+  logEvent(workspaceId: string, event: AuditEvent) {
+    return this.load().then((b) => b.logEvent(workspaceId, event))
+  }
+  deleteUpload(workspaceId: string, uploadId: string) {
+    return this.load().then((b) => b.deleteUpload(workspaceId, uploadId))
+  }
+  deleteAnalysis(workspaceId: string, analysisId: string) {
+    return this.load().then((b) => b.deleteAnalysis(workspaceId, analysisId))
+  }
+  deleteWorkspace(workspaceId: string) {
+    return this.load().then((b) => b.deleteWorkspace(workspaceId))
+  }
+  deleteAccount() {
+    return this.load().then((b) => b.deleteAccount())
   }
   storeFile(workspaceId: string, file: File) {
     return this.load().then((b) => b.storeFile(workspaceId, file))

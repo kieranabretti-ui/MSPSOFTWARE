@@ -27,7 +27,7 @@ export function liveClientHealth(
   const over = findings.find((f) => f.category === 'EXCESSIVE_USAGE')
   if (over) reasons.push(over.title)
   const oos = findings.filter((f) => f.category === 'OUT_OF_SCOPE' || f.category === 'UNBILLED_TIME').length
-  if (oos) reasons.push(`${oos} ticket${oos === 1 ? '' : 's'} with potentially billable work done for free`)
+  if (oos) reasons.push(`${oos} ticket${oos === 1 ? '' : 's'} with logged as non-billable that may be chargeable`)
   // The margin opportunity's agreement gaps (meta.overlaps) that still count.
   // If billing them alone restores the target margin, they come first.
   const overlaps = new Set(findings.find((f) => f.category === 'UNDERPRICED_CLIENT')?.meta.overlaps ?? [])
