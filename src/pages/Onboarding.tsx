@@ -52,7 +52,7 @@ function Progress({ step, next }: { step: 1 | 2; next?: string }) {
 }
 
 function NameStep({ creating, onCreating, onCreated }: { creating: boolean; onCreating: (v: boolean) => void; onCreated: () => void }) {
-  const { createWorkspace } = useStore()
+  const { createWorkspace, backend } = useStore()
   const [name, setName] = useState('')
   const [error, setError] = useState<string | null>(null)
 
@@ -73,8 +73,12 @@ function NameStep({ creating, onCreating, onCreated }: { creating: boolean; onCr
   return (
     <AuthShell
       title="Create your MSP workspace"
-      subtitle="Your clients, uploads and opportunities live here, isolated from every other workspace."
-      asideBody="One workspace per MSP. Name it, set your rates, then load the demo or your own exports and see where the money is going."
+      subtitle={
+        backend.mode === 'supabase'
+          ? 'Your clients, uploads and opportunities live here. Row-level security keeps them to this workspace.'
+          : "Your clients, uploads and opportunities live here, in this browser only. It's an evaluation mode: use sample or anonymised data."
+      }
+      asideBody="One workspace per MSP. Name it, set your rates, then load the demo or your own exports and check the evidence behind each opportunity."
       aside={<NextSteps />}
       footer={<Progress step={1} next="your rates." />}
     >
@@ -162,7 +166,7 @@ function RatesStep() {
   return (
     <AuthShell
       title="Your rates"
-      subtitle="Headroom uses these to value every opportunity. You can change them later in Settings."
+      subtitle="Headroom values time-based opportunities with these, and every calculation shows which rate it used. You can change them later in Settings."
       asideBody="Unbilled and out-of-scope time is valued at your billable rate. Client margins use your labour cost, and any client below your target margin is flagged as underpriced."
       aside={<NextSteps />}
       footer={<Progress step={2} />}

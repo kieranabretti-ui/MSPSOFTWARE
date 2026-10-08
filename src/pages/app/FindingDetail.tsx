@@ -1,63 +1,30 @@
-import { useEffect, useId, useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useId, useState, useSyncExternalStore, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { ArrowLeft, Plus, Sparkles } from 'lucide-react'
+import { ArrowLeft, FileSearch, Plus } from 'lucide-react'
 import { useStore } from '../../data/store'
-import { Button, Card, CardHeader, Disclaimer, EmptyState, Field, Figure, Modal, SeverityBadge, TextLink, inputCls, cx } from '../../components/ui'
+import { Badge, Button, Card, EmptyState, Field, Figure, Modal, inputCls, cx } from '../../components/ui'
 import { useToast } from '../../components/toast'
-import { EvidenceRow, ValueByMonth } from './findings/evidence'
 import { CalculationBlock } from './findings/CalculationBlock'
 import { ConfidenceReading } from './findings/ConfidenceReading'
-import { StageControl } from './findings/StageControl'
 import { FindingStatusTag, TASK_STATUS_OPTIONS, TaskDot } from './findings/StatusTag'
+import { WhatWeFound, recommendations } from './findings/Claims'
+import { EvidenceLedger } from './findings/EvidenceLedger'
+import { DataSources } from './findings/DataSources'
+import { DecisionPanel } from './findings/DecisionPanel'
+import { AiExplanation } from './findings/AiExplanation'
+import EvidenceView, { AI_LINE } from './findings/EvidenceView'
+import { CLASS_LABEL, classDefinition } from './findings/rules'
 import { Select } from './data/kit'
-import { dateTime, money, plural } from '../../lib/format'
+import { dateTime, money } from '../../lib/format'
 import { fmtMinutes, monthLabel, periodLabel } from '../../engine/format'
 import { confidenceOf } from '../../lib/confidence'
+import { valueBasis } from '../../lib/calculation'
 import { mapError } from '../../lib/errors'
 import { track } from '../../lib/track'
-import { ACTION_STATUS, CATEGORY_META, PRIORITY_LABEL, recurringKind } from '../../lib/labels'
-import type { ActionStatus, Finding, SourceRef } from '../../engine/types'
+import { ACTION_STATUS, CATEGORY_META, recurringKind } from '../../lib/labels'
+import type { ActionStatus, Finding } from '../../engine/types'
 
 export { Highlighted } from './findings/evidence'
-
-const SOURCE_KIND: Record<SourceRef['table'], string> = {
-  tickets: 'Ticket',
-  time_entries: 'Time entry',
-  contracts: 'Contract',
-  billing_items: 'Billing line',
-  assets: 'User or device',
-  clients: 'Client record',
-}
-
-// What each rule compared, in a sentence. Keyed by the full rule first, then
-// by its family (the part before the dot).
-const HOW_CHECKED: Record<string, string> = {
-  out_of_scope: "Matched the ticket against the exclusion clauses found in this client's contract, and checked the time logged against it.",
-  'unbilled.billing_mismatch': "Compared the ticket's billable flag with the billable flag on each time entry.",
-  unbilled: 'Matched the ticket against work MSPs commonly charge for, and checked the contract for wording that includes it.',
-  drift: 'Compared active users or devices in your users and devices export with the contracted figure on the client record.',
-  mismatch: 'Compared the contracted quantity on the client record with the quantity on the recurring billing line.',
-  license: "Counted users assigned each licence and compared that with the licence's billing line.",
-  usage: 'Added up support hours per month and compared them with the included hours.',
-  margin: 'Estimated monthly margin from support hours and the labour cost and default software cost per user in Settings.',
-}
-
-// The method line under the facts. Where the inputs differ from the usual
-// (no contract to check, a billed rather than contracted baseline, prices from
-// billing lines), the sentence says what was actually used.
-function howChecked(f: Finding): string {
-  const c = f.meta.calc
-  let method = HOW_CHECKED[f.meta.rule] ?? HOW_CHECKED[f.meta.rule.split('.')[0]] ?? ''
-  if (c?.kind === 'time' && f.meta.rule.startsWith('unbilled.') && f.meta.rule !== 'unbilled.billing_mismatch' && !c.contract_checked)
-    method = 'Matched the ticket against work MSPs commonly charge for. No contract was uploaded for this client, so its wording was not checked.'
-  if (c?.kind === 'margin' && c.software_source === 'client')
-    method = 'Estimated monthly margin from support hours, the labour cost in Settings and the software cost in your clients export.'
-  if (c?.kind === 'seats' && c.baseline_source === 'billing')
-    method = 'Compared active users or devices in your users and devices export with the quantity on the recurring billing line, as the client record has no contracted figure.'
-  const priced = c && (c.kind === 'mismatch' || c.kind === 'licence' || (c.kind === 'seats' && c.price_source === 'billing_line'))
-  const values = !c ? '' : priced ? ' Values use the prices on your billing lines.' : method.includes('Settings') ? '' : ' Values use the rates in Settings.'
-  return `${method ? `${method} ` : ''}Records come from your uploaded data.${values}`
-}
 
 function Fact({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -115,28 +82,45 @@ function HeroValue({ f }: { f: Finding }) {
   )
 }
 
+// The decision panel sits beside the evidence on wide screens, and straight
+// under the headline figure on narrow ones, rendered once either way.
+const WIDE = '(min-width: 1024px)'
+const subscribeWide = (cb: () => void) => {
+  const m = window.matchMedia(WIDE)
+  m.addEventListener('change', cb)
+  return () => m.removeEventListener('change', cb)
+}
+const useWide = () => useSyncExternalStore(subscribeWide, () => window.matchMedia(WIDE).matches, () => true)
+
+const VALUE_LABEL = { confirmed: 'Evidence-backed opportunity', potential: 'Potential opportunity', investigate: 'Potential opportunity, requires review' } as const
+
 export default function FindingDetail() {
   const { id } = useParams()
-  const { data, setFindingExplanation, createAction, setActionStatus, backend } = useStore()
+  const { data, createAction, setActionStatus, markFindingViewed, loadError, reload } = useStore()
   const toast = useToast()
   const nav = useNavigate()
   const formId = useId()
+  const wide = useWide()
   const [taskOpen, setTaskOpen] = useState(false)
+  const [whyOpen, setWhyOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const [tried, setTried] = useState(false)
-  const [aiLoading, setAiLoading] = useState(false)
+  const [retrying, setRetrying] = useState(false)
   const [title, setTitle] = useState('')
   const [notes, setNotes] = useState('')
   const [params, setParams] = useSearchParams()
-  const f = data.findings.find((x) => x.id === id)
+  const f = data.findings.find((x) => x.id === id) ?? data.stale_findings.find((x) => x.id === id)
   const client = data.clients.find((c) => c.id === f?.client_id)
 
-  // One view per opportunity opened, with its category and confidence only.
+  // One view per opportunity opened, with its category and confidence only,
+  // and the first open recorded on the finding for the trust metrics.
   const viewed = f ? `${f.id}|${f.category}|${confidenceOf(f).level}` : null
   useEffect(() => {
     if (!viewed) return
-    const [, category, level] = viewed.split('|') as [string, Finding['category'], ReturnType<typeof confidenceOf>['level']]
+    const [fid, category, level] = viewed.split('|') as [string, Finding['category'], ReturnType<typeof confidenceOf>['level']]
     track('finding_viewed', { category, level })
+    markFindingViewed(fid).catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewed])
 
   // The task form, prefilled from the recommended action. The queue and older
@@ -156,12 +140,38 @@ export default function FindingDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wantsTask])
 
+  if (!f && loadError)
+    return (
+      <Card>
+        <EmptyState
+          title="This opportunity couldn't be loaded"
+          body={`${loadError} Nothing has been changed or removed.`}
+          action={
+            <Button
+              variant="secondary"
+              loading={retrying}
+              onClick={async () => {
+                setRetrying(true)
+                try {
+                  await reload()
+                } finally {
+                  setRetrying(false)
+                }
+              }}
+            >
+              Try again
+            </Button>
+          }
+        />
+      </Card>
+    )
+
   if (!f)
     return (
       <Card>
         <EmptyState
           title="Opportunity not found"
-          body="It may have been removed when the analysis was re-run."
+          body="The latest analysis no longer produces it, or the analysis it came from was deleted. Opportunities with a recorded decision are kept under No longer detected."
           action={
             <Button variant="secondary" onClick={() => nav('/app/opportunities')}>
               <ArrowLeft className="size-4" /> Back to opportunities
@@ -173,8 +183,10 @@ export default function FindingDetail() {
 
   const tasks = data.actions.filter((a) => a.finding_id === f.id).sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
   const months = Object.keys(f.meta.period_values)
-  const hasHighlights = f.evidence.some((e) => e.highlights?.length)
-  const aiReady = backend.mode === 'supabase' && !!backend.aiReview
+  const conf = confidenceOf(f)
+  const classification = f.classification ?? conf.classification
+  const basis = valueBasis(f)
+  const recs = recommendations(f)
 
   const addTask = async (e?: FormEvent) => {
     e?.preventDefault()
@@ -202,18 +214,11 @@ export default function FindingDetail() {
     }
   }
 
-  const explain = async () => {
-    if (backend.mode !== 'supabase' || !backend.aiReview) return
-    setAiLoading(true)
-    try {
-      const text = await backend.aiReview(f.id)
-      await setFindingExplanation(f.id, text)
-    } catch (err) {
-      toast(mapError(err, 'ai'), 'error')
-    } finally {
-      setAiLoading(false)
-    }
-  }
+  const decision = (
+    <Card>
+      <DecisionPanel finding={f} />
+    </Card>
+  )
 
   return (
     <>
@@ -221,219 +226,186 @@ export default function FindingDetail() {
         <ArrowLeft className="size-4" /> Opportunities
       </Link>
 
-      <header className="mb-7 max-w-3xl">
-        <h1 className="text-balance text-h1 text-ink">{f.title}</h1>
-        <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-small text-ink-3">
-          <Link to={`/app/clients/${f.client_id}`} className="font-medium text-ink-2 underline-offset-4 transition-colors hover:text-ink hover:underline">
-            {client?.name}
-          </Link>
-          <span aria-hidden>·</span>
-          <span>{CATEGORY_META[f.category].label}</span>
-          {f.meta.ticket_ref && (
-            <>
-              <span aria-hidden>·</span>
-              <span className="tnum">Ticket #{f.meta.ticket_ref}</span>
-            </>
-          )}
-          <span className="ml-1">
-            <FindingStatusTag status={f.status} />
-          </span>
+      <header className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
+        <div className="min-w-0 max-w-3xl">
+          <h1 className="text-balance text-h1 text-ink">{f.title}</h1>
+          <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-small text-ink-3">
+            <Link to={`/app/clients/${f.client_id}`} className="font-medium text-ink-2 underline-offset-4 transition-colors hover:text-ink hover:underline">
+              {client?.name}
+            </Link>
+            <span aria-hidden>·</span>
+            <span>{CATEGORY_META[f.category].label}</span>
+            {f.meta.ticket_ref && (
+              <>
+                <span aria-hidden>·</span>
+                <span className="tnum">Ticket #{f.meta.ticket_ref}</span>
+              </>
+            )}
+            <span className="ml-1 inline-flex flex-wrap items-center gap-1.5">
+              <Badge>{CLASS_LABEL[classification]}</Badge>
+              <FindingStatusTag status={f.status} />
+            </span>
+          </div>
         </div>
+        <Button variant="secondary" size="lg" className="w-full shrink-0 sm:w-auto" onClick={() => setWhyOpen(true)} data-testid="why-flagged">
+          <FileSearch className="size-4" aria-hidden /> Why was this flagged?
+        </Button>
       </header>
 
-      {/* Below lg the stage and its one next step sit under the title, so
-          moving an opportunity on never means scrolling past its evidence. */}
-      <Card className="mb-6 lg:hidden">
-        <div className="px-5 py-4">
-          <div className="mb-3 flex items-baseline justify-between gap-3">
-            <h2 className="text-h3 text-ink">Stage</h2>
-            <TextLink to="/app/queue" className="shrink-0">
-              Recovery queue
-            </TextLink>
-          </div>
-          <StageControl finding={f} via="detail" />
+      {f.stale && (
+        <div className="mb-6 rounded-lg border border-line bg-surface px-5 py-4 text-small text-ink-2">
+          <span className="font-medium text-ink">No longer detected.</span> The latest analysis didn't produce this opportunity. It's kept because a decision was recorded on it, and it isn't counted in any total.
         </div>
-      </Card>
+      )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
-        {/* The figure, the sum behind it, how sure we are, and why */}
-        <Card className="@container lg:col-span-2 lg:row-span-2 lg:row-start-1">
-          <div className="grid gap-6 px-5 py-6 sm:px-6 @xl:grid-cols-[minmax(0,1fr)_15rem]">
-            <div className="min-w-0">
-              <p className="text-small text-ink-3">Potential value</p>
-              <HeroValue f={f} />
-            </div>
-            <dl className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-8 gap-y-5 border-t border-line-soft pt-5 @xl:grid-cols-1 @xl:content-start @xl:border-l @xl:border-t-0 @xl:pl-6 @xl:pt-0">
+        <div className="min-w-0 space-y-6 lg:col-span-2">
+          {/* The figure, how sure we are, and what the records say */}
+          <Card className="@container">
+            <div className="grid gap-6 px-5 py-6 sm:px-6 @xl:grid-cols-[minmax(0,1fr)_15rem]">
               <div className="min-w-0">
-                <dt className="text-small text-ink-3">Confidence</dt>
-                <dd className="mt-2">
-                  <ConfidenceReading finding={f} />
-                </dd>
+                <p className="text-small text-ink-3">{basis === 'estimate' ? 'Estimated opportunity, requires review' : VALUE_LABEL[classification]}</p>
+                <HeroValue f={f} />
               </div>
-              <div>
-                <dt className="text-small text-ink-3">{PRIORITY_LABEL}</dt>
-                <dd className="mt-2">
-                  <SeverityBadge severity={f.severity} />
-                </dd>
-              </div>
+              <dl className="grid grid-cols-1 gap-y-5 border-t border-line-soft pt-5 @md:grid-cols-2 @md:gap-x-8 @xl:grid-cols-1 @xl:content-start @xl:border-l @xl:border-t-0 @xl:pl-6 @xl:pt-0">
+                <div className="min-w-0">
+                  <dt className="text-small text-ink-3">Confidence</dt>
+                  <dd className="mt-2">
+                    <ConfidenceReading finding={f} />
+                  </dd>
+                </div>
+                <div className="min-w-0">
+                  <dt className="text-small text-ink-3">Classification</dt>
+                  <dd className="mt-2">
+                    <p className="text-small font-medium text-ink">{CLASS_LABEL[classification]}</p>
+                    <p className="mt-1 text-caption leading-relaxed text-ink-3">{classDefinition(classification)}</p>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className="border-t border-line-soft px-5 py-5 sm:px-6">
+              <WhatWeFound finding={f} />
+            </div>
+
+            <dl className="grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line-soft px-5 py-4 sm:grid-cols-4 sm:px-6">
+              {f.meta.ticket_ref ? (
+                <>
+                  <Fact label="Ticket">
+                    <span className="tnum">#{f.meta.ticket_ref}</span>
+                  </Fact>
+                  <Fact label="Technician">{f.meta.technician ?? 'Not recorded'}</Fact>
+                  <Fact label="Non-billable time">
+                    <span className="tnum">{fmtMinutes(f.meta.minutes ?? 0)}</span>
+                  </Fact>
+                  <Fact label="Work date">
+                    <span className="tnum">{f.meta.work_date ? dateTime(f.meta.work_date.slice(0, 10)) : 'Not recorded'}</span>
+                  </Fact>
+                </>
+              ) : (
+                <>
+                  <Fact label="Client">{client?.name}</Fact>
+                  <Fact label="Package">{client?.package ?? 'Not recorded'}</Fact>
+                  <Fact label="Agreement MRR">
+                    <span className="tnum">{money(client?.monthly_recurring_revenue ?? 0)}</span>
+                  </Fact>
+                  <Fact label="Months affected">
+                    <span className="tnum">{months.length}</span>
+                  </Fact>
+                </>
+              )}
             </dl>
-          </div>
+          </Card>
 
-          <div className="border-t border-line-soft px-5 py-5 sm:px-6">
-            <CalculationBlock finding={f} />
-          </div>
-
-          <div className="border-t border-line-soft px-5 py-5 sm:px-6">
-            <h2 className="text-h3 text-ink">Why it was flagged</h2>
-            <p className="mt-1.5 max-w-[68ch] text-body leading-relaxed text-ink-2">{f.description}</p>
-          </div>
-
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line-soft px-5 py-4 sm:grid-cols-4 sm:px-6">
-            {f.meta.ticket_ref ? (
-              <>
-                <Fact label="Ticket">
-                  <span className="tnum">#{f.meta.ticket_ref}</span>
-                </Fact>
-                <Fact label="Technician">{f.meta.technician ?? 'Not recorded'}</Fact>
-                <Fact label="Non-billable time">
-                  <span className="tnum">{fmtMinutes(f.meta.minutes ?? 0)}</span>
-                </Fact>
-                <Fact label="Work date">
-                  <span className="tnum">{f.meta.work_date ? dateTime(f.meta.work_date.slice(0, 10)) : 'Not recorded'}</span>
-                </Fact>
-              </>
-            ) : (
-              <>
-                <Fact label="Client">{client?.name}</Fact>
-                <Fact label="Package">{client?.package ?? 'Not recorded'}</Fact>
-                <Fact label="Agreement MRR">
-                  <span className="tnum">{money(client?.monthly_recurring_revenue ?? 0)}</span>
-                </Fact>
-                <Fact label="Months affected">
-                  <span className="tnum">{months.length}</span>
-                </Fact>
-              </>
-            )}
-          </dl>
-
-          <div className="border-t border-line-soft px-5 py-3.5 sm:px-6">
-            <p className="max-w-[90ch] text-caption leading-relaxed text-ink-3">
-              <span className="font-medium text-ink-2">How this was checked:</span> {howChecked(f)}
-            </p>
-          </div>
-        </Card>
-
-        {/* The decision: where it stands, the one step that moves it on, and who is on it */}
-        <Card className="@container lg:col-start-3 lg:row-start-1">
-          <div className="hidden lg:block">
-            <CardHeader
-              as="h2"
-              title="Stage"
-              right={
-                <TextLink to="/app/queue" className="shrink-0 pt-0.5">
-                  Recovery queue
-                </TextLink>
-              }
-            />
-            <div className="px-5 py-5">
-              <StageControl finding={f} via="detail" />
-            </div>
-          </div>
-          <div className="border-line-soft px-5 py-5 lg:border-t">
-            <h2 className="text-h3 text-ink">Recommended action</h2>
-            <p className="mt-2 text-body leading-relaxed text-ink-2">{f.recommended_action}</p>
-          </div>
-          <div className="border-t border-line-soft px-5 py-4">
-            <div className="flex items-center justify-between gap-3">
-              <h3 className="text-small font-medium text-ink">Tasks</h3>
-              <Button variant="secondary" size="sm" onClick={openTask}>
-                <Plus className="size-4" aria-hidden /> Add a task
-              </Button>
-            </div>
-            {tasks.length ? (
-              <ul className="mt-3 divide-y divide-line-soft">
-                {tasks.map((a) => {
-                  const note = a.notes && !a.notes.includes(f.title) ? a.notes : null
-                  const done = a.status === 'resolved' || a.status === 'dismissed'
-                  return (
-                    <li key={a.id} className="flex flex-col gap-2 py-3 first:pt-0 last:pb-0 @md:flex-row @md:items-start @md:justify-between @md:gap-3">
-                      <div className="min-w-0">
-                        <p className={cx('text-small font-medium', done ? 'text-ink-3' : 'text-ink')}>{a.title}</p>
-                        {note && <p className="mt-0.5 line-clamp-2 text-caption text-ink-3">{note}</p>}
-                      </div>
-                      <Select
-                        className="w-40 shrink-0"
-                        lead={<TaskDot status={a.status} />}
-                        value={a.status}
-                        onChange={(e) => setTaskStatus(a.id, e.target.value as ActionStatus)}
-                        aria-label={`Task status: ${a.title}`}
-                      >
-                        {TASK_STATUS_OPTIONS.map(([k, v]) => (
-                          <option key={k} value={k}>
-                            {v}
-                          </option>
-                        ))}
-                      </Select>
-                    </li>
-                  )
-                })}
-              </ul>
-            ) : (
-              <p className="mt-2 text-small text-ink-3">No tasks yet. Add one to note who is following this up.</p>
-            )}
-          </div>
-        </Card>
-
-        {/* The ledger: every record behind the figure */}
-        <Card className="lg:col-span-2 lg:row-start-3">
-          <CardHeader as="h2" title="Evidence" subtitle={`${plural(f.evidence.length, 'record')} from your uploaded data.${hasHighlights ? ' Matched phrases are highlighted.' : ''}`} />
-          <div className="divide-y divide-line-soft">
-            {f.evidence.map((e, i) => (
-              <EvidenceRow key={i} evidence={e} nonBillableMinutes={f.meta.minutes} />
-            ))}
-            {months.length > 1 && <ValueByMonth periodValues={f.meta.period_values} total={f.estimated_value} />}
-          </div>
-        </Card>
-
-        <div className="space-y-6 lg:col-start-3 lg:row-span-2 lg:row-start-2">
-          {aiReady && (
-            <Card>
-              <CardHeader as="h2" title="AI explanation" subtitle="A plain-English read of this evidence" />
-              <div className="px-5 py-4">
-                {f.ai_explanation ? (
-                  <>
-                    <p className="whitespace-pre-line text-body leading-relaxed text-ink-2">{f.ai_explanation}</p>
-                    <p className="mt-3 text-caption text-ink-3">Written from the evidence on this page. Check it before acting on it.</p>
-                  </>
-                ) : (
-                  <>
-                    <Button variant="secondary" size="sm" onClick={explain} loading={aiLoading}>
-                      {!aiLoading && <Sparkles className="size-4" aria-hidden />} Explain this opportunity
-                    </Button>
-                    <p className="mt-3 text-caption leading-relaxed text-ink-3">
-                      Sends this one opportunity and its evidence, including any names in the ticket and time entries, to Anthropic's Claude API. Nothing else in your workspace is sent.
-                    </p>
-                  </>
-                )}
-              </div>
-            </Card>
-          )}
+          {!wide && decision}
 
           <Card>
-            <CardHeader as="h2" title="Source records" subtitle="The rows this opportunity was built from" />
-            <ul className="divide-y divide-line-soft">
-              {f.source_data.map((s, i) => (
-                <li key={`${s.table}:${s.id}:${i}`} className="flex items-baseline justify-between gap-3 px-5 py-2.5 text-small">
-                  <span className="min-w-0 truncate text-ink-2">{s.label}</span>
-                  <span className="shrink-0 text-caption text-ink-3">{SOURCE_KIND[s.table]}</span>
-                </li>
-              ))}
-            </ul>
+            <EvidenceLedger finding={f} />
           </Card>
+
+          <Card>
+            <div className="px-5 py-5 sm:px-6">
+              <CalculationBlock finding={f} />
+            </div>
+          </Card>
+
+          <Card>
+            <section aria-labelledby="rec-heading" className="px-5 py-5 sm:px-6">
+              <h2 id="rec-heading" className="text-h3 text-ink">
+                Recommended action
+              </h2>
+              <ul className="mt-2 space-y-2">
+                {recs.map((r, i) => (
+                  <li key={i} className="max-w-[72ch] text-body leading-relaxed text-ink-2">
+                    {r}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 text-caption text-ink-3">Recommendations require MSP review before action.</p>
+            </section>
+          </Card>
+
+          <Card>
+            <div className="px-5 py-5 sm:px-6">
+              <DataSources finding={f} />
+            </div>
+          </Card>
+        </div>
+
+        <div className="min-w-0 space-y-6">
+          {wide && decision}
+
+          <Card className="@container">
+            <div className="px-5 py-4">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-h3 text-ink">Tasks</h2>
+                <Button variant="secondary" size="sm" onClick={openTask}>
+                  <Plus className="size-4" aria-hidden /> Add a task
+                </Button>
+              </div>
+              {tasks.length ? (
+                <ul className="mt-3 divide-y divide-line-soft">
+                  {tasks.map((a) => {
+                    const note = a.notes && !a.notes.includes(f.title) ? a.notes : null
+                    const done = a.status === 'resolved' || a.status === 'dismissed'
+                    return (
+                      <li key={a.id} className="flex flex-col gap-2 py-3 first:pt-0 last:pb-0 @md:flex-row @md:items-start @md:justify-between @md:gap-3">
+                        <div className="min-w-0">
+                          <p className={cx('text-small font-medium', done ? 'text-ink-3' : 'text-ink')}>{a.title}</p>
+                          {note && <p className="mt-0.5 line-clamp-2 text-caption text-ink-3">{note}</p>}
+                        </div>
+                        <Select
+                          className="w-40 shrink-0"
+                          lead={<TaskDot status={a.status} />}
+                          value={a.status}
+                          onChange={(e) => setTaskStatus(a.id, e.target.value as ActionStatus)}
+                          aria-label={`Task status: ${a.title}`}
+                        >
+                          {TASK_STATUS_OPTIONS.map(([k, v]) => (
+                            <option key={k} value={k}>
+                              {v}
+                            </option>
+                          ))}
+                        </Select>
+                      </li>
+                    )
+                  })}
+                </ul>
+              ) : (
+                <p className="mt-2 text-small text-ink-3">No tasks yet. Add one to note who is following this up.</p>
+              )}
+            </div>
+          </Card>
+
+          <AiExplanation finding={f} />
         </div>
       </div>
 
-      <Disclaimer className="mt-8 max-w-[68ch]" />
+      <p className="mt-8 max-w-[72ch] text-caption leading-relaxed text-ink-3">
+        Figures are potential revenue based on the data provided, not amounts a client owes. {AI_LINE} Recommendations require MSP review before action.
+      </p>
+
+      <EvidenceView finding={f} open={whyOpen} onClose={() => setWhyOpen(false)} />
 
       <Modal
         open={taskOpen}

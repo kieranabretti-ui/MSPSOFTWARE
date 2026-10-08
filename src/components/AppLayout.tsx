@@ -6,7 +6,7 @@ import { ICONS } from '../brand/icons'
 import { useStore } from '../data/store'
 import type { WorkspaceData } from '../data/backend'
 import { useToast } from './toast'
-import { Button, cx, Logo, trapTab } from './ui'
+import { Button, cx, Logo, Modal, trapTab } from './ui'
 
 interface NavItem {
   to: string
@@ -51,10 +51,8 @@ const TITLES: [RegExp, string][] = [
   [/^\/app\/settings/, 'Settings'],
 ]
 
-function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
-  const { workspace, user, signOut, data } = useStore()
-  const navigate = useNavigate()
-  const toast = useToast()
+function Sidebar({ onNavigate, onSignOut }: { onNavigate?: () => void; onSignOut: () => void }) {
+  const { workspace, user, data } = useStore()
   const { pathname } = useLocation()
   return (
     <div className="flex h-full flex-col">
@@ -94,14 +92,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               <div className="truncate text-caption text-ink-3">{user?.email}</div>
             </div>
             <button
-              onClick={async () => {
-                try {
-                  await signOut()
-                  navigate('/')
-                } catch {
-                  toast("We couldn't sign you out. Try again.", 'error')
-                }
-              }}
+              onClick={onSignOut}
               className="-my-2 -mr-2 flex size-11 shrink-0 items-center justify-center rounded-sm text-ink-3 transition-colors hover:bg-raised hover:text-ink"
               title="Sign out"
               aria-label="Sign out"
@@ -144,12 +135,27 @@ export default function AppLayout() {
   useEffect(() => {
     const t = TITLES.find(([re]) => re.test(loc.pathname))?.[1]
     if (t) document.title = `${t} · Headroom`
-    if (lastPath.current === loc.pathname) return
+    if (lastPath.current === loc.pathname && !loc.hash) return
+    const samePage = lastPath.current === loc.pathname
     lastPath.current = loc.pathname
     setOpen(false)
-    window.scrollTo(0, 0)
-    mainRef.current?.focus({ preventScroll: true })
-  }, [loc.pathname])
+    if (!samePage) {
+      window.scrollTo(0, 0)
+      mainRef.current?.focus({ preventScroll: true })
+    }
+    // A link to a section (/app/analyses#uploads) lands on it once the page
+    // has rendered; lazy pages can take a few frames.
+    if (!loc.hash) return
+    let tries = 0
+    let frame = 0
+    const seek = () => {
+      const el = document.getElementById(decodeURIComponent(loc.hash.slice(1)))
+      if (el) el.scrollIntoView({ block: 'start' })
+      else if (tries++ < 30) frame = requestAnimationFrame(seek)
+    }
+    frame = requestAnimationFrame(seek)
+    return () => cancelAnimationFrame(frame)
+  }, [loc.pathname, loc.hash])
 
   // The mobile drawer is modal: focus starts on Close, Tab stays inside, and
   // Escape hands focus back to the menu button.
@@ -169,6 +175,30 @@ export default function AppLayout() {
   const closeMenu = () => {
     setOpen(false)
     menuRef.current?.focus()
+  }
+
+  // Local (evaluation) mode keeps the account and its data in this browser, so
+  // signing out asks whether to leave them there. Hosted data stays on the
+  // server either way.
+  const [signingOut, setSigningOut] = useState(false)
+  const [leaving, setLeaving] = useState<'keep' | 'remove' | null>(null)
+  const askBeforeSignOut = backend.mode === 'local' && !isDemoSession
+  const doSignOut = async (clearLocalData = false) => {
+    setLeaving(clearLocalData ? 'remove' : 'keep')
+    try {
+      await signOut({ clearLocalData })
+      setSigningOut(false)
+      navigate('/')
+    } catch {
+      toast("We couldn't sign you out. Try again.", 'error')
+    } finally {
+      setLeaving(null)
+    }
+  }
+  const requestSignOut = () => {
+    setOpen(false)
+    if (askBeforeSignOut) setSigningOut(true)
+    else void doSignOut()
   }
 
   const startOwnAudit = async () => {
@@ -194,7 +224,7 @@ export default function AppLayout() {
       </a>
 
       <aside className="no-print fixed inset-y-0 left-0 hidden w-60 border-r border-line-soft bg-canvas lg:block">
-        <Sidebar />
+        <Sidebar onSignOut={requestSignOut} />
       </aside>
 
       {/* mobile top bar: the page's banner landmark below lg */}
@@ -226,7 +256,7 @@ export default function AppLayout() {
             <button ref={closeRef} onClick={closeMenu} className="absolute right-1 top-2 flex size-11 items-center justify-center rounded-sm text-ink-3 hover:bg-raised hover:text-ink" aria-label="Close menu">
               <X className="size-4" />
             </button>
-            <Sidebar onNavigate={() => setOpen(false)} />
+            <Sidebar onNavigate={() => setOpen(false)} onSignOut={requestSignOut} />
           </div>
         </div>
       )}
@@ -258,6 +288,27 @@ export default function AppLayout() {
       <main ref={mainRef} id="main" tabIndex={-1} inert={open} className="mx-auto max-w-[1200px] px-4 py-7 focus:outline-none sm:px-8 sm:py-10">
         <Outlet />
       </main>
+
+      <Modal
+        open={signingOut}
+        onClose={() => !leaving && setSigningOut(false)}
+        title="Sign out"
+      >
+        <div className="space-y-3 text-body text-ink-2">
+          <p>
+            {workspace?.name ?? 'This workspace'} is stored only in this browser, unencrypted. Signing out keeps it here, so anyone using this browser profile can still read it.
+          </p>
+          <p>Removing it deletes the workspace, its data and activity log, and your account record from this browser. It can't be undone. Download anything you need first.</p>
+          <div className="flex flex-col gap-2 pt-2 sm:flex-row-reverse">
+            <Button onClick={() => void doSignOut(false)} loading={leaving === 'keep'} disabled={!!leaving}>
+              Sign out
+            </Button>
+            <Button variant="secondary" onClick={() => void doSignOut(true)} loading={leaving === 'remove'} disabled={!!leaving}>
+              Sign out and remove data from this browser
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       {busy && (
         <div className="no-print fixed inset-0 z-[55] flex items-center justify-center bg-[var(--brand-overlay)] backdrop-blur-sm">

@@ -38,6 +38,8 @@ function recurring(count: number, price: number) {
   return { monthly: pence(exact), annual: pence(exact * 12) }
 }
 const annualLine = (monthly: number, annual: number) => `${gbp(monthly)} × 12 = ${gbp(annual)} a year`
+// Names the price used without nesting brackets, as labels often carry their own.
+const priceFrom = (label: string | null | undefined) => (label ? `, priced as ${label}` : ', at the default price in Settings')
 const hrs = (n: number) => `${num(n, 2)}h`
 const s = (n: number) => (n === 1 ? '' : 's')
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0)
@@ -70,7 +72,7 @@ export function formatCalculation(f: Pick<FindingDraft, 'meta' | 'estimated_valu
       return {
         lines: [
           `${c.actual} active ${c.unit}s − ${c.baseline} ${c.baseline_source === 'billing' ? 'billed' : 'contracted'} = ${extra} ${c.unit}${s(extra)}`,
-          `${extra} × ${gbp(c.unit_price)} (${c.price_label ?? 'default price in Settings'}) = ${gbp(monthly)} a month`,
+          `${extra} × ${gbp(c.unit_price)} = ${gbp(monthly)} a month${priceFrom(c.price_label)}`,
           annualLine(monthly, annual),
         ],
         result: `${gbp(monthly)} a month`,
@@ -86,7 +88,7 @@ export function formatCalculation(f: Pick<FindingDraft, 'meta' | 'estimated_valu
       const { monthly, annual } = recurring(gap, c.unit_price)
       const { total, note } = periodNote(f, monthly, `the gap changed`)
       return {
-        lines: [`${c.contracted} contracted − ${c.billed} billed = ${gap} ${c.unit}${s(gap)}`, `${gap} × ${gbp(c.unit_price)} (${c.price_label}) = ${gbp(monthly)} a month`, annualLine(monthly, annual)],
+        lines: [`${c.contracted} contracted − ${c.billed} billed = ${gap} ${c.unit}${s(gap)}`, `${gap} × ${gbp(c.unit_price)} = ${gbp(monthly)} a month${priceFrom(c.price_label)}`, annualLine(monthly, annual)],
         result: `${gbp(monthly)} a month`,
         note,
         total,
@@ -99,7 +101,7 @@ export function formatCalculation(f: Pick<FindingDraft, 'meta' | 'estimated_valu
       const { monthly, annual } = recurring(c.contracted, c.unit_price)
       const { total, note } = periodNote(f, monthly, 'the gap changed')
       return {
-        lines: [`${c.contracted} contracted ${c.unit}s with no per-${c.unit} charge found`, `${c.contracted} × ${gbp(c.unit_price)} (default price in Settings) = ${gbp(monthly)} a month`, annualLine(monthly, annual)],
+        lines: [`${c.contracted} contracted ${c.unit}s with no per-${c.unit} charge found`, `${c.contracted} × ${gbp(c.unit_price)} = ${gbp(monthly)} a month${priceFrom(null)}`, annualLine(monthly, annual)],
         result: `${gbp(monthly)} a month, as a guide`,
         note,
         total,
@@ -113,7 +115,7 @@ export function formatCalculation(f: Pick<FindingDraft, 'meta' | 'estimated_valu
       const { monthly, annual } = recurring(gap, c.unit_price)
       const { total, note } = periodNote(f, monthly, 'licences were assigned')
       return {
-        lines: [`${c.assigned} assigned − ${c.billed} billed = ${gap} licence${s(gap)}`, `${gap} × ${gbp(c.unit_price)} (${c.price_label}) = ${gbp(monthly)} a month`, annualLine(monthly, annual)],
+        lines: [`${c.assigned} assigned − ${c.billed} billed = ${gap} licence${s(gap)}`, `${gap} × ${gbp(c.unit_price)} = ${gbp(monthly)} a month${priceFrom(c.price_label)}`, annualLine(monthly, annual)],
         result: `${gbp(monthly)} a month`,
         note,
         total,

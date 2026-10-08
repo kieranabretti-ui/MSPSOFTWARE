@@ -63,7 +63,7 @@ Every finding's calculation is shown as lines a reader can check by hand, for ex
 
 ```
 47 active users − 39 contracted = 8 users
-8 × £82 (Managed Support (per user)) = £656 a month
+8 × £82 = £656 a month, priced as Managed Support (per user)
 £656 × 12 = £7,872 a year
 ```
 

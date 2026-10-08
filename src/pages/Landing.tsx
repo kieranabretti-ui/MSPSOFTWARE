@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react'
 import { ButtonLink, TextLink } from '../components/ui'
 import { BRAND } from '../brand/brand'
 import { AuditPanel } from './landing/AuditPanel'
+import { CheckTheEvidence } from './landing/CheckTheEvidence'
 import { ClientExample } from './landing/ClientExample'
 import { Faq } from './landing/Faq'
 import { Flow } from './landing/Flow'
@@ -52,7 +53,7 @@ export default function Landing() {
                 {BRAND.tagline}
               </h1>
               <p className="mt-6 max-w-[31em] text-lead text-ink-2 lg:mt-8">
-                Upload your PSA exports and contracts. Headroom finds unbilled work, agreement drift, scope creep and underpriced clients, with the ticket, time entry or clause behind every pound.
+                Upload your PSA exports and contracts. Headroom flags possible unbilled work, agreement drift, out-of-scope work and underpriced clients, each with the record behind it, the calculation and a confidence level.
               </p>
               <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:mt-8">
                 <AuditCta location="hero" />
@@ -78,6 +79,7 @@ export default function Landing() {
         <Flow />
         <ProductPreview />
         <ClientExample />
+        <CheckTheEvidence />
         <BuiltForMsps />
         <SecuritySummary />
         <Pricing />

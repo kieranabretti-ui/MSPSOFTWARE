@@ -102,7 +102,7 @@ describe('known answer: agreement drift (brief example)', () => {
     expect(f.annual_value).toBe(7872)
     expect(f.estimated_value).toBe(656) // one month analysed
     expect(formatCalculation(f)).toMatchObject({
-      lines: ['47 active users − 39 contracted = 8 users', '8 × £82 (Managed Support (per user)) = £656 a month', '£656 × 12 = £7,872 a year'],
+      lines: ['47 active users − 39 contracted = 8 users', '8 × £82 = £656 a month, priced as Managed Support (per user)', '£656 × 12 = £7,872 a year'],
       monthly: 656,
       annual: 7872,
       basis: 'recurring',
@@ -175,7 +175,7 @@ describe('known answer: missing recurring charge', () => {
     expect(f.category).toBe('RECURRING_CHARGE_MISMATCH')
     expect(f.monthly_value).toBe(160)
     expect(f.annual_value).toBe(1920)
-    expect(formatCalculation(f)!.lines).toEqual(['20 contracted devices with no per-device charge found', '20 × £8 (default price in Settings) = £160 a month', '£160 × 12 = £1,920 a year'])
+    expect(formatCalculation(f)!.lines).toEqual(['20 contracted devices with no per-device charge found', '20 × £8 = £160 a month, at the default price in Settings', '£160 × 12 = £1,920 a year'])
   })
 
   it('is LOW confidence, never a confirmed discrepancy', () => {
@@ -233,7 +233,7 @@ describe('known answer: recurring charge below the contracted quantity', () => {
   it('calculates £90 a month and £1,080 a year', () => {
     expect(f.monthly_value).toBe(90)
     expect(f.annual_value).toBe(1080)
-    expect(formatCalculation(f)!.lines).toEqual(['40 contracted − 35 billed = 5 users', '5 × £18 (Managed User Support (per user)) = £90 a month', '£90 × 12 = £1,080 a year'])
+    expect(formatCalculation(f)!.lines).toEqual(['40 contracted − 35 billed = 5 users', '5 × £18 = £90 a month, priced as Managed User Support (per user)', '£90 × 12 = £1,080 a year'])
     expect(findings.some((x) => x.meta.rule === 'drift.user')).toBe(false)
   })
 
@@ -297,7 +297,7 @@ describe('known answer: prices with pence are rounded once, after annualising', 
   it('keeps the pence', () => {
     expect(f.monthly_value).toBe(25.5)
     expect(f.annual_value).toBe(306)
-    expect(formatCalculation(f)!.lines).toEqual(['13 active users − 10 contracted = 3 users', '3 × £8.50 (Managed support per user) = £25.50 a month', '£25.50 × 12 = £306 a year'])
+    expect(formatCalculation(f)!.lines).toEqual(['13 active users − 10 contracted = 3 users', '3 × £8.50 = £25.50 a month, priced as Managed support per user', '£25.50 × 12 = £306 a year'])
   })
 })
 

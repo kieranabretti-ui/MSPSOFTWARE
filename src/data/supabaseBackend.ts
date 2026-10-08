@@ -221,14 +221,24 @@ export class SupabaseBackend implements Backend {
     return path
   }
 
-  // Server-side AI review (Edge Function holds the API key).
+  // Server-side AI review (Edge Function holds the API key). The function
+  // stores the explanation and its ai_meta {model, generated_at,
+  // evidence_hash} itself; the store reads both back afterwards
+  // (setFindingExplanation).
   async aiReview(findingId: string): Promise<string> {
     const { data, error } = await this.sb.functions.invoke('ai-review', { body: { finding_id: findingId } })
     if (error) {
       // Edge Function errors carry the function's JSON body in error.context.
       const context = (error as { context?: Response }).context
-      const body = await context?.json?.().catch(() => null)
-      throw fail({ message: body?.error ?? error.message, status: context?.status })
+      const status = context?.status
+      const body = (await context?.json?.().catch(() => null)) as { error?: unknown } | null
+      const message = typeof body?.error === 'string' ? body.error : null
+      // Limits (429) and failed output checks (422) come with a fixed message
+      // from the function that says what happened; show it as written rather
+      // than the generic "too many attempts". Sign-in and access failures
+      // keep the shared messages.
+      if (message && status !== 401 && status !== 403) throw new AppError(message, { code: `ai_review_${status ?? 'error'}`, detail: error.message })
+      throw fail({ message: message ?? error.message, status })
     }
     return (data as { explanation: string }).explanation
   }

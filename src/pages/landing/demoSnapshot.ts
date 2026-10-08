@@ -18,7 +18,10 @@ export const DEMO: LandingSnapshot = {
     "findings": 40,
     "clients": 15,
     "atRisk": 4,
-    "billed": 143220
+    "affectedClients": 15,
+    "billed": 143220,
+    "highConfidence": 2405,
+    "requiresReview": 1876
   },
   "data": {
     "clients": 15,
@@ -121,7 +124,6 @@ export const DEMO: LandingSnapshot = {
       "client": "Harbour Physio",
       "category": "EXCESSIVE_USAGE",
       "severity": "HIGH",
-      "confidence": 80,
       "level": "MEDIUM",
       "overlaps": false,
       "value": 355,
@@ -134,7 +136,6 @@ export const DEMO: LandingSnapshot = {
       "client": "ABC Ltd",
       "category": "UNDERPRICED_CLIENT",
       "severity": "MEDIUM",
-      "confidence": 50,
       "level": "LOW",
       "overlaps": true,
       "value": 336,
@@ -147,7 +148,6 @@ export const DEMO: LandingSnapshot = {
       "client": "ABC Ltd",
       "category": "AGREEMENT_DRIFT",
       "severity": "HIGH",
-      "confidence": 95,
       "level": "HIGH",
       "overlaps": false,
       "value": 324,
@@ -160,7 +160,6 @@ export const DEMO: LandingSnapshot = {
       "client": "Riverside Care Group",
       "category": "AGREEMENT_DRIFT",
       "severity": "HIGH",
-      "confidence": 95,
       "level": "HIGH",
       "overlaps": false,
       "value": 270,
@@ -173,7 +172,6 @@ export const DEMO: LandingSnapshot = {
       "client": "Meridian Logistics",
       "category": "AGREEMENT_DRIFT",
       "severity": "HIGH",
-      "confidence": 95,
       "level": "HIGH",
       "overlaps": false,
       "value": 240,
@@ -190,7 +188,6 @@ export const DEMO: LandingSnapshot = {
         "client": "ABC Ltd",
         "category": "AGREEMENT_DRIFT",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 324,
@@ -203,7 +200,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Riverside Care Group",
         "category": "AGREEMENT_DRIFT",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 270,
@@ -216,7 +212,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Meridian Logistics",
         "category": "AGREEMENT_DRIFT",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 240,
@@ -229,7 +224,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Dorset Legal",
         "category": "AGREEMENT_DRIFT",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 168,
@@ -248,7 +242,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Meridian Logistics",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 150,
@@ -280,7 +273,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Elmfield Dental",
         "category": "UNBILLED_TIME",
         "severity": "MEDIUM",
-        "confidence": 80,
         "level": "MEDIUM",
         "overlaps": false,
         "value": 70,
@@ -308,7 +300,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Riverside Care Group",
         "category": "AGREEMENT_DRIFT",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 270,
@@ -326,7 +317,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Castle Accountancy",
         "category": "UNDERPRICED_CLIENT",
         "severity": "MEDIUM",
-        "confidence": 50,
         "level": "LOW",
         "overlaps": false,
         "value": 229,
@@ -348,7 +338,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Willow & Hart Interiors",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 60,
@@ -361,7 +350,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Bramley Homes",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 80,
@@ -374,7 +362,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Kingsbridge Architects",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 150,
@@ -387,7 +374,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Meridian Logistics",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 150,
@@ -400,7 +386,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Bramley Homes",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 95,
@@ -413,7 +398,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Castle Accountancy",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 75,
@@ -426,7 +410,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Pennine Engineering",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 120,
@@ -439,7 +422,6 @@ export const DEMO: LandingSnapshot = {
         "client": "Meridian Logistics",
         "category": "OUT_OF_SCOPE",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 90,
@@ -455,7 +437,6 @@ export const DEMO: LandingSnapshot = {
       "client": "Bramley Homes",
       "category": "OUT_OF_SCOPE",
       "severity": "HIGH",
-      "confidence": 95,
       "level": "HIGH",
       "overlaps": false,
       "value": 80,
@@ -489,6 +470,120 @@ export const DEMO: LandingSnapshot = {
       ],
       "result": "£80 one-off"
     }
+  },
+  "evidenceExample": {
+    "client": "Acme Ltd",
+    "title": "8 more users than contracted",
+    "category": "AGREEMENT_DRIFT",
+    "rule": "drift.user",
+    "monthly": 656,
+    "annual": 7872,
+    "level": "HIGH",
+    "classification": "confirmed",
+    "basis": "Contracted for 39 users; your users list shows 47 active. Valued at your own billing line price.",
+    "checks": [
+      {
+        "text": "The agreement states 39 users.",
+        "met": true
+      },
+      {
+        "text": "Your clients file agrees with the agreement.",
+        "met": true
+      },
+      {
+        "text": "Valued at your billing line price (Managed Support (per user)).",
+        "met": true
+      },
+      {
+        "text": "Exactly one billing line is the per-unit charge.",
+        "met": true
+      },
+      {
+        "text": "Every active user has a first-seen date.",
+        "met": true
+      },
+      {
+        "text": "Value is (active − contracted) × unit price.",
+        "met": true
+      }
+    ],
+    "claims": [
+      {
+        "type": "fact",
+        "text": "Your users list shows 47 active users for Acme Ltd."
+      },
+      {
+        "type": "fact",
+        "text": "Acme Managed Services Agreement, section 1.2 states 39 users."
+      },
+      {
+        "type": "fact",
+        "text": "\"Managed Support (per user)\" is billed at £82 per user."
+      },
+      {
+        "type": "observation",
+        "text": "47 − 39 = 8 users more than contracted."
+      },
+      {
+        "type": "observation",
+        "text": "8 × £82 = £656 a month, £7,872 a year."
+      },
+      {
+        "type": "interpretation",
+        "text": "The extra users may be supported without being charged for. Some may be leavers not yet removed from the list, or covered by a separate arrangement."
+      },
+      {
+        "type": "recommendation",
+        "text": "Review the agreement with Acme Ltd. If the extra users are confirmed, update the recurring charge to 47 users (+⁠£656/month)."
+      }
+    ],
+    "evidence": [
+      {
+        "source": "agreement",
+        "label": "Agreement · Acme Managed Services Agreement, section 1.2",
+        "text": "The monthly charge is based on 39 supported users.",
+        "highlights": [
+          "39 supported users"
+        ],
+        "reference": "Acme Managed Services Agreement, section 1.2"
+      },
+      {
+        "source": "client_record",
+        "label": "Client record · clients file",
+        "text": "Contracted users: 39",
+        "highlights": [],
+        "reference": "clients.csv, row 2"
+      },
+      {
+        "source": "asset_register",
+        "label": "Users list",
+        "text": "47 active users.",
+        "highlights": [],
+        "reference": "users.csv, rows 2 to 48"
+      },
+      {
+        "source": "billing",
+        "label": "Price used",
+        "text": "Managed Support (per user): £82 per user",
+        "highlights": [],
+        "reference": "billing.csv, row 2"
+      }
+    ],
+    "calculation": {
+      "lines": [
+        "47 active users − 39 contracted = 8 users",
+        "8 × £82 = £656 a month, priced as Managed Support (per user)",
+        "£656 × 12 = £7,872 a year"
+      ],
+      "result": "£656 a month"
+    },
+    "recommendedAction": "Review the agreement with Acme Ltd. If the extra users are confirmed, update the recurring charge to 47 users (+⁠£656/month).",
+    "files": [
+      "Acme Managed Services Agreement",
+      "clients.csv",
+      "users.csv",
+      "billing.csv"
+    ]
   },
   "client": {
     "name": "ABC Ltd",
@@ -537,7 +632,6 @@ export const DEMO: LandingSnapshot = {
         "client": "ABC Ltd",
         "category": "UNDERPRICED_CLIENT",
         "severity": "MEDIUM",
-        "confidence": 50,
         "level": "LOW",
         "overlaps": true,
         "value": 336,
@@ -550,7 +644,6 @@ export const DEMO: LandingSnapshot = {
         "client": "ABC Ltd",
         "category": "AGREEMENT_DRIFT",
         "severity": "HIGH",
-        "confidence": 95,
         "level": "HIGH",
         "overlaps": false,
         "value": 324,
@@ -563,7 +656,6 @@ export const DEMO: LandingSnapshot = {
         "client": "ABC Ltd",
         "category": "UNBILLED_TIME",
         "severity": "LOW",
-        "confidence": 50,
         "level": "LOW",
         "overlaps": false,
         "value": 80,

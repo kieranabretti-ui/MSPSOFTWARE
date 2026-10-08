@@ -9,7 +9,9 @@ const Login = lazy(() => import('./pages/Auth').then((m) => ({ default: m.Login 
 const Signup = lazy(() => import('./pages/Auth').then((m) => ({ default: m.Signup })))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
 const Demo = lazy(() => import('./pages/Demo'))
-const Security = lazy(() => import('./pages/Security'))
+const TrustCentre = lazy(() => import('./pages/trust/TrustCentre'))
+const Privacy = lazy(() => import('./pages/legal/LegalPage').then((m) => ({ default: m.Privacy })))
+const Terms = lazy(() => import('./pages/legal/LegalPage').then((m) => ({ default: m.Terms })))
 const AppLayout = lazy(() => import('./components/AppLayout'))
 const Overview = lazy(() => import('./pages/app/Overview'))
 const Opportunities = lazy(() => import('./pages/app/Opportunities'))
@@ -50,7 +52,12 @@ export default function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/demo" element={<Demo />} />
-      <Route path="/security" element={<Security />} />
+      <Route path="/trust" element={<TrustCentre />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
+      {/* The security page is now the Trust Centre's first section. */}
+      <Route path="/security" element={<Navigate to="/trust#security" replace />} />
+      <Route path="/dpa" element={<Navigate to="/privacy#dpa" replace />} />
       <Route
         path="/app"
         element={

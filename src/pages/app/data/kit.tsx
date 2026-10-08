@@ -1,6 +1,7 @@
 import { useRef, useState, type DragEvent, type ReactNode, type SelectHTMLAttributes } from 'react'
-import { Check, CheckCircle2, ChevronDown, FileUp, Info, Loader2 } from 'lucide-react'
-import { cx, inputCls } from '../../../components/ui'
+import { Check, CheckCircle2, ChevronDown, FileUp, Info, Loader2, Minus } from 'lucide-react'
+import { Button, Field, Modal, cx, inputCls } from '../../../components/ui'
+import { COMPANY } from '../../../brand/brand'
 import { ICONS } from '../../../brand/icons'
 
 // Small primitives shared by Data, Actions and Settings. They live here, not in
@@ -143,5 +144,114 @@ export function Steps({ steps, current }: { steps: string[]; current: number }) 
         )
       })}
     </ol>
+  )
+}
+
+// Where an upload goes, said where the file is chosen. In evaluation (local)
+// mode the data sits unencrypted in browser storage with no server login, so
+// the screen says so before anything is read.
+export function StorageNotice({ mode, demo, className }: { mode: 'local' | 'supabase'; demo?: boolean; className?: string }) {
+  if (mode === 'supabase')
+    return (
+      <p className={cx('text-caption text-ink-3', className)}>
+        Stored in your Headroom workspace{COMPANY.hostingRegion ? `, hosted in ${COMPANY.hostingRegion}` : ''}. Row-level security limits it to your workspace. You can delete any upload later from Analyses or Settings.
+      </p>
+    )
+  if (demo) return <p className={cx('text-caption text-ink-3', className)}>This is the demo sandbox. Anything you add stays in this browser.</p>
+  return (
+    <Callout tone="warning" className={className}>
+      <strong className="font-semibold">Evaluation mode.</strong> This file is stored unencrypted in this browser and isn't protected by a server login: anyone using this browser profile can read it. Use sample or anonymised data, not client data.
+    </Callout>
+  )
+}
+
+// A confirmation for anything that deletes data. It says exactly what goes and
+// what stays, and for the largest deletions asks for a typed confirmation.
+export function ConfirmDelete({
+  open,
+  onClose,
+  onConfirm,
+  title,
+  intro,
+  removes,
+  keeps,
+  confirmLabel,
+  typeToConfirm,
+  busy,
+  error,
+}: {
+  open: boolean
+  onClose: () => void
+  onConfirm: () => void
+  title: string
+  intro?: ReactNode
+  removes: ReactNode[]
+  keeps: ReactNode[]
+  confirmLabel: string
+  // When set, the button stays disabled until this text is typed.
+  typeToConfirm?: string
+  busy?: boolean
+  error?: string | null
+}) {
+  const [typed, setTyped] = useState('')
+  const ready = !typeToConfirm || typed.trim().toLowerCase() === typeToConfirm.trim().toLowerCase()
+  const close = () => {
+    if (busy) return
+    setTyped('')
+    onClose()
+  }
+  return (
+    <Modal
+      open={open}
+      onClose={close}
+      title={title}
+      footer={
+        <>
+          <Button variant="secondary" onClick={close} disabled={busy}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={onConfirm} loading={busy} disabled={!ready}>
+            {confirmLabel}
+          </Button>
+        </>
+      }
+    >
+      <div className="space-y-4 text-body text-ink-2">
+        {intro && <div>{intro}</div>}
+        <div>
+          <p className="text-label font-semibold uppercase text-ink-3">Deleted</p>
+          <ul className="mt-2 space-y-1.5">
+            {removes.map((r, i) => (
+              <li key={i} className="flex gap-2.5 text-small">
+                <Minus className="mt-[3px] size-3.5 shrink-0 text-ink-3" aria-hidden />
+                <span>{r}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="text-label font-semibold uppercase text-ink-3">Not deleted</p>
+          <ul className="mt-2 space-y-1.5">
+            {keeps.map((r, i) => (
+              <li key={i} className="flex gap-2.5 text-small text-ink-3">
+                <Check className="mt-[3px] size-3.5 shrink-0" aria-hidden />
+                <span>{r}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <p className="text-small text-ink-2">This can't be undone.</p>
+        {typeToConfirm && (
+          <Field label={`Type ${typeToConfirm} to confirm`}>
+            <input className={inputCls} value={typed} onChange={(e) => setTyped(e.target.value)} autoComplete="off" spellCheck={false} />
+          </Field>
+        )}
+        {error && (
+          <Callout tone="danger" alert>
+            {error}
+          </Callout>
+        )}
+      </div>
+    </Modal>
   )
 }

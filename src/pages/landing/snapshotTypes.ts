@@ -1,4 +1,4 @@
-import type { Category, ConfidenceLevel, FindingStatus, Health, Severity } from '../../engine/types'
+import type { Category, ClaimType, ConfidenceLevel, EvidenceSource, FindingClass, FindingStatus, Health, Severity } from '../../engine/types'
 
 // The shape of the landing page's demo snapshot. The figures are produced by
 // running the real engine on the demo dataset (see buildSnapshot.ts), written
@@ -10,8 +10,7 @@ export interface SnapshotFinding {
   client: string
   category: Category
   severity: Severity
-  confidence: number
-  // The level the app shows; the percentage above never reaches the page.
+  // The level the app shows. The engine's numeric score is never exported.
   level: ConfidenceLevel
   // true when this overlaps another finding's value (disclosed, not netted)
   overlaps: boolean
@@ -53,7 +52,13 @@ export interface LandingSnapshot {
     findings: number
     clients: number
     atRisk: number
+    // Clients with at least one opportunity.
+    affectedClients: number
+    // Agreement revenue for the period: client MRR × months, not invoiced amounts.
     billed: number
+    // Conservative split: High confidence alone, Medium and Low as "Requires review".
+    highConfidence: number
+    requiresReview: number
   }
   data: { clients: number; tickets: number; timeEntries: number; usersAndDevices: number; billingLines: number; contracts: number }
   settings: { labourRate: number; billableRate: number; targetMargin: number }
@@ -79,6 +84,9 @@ export interface LandingSnapshot {
   outOfScope: { count: number; value: number; rows: SnapshotFinding[] }
   // The calculation is precomputed so the page never loads lib/calculation.
   spotlight: TicketExample & { recommendedAction: string; basis: string; calculation: { lines: string[]; result: string } }
+  // The "Check the evidence" example: the engine's own output on the brief's
+  // drift case (a known-answer test), laid out as the finding detail page.
+  evidenceExample: EvidenceExample
   // The client example, with the contract value its costs call for.
   client: {
     name: string
@@ -105,4 +113,32 @@ export interface LandingSnapshot {
     // true when the margin finding overlaps the client's agreement drift
     overlapNote: boolean
   }
+}
+
+// One evidence line as the page shows it: where it came from, what it says,
+// and the file and row (or contract and section) it was read from.
+export interface ExampleEvidence {
+  source: EvidenceSource
+  label: string
+  text: string
+  highlights: string[]
+  reference: string
+}
+
+export interface EvidenceExample {
+  client: string
+  title: string
+  category: Category
+  rule: string
+  monthly: number
+  annual: number
+  level: ConfidenceLevel
+  classification: FindingClass
+  basis: string
+  checks: { text: string; met: boolean }[]
+  claims: { type: ClaimType; text: string }[]
+  evidence: ExampleEvidence[]
+  calculation: { lines: string[]; result: string }
+  recommendedAction: string
+  files: string[]
 }

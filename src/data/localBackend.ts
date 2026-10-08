@@ -228,7 +228,9 @@ export class LocalBackend implements Backend {
     out.assets = n
     ;[d.contracts, n] = count(d.contracts, (c) => c.upload_id === uploadId)
     out.contracts = n
-    const inUse = new Set([...d.tickets, ...d.time_entries, ...d.billing_items, ...d.assets, ...d.contracts].map((r) => r.client_id))
+    // Mirrors delete_upload: a client with a task or a decided finding is kept.
+    const decided = d.findings.filter((f) => f.status !== 'open' || (f.decision_note ?? '').trim() !== '' || (f.owner ?? '').trim() !== '')
+    const inUse = new Set<string | null>([...d.tickets, ...d.time_entries, ...d.billing_items, ...d.assets, ...d.contracts, ...d.actions, ...decided].map((r) => r.client_id))
     ;[d.clients, n] = count(d.clients, (c) => mine(c) && !inUse.has(c.id))
     out.clients = n
     d.clients = d.clients.map((c) => (mine(c) ? (out.clients_kept++, { ...c, source: null }) : c))

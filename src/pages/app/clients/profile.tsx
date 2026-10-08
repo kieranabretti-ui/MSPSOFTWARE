@@ -8,23 +8,26 @@ import { ConfidenceLevel } from '../../../components/ConfidenceLevel'
 import { ICONS } from '../../../brand/icons'
 import { hours, money, num, pct, plural } from '../../../lib/format'
 import { signed } from '../../../engine/format'
-import { CATEGORY_META } from '../../../lib/labels'
+import { CATEGORY_META, CLASSIFICATION, SPLIT_LABEL } from '../../../lib/labels'
 import { confidenceOf } from '../../../lib/confidence'
 import { CLAUSE_LABELS, extractClauses } from '../../../engine/contractTerms'
 import { FindingStatusTag } from '../findings/StatusTag'
 import { ClientHealth, MarginValue, isBelowTarget, marginKnown } from './parts'
 
-// The sections of a client's profile page, top to bottom: what is leaking,
-// the opportunities behind it, the agreement against what you deliver (in
+// The sections of a client's profile page, top to bottom: the potential
+// opportunity, the findings behind it, the agreement against what you deliver (in
 // contracts/ContractVsReality), what the client earns you, then the
 // supporting data.
 
 const rowLink = 'block transition-colors duration-150 hover:bg-hover focus-visible:-outline-offset-2'
 
-// 1. Potential leakage for this client against what they were billed, the
-//    part that recurs, and why the client has the health it has.
+// 1. Potential opportunity for this client, High confidence apart from what
+//    requires review, against the agreement value for the period, the part
+//    that recurs, and why the client has the health it has.
 export function LeakagePanel({
   leakage,
+  high,
+  review,
   recurring,
   billed,
   months,
@@ -37,6 +40,8 @@ export function LeakagePanel({
   recommendation,
 }: {
   leakage: number
+  high: number
+  review: number
   recurring: number
   billed: number
   months: number
@@ -55,28 +60,45 @@ export function LeakagePanel({
       <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_280px]">
         <div className="px-5 py-6 sm:px-7">
           <h2 id="cd-leakage" className="text-body font-medium text-ink-2">
-            Potential leakage
+            Potential opportunity
           </h2>
-          <div className="mt-2">
-            <Figure>{money(leakage)}</Figure>
-          </div>
-          <p className="mt-1.5 text-small text-ink-3">
-            {findingCount > 0 ? `Across ${plural(findingCount, 'opportunity', 'opportunities')} in ${periodLabel}.` : `None found in ${periodLabel}.`}
+          <dl className="mt-2 flex flex-wrap items-end gap-x-8 gap-y-3">
+            <div>
+              <dt className="text-caption text-ink-3">{SPLIT_LABEL.high}</dt>
+              <dd className="mt-1">
+                <Figure>{money(high)}</Figure>
+              </dd>
+            </div>
+            <div>
+              <dt className="text-caption text-ink-3">{SPLIT_LABEL.review}</dt>
+              <dd className="mt-1">
+                <Figure tone="muted">{money(review)}</Figure>
+              </dd>
+            </div>
+          </dl>
+          <p className="tnum mt-2 text-small text-ink-3">
+            {findingCount > 0
+              ? `${SPLIT_LABEL.total} ${money(leakage)} across ${plural(findingCount, 'opportunity', 'opportunities')} in ${periodLabel}.`
+              : `No rule flagged an opportunity for this client in ${periodLabel}.`}
           </p>
           <div className="mt-5 max-w-[640px]">
-            {billed > 0 ? <GapBar billed={billed} gap={leakage} height={14} billedLabel={`MRR over ${plural(months, 'month')}`} /> : <p className="text-caption text-ink-3">Add this client's monthly recurring revenue to see leakage against what you bill.</p>}
+            {billed > 0 ? (
+              <GapBar billed={billed} gap={leakage} height={14} billedLabel={`Agreement value (MRR × ${plural(months, 'month')})`} />
+            ) : (
+              <p className="text-caption text-ink-3">Add this client's monthly recurring revenue to compare potential opportunity with agreement value.</p>
+            )}
           </div>
         </div>
         <dl className="flex flex-col justify-center border-t border-line-soft px-5 py-6 sm:px-7 md:border-l md:border-t-0">
-          <dt className="text-small font-medium text-ink-2">Recurring leakage</dt>
+          <dt className="text-small font-medium text-ink-2">Recurring potential</dt>
           <dd className="mt-2 flex flex-wrap items-baseline gap-x-1.5">
-            <Figure tone={recurring > 0 ? 'accent' : 'muted'}>{money(recurring)}</Figure>
+            <Figure tone={recurring > 0 ? 'default' : 'muted'}>{money(recurring)}</Figure>
             <span className="text-small text-ink-3">a month</span>
           </dd>
           <dd className="mt-1.5 text-caption text-ink-3">
             {recurring > 0 ? (
               <>
-                <span className="tnum">{money(recurring * 12)}</span> a year if nothing changes.
+                <span className="tnum">{money(recurring * 12)}</span> a year if confirmed and left uncorrected.
                 {overlap && ' Part of this overlaps: billing the agreement gaps would restore the target margin on its own.'}
               </>
             ) : findingCount > 0 ? (
@@ -143,7 +165,9 @@ export function ClientFindings({ findings, total, periodLabel, clientId }: { fin
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className={cx('block text-body font-medium sm:truncate', dismissed ? 'text-ink-3' : 'text-ink')}>{f.title}</span>
-                    <span className="mt-0.5 block text-caption text-ink-3">{CATEGORY_META[f.category].label}</span>
+                    <span className="mt-0.5 block text-caption text-ink-3">
+                      {CATEGORY_META[f.category].label} · {CLASSIFICATION[confidenceOf(f).classification].label}
+                    </span>
                     <span className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 sm:hidden">
                       <ConfidenceLevel level={confidenceOf(f).level} short />
                       {f.status !== 'open' && <FindingStatusTag status={f.status} />}
@@ -166,7 +190,7 @@ export function ClientFindings({ findings, total, periodLabel, clientId }: { fin
       ) : (
         <div className="px-5 py-8">
           <p className="text-body font-medium text-ink">No opportunities for this client</p>
-          <p className="mt-1 max-w-[56ch] text-small text-ink-3">Nothing in {periodLabel} points to unbilled, out-of-scope or underpriced work for this client.</p>
+          <p className="mt-1 max-w-[56ch] text-small text-ink-3">No rule flagged an opportunity for this client in {periodLabel} with the data provided. Missing exports or contracts limit what can be checked.</p>
         </div>
       )}
     </Card>

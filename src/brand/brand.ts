@@ -16,7 +16,26 @@ export const COMPANY = {
   hostingRegion: 'the United Kingdom' as string | null,
   contactEmail: null as string | null,
   securityEmail: null as string | null,
-  privacyUrl: null as string | null,
-  termsUrl: null as string | null,
+  // Internal routes (src/pages/legal), effective 8 October 2026.
+  privacyUrl: '/privacy' as string | null,
+  termsUrl: '/terms' as string | null,
   founder: null as null | { name: string; role: string; bio: string },
 }
+
+// The trust lines, worded once so the landing page, Trust Centre, app and
+// report say the same thing.
+export const TRUST_COPY = {
+  evidenceBacked: 'Evidence-backed opportunity',
+  calculationShown: 'Calculation shown',
+  confidence: 'Confidence reflects the strength and completeness of the underlying evidence.',
+  ai: 'AI assists with interpretation. Financial calculations are deterministic.',
+  review: 'Recommendations require MSP review before action.',
+  checkEvidence: "Don't take our word for it. Check the evidence.",
+  decides: 'The software recommends. The MSP decides.',
+  freeAudit: 'See exactly what we find before you pay.',
+} as const
+
+// Hosted (Supabase keys present) or evaluation mode (data in this browser).
+// Public claims about server-side controls read this, so they are only made
+// where the deployment has them. The demo always runs in the browser.
+export const HOSTED = !!(import.meta.env?.VITE_SUPABASE_URL && import.meta.env?.VITE_SUPABASE_ANON_KEY)

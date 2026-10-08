@@ -11,7 +11,7 @@ export const DISMISS_REASONS: Record<DismissReason, { label: string; hint: strin
   data_wrong: { label: 'The data is wrong', hint: 'A record in the upload is incorrect or out of date.' },
   contract_allows: { label: 'The agreement covers it', hint: 'The contract allows this, so there is nothing to bill.' },
   already_billed: { label: 'Already billed', hint: 'It was invoiced somewhere this data does not show.' },
-  goodwill: { label: 'Goodwill', hint: 'Valid, but done free of charge on purpose.' },
+  goodwill: { label: 'Goodwill', hint: 'Valid, but deliberately not charged.' },
   relationship: { label: 'Commercial decision', hint: 'Valid, but not pursued to protect the relationship.' },
   other: { label: 'Other', hint: 'None of the above. Add a note.' },
 }

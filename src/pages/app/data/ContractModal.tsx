@@ -6,7 +6,7 @@ import { useToast } from '../../../components/toast'
 import { extractClauses, CLAUSE_LABELS } from '../../../engine/contractTerms'
 import { mapError } from '../../../lib/errors'
 import { AddClientModal } from '../Clients'
-import { Callout, Dropzone, Select } from './kit'
+import { Callout, Dropzone, Select, StorageNotice } from './kit'
 import { CONTRACT_CHECKS } from './sources'
 
 // Words that stay lower case mid-title, and company suffixes that keep their
@@ -36,7 +36,7 @@ function titleFromFileName(name: string) {
 }
 
 export function ContractModal({ onClose }: { onClose: () => void }) {
-  const { data, analysis, addContract, backend } = useStore()
+  const { data, analysis, addContract, backend, isDemoSession } = useStore()
   const toast = useToast()
   const [clientId, setClientId] = useState('')
   const [title, setTitle] = useState('')
@@ -50,13 +50,12 @@ export function ContractModal({ onClose }: { onClose: () => void }) {
 
   const onFile = async (f: File) => {
     setError(null)
-    if (f.size > 20 * 1024 * 1024) return setError('This PDF is over 20 MB. Upload a smaller copy or just the schedule that covers scope.')
-    const isPdf = /\.pdf$/i.test(f.name) || f.type === 'application/pdf'
-    if (!isPdf && !/\.txt$/i.test(f.name)) return setError('Upload the contract as a PDF, or as a .txt file.')
     setExtracting(true)
     try {
-      const { extractPdfText } = await import('../../../lib/pdf')
-      const t = isPdf ? await extractPdfText(f) : await f.text()
+      // Checks the file by its content (a real PDF, or plain text), its size,
+      // page count and length before reading it.
+      const { readContractFile } = await import('../../../lib/pdf')
+      const t = await readContractFile(f)
       // A scanned PDF is a picture of text, so there is nothing to read.
       if (t.trim().length < 40) return setError("We couldn't find any text in this file. If it's a scanned PDF, try a text-based PDF.")
       setText(t)
@@ -132,8 +131,9 @@ export function ContractModal({ onClose }: { onClose: () => void }) {
             <Dropzone accept=".pdf,application/pdf,.txt" onFile={onFile} label="Upload contract PDF" busy={extracting} busyLabel="Extracting text…" hint="PDF or plain text, up to 20 MB" />
             <p className="text-caption text-ink-3">
               Headroom reads the scope and exclusions so tickets can be checked against them. It looks for: {CONTRACT_CHECKS.charAt(0).toLowerCase() + CONTRACT_CHECKS.slice(1)}{' '}
-              {backend.mode === 'supabase' ? "The original PDF is kept in your workspace's private storage." : 'Only the extracted text is kept, in this browser.'}
+              {backend.mode === 'supabase' ? "The original file is kept in your workspace's private storage so you can delete it later." : 'Only the extracted text is kept, in this browser.'}
             </p>
+            <StorageNotice mode={backend.mode} demo={isDemoSession} />
           </div>
         ) : (
           <>
@@ -152,7 +152,7 @@ export function ContractModal({ onClose }: { onClose: () => void }) {
                 </button>
               </div>
               <textarea className={cx(inputCls, 'h-44 resize-y py-2.5 text-small leading-relaxed')} value={text} onChange={(e) => setText(e.target.value)} aria-label="Contract text" />
-              <p className="mt-1.5 text-caption text-ink-3">Check the extracted text and correct anything the PDF reader missed. Clauses update as you edit.</p>
+              <p className="mt-1.5 text-caption text-ink-3">Check the extracted text and correct anything the PDF reader missed. Clauses update as you edit. Page breaks are kept so a clause can be cited by page.</p>
             </div>
             <div>
               <div className="mb-2 flex items-baseline justify-between gap-3">

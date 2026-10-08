@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Download, FileText, Play, Upload as UploadIcon } from 'lucide-react'
-import type { Analysis, AnalysisSummary } from '../../engine/types'
+import type { Analysis, AnalysisSummary, Upload } from '../../engine/types'
 import { useStore } from '../../data/store'
 import { Button, Card, CardHeader, Modal, PageHeader, cx } from '../../components/ui'
 import { useToast } from '../../components/toast'
@@ -13,7 +13,9 @@ import { CsvImportModal } from './data/CsvImportModal'
 import { ContractModal } from './data/ContractModal'
 import { SourceRow } from './data/SourceRow'
 import { UploadHistory } from './data/UploadHistory'
-import { Callout } from './data/kit'
+import { Callout, ConfirmDelete } from './data/kit'
+import { analysisDeletion, clearDeletion, uploadDeletion } from './settings/deletion'
+import { LoadFailed } from './overview/LoadFailed'
 import { CONTRACT_CHECKS } from './data/sources'
 import { AnalysisProgress } from './analyses/AnalysisProgress'
 import { AnalysisResult } from './analyses/AnalysisResult'
@@ -38,7 +40,7 @@ const linkBtn = 'inline-flex items-center gap-1 rounded-sm text-caption font-med
 // Where data comes in and analyses go out: the run and its result, the exports
 // it reads, and every past run with what it found.
 export default function AnalysesPage() {
-  const { data, analysis, loadDemoData, resetData, workspace, backend } = useStore()
+  const { data, analysis, loadDemoData, resetData, deleteUpload, deleteAnalysis, workspace, backend, isDemoSession } = useStore()
   const toast = useToast()
   const nav = useNavigate()
   // A file that arrived in the wrong slot travels with it to the right one.
@@ -47,6 +49,10 @@ export default function AnalysesPage() {
   const [confirmDemo, setConfirmDemo] = useState(false)
   const [confirmReset, setConfirmReset] = useState(false)
   const [clearing, setClearing] = useState(false)
+  // One deletion at a time: an upload or an analysis, with its own confirm.
+  const [deleting, setDeleting] = useState<{ upload: Upload } | { analysis: Analysis; latest: boolean } | null>(null)
+  const [deleteBusy, setDeleteBusy] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
   // The run replaces the status panel: its progress, then its result.
   const [run, setRun] = useState<'running' | AnalysisSummary | null>(null)
   // While a run is in progress the history shows what it was before the run,
@@ -58,7 +64,8 @@ export default function AnalysesPage() {
     setRun('running')
   }
   const hasData = data.clients.length > 0 || data.tickets.length > 0
-  const stale = analysis && data.uploads.some((u) => u.created_at > analysis.created_at)
+  // New uploads, or a deleted one, since the last run mean its figures are out of date.
+  const stale = analysis && (data.uploads.some((u) => u.created_at > analysis.created_at) || data.audit_log.some((e) => e.action === 'upload.deleted' && e.created_at > analysis.created_at))
 
   const loadDemo = async () => {
     setConfirmDemo(false)
@@ -85,6 +92,41 @@ export default function AnalysesPage() {
       setClearing(false)
     }
   }
+
+  const closeDelete = () => {
+    if (deleteBusy) return
+    setDeleting(null)
+    setDeleteError(null)
+  }
+
+  const confirmDelete = async () => {
+    if (!deleting) return
+    setDeleteBusy(true)
+    setDeleteError(null)
+    try {
+      if ('upload' in deleting) {
+        const r = await deleteUpload(deleting.upload.id)
+        const records = r.tickets + r.time_entries + r.billing_items + r.assets + r.contracts + r.clients
+        toast(`Deleted ${deleting.upload.file_name} and ${plural(records, 'record')}.${analysis ? ' Run the analysis again to update opportunities.' : ''}`)
+      } else {
+        await deleteAnalysis(deleting.analysis.id)
+        setRun(null)
+        toast(deleting.latest ? 'Analysis deleted. Run the analysis again to see opportunities.' : 'Analysis deleted.')
+      }
+      setDeleting(null)
+    } catch (e) {
+      setDeleteError(mapError(e, 'save'))
+    } finally {
+      setDeleteBusy(false)
+    }
+  }
+
+  const deleteCopy = !deleting
+    ? null
+    : 'upload' in deleting
+      ? uploadDeletion(deleting.upload, backend.mode, data)
+      : analysisDeletion(deleting.analysis, deleting.latest, data, backend.mode)
+  const clearCopy = clearDeletion(workspace?.name ?? 'this workspace', backend.mode)
 
   const template = async (kind: CsvKind, full: boolean) => {
     const rows = await demoRows(kind)
@@ -115,7 +157,7 @@ export default function AnalysesPage() {
     empty: { dot: 'bg-ink-4', title: 'No data yet', body: 'Start with Clients and Tickets. Time entries, users and devices, billing and contracts make the analysis more complete.' },
     ready: { dot: 'bg-ink-2', title: 'Ready to analyse', body: 'Upload anything else you have, then run the analysis.' },
     current: { dot: 'bg-success', title: 'Analysis up to date', body: analysis ? `Last run ${relative(analysis.created_at)} on ${analysis.summary.period_label}.` : '' },
-    stale: { dot: 'bg-warning', title: 'New data since the last analysis', body: analysis ? `Last run ${relative(analysis.created_at)} on ${analysis.summary.period_label}. Run it again to include your latest uploads.` : '' },
+    stale: { dot: 'bg-warning', title: 'Data has changed since the last analysis', body: analysis ? `Last run ${relative(analysis.created_at)} on ${analysis.summary.period_label}. Run it again so opportunities reflect your current uploads.` : '' },
   }[state]
 
   const Demo = ICONS.data
@@ -131,9 +173,11 @@ export default function AnalysesPage() {
         }
       />
 
-      {backend.mode === 'local' && workspace && !workspace.is_demo && (
+      <LoadFailed />
+
+      {backend.mode === 'local' && workspace && !workspace.is_demo && !isDemoSession && (
         <Callout tone="warning" className="mb-6">
-          <strong className="font-semibold">Evaluation mode:</strong> data stays in this browser and isn't protected by a server login. Don't upload client data here.
+          <strong className="font-semibold">Evaluation mode:</strong> data stays unencrypted in this browser and isn't protected by a server login. Don't upload client data here.
         </Callout>
       )}
 
@@ -169,7 +213,7 @@ export default function AnalysesPage() {
 
       {/* Once there are runs, the history sits with the run; before then the
           sources come first, since uploading is the next step. */}
-      {history.length > 0 && <AnalysisHistory analyses={history} className="mb-6" />}
+      {history.length > 0 && <AnalysisHistory analyses={history} className="mb-6" onDelete={run === 'running' ? undefined : (a, latest) => setDeleting({ analysis: a, latest })} />}
 
       <Card className="mb-6">
         <CardHeader
@@ -238,7 +282,7 @@ export default function AnalysesPage() {
 
       {!history.length && <AnalysisHistory analyses={history} className="mb-6" />}
 
-      <UploadHistory uploads={data.uploads} onClear={hasData ? () => setConfirmReset(true) : undefined} />
+      <UploadHistory id="uploads" uploads={data.uploads} onClear={hasData ? () => setConfirmReset(true) : undefined} onDelete={run === 'running' ? undefined : (u) => setDeleting({ upload: u })} />
 
       {importing && (
         <CsvImportModal
@@ -266,25 +310,31 @@ export default function AnalysesPage() {
       >
         <p className="text-body text-ink-2">This clears everything in {workspace?.name} (clients, uploads, opportunities and tasks) and loads Northlight IT, a fictional MSP with 15 clients.</p>
       </Modal>
-      <Modal
+      <ConfirmDelete
         open={confirmReset}
         onClose={() => !clearing && setConfirmReset(false)}
-        title="Clear all data?"
-        footer={
-          <>
-            <Button variant="secondary" onClick={() => setConfirmReset(false)} disabled={clearing}>
-              Cancel
-            </Button>
-            <Button variant="danger" onClick={clearAll} loading={clearing}>
-              Clear data
-            </Button>
-          </>
-        }
-      >
-        <p className="text-body text-ink-2">
-          This removes every client, upload, opportunity, task and report in {workspace?.name}, and any stored contract files. It can't be undone.
-        </p>
-      </Modal>
+        onConfirm={clearAll}
+        title={clearCopy.title}
+        intro={clearCopy.intro}
+        removes={clearCopy.removes}
+        keeps={clearCopy.keeps}
+        confirmLabel={clearCopy.confirm}
+        busy={clearing}
+      />
+      {deleteCopy && (
+        <ConfirmDelete
+          open
+          onClose={closeDelete}
+          onConfirm={confirmDelete}
+          title={deleteCopy.title}
+          intro={deleteCopy.intro && <p className="break-words font-medium text-ink">{deleteCopy.intro}</p>}
+          removes={deleteCopy.removes}
+          keeps={deleteCopy.keeps}
+          confirmLabel={deleteCopy.confirm}
+          busy={deleteBusy}
+          error={deleteError}
+        />
+      )}
     </>
   )
 }

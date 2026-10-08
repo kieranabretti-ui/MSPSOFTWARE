@@ -206,7 +206,7 @@ export const PLANS: Record<PlanId, Plan> = {
     usersPlanned: false,
     features: [
       available('Upload ticket, time, agreement and billing exports, plus contract PDFs if you have them'),
-      available('Your potential leakage figure, by type and by client'),
+      available('Your potential opportunity figure, by type and by client'),
       available('Every opportunity with its evidence, calculation and confidence'),
       available('A summary report to share with your partner or finance lead'),
     ],

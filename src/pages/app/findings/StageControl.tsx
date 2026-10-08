@@ -5,24 +5,27 @@ import { Button, cx } from '../../../components/ui'
 import { useToast } from '../../../components/toast'
 import { mapError } from '../../../lib/errors'
 import { FINDING_STATUS, NEXT_STAGE } from '../../../lib/labels'
+import { DISMISS_REASONS } from '../../../lib/audit'
 import type { Finding, FindingStatus } from '../../../engine/types'
 import { StageMark } from './StatusTag'
+import DismissDialog from './DismissDialog'
 
 // The working stages in order. Dismissed sits outside the line.
 const STEPS: FindingStatus[] = ['open', 'reviewing', 'valid', 'resolved']
 
-export const DISMISSED_TOAST = 'Dismissed. It no longer counts towards potential leakage.'
+export { DISMISSED_TOAST } from './DismissDialog'
 export const REOPENED_TOAST = 'Reopened as New.'
 
 // Where an opportunity is, and the one step that moves it on. The stepper is
 // a list with a word on every step; done steps carry a tick, the current one
 // is marked for screen readers. It runs across when there's room for every
 // word and down when there isn't, so no stage name is ever cut short. The next step is the page's one lime action;
-// Dismiss and Reopen stay quiet beside it.
+// Dismiss (which always asks for a reason) and Reopen stay quiet beside it.
 export function StageControl({ finding: f, via }: { finding: Finding; via: 'detail' | 'queue' }) {
-  const { setFindingStatus } = useStore()
+  const { setFindingDecision } = useStore()
   const toast = useToast()
   const [pending, setPending] = useState<FindingStatus | null>(null)
+  const [dismissing, setDismissing] = useState(false)
   const next = NEXT_STAGE[f.status]
   const at = STEPS.indexOf(f.status)
   const dismissed = f.status === 'dismissed'
@@ -30,7 +33,7 @@ export function StageControl({ finding: f, via }: { finding: Finding; via: 'deta
   const move = async (to: FindingStatus, message: string) => {
     setPending(to)
     try {
-      await setFindingStatus(f.id, to, via)
+      await setFindingDecision(f.id, { status: to }, via)
       toast(message)
     } catch (e) {
       toast(mapError(e, 'finding'), 'error')
@@ -62,7 +65,10 @@ export function StageControl({ finding: f, via }: { finding: Finding; via: 'deta
         <p className="mt-4 flex items-start gap-2 text-small text-ink-2">
           <StageMark status="dismissed" className="mt-1.5 text-ink-3" />
           <span>
-            <span className="font-medium text-ink">Dismissed.</span> It no longer counts towards potential leakage.
+            <span className="font-medium text-ink">Dismissed: {f.dismiss_reason ? DISMISS_REASONS[f.dismiss_reason].label.toLowerCase() : 'no reason recorded'}.</span> It no longer counts towards the potential total.{' '}
+            <button type="button" onClick={() => setDismissing(true)} className="font-medium text-ink-2 underline decoration-ink-4 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink">
+              Change reason
+            </button>
           </span>
         </p>
       )}
@@ -74,8 +80,8 @@ export function StageControl({ finding: f, via }: { finding: Finding; via: 'deta
           </Button>
         )}
         {!dismissed && (
-          <Button variant="ghost" size="sm" loading={pending === 'dismissed'} disabled={!!pending} onClick={() => move('dismissed', DISMISSED_TOAST)}>
-            {pending !== 'dismissed' && <CircleX className="size-4" aria-hidden />} Dismiss
+          <Button variant="ghost" size="sm" disabled={!!pending} onClick={() => setDismissing(true)}>
+            <CircleX className="size-4" aria-hidden /> Dismiss
           </Button>
         )}
         {f.status !== 'open' && (
@@ -84,6 +90,7 @@ export function StageControl({ finding: f, via }: { finding: Finding; via: 'deta
           </Button>
         )}
       </div>
+      <DismissDialog finding={f} open={dismissing} onClose={() => setDismissing(false)} via={via} />
     </div>
   )
 }

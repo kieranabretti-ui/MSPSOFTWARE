@@ -133,8 +133,11 @@ $$;
 
 -- Deletes one upload and the rows it produced (rows whose source names it).
 -- A row belongs to the last file that wrote it: a re-upload re-stamps rows.
--- Clients are only removed when nothing else of theirs remains; otherwise
--- their provenance is cleared and they stay. Returns the stored file path (or
+-- Clients are only removed when nothing else of theirs remains: no other
+-- source rows, no contract, no task and no finding a person has decided on
+-- (moved off New, or given a note or an owner), since removing the client
+-- would take those decisions with it. Otherwise their provenance is cleared
+-- and they stay. Returns the stored file path (or
 -- null) so the client can remove the object from Storage.
 create or replace function public.delete_upload(p_upload_id uuid)
 returns text language plpgsql security definer set search_path = '' as $$
@@ -167,7 +170,13 @@ begin
     and not exists (select 1 from public.time_entries x where x.client_id = c.id)
     and not exists (select 1 from public.billing_items x where x.client_id = c.id)
     and not exists (select 1 from public.assets x where x.client_id = c.id)
-    and not exists (select 1 from public.contracts x where x.client_id = c.id);
+    and not exists (select 1 from public.contracts x where x.client_id = c.id)
+    and not exists (select 1 from public.actions x where x.client_id = c.id)
+    and not exists (
+      select 1 from public.findings x
+      where x.client_id = c.id
+        and (x.status <> 'open' or coalesce(btrim(x.decision_note), '') <> '' or coalesce(btrim(x.owner), '') <> '')
+    );
   get diagnostics n_clients = row_count;
   update public.clients set source = null where workspace_id = ws and source ->> 'upload_id' = u_key;
   get diagnostics n_kept = row_count;

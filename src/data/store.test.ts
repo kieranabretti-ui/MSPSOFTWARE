@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Finding, FindingDraft } from '../engine/types'
-import { decisionEvents, isDecided, mergeFindings, normaliseContractText } from './store'
+import { aiStillApplies, decisionEvents, isDecided, mergeFindings, normaliseContractText } from './store'
 
 const draft = (key: string, over: Partial<FindingDraft> = {}): FindingDraft => ({
   finding_key: key,
@@ -49,7 +49,9 @@ describe('mergeFindings', () => {
       owner: 'Sam',
       decided_at: '2026-10-02T00:00:00Z',
       first_viewed_at: '2026-10-02T00:00:00Z',
-      ai_explanation: 'x',
+      // the value changed, so the explanation written for the old one is dropped
+      ai_explanation: null,
+      ai_meta: null,
       estimated_value: 20,
       stale: false,
       created_at: '2026-10-01T00:00:00Z',
@@ -82,6 +84,20 @@ describe('mergeFindings', () => {
     const prev = [stored('a', { stale: true, status: 'valid', updated_at: '2026-10-03T00:00:00Z' })]
     const r = mergeFindings(prev, [], ctx)
     expect(r.findings[0].updated_at).toBe('2026-10-03T00:00:00Z')
+  })
+
+  it('keeps an AI explanation only while the evidence, figures, calculation and client are unchanged', () => {
+    const meta = { model: 'm', generated_at: '2026-10-02T00:00:00Z', evidence_hash: 'h' }
+    const ev = [{ kind: 'ticket' as const, label: 'Ticket', text: 'Laptop setup', source: 'psa' as const }]
+    // Stored rows come back from jsonb with keys reordered; that is not a change.
+    const prev = [stored('a', { evidence: [{ text: 'Laptop setup', source: 'psa', label: 'Ticket', kind: 'ticket' }], ai_explanation: 'x', ai_meta: meta })]
+    const same = mergeFindings(prev, [draft('a', { evidence: ev })], ctx)
+    expect(same.findings[0]).toMatchObject({ ai_explanation: 'x', ai_meta: meta })
+    const changed = mergeFindings(prev, [draft('a', { evidence: [{ ...ev[0], text: 'Laptop setup and printer' }] })], ctx)
+    expect(changed.findings[0]).toMatchObject({ ai_explanation: null, ai_meta: null })
+    expect(aiStillApplies(stored('b'), draft('b', { client_id: 'c2' }))).toBe(false)
+    expect(aiStillApplies(stored('b'), draft('b', { meta: { rule: 'unbilled.keyword', period_values: {}, calc: { kind: 'missing' } as never } }))).toBe(false)
+    expect(aiStillApplies(stored('b'), draft('b'))).toBe(true)
   })
 })
 

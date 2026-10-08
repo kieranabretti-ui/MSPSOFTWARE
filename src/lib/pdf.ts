@@ -67,7 +67,9 @@ export async function extractPdfText(file: File): Promise<string> {
       if (chars > CONTRACT_MAX_CHARS) throw TOO_LONG()
       pages.push(text)
     }
-    const text = pages.join('\n\n').trim()
+    // A form feed between pages lets a clause be cited by page number
+    // (contractTerms counts pages by \f; the store keeps it).
+    const text = pages.join('\n\f\n').trim()
     if (text.replace(/\s/g, '').length < 40) throw new AppError("We couldn't find any text in this PDF. It may be a scanned image; export it as a text PDF or paste the text instead.", { code: 'no_text' })
     return text
   } finally {

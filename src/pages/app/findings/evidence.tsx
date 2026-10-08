@@ -128,7 +128,8 @@ function FigureRows({ rows }: { rows: { label: string; value: ReactNode; strong?
 }
 
 // One row of the ledger: what the record is on the left, the record on the right.
-function LedgerRow({ icon: Icon, name, source, children }: { icon: LucideIcon; name: ReactNode; source?: ReactNode; children: ReactNode }) {
+// `refs` (where it sits in the customer's files) closes the record.
+function LedgerRow({ icon: Icon, name, source, refs, children }: { icon: LucideIcon; name: ReactNode; source?: ReactNode; refs?: ReactNode; children: ReactNode }) {
   return (
     <div className="grid gap-x-6 gap-y-3 px-5 py-5 md:grid-cols-[11rem_minmax(0,1fr)]">
       <div className="min-w-0">
@@ -138,19 +139,22 @@ function LedgerRow({ icon: Icon, name, source, children }: { icon: LucideIcon; n
         </div>
         {source && <p className="mt-1 text-caption text-ink-3 md:pl-6">{source}</p>}
       </div>
-      <div className="min-w-0">{children}</div>
+      <div className="min-w-0">
+        {children}
+        {refs}
+      </div>
     </div>
   )
 }
 
-export function EvidenceRow({ evidence: e, nonBillableMinutes }: { evidence: Evidence; nonBillableMinutes?: number }) {
+export function EvidenceRow({ evidence: e, nonBillableMinutes, refs }: { evidence: Evidence; nonBillableMinutes?: number; refs?: ReactNode }) {
   const k = e.kind === 'asset' && /^devices/i.test(e.label) ? { ...KIND.asset, icon: Laptop } : KIND[e.kind]
   const [head, ...rest] = e.label.split(' · ')
   const tail = rest.join(' · ')
 
   if (e.kind === 'contract')
     return (
-      <LedgerRow icon={k.icon} name={k.name} source="Uploaded contract">
+      <LedgerRow icon={k.icon} name={head === 'Agreement' || !head ? k.name : head} source="Uploaded contract" refs={refs}>
         <figure>
           <blockquote className="rounded-md border border-line-soft bg-sunken px-4 py-3.5 text-body leading-relaxed text-ink">
             <span className="text-ink-3" aria-hidden>
@@ -161,7 +165,7 @@ export function EvidenceRow({ evidence: e, nonBillableMinutes }: { evidence: Evi
               ”
             </span>
           </blockquote>
-          {tail && <figcaption className="mt-2 text-caption text-ink-3">{tail}</figcaption>}
+          {tail && !refs && <figcaption className="mt-2 text-caption text-ink-3">{tail}</figcaption>}
         </figure>
       </LedgerRow>
     )
@@ -169,7 +173,7 @@ export function EvidenceRow({ evidence: e, nonBillableMinutes }: { evidence: Evi
   if (e.kind === 'ticket') {
     const [subject, ...body] = e.text.split('\n\n')
     return (
-      <LedgerRow icon={k.icon} name={<span className="tnum">{head}</span>} source="Ticket export">
+      <LedgerRow icon={k.icon} name={<span className="tnum">{head}</span>} source="Ticket export" refs={refs}>
         <p className="text-body font-medium text-ink">
           <Highlighted text={subject} highlights={e.highlights} />
         </p>
@@ -185,7 +189,7 @@ export function EvidenceRow({ evidence: e, nonBillableMinutes }: { evidence: Evi
   if (e.kind === 'time_entry') {
     const rows = parseTime(e.text)
     return (
-      <LedgerRow icon={k.icon} name={e.label} source="Time entries">
+      <LedgerRow icon={k.icon} name={e.label} source="Time entries" refs={refs}>
         {rows ? <TimeLedger rows={rows} nonBillableMinutes={nonBillableMinutes} /> : <p className="tnum whitespace-pre-line text-small text-ink-2">{e.text}</p>}
       </LedgerRow>
     )
@@ -193,7 +197,7 @@ export function EvidenceRow({ evidence: e, nonBillableMinutes }: { evidence: Evi
 
   const figures = parseFigures(e.text)
   return (
-    <LedgerRow icon={k.icon} name={head} source={tail || undefined}>
+    <LedgerRow icon={k.icon} name={head} source={tail || undefined} refs={refs}>
       {figures ? (
         <FigureRows rows={figures} />
       ) : (

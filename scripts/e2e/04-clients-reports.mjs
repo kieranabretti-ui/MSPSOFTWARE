@@ -19,7 +19,7 @@ export default async function clientsReports({ page, SHOTS, shot, expect, until,
 
   step('report + PDF + CSV')
   await page.getByRole('link', { name: 'Reports' }).first().click()
-  await page.getByRole('heading', { name: 'MSP Revenue Leakage Report' }).waitFor()
+  await page.getByRole('heading', { name: 'Revenue Opportunity Report' }).waitFor()
   expect(await page.getByText('How to read confidence').count(), 'report explains confidence')
   await shot('08-report')
   const [pdf] = await Promise.all([page.waitForEvent('download'), page.getByTestId('download-pdf').click()])

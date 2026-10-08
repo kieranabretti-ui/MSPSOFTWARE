@@ -7,6 +7,7 @@ import { ICONS } from '../../brand/icons'
 import { hours, money, plural } from '../../lib/format'
 import type { Client, ClientMetrics } from '../../engine/types'
 import { AddClientModal } from './clients/AddClientModal'
+import { LoadFailed } from './overview/LoadFailed'
 import { ClientHealth, LeakageCell, MarginValue, SeatCount, marginKnown, useLiveHealth, type LiveHealth } from './clients/parts'
 
 // Data.tsx imports the modal from here.
@@ -50,7 +51,7 @@ const sep = (
 )
 
 export default function Clients() {
-  const { data, analysis, workspace } = useStore()
+  const { data, analysis, workspace, loadError } = useStore()
   const m = useMetrics()
   const nav = useNavigate()
   const [view, setView] = useState<View>('overview')
@@ -109,7 +110,7 @@ export default function Clients() {
       {overContract > 0 && (
         <>
           {sep}
-          {overContract} above contract
+          {overContract} above agreement
         </>
       )}
       {sep}
@@ -132,11 +133,12 @@ export default function Clients() {
           ) : undefined
         }
       />
-      {data.clients.length === 0 ? (
+      <LoadFailed />
+      {data.clients.length === 0 && loadError ? null : data.clients.length === 0 ? (
         <Card>
           <EmptyState
             title="No clients yet"
-            body="Upload your clients export on the Analyses page, or add a client by hand, to see each client's margin, agreement and potential leakage."
+            body="Upload your clients export on the Analyses page, or add a client by hand, to see each client's margin, agreement and potential opportunity."
             action={
               <>
                 <Button onClick={() => setAdding(true)}>
@@ -153,7 +155,7 @@ export default function Clients() {
         <>
           {!analysis && (
             <div className="mb-4 flex flex-col gap-3 rounded-lg border border-line bg-surface px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-              <p className="text-small text-ink-2">Run the analysis to see leakage, margins and health for each client.</p>
+              <p className="text-small text-ink-2">Run the analysis to see potential opportunity, margins and health for each client.</p>
               <ButtonLink to="/app/analyses" variant="secondary" size="sm" className="self-start sm:self-auto">
                 Go to Analyses
               </ButtonLink>
@@ -199,7 +201,7 @@ export default function Clients() {
           <Card className="overflow-hidden">
             <div className="overflow-x-auto" id="clients-panel" role="tabpanel" aria-labelledby={`clients-tab-${view}`}>
               <table className="w-full text-small">
-                <caption className="sr-only">Clients with MRR, support, margin, potential leakage and health</caption>
+                <caption className="sr-only">Clients with MRR, support, margin, potential opportunity and health</caption>
                 <thead>
                   <tr className="border-b border-line-soft bg-sunken">
                     <th scope="col" className={cx(thBase, 'pl-4 text-left sm:pl-5')}>Client</th>
@@ -214,7 +216,7 @@ export default function Clients() {
                         </th>
                         <th scope="col" className={cx(th, COL.support)}>Support / mo</th>
                         <th scope="col" className={cx(th, COL.margin)}>Margin</th>
-                        <th scope="col" className={cx(th, 'pr-4 sm:pr-3')}>Potential leakage</th>
+                        <th scope="col" className={cx(th, 'pr-4 sm:pr-3')}>Potential opportunity</th>
                       </>
                     ) : (
                       <>
@@ -306,7 +308,7 @@ export default function Clients() {
           </Card>
           <p className="mt-3 max-w-[90ch] text-caption text-ink-3">
             {view === 'overview'
-              ? `Users and devices show supported / contracted; anything above contract carries an up arrow. The bar ranks each client's potential leakage over ${months ? plural(months, 'month') : 'the period'} against the largest. `
+              ? `Users and devices show supported / contracted; anything above contract carries an up arrow. The bar ranks each client's potential opportunity over ${months ? plural(months, 'month') : 'the period'} against the largest. `
               : 'Contribution is MRR less estimated labour and software, before overheads. '}
             Margins below your {Math.round(target * 100)}% target carry a red dot.
             {withMt.length > measured.length && ' Clients without MRR show Needs MRR and are left out of the margin total and the at-risk count.'}

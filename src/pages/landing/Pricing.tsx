@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Check } from 'lucide-react'
 import { Badge, Figure, TextLink, cx } from '../../components/ui'
 import { IntervalToggle } from '../../components/IntervalToggle'
-import { COMPANY } from '../../brand/brand'
+import { COMPANY, HOSTED, TRUST_COPY } from '../../brand/brand'
 import { money } from '../../lib/format'
 import { track } from '../../lib/track'
 import {
@@ -76,9 +76,11 @@ function PlanCta({ plan, interval }: { plan: Plan; interval: Interval }) {
 function DataNote() {
   return (
     <p className="text-caption text-ink-3">
-      {COMPANY.hostingRegion ? `Hosted in ${COMPANY.hostingRegion}. ` : ''}AI runs only when you ask, through Anthropic. Not SOC 2 certified.{' '}
-      <TextLink to="/security" className="text-caption underline">
-        How your data is handled
+      {HOSTED
+        ? `Workspace data is stored${COMPANY.hostingRegion ? ` in ${COMPANY.hostingRegion}` : ''}. Optional AI explanations are processed by Anthropic in the US. Not SOC 2 certified.`
+        : "Evaluation mode: data stays in this browser. Use sample data, not client data."}{' '}
+      <TextLink to="/trust" className="text-caption underline">
+        Trust Centre
       </TextLink>
     </p>
   )
@@ -190,7 +192,7 @@ export function Pricing() {
             Find the work your MSP is doing for free.
           </h2>
           <p className="mt-5 max-w-[52ch] text-lead text-ink-2">
-            Start with a free audit of your own exports. You see the figure, the evidence behind it and the clients involved before you pay anything. If Headroom then finds even one missed recurring
+            Start with a free audit of your own exports. {TRUST_COPY.freeAudit} You see each opportunity, the evidence and calculation behind it, and the clients involved. If Headroom then finds even one missed recurring
             charge, {growth.name} can pay for itself.
           </p>
         </div>
@@ -200,8 +202,8 @@ export function Pricing() {
             {formatPrice(ROI_EXAMPLE.pricePerUser)} per user a month, is {formatPrice(roiMonthly)} a month of potential revenue. {growth.name} is {formatPrice(priceFor('growth', 'month'))}.
           </p>
           <p className="tnum text-ink-3">
-            For scale: the fictional demo MSP has {DEMO.totals.clients} clients and billed {money(DEMO.totals.billed)} in {inWords(DEMO.period.months)} months. Headroom found{' '}
-            {money(DEMO.totals.identified)} of potential leakage there, {money(DEMO.totals.monthly)} a month of it recurring.
+            For scale: the fictional demo MSP has {DEMO.totals.clients} clients with agreements worth {money(DEMO.totals.billed)} over {inWords(DEMO.period.months)} months. Headroom found{' '}
+            {money(DEMO.totals.identified)} of potential opportunity there ({money(DEMO.totals.highConfidence)} high confidence), {money(DEMO.totals.monthly)} a month of it recurring.
           </p>
           <p className="text-ink-3">If your audit finds less than {growth.name} costs, we'll tell you plainly.</p>
         </div>
@@ -233,6 +235,20 @@ export function Pricing() {
             <span className="tnum">{f}</span>
           </li>
         ))}
+        <li className="flex gap-2.5">
+          <span aria-hidden className="mt-[0.6em] size-1 shrink-0 rounded-full bg-line-strong" />
+          <span>
+            Plans are subject to the{' '}
+            <TextLink to="/terms" className="text-small underline">
+              Terms
+            </TextLink>{' '}
+            and the{' '}
+            <TextLink to="/privacy" className="text-small underline">
+              Privacy policy
+            </TextLink>
+            .
+          </span>
+        </li>
       </ul>
     </Section>
   )

@@ -168,6 +168,38 @@ export interface MergeResult {
   removed: number
 }
 
+// JSON values compared the way Postgres compares jsonb: key order doesn't
+// matter and undefined properties don't exist.
+function sameJson(a: unknown, b: unknown): boolean {
+  const canon = (v: unknown): unknown => {
+    if (Array.isArray(v)) return v.map(canon)
+    if (v && typeof v === 'object')
+      return Object.fromEntries(
+        Object.keys(v)
+          .filter((k) => (v as Record<string, unknown>)[k] !== undefined)
+          .sort()
+          .map((k) => [k, canon((v as Record<string, unknown>)[k])]),
+      )
+    return v ?? null
+  }
+  return JSON.stringify(canon(a)) === JSON.stringify(canon(b))
+}
+
+// Whether an AI explanation written for `prev` still describes `next`. The
+// hosted database clears the explanation when the evidence, values,
+// calculation or client change (migration 20261008000100,
+// findings_clear_stale_ai); this mirrors it so both modes show the same.
+export function aiStillApplies(prev: Pick<Finding, 'evidence' | 'estimated_value' | 'monthly_value' | 'annual_value' | 'meta' | 'client_id'>, next: Pick<FindingDraft, 'evidence' | 'estimated_value' | 'monthly_value' | 'annual_value' | 'meta' | 'client_id'>): boolean {
+  return (
+    prev.client_id === next.client_id &&
+    Number(prev.estimated_value) === Number(next.estimated_value) &&
+    Number(prev.monthly_value) === Number(next.monthly_value) &&
+    Number(prev.annual_value) === Number(next.annual_value) &&
+    sameJson(prev.meta?.calc ?? null, next.meta?.calc ?? null) &&
+    sameJson(prev.evidence, next.evidence)
+  )
+}
+
 // Carries ids, decisions and AI notes over to findings that still apply, by
 // finding_key. A previous finding the engine no longer produces is kept as
 // stale when a person decided on it, otherwise dropped. Pure.
@@ -179,14 +211,16 @@ export function mergeFindings(prev: Finding[], drafts: FindingDraft[], ctx: { wo
     const p = byKey.get(f.finding_key)
     seen.add(f.finding_key)
     if (!p) created++
+    // An explanation of different evidence or figures is dropped, not carried.
+    const keepAi = !!p && aiStillApplies(p, f)
     return {
       ...f,
       id: p?.id ?? uuid(),
       workspace_id: ctx.workspaceId,
       analysis_id: ctx.analysisId,
       status: p?.status ?? 'open',
-      ai_explanation: p?.ai_explanation ?? null,
-      ai_meta: p?.ai_meta ?? null,
+      ai_explanation: keepAi ? (p.ai_explanation ?? null) : null,
+      ai_meta: keepAi ? (p.ai_meta ?? null) : null,
       dismiss_reason: p?.dismiss_reason ?? null,
       decision_note: p?.decision_note ?? null,
       owner: p?.owner ?? null,
@@ -654,7 +688,23 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     // write text that looks like AI output. Here it is only shown. Local mode
     // has no AI.
     async setFindingExplanation(id, text) {
-      setData((d) => ({ ...d, findings: d.findings.map((f) => (f.id === id ? { ...f, ai_explanation: text } : f)) }))
+      const apply = (patch: Pick<Finding, 'ai_explanation'> & Partial<Pick<Finding, 'ai_meta'>>) => (d: WorkspaceData) => ({
+        ...d,
+        findings: d.findings.map((f) => (f.id === id ? { ...f, ...patch } : f)),
+        stale_findings: d.stale_findings.map((f) => (f.id === id ? { ...f, ...patch } : f)),
+      })
+      setData(apply({ ai_explanation: text }))
+      // Read back what the function stored, with its model, time and
+      // evidence hash, so the label and freshness check use the saved values.
+      const ws = wsRef.current
+      if (backend.mode !== 'supabase' || !ws) return
+      try {
+        const fresh = await backend.loadAll(ws.id)
+        const saved = [...fresh.findings, ...fresh.stale_findings].find((f) => f.id === id)
+        if (saved) setData(apply({ ai_explanation: saved.ai_explanation ?? null, ai_meta: saved.ai_meta ?? null }))
+      } catch (e) {
+        console.warn('Could not read back the AI explanation metadata', e)
+      }
     },
     // A task on an opportunity. Adding one starts the review of a New
     // opportunity; it never approves it. The value is kept on the row for
@@ -704,7 +754,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const ws = requireWs()
       const an = dataRef.current.analyses[0]
       if (!an) return null
-      const report: Report = { id: uuid(), workspace_id: ws.id, analysis_id: an.id, title: 'MSP Revenue Leakage Report', period_label: an.summary.period_label, created_at: now() }
+      const report: Report = { id: uuid(), workspace_id: ws.id, analysis_id: an.id, title: 'Revenue Opportunity Report', period_label: an.summary.period_label, created_at: now() }
       await backend.saveReport(ws.id, report)
       setData((d) => ({ ...d, reports: [report, ...d.reports] }))
       await log(backend, ws.id, 'export.pdf', { type: 'report', id: report.id }, { scope: 'report', analysis_id: an.id })

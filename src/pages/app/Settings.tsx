@@ -1,13 +1,19 @@
-import { useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { ChevronDown } from 'lucide-react'
-import { useMetrics, useStore } from '../../data/store'
+import { counted, useStore } from '../../data/store'
 import { Badge, Button, Card, Field, PageHeader, TextLink, cx, inputCls } from '../../components/ui'
+import { confidenceSplit } from '../../lib/confidence'
+import { SPLIT_LABEL } from '../../lib/labels'
 import { useToast } from '../../components/toast'
 import { DEFAULT_SETTINGS, type WorkspaceSettings } from '../../engine/types'
 import { mapError } from '../../lib/errors'
 import { money } from '../../lib/format'
 import { Callout } from './data/kit'
 import { PlanBody } from './settings/PlanSection'
+import { Section } from './settings/Section'
+import { DataPrivacy } from './settings/DataPrivacy'
+import { ActivityLog, TrustPanel } from './settings/Activity'
+import { LoadFailed } from './overview/LoadFailed'
 
 type NumKey = Exclude<keyof WorkspaceSettings, 'currency' | 'business_hours_start' | 'business_hours_end'>
 type FieldDef = { key: NumKey; label: string; hint: string; pct?: boolean; prefix?: string; suffix?: string }
@@ -31,18 +37,6 @@ const GROUPS: { title: string; body: string; keys: NumKey[] }[] = [
 ]
 
 type ErrKey = NumKey | 'name' | 'hours'
-
-function Section({ title, body, children, last }: { title: string; body?: ReactNode; children: ReactNode; last?: boolean }) {
-  return (
-    <section className={cx('grid grid-cols-1 gap-x-10 gap-y-5 px-5 py-6 sm:px-6 lg:grid-cols-[15rem_minmax(0,1fr)]', !last && 'border-b border-line-soft')}>
-      <div>
-        <h2 className="text-h3 text-ink">{title}</h2>
-        {body && <p className="mt-1 max-w-[40ch] text-small text-ink-3">{body}</p>}
-      </div>
-      <div className="min-w-0">{children}</div>
-    </section>
-  )
-}
 
 // A number input with its unit drawn inside the control.
 function UnitInput({ prefix, suffix, invalid, ...rest }: { prefix?: string; suffix?: string; invalid?: boolean; value: string; onChange: (e: ChangeEvent<HTMLInputElement>) => void }) {
@@ -81,7 +75,7 @@ function TimeSelect({ value, onChange, invalid }: { value: string; onChange: (v:
 }
 
 export default function Settings() {
-  const { workspace, user, updateSettings, runAnalysis, analysis, backend, isDemoSession } = useStore()
+  const { workspace, user, updateSettings, runAnalysis, analysis, isDemoSession, data } = useStore()
   const toast = useToast()
   const s = workspace!.settings
   const initial = (): Record<string, string> => ({
@@ -93,9 +87,10 @@ export default function Settings() {
   const [vals, setVals] = useState<Record<string, string>>(initial)
   const [error, setError] = useState<{ key: ErrKey; text: string } | null>(null)
   const [saving, setSaving] = useState(false)
-  // The headline before the last re-run, so the result can say what moved.
-  const m = useMetrics()
-  const [rerun, setRerun] = useState<{ total: number; monthly: number } | null>(null)
+  // The headline before the last re-run, so the result can say what moved:
+  // High confidence on its own, then the labelled total.
+  const split = confidenceSplit(data.findings.filter(counted))
+  const [rerun, setRerun] = useState<{ high: number; total: number } | null>(null)
   const saved = initial()
   const dirty = name !== workspace!.name || Object.keys(saved).some((k) => saved[k] !== vals[k])
 
@@ -118,7 +113,7 @@ export default function Settings() {
     if (vals.business_hours_start >= vals.business_hours_end) return fail('hours', 'Support hours must end after they start.')
     setSaving(true)
     setRerun(null)
-    const before = { total: m.total, monthly: m.monthly }
+    const before = { high: split.high.value, total: split.total.value }
     try {
       await updateSettings(patch, name.trim())
       if (analysis) {
@@ -152,7 +147,8 @@ export default function Settings() {
 
   return (
     <>
-      <PageHeader title="Settings" subtitle="The assumptions the analysis uses. Saving re-runs the analysis with them." />
+      <PageHeader title="Settings" subtitle="The assumptions the analysis uses, your plan, and how your data is stored, exported and deleted." />
+      <LoadFailed />
 
       <div className="space-y-6">
         <Card>
@@ -196,8 +192,8 @@ export default function Settings() {
                   </span>
                 ) : rerun ? (
                   <span className="tnum text-ink-2">
-                    Analysis re-run with these assumptions: potential leakage is now <span className="font-semibold text-ink">{money(m.total)}</span> (was {money(rerun.total)}),{' '}
-                    {money(m.monthly)} a month recurring (was {money(rerun.monthly)}). <TextLink to="/app">View the overview</TextLink>
+                    Analysis re-run with these assumptions. {SPLIT_LABEL.high}: <span className="font-semibold text-ink">{money(split.high.value)}</span> (was {money(rerun.high)}). {SPLIT_LABEL.total}:{' '}
+                    {money(split.total.value)} (was {money(rerun.total)}). <TextLink to="/app">View the overview</TextLink>
                   </span>
                 ) : (
                   <span className="text-ink-3">{analysis ? 'Saving re-runs the analysis with these assumptions.' : 'These apply the next time you run the analysis.'}</span>
@@ -233,25 +229,6 @@ export default function Settings() {
               </div>
             </div>
           </Section>
-          <Section title="Storage" body="Where this workspace keeps its data.">
-            <div className="space-y-2.5">
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="text-body text-ink-2">Stored in</span>
-                {backend.mode === 'supabase' ? <Badge tone="success">Your workspace</Badge> : isDemoSession ? <Badge>Demo sandbox</Badge> : <Badge tone="warning">This browser only</Badge>}
-              </div>
-              {backend.mode === 'supabase' ? (
-                <p className="max-w-[68ch] text-small text-ink-3">Stored in your Headroom workspace with row-level security on every table. Contract files are kept in private storage.</p>
-              ) : isDemoSession ? (
-                <p className="max-w-[68ch] text-small text-ink-3">This is the demo sandbox. Sign out and create an account to keep your own data.</p>
-              ) : (
-                <p className="max-w-[68ch] text-small text-ink-3">Stored only in this browser on this device. Clearing browser data removes it.</p>
-              )}
-              {/* Setup help for developers only; production builds drop this branch. */}
-              {import.meta.env.DEV && backend.mode === 'local' && !isDemoSession && (
-                <p className="max-w-[68ch] text-caption text-ink-3">Development build: set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to store workspaces with accounts.</p>
-              )}
-            </div>
-          </Section>
           <Section title="Integrations" body="Direct connections to your tools." last>
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-3">
@@ -263,6 +240,18 @@ export default function Settings() {
               </p>
             </div>
           </Section>
+        </Card>
+
+        <div>
+          <h2 className="mb-3 text-label font-semibold uppercase text-ink-3">Data and privacy</h2>
+          <Card>
+            <DataPrivacy />
+          </Card>
+        </div>
+
+        <Card>
+          <TrustPanel />
+          <ActivityLog />
         </Card>
       </div>
     </>

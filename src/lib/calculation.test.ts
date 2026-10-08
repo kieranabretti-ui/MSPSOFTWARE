@@ -32,7 +32,7 @@ describe('formatCalculation on the demo', () => {
   it('shows the drift sum at the billing line price', () => {
     const f = findings.find((x) => x.client_id === clientId('ABC Ltd') && x.meta.rule === 'drift.user')!
     expect(formatCalculation(f)).toEqual({
-      lines: ['39 active users − 35 contracted = 4 users', '4 × £18 (Managed User Support (per user)) = £72 a month', '£72 × 12 = £864 a year'],
+      lines: ['39 active users − 35 contracted = 4 users', '4 × £18 = £72 a month, priced as Managed User Support (per user)', '£72 × 12 = £864 a year'],
       result: '£72 a month',
       note: '£324 across the period as users were added. See value by month.',
       total: 324,
@@ -62,7 +62,7 @@ describe('formatCalculation on the demo', () => {
 
   it('shows the licence sum', () => {
     const f = findings.find((x) => x.meta.rule === 'license.unbilled')!
-    expect(formatCalculation(f)!.lines).toEqual(['22 assigned − 21 billed = 1 licence', '1 × £15 (Microsoft 365 Business Standard) = £15 a month', '£15 × 12 = £180 a year'])
+    expect(formatCalculation(f)!.lines).toEqual(['22 assigned − 21 billed = 1 licence', '1 × £15 = £15 a month, priced as Microsoft 365 Business Standard', '£15 × 12 = £180 a year'])
   })
 
   it('returns null for findings saved before calculations were recorded', () => {

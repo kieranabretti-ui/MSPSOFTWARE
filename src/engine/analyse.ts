@@ -709,7 +709,7 @@ export function analyse(input: Dataset): AnalysisOutput {
         finding_key: `MISSING_LICENSE:${client.id}:${norm(license)}`,
         client_id: client.id,
         category: 'MISSING_LICENSE',
-        title: `${gap} ${license} licence${gap === 1 ? '' : 's'} assigned but not billed`,
+        title: `${gap} ${license} licence${gap === 1 ? '' : 's'} assigned beyond those billed`,
         description: `${holders.length} users at ${client.name} are assigned ${license}, but the recurring charge "${line.service}" bills ${line.quantity}.`,
         evidence: [
           ev('asset_register', 'asset', 'Users list', `${holders.length} active users with ${license}.`, holders.map(ref.asset)),
@@ -721,7 +721,7 @@ export function analyse(input: Dataset): AnalysisOutput {
         recommended_action: action,
         claims: claimsOf({
           facts: [`Your users list shows ${holders.length} active users assigned ${license}.`, `The recurring charge "${line.service}" bills ${line.quantity} × ${gbp(line.unit_price)}.`],
-          observations: [`${holders.length} − ${line.quantity} = ${plural(gap, 'licence')} assigned but not billed. ${gap} × ${gbp(line.unit_price)} = ${gbp(monthly)} a month (${gbp(pence(monthlyExact * 12))} a year).`],
+          observations: [`${holders.length} − ${line.quantity} = ${plural(gap, 'licence')} assigned beyond those billed. ${gap} × ${gbp(line.unit_price)} = ${gbp(monthly)} a month (${gbp(pence(monthlyExact * 12))} a year).`],
           interpretations: match === 'partial' ? [`The licence was matched to "${line.service}" by a partial name match.`] : [],
           recommendation: action,
         }),

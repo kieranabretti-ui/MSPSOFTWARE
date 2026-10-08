@@ -56,9 +56,12 @@ export function addSink(fn: Sink): () => void {
 // Events with no properties can be sent with none.
 type Args<K extends TrackName> = keyof TrackEvents[K] extends never ? [props?: TrackEvents[K]] : [props: TrackEvents[K]]
 
+// Record ids are never sent: a UUID in the path is replaced with :id.
+export const scrubPath = (path: string) => path.replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, ':id')
+
 export function track<K extends TrackName>(name: K, ...[props]: Args<K>): void {
   try {
-    const payload = { ...(props ?? {}), ...context, event: name, path: typeof location === 'undefined' ? '' : location.pathname, ts: new Date().toISOString() } as unknown as TrackPayload<K>
+    const payload = { ...(props ?? {}), ...context, event: name, path: typeof location === 'undefined' ? '' : scrubPath(location.pathname), ts: new Date().toISOString() } as unknown as TrackPayload<K>
     if (import.meta.env.DEV) console.debug('[track]', name, payload)
     if (ENDPOINT && typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') navigator.sendBeacon(ENDPOINT, JSON.stringify(payload))
     for (const sink of sinks) {

@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import { Plus } from 'lucide-react'
 import { TextLink } from '../../components/ui'
+import { HOSTED, TRUST_COPY } from '../../brand/brand'
+import { CONFIDENCE } from '../../lib/labels'
 import { money } from '../../lib/format'
 import { ENTITLEMENTS, PLANS, READ_ONLY_DAYS_AFTER_END, formatLimit } from '../../billing/plans'
 import { DEMO } from './demoSnapshot'
@@ -27,12 +29,14 @@ const QUESTIONS: { q: string; a: ReactNode }[] = [
     q: 'Is my customer data secure?',
     a: (
       <>
-        On the hosted service, your exports are read in your browser and saved to a workspace only its members can access, enforced by row-level security in the database. Contract PDFs sit in private
-        storage. AI only runs when you ask it to explain a single opportunity. Headroom isn't SOC 2 or ISO 27001 certified yet;{' '}
-        <TextLink to="/security" className="text-body underline">
-          the security page
+        {HOSTED
+          ? "Your exports are read in your browser and saved to a workspace only its members can access, enforced by row-level security in the database. Contract files sit in private storage, and key actions are recorded in an audit log. AI only runs when you ask it to explain a single opportunity. "
+          : "This site is running in evaluation mode, so data stays in your browser and isn't protected by a server login: use the demo or sample data, not client data. "}
+        Headroom isn't SOC 2 or ISO 27001 certified yet;{' '}
+        <TextLink to="/trust" className="text-body underline">
+          the Trust Centre
         </TextLink>{' '}
-        sets out exactly what is and isn't in place.
+        sets out exactly what is and isn't in place, who our providers are and how deletion works.
       </>
     ),
   },
@@ -42,7 +46,11 @@ const QUESTIONS: { q: string; a: ReactNode }[] = [
   },
   {
     q: 'How accurate are the opportunities?',
-    a: "Every opportunity comes from deterministic rules, so the same data always gives the same result. Each one shows the records behind it, how its value was calculated, and a confidence level: High when your agreement and your records both support it, Medium when your records support it but it needs a check, Low when it's a possibility to verify by hand.",
+    a: `Every opportunity comes from deterministic rules, so the same data always gives the same result. Each one shows the records behind it, the file and row they came from, how its value was calculated, and a confidence level. ${TRUST_COPY.confidence} High: ${CONFIDENCE.HIGH.definition} Medium: ${CONFIDENCE.MEDIUM.definition} Low: ${CONFIDENCE.LOW.definition} ${TRUST_COPY.review}`,
+  },
+  {
+    q: 'Does AI work out the figures?',
+    a: `No. ${TRUST_COPY.ai} Rules find each opportunity and calculate its value. AI is used only when you ask for a plain-English explanation of one opportunity, and that text is labelled AI-assisted.`,
   },
   {
     q: 'Does it replace my PSA?',
@@ -50,7 +58,7 @@ const QUESTIONS: { q: string; a: ReactNode }[] = [
   },
   {
     q: 'How much could I recover?',
-    a: `It depends on your data, your agreements and how you price, and we don't promise a figure. As an example, the fictional demo MSP (${DEMO.totals.clients} clients) shows ${money(DEMO.totals.identified)} of potential leakage over ${inWords(DEMO.period.months)} months, ${money(DEMO.totals.monthly)} a month of it recurring. Your first audit is free, so you can see your own figure.`,
+    a: `It depends on your data, your agreements and how you price, and we don't promise a figure. As an example, the fictional demo MSP (${DEMO.totals.clients} clients) shows ${money(DEMO.totals.identified)} of potential opportunity over ${inWords(DEMO.period.months)} months: ${money(DEMO.totals.highConfidence)} at high confidence and ${money(DEMO.totals.requiresReview)} that requires review. ${money(DEMO.totals.monthly)} a month of it is recurring. Your first audit is free, so you can see exactly what we find before you pay.`,
   },
   {
     q: 'What if my audit finds very little?',
