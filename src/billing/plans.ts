@@ -144,7 +144,8 @@ export const ENTITLEMENTS: Record<PlanId, Entitlements> = {
     monitoring: false,
     psaConnection: false,
     prioritySupport: true,
-    quarterlyReview: true,
+    // Planned: a people-delivered review needs a contact channel and paid plans on sale.
+    quarterlyReview: false,
   },
 }
 
@@ -199,7 +200,7 @@ export const PLANS: Record<PlanId, Plan> = {
     name: 'Free',
     tagline: 'Revenue Leakage Audit',
     whoFor: 'Find out what your MSP may be leaving on the table.',
-    sub: 'One analysis of your own exports. No card.',
+    sub: 'One full analysis. No card.',
     recommended: false,
     salesLed: false,
     cta: { label: 'Get My Free Audit', to: signupFor() },
@@ -218,7 +219,7 @@ export const PLANS: Record<PlanId, Plan> = {
     whoFor: 'For MSPs that want continuous visibility into revenue leakage, agreement drift, unbilled work and client profitability.',
     recommended: true,
     salesLed: false,
-    cta: { label: 'Start Monitoring', to: signupFor('growth'), note: `First ${FOUNDING.freeDays} days free for founding MSPs.` },
+    cta: { label: 'Start Monitoring', to: signupFor('growth'), note: `Not on sale online yet. Founding MSPs get the first ${FOUNDING.freeDays} days free when it opens.` },
     usersPlanned: true,
     features: [
       available('Everything in the free audit'),
@@ -247,7 +248,7 @@ export const PLANS: Record<PlanId, Plan> = {
       // A support promise needs a published support channel. Until one exists it is planned, and once it does the
       // wording is a target, not a service level (the Terms offer none).
       COMPANY.contactEmail ? available('Priority support from a named contact. We aim to reply within one business day') : planned('Priority support from a named contact'),
-      available('A quarterly commercial review: we go through your findings with you and run custom analysis on request'),
+      planned('A quarterly commercial review of your findings with us'),
       planned('Multiple PSA environments and entities'),
       planned('Advanced reporting'),
       planned('Deeper contract intelligence'),

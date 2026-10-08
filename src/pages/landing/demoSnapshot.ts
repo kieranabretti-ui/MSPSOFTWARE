@@ -20,8 +20,8 @@ export const DEMO: LandingSnapshot = {
     "atRisk": 4,
     "affectedClients": 15,
     "billed": 143220,
-    "highConfidence": 2405,
-    "requiresReview": 1876
+    "highConfidence": 1405,
+    "requiresReview": 2876
   },
   "data": {
     "clients": 15,
@@ -77,13 +77,13 @@ export const DEMO: LandingSnapshot = {
   "levels": [
     {
       "level": "HIGH",
-      "count": 19,
-      "value": 2405
+      "count": 9,
+      "value": 1405
     },
     {
       "level": "MEDIUM",
-      "count": 7,
-      "value": 610
+      "count": 17,
+      "value": 1610
     },
     {
       "level": "LOW",
@@ -337,8 +337,8 @@ export const DEMO: LandingSnapshot = {
         "title": "Personal device work logged as non-billable",
         "client": "Willow & Hart Interiors",
         "category": "OUT_OF_SCOPE",
-        "severity": "HIGH",
-        "level": "HIGH",
+        "severity": "MEDIUM",
+        "level": "MEDIUM",
         "overlaps": false,
         "value": 60,
         "monthly": 0,
@@ -349,8 +349,8 @@ export const DEMO: LandingSnapshot = {
         "title": "Personal device work logged as non-billable",
         "client": "Bramley Homes",
         "category": "OUT_OF_SCOPE",
-        "severity": "HIGH",
-        "level": "HIGH",
+        "severity": "MEDIUM",
+        "level": "MEDIUM",
         "overlaps": false,
         "value": 80,
         "monthly": 0,
@@ -361,8 +361,8 @@ export const DEMO: LandingSnapshot = {
         "title": "Third-party application support logged as non-billable",
         "client": "Kingsbridge Architects",
         "category": "OUT_OF_SCOPE",
-        "severity": "HIGH",
-        "level": "HIGH",
+        "severity": "MEDIUM",
+        "level": "MEDIUM",
         "overlaps": false,
         "value": 150,
         "monthly": 0,
@@ -385,8 +385,8 @@ export const DEMO: LandingSnapshot = {
         "title": "Hardware repair logged as non-billable",
         "client": "Bramley Homes",
         "category": "OUT_OF_SCOPE",
-        "severity": "HIGH",
-        "level": "HIGH",
+        "severity": "MEDIUM",
+        "level": "MEDIUM",
         "overlaps": false,
         "value": 95,
         "monthly": 0,
@@ -397,8 +397,8 @@ export const DEMO: LandingSnapshot = {
         "title": "Third-party application support logged as non-billable",
         "client": "Castle Accountancy",
         "category": "OUT_OF_SCOPE",
-        "severity": "HIGH",
-        "level": "HIGH",
+        "severity": "MEDIUM",
+        "level": "MEDIUM",
         "overlaps": false,
         "value": 75,
         "monthly": 0,
@@ -409,8 +409,8 @@ export const DEMO: LandingSnapshot = {
         "title": "Onsite visit logged as non-billable",
         "client": "Pennine Engineering",
         "category": "OUT_OF_SCOPE",
-        "severity": "HIGH",
-        "level": "HIGH",
+        "severity": "MEDIUM",
+        "level": "MEDIUM",
         "overlaps": false,
         "value": 120,
         "monthly": 0,
@@ -436,8 +436,8 @@ export const DEMO: LandingSnapshot = {
       "title": "Personal device work logged as non-billable",
       "client": "Bramley Homes",
       "category": "OUT_OF_SCOPE",
-      "severity": "HIGH",
-      "level": "HIGH",
+      "severity": "MEDIUM",
+      "level": "MEDIUM",
       "overlaps": false,
       "value": 80,
       "monthly": 0,
@@ -463,7 +463,7 @@ export const DEMO: LandingSnapshot = {
       "billable": false
     },
     "recommendedAction": "Review whether this work on a personal device should be treated as out of scope and charged at the agreement rate (£60/h). If it's a recurring request, agree how it will be billed with Bramley Homes.",
-    "basis": "The contract clause and the ticket both support this, and the rate is the one in the agreement.",
+    "basis": "The contract excludes this kind of work and the ticket's wording reads like it, but that link is a keyword match, not a field in your records. Read the ticket before charging.",
     "calculation": {
       "lines": [
         "1h 20m non-billable × £60/h = £80"

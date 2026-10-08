@@ -70,13 +70,13 @@ const QUESTIONS: { q: string; a: ReactNode }[] = [
   },
   {
     q: 'Can I change plan or cancel?',
-    a: `You can move to a higher plan at any time. Downgrades and cancellations take effect at the end of the period you've paid for, and you keep read-only access to past reports for ${READ_ONLY_DAYS_AFTER_END} days after that.`,
+    a: `Paid plans aren't on sale yet, so there is nothing to pay for or cancel today, and you can delete your workspace at any time in Settings. When paid plans open, you'll be able to move to a higher plan at any time; downgrades and cancellations will take effect at the end of the period you've paid for, with read-only access to past reports for ${READ_ONLY_DAYS_AFTER_END} days after that.`,
   },
   ...(COMPANY.contactEmail
     ? [
         {
           q: `Why does ${PLANS.pro.name} start with a call?`,
-          a: `Part of ${PLANS.pro.name} is delivered by people: the quarterly review and priority support. A short call confirms it fits and shows which planned items matter to you.`,
+          a: `Part of ${PLANS.pro.name} is delivered by people: priority support now, and a quarterly review that is planned. A short call confirms it fits and shows which planned items matter to you.`,
         },
       ]
     : []),

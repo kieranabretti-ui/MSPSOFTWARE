@@ -92,7 +92,7 @@ const SECTIONS = [
 
 // Per-rule confidence criteria, as docs/methodology.md section 4 and src/engine/confidence.ts set them.
 const RULE_CONFIDENCE: [string, string, string][] = [
-  ['Out-of-scope work', 'Agreement clause matched with no other wording saying the work is included, strong wording match, hourly rate from the agreement and, for out-of-hours work, support hours from the agreement', 'Medium'],
+  ['Out-of-scope work', 'Out-of-hours work only: the time entries fall outside the support hours stated in the agreement, no other wording says the work is included, and the rate comes from the agreement. Other kinds of work are linked to the ticket by a keyword match, so they are never High', 'Medium'],
   ['Billable ticket, non-billable time', 'Never: the time may be a deliberate write-off', 'Medium'],
   ['Chargeable-looking work', 'Never: nothing confirms it is chargeable', 'Low'],
   ['Recurring charge below agreement', 'Contracted quantity stated in an agreement, and one unambiguous per-unit billing line', 'Medium'],

@@ -55,6 +55,7 @@ Details that matter:
 - **Licence matching.** A licence matches a billing line when the names are identical once case and punctuation are ignored. A partial match (one name contains the other) is used only when it is the single candidate for that line and that licence; otherwise no finding is raised.
 - **Drift timing.** Only assets present by the end of the period count. Each month counts the assets first seen by that month's end; an asset with no first-seen date counts from the first month, and is disclosed.
 - **Usage.** Only non-billable time counts against the allowance, because billable time is charged separately. The allowance is the agreement's when it states one, otherwise the clients file's; a disagreement between them is recorded and shown. Hours over the allowance are not rounded up to any billing increment, so the value is the lower figure.
+- **Ticket wording.** A keyword only counts when the ticket does not say the opposite in the same clause: "onsite visit not required", "no onsite", "not a new user" and "no need for an onsite visit" are not matches, and a ticket that says the work was remote only ("remote only", "fixed remotely") is never read as an onsite visit.
 - **Exclusion clauses.** A sentence that says the work is not chargeable, or is included or covered, is never read as an exclusion. If another sentence in the agreement says the kind of work is included, the out-of-scope finding stays at Medium.
 - **Time zones.** Timestamps with a zone (Z or ±hh:mm) are converted to UK time at import, and business hours are judged on UK wall-clock time, so results don't depend on the browser's time zone. Timestamps without a zone are taken as UK time.
 - **Margin.** Contribution = MRR − all logged hours × labour cost − software cost (clients file, or users × the Settings default per user). Shortfall per month = target margin × MRR − contribution, where positive. The target price is average cost ÷ (1 − target margin). When billing the client's agreement gaps alone would restore the target margin, the overlap is disclosed and neither figure is netted. Months above target are not netted against months below it; the calculation note gives the shortfall measured on the period average for comparison.
@@ -81,15 +82,15 @@ Confidence reflects the strength and completeness of the underlying evidence. It
 
 | Level | Meaning |
 | --- | --- |
-| **High** | Direct evidence in your records on both sides of the comparison, and a deterministic calculation with no defaulted inputs. |
-| **Medium** | Your records support it, but an input is assumed (a Settings price, rate or hours, or the clients file rather than the agreement) or a person needs to check something the data cannot show. |
+| **High** | Direct evidence in your records on both sides of the comparison, and a deterministic calculation with no defaulted inputs. A keyword match in ticket text is never enough on its own. |
+| **Medium** | Your records support it, but an input is assumed (a Settings price, rate or hours, or the clients file rather than the agreement), the link rests on a keyword match in ticket text, or a person needs to check something the data cannot show. |
 | **Low** | The evidence is incomplete or ambiguous, or the value is modelled rather than counted. |
 
 Per rule:
 
 | Rule | High when | Otherwise |
 | --- | --- | --- |
-| Out of scope | Agreement clause matched with no other wording saying the work is included, strong wording match, hourly rate from the agreement, and (out of hours) support hours from the agreement | Medium |
+| Out of scope | Out of hours only: the time entries' own timestamps fall outside the support hours stated in the agreement, the agreement clause has no other wording saying the work is included, and the hourly rate and multiplier come from the agreement. Every other kind of work (personal device, hardware repair, third-party application, project, onsite, new user, new device) is linked to the ticket only by a keyword match, which is an interpretation, so it is never High | Medium |
 | Unbilled, billing mismatch | Never: the time may be a deliberate write-off | Medium |
 | Unbilled, chargeable-looking work | Never: nothing confirms it is chargeable | Low |
 | Recurring mismatch | Contracted quantity stated in an agreement, and one unambiguous per-unit line | Medium |
@@ -115,7 +116,7 @@ Classification:
 | Classification | Rule |
 | --- | --- |
 | **Confirmed discrepancy** | High confidence, and a pure record-against-record discrepancy: drift, recurring mismatch, licence |
-| **Potential opportunity** | Medium confidence; or High where acting still needs judgement (out-of-scope work: whether to charge it is the MSP's decision) |
+| **Potential opportunity** | Medium confidence; or High where acting still needs judgement (out-of-hours work outside the agreed hours: whether to charge it is the MSP's decision) |
 | **Investigation required** | Low confidence, or any modelled estimate |
 
 No finding says a client owes money. Wording is "evidence-backed opportunity", "potential opportunity" or "requires review".

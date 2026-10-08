@@ -37,10 +37,10 @@ describe('buildReport (demo)', () => {
     expect(r.annual).toBe(4272)
     expect(r.findingCount).toBe(40)
     expect(r.agreementValue).toBe(143220)
-    expect(r.split.high.value).toBe(2405)
-    expect(r.split.review.value).toBe(1876)
+    expect(r.split.high.value).toBe(1405)
+    expect(r.split.review.value).toBe(2876)
     expect(r.split.high.value + r.split.review.value).toBe(r.total)
-    expect(headlineSentence(r)).toContain('£2,405 is high-confidence opportunity')
+    expect(headlineSentence(r)).toContain('£1,405 is high-confidence opportunity')
   })
 
   it('backs every opportunity with an evidence row that adds up to the total', () => {

@@ -9,8 +9,8 @@ describe('opportunity split (dashboard headline)', () => {
   const s = opportunitySplit(findings)
 
   it('separates High confidence from Requires review and adds up to the pinned total', () => {
-    expect(Math.round(s.high.value)).toBe(2405)
-    expect(Math.round(s.review.value)).toBe(1876)
+    expect(Math.round(s.high.value)).toBe(1405)
+    expect(Math.round(s.review.value)).toBe(2876)
     expect(Math.round(s.total.value)).toBe(4281)
     expect(s.total.count).toBe(40)
     expect(s.high.count + s.review.count).toBe(40)

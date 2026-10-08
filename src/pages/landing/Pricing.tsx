@@ -177,10 +177,10 @@ export function Pricing() {
 
   const footnotes = [
     `Prices are in GBP and exclude VAT, which is added at ${vatPct()}% for UK businesses.${SETUP_FEE === 0 ? ' There is no setup fee.' : ''}`,
-    `Annual plans save ${annualDiscountPct()}%. Monthly plans can be cancelled any time and end at the close of the billing month. After a plan ends, past reports stay readable for ${READ_ONLY_DAYS_AFTER_END} days.`,
+    `When paid plans open: annual plans save ${annualDiscountPct()}%, monthly plans can be cancelled at any time and end at the close of the billing month, and after a plan ends past reports stay readable for ${READ_ONLY_DAYS_AFTER_END} days.`,
     'Items marked Planned are not available yet and are not part of what you pay for today.',
     'Headroom shows potential revenue opportunities for you to review, not guaranteed savings.',
-    'Paid plans open to founding MSPs first, and we invoice directly until online checkout is live. Until then, every account has the whole product as it is today (one user per workspace), and your first audit is free.',
+    "Paid plans aren't on sale yet and there is no checkout, so nothing is charged. They will open to founding MSPs first. Until then, every account has the whole product as it is today (one user per workspace), and your first audit is free.",
   ]
 
   return (
@@ -192,7 +192,7 @@ export function Pricing() {
             Find the work your MSP is doing for free.
           </h2>
           <p className="mt-5 max-w-[52ch] text-lead text-ink-2">
-            Start with a free audit of your own exports. {TRUST_COPY.freeAudit} You see each opportunity, the evidence and calculation behind it, and the clients involved. If Headroom then finds even one missed recurring
+            {HOSTED ? 'Start with a free audit of your own exports.' : 'Start with a free audit. This evaluation version keeps data in your browser, so try it on the sample exports.'} {TRUST_COPY.freeAudit} You see each opportunity, the evidence and calculation behind it, and the clients involved. If Headroom then finds even one missed recurring
             charge, {growth.name} can pay for itself.
           </p>
         </div>

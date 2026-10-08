@@ -32,7 +32,7 @@ export const NEXT_STAGE: Partial<Record<FindingStatus, { to: FindingStatus; labe
 // engine imports so the landing page can use it.
 export const CONFIDENCE: Record<ConfidenceLevel, { label: string; short: string; definition: string; marks: number }> = {
   HIGH: { label: 'High confidence', short: 'High', definition: 'Direct evidence in your records on both sides, and a deterministic calculation.', marks: 3 },
-  MEDIUM: { label: 'Medium confidence', short: 'Medium', definition: 'Your records support it, but an input is assumed or needs a check.', marks: 2 },
+  MEDIUM: { label: 'Medium confidence', short: 'Medium', definition: 'Your records support it, but an input is assumed, the link is a keyword match, or it needs a check.', marks: 2 },
   LOW: { label: 'Low confidence', short: 'Low', definition: 'Incomplete or ambiguous evidence, or a modelled estimate. Verify it by hand.', marks: 1 },
 }
 export const LEVEL_ORDER: ConfidenceLevel[] = ['HIGH', 'MEDIUM', 'LOW']

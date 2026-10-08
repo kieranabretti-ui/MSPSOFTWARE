@@ -258,9 +258,38 @@ export interface AnalysisOutput {
 
 type Draft = Omit<FindingDraft, 'severity' | 'confidence' | 'classification' | 'source_data'>
 
+// The same agreement sentence can back two parts of a finding (an
+// out-of-hours exclusion is also the support-hours clause). Show it once, with
+// both roles in its label: "Agreement and support hours · MSA, section 2.1".
+export function dedupeClauseEvidence(evidence: Evidence[]): Evidence[] {
+  const out: Evidence[] = []
+  const seen = new Map<string, number>()
+  for (const e of evidence) {
+    if (e.source !== 'agreement') {
+      out.push(e)
+      continue
+    }
+    const r = e.refs?.[0]
+    const key = `${r?.id ?? ''}|${r?.section ?? ''}|${r?.page ?? ''}|${e.text}`
+    const at = seen.get(key)
+    if (at == null) {
+      seen.set(key, out.length)
+      out.push(e)
+      continue
+    }
+    const first = out[at]
+    const [firstRole, ...cite] = first.label.split(' · ')
+    const role = e.label.split(' · ')[0]
+    const highlights = [...new Set([...(first.highlights ?? []), ...(e.highlights ?? [])])]
+    out[at] = { ...first, label: [`${firstRole} and ${role.toLowerCase()}`, ...cite].join(' · '), ...(highlights.length ? { highlights } : {}) }
+  }
+  return out
+}
+
 // Severity, confidence score and classification all derive from the
 // confidence model; source_data is every record the evidence points at.
-function finalise(d: Draft): FindingDraft {
+function finalise(input: Draft): FindingDraft {
+  const d = { ...input, evidence: dedupeClauseEvidence(input.evidence) }
   const r = confidenceOf({ confidence: 0, meta: d.meta })
   return {
     ...d,

@@ -87,11 +87,54 @@ const RULES: Rule[] = [
   },
 ]
 
+// Negation. A keyword only counts when the ticket doesn't say the opposite:
+// "no onsite", "not a new user", "onsite visit not required". The words just
+// before a match, or just after it, in the same clause are checked.
+const NEGATED_BEFORE = /\b(?:no|not|non|without|never|nor|isn'?t|wasn'?t|aren'?t|weren'?t|didn'?t|doesn'?t|don'?t|no need (?:for|to)|not (?:an?|the|any))\s+(?:(?:an?|the|any|need(?:ed)? (?:for|to)?|require(?:d)?|for)\s+)*$/i
+const NEGATED_AFTER = /^[\w\s'-]{0,24}?\b(?:not|no longer|never)\s+(?:required|needed|necessary|attended|done|carried out)\b|^[\w\s'-]{0,24}?\b(?:unnecessary|not needed)\b/i
+// A ticket that says the work was remote only was not an onsite visit.
+const REMOTE_ONLY = /\bremote(?:ly)?(?:\s+(?:support|session|fix|access))?\s+only\b|\b(?:fixed|resolved|done|completed|handled)\s+remotely\b/i
+const CLAUSE_BREAK = /[.;!?\n]|\bbut\b/i
+// "could not be fixed remotely" says the opposite: the remote fix failed.
+const REMOTE_FAILED_BEFORE = /\b(?:not|never|unable to|cannot|can'?t|couldn'?t|wasn'?t|isn'?t)\b[\w\s']{0,12}$/i
+
+function saysRemoteOnly(text: string): boolean {
+  const g = new RegExp(REMOTE_ONLY.source, 'gi')
+  for (const m of text.matchAll(g)) {
+    const { before } = clauseAround(text, m.index, m[0].length)
+    if (!REMOTE_FAILED_BEFORE.test(before)) return true
+  }
+  return false
+}
+
+function clauseAround(text: string, index: number, length: number): { before: string; after: string } {
+  let before = text.slice(Math.max(0, index - 40), index)
+  const cut = before.split(CLAUSE_BREAK)
+  before = cut[cut.length - 1]
+  let after = text.slice(index + length, index + length + 40)
+  after = after.split(CLAUSE_BREAK)[0]
+  return { before, after }
+}
+
+function isNegated(text: string, index: number, length: number): boolean {
+  const { before, after } = clauseAround(text, index, length)
+  return NEGATED_BEFORE.test(before) || NEGATED_AFTER.test(after)
+}
+
+// The first occurrence of a pattern that isn't negated, or null.
+function firstPositive(text: string, re: RegExp): string | null {
+  const g = new RegExp(re.source, re.flags.includes('g') ? re.flags : re.flags + 'g')
+  for (const m of text.matchAll(g)) if (!isNegated(text, m.index, m[0].length)) return m[0]
+  return null
+}
+
 export function classifyText(text: string): Classification[] {
   const out: Classification[] = []
+  const remoteOnly = saysRemoteOnly(text)
   for (const rule of RULES) {
-    const strong = rule.strong.map((r) => text.match(r)?.[0]).filter((m): m is string => !!m)
-    const weak = rule.weak.map((r) => text.match(r)?.[0]).filter((m): m is string => !!m)
+    if (rule.category === 'onsite' && remoteOnly) continue
+    const strong = rule.strong.map((r) => firstPositive(text, r)).filter((m): m is string => !!m)
+    const weak = rule.weak.map((r) => firstPositive(text, r)).filter((m): m is string => !!m)
     if (!strong.length && !weak.length) continue
     const confidence = strong.length ? Math.min(98, 86 + (strong.length - 1) * 5 + weak.length * 3) : Math.min(68, 52 + weak.length * 8)
     out.push({ category: rule.category, confidence, matches: [...strong, ...weak] })

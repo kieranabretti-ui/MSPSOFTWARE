@@ -215,8 +215,9 @@ describe('known answer: out of scope, clause in the second of two contracts', ()
     expect(f.evidence.find((e) => e.label.startsWith('Hourly rate'))!.label).toBe('Hourly rate · Schedule 2: Scope of Service, section 3.1, page 2')
   })
 
-  it('is HIGH confidence but a potential opportunity: charging it is the MSP’s call', () => {
-    expect(confidenceOf(f)).toMatchObject({ level: 'HIGH', classification: 'potential' })
+  it('is MEDIUM, a potential opportunity: only a keyword match links the ticket to personal-device work', () => {
+    expect(confidenceOf(f)).toMatchObject({ level: 'MEDIUM', classification: 'potential' })
+    expect(confidenceOf(f).criteria.find((c) => c.id === 'structured_link')?.met).toBe(false)
   })
 })
 
@@ -497,7 +498,27 @@ describe('known answer: billing mismatch and out-of-hours rates', () => {
     const f = byRule(analyse(dataset({ clients: [c], contracts: [agreement], tickets: [t] })).findings, 'out_of_scope.after_hours')
     expect(f.estimated_value).toBe(90)
     expect(f.meta.calc).toMatchObject({ kind: 'time', base_rate: 60, multiplier: 1.5, rate: 90, rate_source: 'contract', hours_source: 'contract' })
+    // The timestamps, not the ticket wording, place the work out of hours.
     expect(confidenceOf(f).level).toBe('HIGH')
+    expect(confidenceOf(f).criteria.find((c) => c.id === 'structured_link')?.met).toBe(true)
+  })
+
+  it('shows the support-hours clause once when it is also the exclusion', () => {
+    const c = client('Once Ltd')
+    const agreement = contract(
+      c,
+      'Once MSA',
+      '2. Hours\n\n2.1 Support hours are 08:30 to 17:30, Monday to Friday. Work outside these hours is chargeable.\n\n3. Rates\n\n3.1 The standard hourly rate is £60 per hour.\n\n3.2 Work outside business hours is charged at 1.5 times the standard rate.',
+    )
+    const t = ticket(c, '603', '2026-09-12T10:00:00', 'Server restart after power cut', 60)
+    const f = byRule(analyse(dataset({ clients: [c], contracts: [agreement], tickets: [t] })).findings, 'out_of_scope.after_hours')
+    const clauses = f.evidence.filter((e) => e.source === 'agreement')
+    expect(new Set(clauses.map((e) => e.text)).size).toBe(clauses.length)
+    expect(clauses.map((e) => e.label)).toEqual([
+      'Agreement and support hours · Once MSA, section 2.1',
+      'Hourly rate · Once MSA, section 3.1',
+      'Out-of-hours rate · Once MSA, section 3.2',
+    ])
   })
 })
 
@@ -517,5 +538,38 @@ describe('known answer: time zones', () => {
     expect(isOutsideHours('2026-09-15T08:00:00Z', '08:30', '17:30')).toBe(false)
     expect(isOutsideHours('2026-09-15T08:00:00', '08:30', '17:30')).toBe(true)
     expect(isOutsideHours('2026-09-12T10:00:00', '08:30', '17:30')).toBe(true) // Saturday
+  })
+})
+
+describe('known answer: ticket wording that says the opposite', () => {
+  // An agreement that charges for onsite visits and new users at £60/h. Each
+  // ticket below has 60 non-billable minutes in business hours.
+  const c = client('Negation Ltd')
+  const agreement = contract(
+    c,
+    'Negation MSA',
+    '2. Exclusions\n\n2.1 Onsite visits are chargeable at the standard hourly rate.\n\n2.2 New user setup is chargeable.\n\n3. Rates\n\n3.1 The standard hourly rate is £60 per hour.',
+  )
+  const run = (subject: string) => analyse(dataset({ clients: [c], contracts: [agreement], tickets: [ticket(c, '701', '2026-09-15T10:00:00', subject, 60)] })).findings
+
+  it.each([
+    'Onsite visit not required, password reset',
+    'No onsite visit needed',
+    'Printer queue cleared, remote only',
+    'No need for an onsite visit, fixed remotely',
+    'Not a new user, existing account unlocked',
+  ])('raises nothing for "%s"', (subject) => {
+    expect(run(subject)).toEqual([])
+  })
+
+  it('still raises the onsite visit when the ticket says it happened: £60, Medium on a keyword match', () => {
+    const f = byRule(run('Onsite visit to replace the switch'), 'out_of_scope.onsite')
+    expect(f.estimated_value).toBe(60)
+    expect(confidenceOf(f)).toMatchObject({ level: 'MEDIUM', classification: 'potential' })
+    expect(confidenceOf(f).basis).toMatch(/keyword match/)
+  })
+
+  it('still raises the onsite visit when the remote fix failed: "could not be fixed remotely"', () => {
+    expect(byRule(run('Could not be fixed remotely, engineer attended site'), 'out_of_scope.onsite').estimated_value).toBe(60)
   })
 })

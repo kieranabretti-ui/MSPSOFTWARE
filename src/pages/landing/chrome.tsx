@@ -246,7 +246,7 @@ export function Close() {
           See what your own data shows.
         </h2>
         <p className="mt-6 max-w-[48ch] text-balance text-[length:clamp(1.25rem,1rem+1vw,1.75rem)] font-medium leading-snug tracking-[-0.02em] text-ink-2">
-          Run a free audit on the exports you already have. {TRUST_COPY.freeAudit}
+          {HOSTED ? 'Run a free audit on the exports you already have.' : 'Run a free audit on the sample exports in this evaluation version.'} {TRUST_COPY.freeAudit}
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <AuditCta location="close_primary" label="Get My Free Audit" />

@@ -138,3 +138,36 @@ describe('normaliseContractText', () => {
     expect(normaliseContractText('Page one\r\n1. Scope\f\nPage two\u0000\u0007\tend')).toBe('Page one\n1. Scope\f\nPage two\tend')
   })
 })
+
+describe('demo timeline', () => {
+  it('runs in order: uploads, then the analysis, then every decision', async () => {
+    const { analyse } = await import('../engine/analyse')
+    const { buildDemoDataset } = await import('../demo/dataset')
+    const { demoHistory } = await import('./store')
+    const ds = buildDemoDataset('ws')
+    const { findings } = mergeFindings([], analyse(ds).findings, { workspaceId: 'ws', analysisId: 'a1', at: '2026-10-08T09:00:00Z' })
+    const names = new Map(ds.clients.map((c) => [c.id, c.name]))
+    const uploads = (['clients', 'tickets', 'time_entries', 'assets', 'billing', 'contract'] as const).map((kind, i) => ({ id: `up-${i}`, kind, row_count: 1 }))
+    const h = demoHistory({ workspaceId: 'ws', actor: { id: null, email: null }, uploads, analysisId: 'a1', findings, clientName: (id) => names.get(id) ?? '', now: Date.parse('2026-10-08T12:00:00Z') })
+
+    // The log is written oldest first and stays in time order.
+    const times = h.events.map((e) => e.created_at)
+    expect(times).toEqual([...times].sort())
+    const firstDecision = h.events.findIndex((e) => e.action.startsWith('finding.') && e.action !== 'finding.created')
+    expect(firstDecision).toBeGreaterThan(0)
+    const before = h.events.slice(0, firstDecision).map((e) => e.action)
+    expect(before).toEqual([...uploads.map(() => 'upload.created'), 'analysis.run', 'finding.created'])
+    expect(h.events.slice(firstDecision).every((e) => e.action !== 'upload.created' && e.action !== 'analysis.run')).toBe(true)
+    // Imports come before the run, and the run before any decision.
+    expect(h.importedAt < h.runAt).toBe(true)
+    const decided = h.staged.filter((f) => f.decided_at)
+    expect(decided).toHaveLength(5)
+    for (const f of decided) {
+      expect(f.created_at).toBe(h.runAt)
+      expect(f.first_viewed_at! > h.runAt).toBe(true)
+      expect(f.decided_at! > f.first_viewed_at!).toBe(true)
+      expect(f.decided_at! < '2026-10-08T12:00:00Z').toBe(true)
+    }
+    expect(h.events[firstDecision].created_at > h.runAt).toBe(true)
+  })
+})

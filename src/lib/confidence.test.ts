@@ -20,16 +20,17 @@ describe('confidenceOf', () => {
       l.value += f.estimated_value
       l.monthly += f.monthly_value
     }
-    // Licence now HIGH (exact name match); margin estimates LOW (modelled).
-    expect(by.HIGH).toEqual({ count: 19, value: 2405, monthly: 243 })
-    expect(by.MEDIUM).toEqual({ count: 7, value: 610, monthly: 0 })
+    // Licence HIGH (exact name match); margin estimates LOW (modelled);
+    // out-of-scope work linked only by ticket keywords capped at MEDIUM.
+    expect(by.HIGH).toEqual({ count: 9, value: 1405, monthly: 243 })
+    expect(by.MEDIUM).toEqual({ count: 17, value: 1610, monthly: 0 })
     expect(by.LOW).toEqual({ count: 14, value: 1266, monthly: 113 })
   })
 
   it('splits the headline into high confidence and requires review without changing the total', () => {
     const split = confidenceSplit(findings)
-    expect(split.high).toEqual({ count: 19, value: 2405, monthly: 243 })
-    expect(split.review).toEqual({ count: 21, value: 1876, monthly: 113 })
+    expect(split.high).toEqual({ count: 9, value: 1405, monthly: 243 })
+    expect(split.review).toEqual({ count: 31, value: 2876, monthly: 113 })
     expect(split.total).toEqual({ count: 40, value: 4281, monthly: 356 })
   })
 
@@ -98,8 +99,10 @@ describe('confidenceOf', () => {
   })
 
   it('reads match strength from the stored score for rows saved before it was recorded', () => {
-    expect(confidenceOf({ confidence: 80, meta: { rule: 'out_of_scope.onsite', period_values: {}, calc: time({ match: undefined }) } }).level).toBe('MEDIUM')
-    expect(confidenceOf({ confidence: 94, meta: { rule: 'out_of_scope.onsite', period_values: {}, calc: time({ match: undefined }) } }).level).toBe('HIGH')
+    const loose = confidenceOf({ confidence: 80, meta: { rule: 'out_of_scope.onsite', period_values: {}, calc: time({ match: undefined }) } })
+    expect(loose.criteria.find((c) => c.id === 'strong_text_match')?.met).toBe(false)
+    const strong = confidenceOf({ confidence: 94, meta: { rule: 'out_of_scope.onsite', period_values: {}, calc: time({ match: undefined }) } })
+    expect(strong.criteria.find((c) => c.id === 'strong_text_match')?.met).toBe(true)
   })
 
   it('drops out-of-scope work valued at the Settings rate to Medium', () => {
@@ -108,8 +111,18 @@ describe('confidenceOf', () => {
     expect(r.criteria.find((c) => c.id === 'rate_from_agreement')?.met).toBe(false)
   })
 
-  it('keeps a HIGH out-of-scope finding a potential opportunity, not a confirmed one', () => {
-    expect(confidenceOf({ confidence: 95, meta: { rule: 'out_of_scope.onsite', period_values: {}, calc: time({}) } })).toMatchObject({ level: 'HIGH', classification: 'potential' })
+  it('caps out-of-scope work linked only by ticket keywords at Medium, even with every other check met', () => {
+    const r = confidenceOf({ confidence: 95, meta: { rule: 'out_of_scope.onsite', period_values: {}, calc: time({}) } })
+    expect(r).toMatchObject({ level: 'MEDIUM', classification: 'potential' })
+    expect(r.basis).toMatch(/keyword match/)
+    expect(r.criteria.find((c) => c.id === 'structured_link')?.met).toBe(false)
+    expect(r.criteria.filter((c) => c.id !== 'structured_link').every((c) => c.met)).toBe(true)
+  })
+
+  it('keeps a HIGH out-of-hours finding a potential opportunity, not a confirmed one', () => {
+    const r = confidenceOf({ confidence: 95, meta: { rule: 'out_of_scope.after_hours', period_values: {}, calc: time({ after_hours: true, hours_source: 'contract' }) } })
+    expect(r).toMatchObject({ level: 'HIGH', classification: 'potential' })
+    expect(r.criteria.find((c) => c.id === 'structured_link')?.met).toBe(true)
   })
 
   it('says when no contract was there to check unbilled work', () => {

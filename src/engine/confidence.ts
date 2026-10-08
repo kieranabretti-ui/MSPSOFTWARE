@@ -10,7 +10,9 @@ import type { ConfidenceLevel, FindingClass, FindingDraft } from './types'
 // documents the same table.
 //
 //   HIGH   direct record evidence on both sides of the comparison and a
-//          deterministic calculation with no defaulted inputs.
+//          deterministic calculation with no defaulted inputs. A link that
+//          rests only on a keyword match in ticket text is an interpretation,
+//          so it caps the finding at MEDIUM.
 //   MEDIUM records support it, but an input is defaulted or assumed (a
 //          Settings price, rate or hours; the clients file instead of the
 //          agreement; work that may have been goodwill) or a person needs to
@@ -21,12 +23,14 @@ import type { ConfidenceLevel, FindingClass, FindingDraft } from './types'
 //   confirmed    HIGH, and a pure record-against-record discrepancy (seats,
 //                licences, recurring charges).
 //   potential    MEDIUM, or HIGH where acting on it still needs judgement
-//                (out-of-scope work: whether to charge it is the MSP's call).
+//                (out-of-hours work outside the agreed hours: whether to
+//                charge it is the MSP's call).
 //   investigate  LOW, or any modelled estimate.
 
 export type CriterionId =
   | 'agreement_clause'
   | 'strong_text_match'
+  | 'structured_link'
   | 'rate_from_agreement'
   | 'hours_from_agreement'
   | 'baseline_from_agreement'
@@ -62,8 +66,8 @@ export interface ConfidenceReading {
 // Published so the methodology page and the PDF can render the same table the
 // code applies.
 export const CONFIDENCE_DEFINITIONS: Record<ConfidenceLevel, string> = {
-  HIGH: 'Direct evidence in your records on both sides of the comparison, and a deterministic calculation with no defaulted inputs.',
-  MEDIUM: 'Your records support it, but an input is assumed (a Settings price, rate or hours, or the clients file rather than the agreement) or a person needs to check something the data cannot show.',
+  HIGH: 'Direct evidence in your records on both sides of the comparison, and a deterministic calculation with no defaulted inputs. A keyword match in ticket text is never enough on its own.',
+  MEDIUM: 'Your records support it, but an input is assumed (a Settings price, rate or hours, or the clients file rather than the agreement), the link rests on a keyword match in ticket text, or a person needs to check something the data cannot show.',
   LOW: 'The evidence is incomplete or ambiguous, or the value is modelled rather than counted.',
 }
 
@@ -115,6 +119,11 @@ export function confidenceOf(f: Pick<FindingDraft, 'confidence' | 'meta'>): Conf
       ? [c('hours_from_agreement', hoursOk, hoursOk ? 'The support hours are stated in the agreement.' : 'The support hours come from your Settings, not the agreement.')]
       : []
     if (prefix === 'out_of_scope') {
+      // Which kind of work a ticket is comes from its wording: a keyword match
+      // is an interpretation, so it can't be HIGH on its own. Out-of-hours work
+      // is the exception: the time entries' own timestamps place it outside the
+      // support window, a structured signal rather than a reading of the text.
+      const structured = rule === 'out_of_scope.after_hours'
       const clauseOk = !calc.clause_conflict
       const criteria = [
         c(
@@ -123,6 +132,13 @@ export function confidenceOf(f: Pick<FindingDraft, 'confidence' | 'meta'>): Conf
           clauseOk ? 'An agreement clause excludes or charges for this kind of work, and no other wording in it says the work is included.' : 'An agreement clause excludes or charges for this kind of work, but other wording in the agreement says it is included.',
         ),
         c('strong_text_match', strong, strong ? "The ticket's wording clearly matches that kind of work." : "The ticket's wording is a looser match for that kind of work."),
+        c(
+          'structured_link',
+          structured,
+          structured
+            ? 'The time entries themselves show the work was outside the support hours.'
+            : 'Only the ticket wording links it to this kind of work. No structured field in your records (such as a PSA work type) says so.',
+        ),
         c('rate_from_agreement', rateOk, rateText),
         ...hoursCrit,
       ]
@@ -130,6 +146,8 @@ export function confidenceOf(f: Pick<FindingDraft, 'confidence' | 'meta'>): Conf
       if (!hoursOk) return reading(rule, 'MEDIUM', 'Compared with your default support hours in Settings, not hours stated in the contract.', criteria)
       if (!strong) return reading(rule, 'MEDIUM', "The contract excludes this kind of work, but the ticket's wording is a looser match. Check the ticket first.", criteria)
       if (!rateOk) return reading(rule, 'MEDIUM', 'The contract clause and the ticket both support this, but the hourly rate comes from your Settings, not the agreement.', criteria)
+      if (!structured)
+        return reading(rule, 'MEDIUM', "The contract excludes this kind of work and the ticket's wording reads like it, but that link is a keyword match, not a field in your records. Read the ticket before charging.", criteria)
       return reading(rule, 'HIGH', 'The contract clause and the ticket both support this, and the rate is the one in the agreement.', criteria)
     }
     if (rule === 'unbilled.billing_mismatch') {

@@ -258,6 +258,50 @@ const analyseFor = async (ws: Workspace, d: WorkspaceData) => {
   return { analysis, ...merged }
 }
 
+// The demo opens part-way through the workflow (see demo/stages.ts), with the
+// decisions a person would have recorded, set before saving so the first load
+// already shows them. The history runs in order: imports, then the analysis
+// that found the opportunities, then the decisions. The run and its findings
+// are dated a day before the earliest decision, never after it. Pure, so the
+// order is tested (store.test.ts).
+export function demoHistory(input: {
+  workspaceId: string
+  actor: { id: string | null; email: string | null }
+  uploads: Pick<Upload, 'id' | 'kind' | 'row_count'>[]
+  analysisId: string
+  findings: Finding[]
+  clientName: (id: string) => string
+  now: number
+}): { importedAt: string; runAt: string; staged: Finding[]; events: AuditEvent[] } {
+  const { workspaceId: wsId, actor, uploads, analysisId, findings } = input
+  const daysAgo = (n: number, h = 10) => new Date(input.now - n * 864e5 - h * 36e5).toISOString()
+  const stages = new Map(applyDemoStages(findings, input.clientName).map((s) => [s.id, s]))
+  const start = Math.max(...[...stages.values()].map((s) => s.days_ago), 0) + 1
+  const importedAt = daysAgo(start, 12)
+  const runAt = daysAgo(start, 11.5)
+  const staged = findings.map((f) => {
+    const s = stages.get(f.id)
+    const dated = { ...f, created_at: runAt, updated_at: runAt }
+    return s ? { ...dated, status: s.status, owner: s.owner, decision_note: s.note, decided_at: daysAgo(s.days_ago), first_viewed_at: daysAgo(s.days_ago, 11), updated_at: daysAgo(s.days_ago) } : dated
+  })
+  // The activity the history implies: the imports, the first run and the
+  // decisions above, oldest first.
+  const events: AuditEvent[] = [
+    ...uploads.map((u) => auditEvent(wsId, actor, 'upload.created', { type: 'upload', id: u.id }, { kind: u.kind, rows: u.row_count }, importedAt)),
+    auditEvent(wsId, actor, 'analysis.run', { type: 'analysis', id: analysisId }, { findings: findings.length, new: findings.length, stale: 0, removed: 0, source: 'demo' }, runAt),
+    auditEvent(wsId, actor, 'finding.created', { type: 'analysis', id: analysisId }, { count: findings.length }, runAt),
+  ]
+  for (const s of [...stages.values()].sort((a, b) => b.days_ago - a.days_ago)) {
+    const target = { type: 'finding', id: s.id }
+    events.push(auditEvent(wsId, actor, 'finding.viewed', target, {}, daysAgo(s.days_ago, 11)))
+    events.push(auditEvent(wsId, actor, 'finding.owner', target, { assigned: true }, daysAgo(s.days_ago, 10.8)))
+    if (s.note) events.push(auditEvent(wsId, actor, 'finding.note', target, { cleared: false, length: s.note.length }, daysAgo(s.days_ago, 10.5)))
+    const path: FindingStatus[] = ['open', 'reviewing', 'valid', 'resolved']
+    for (let i = 1; i <= path.indexOf(s.status); i++) events.push(auditEvent(wsId, actor, 'finding.stage_changed', target, { from: path[i - 1], to: path[i], via: 'detail' }, daysAgo(s.days_ago, 10.2 - i * 0.1)))
+  }
+  return { importedAt, runAt, staged, events }
+}
+
 // Contract text keeps a form feed between PDF pages so a clause can be cited
 // by page. Normalises line endings and strips other control characters.
 export function normaliseContractText(text: string): string {
@@ -417,38 +461,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     // the decisions a person would have recorded. They are set before saving,
     // so the first load already shows them.
     const names = new Map(fresh.clients.map((c) => [c.id, c.name]))
-    const daysAgo = (n: number, h = 10) => new Date(Date.now() - n * 864e5 - h * 36e5).toISOString()
-    const stages = new Map(applyDemoStages(findings, (id) => names.get(id) ?? '').map((s) => [s.id, s]))
-    // The history runs in order: imports, then the analysis that found the
-    // opportunities, then the decisions. The run and its findings are dated a
-    // day before the earliest decision, never after it.
-    const start = Math.max(...[...stages.values()].map((s) => s.days_ago), 0) + 1
-    const importedAt = daysAgo(start, 12)
-    const runAt = daysAgo(start, 11.5)
-    const staged = findings.map((f) => {
-      const s = stages.get(f.id)
-      const dated = { ...f, created_at: runAt, updated_at: runAt }
-      return s ? { ...dated, status: s.status, owner: s.owner, decision_note: s.note, decided_at: daysAgo(s.days_ago), first_viewed_at: daysAgo(s.days_ago, 11), updated_at: daysAgo(s.days_ago) } : dated
-    })
+    const demoActor = { id: userRef.current?.id ?? null, email: userRef.current?.email ?? null }
+    const { importedAt, runAt, staged, events } = demoHistory({ workspaceId: ws.id, actor: demoActor, uploads, analysisId: analysis.id, findings, clientName: (id) => names.get(id) ?? '', now: Date.now() })
     onStage?.('opening')
     await b.upsert(ws.id, { uploads: uploads.map((u) => ({ ...u, created_at: importedAt })) })
     await b.saveAnalysis(ws.id, { ...analysis, created_at: runAt }, staged)
-    // The activity the demo's history implies: the imports, the first run and
-    // the decisions above, oldest first.
-    const demoActor = { id: userRef.current?.id ?? null, email: userRef.current?.email ?? null }
-    const events: AuditEvent[] = [
-      ...uploads.map((u) => auditEvent(ws.id, demoActor, 'upload.created', { type: 'upload', id: u.id }, { kind: u.kind, rows: u.row_count }, importedAt)),
-      auditEvent(ws.id, demoActor, 'analysis.run', { type: 'analysis', id: analysis.id }, { findings: findings.length, new: findings.length, stale: 0, removed: 0, source: 'demo' }, runAt),
-      auditEvent(ws.id, demoActor, 'finding.created', { type: 'analysis', id: analysis.id }, { count: findings.length }, runAt),
-    ]
-    for (const s of [...stages.values()].sort((a, b) => b.days_ago - a.days_ago)) {
-      const target = { type: 'finding', id: s.id }
-      events.push(auditEvent(ws.id, demoActor, 'finding.viewed', target, {}, daysAgo(s.days_ago, 11)))
-      events.push(auditEvent(ws.id, demoActor, 'finding.owner', target, { assigned: true }, daysAgo(s.days_ago, 10.8)))
-      if (s.note) events.push(auditEvent(ws.id, demoActor, 'finding.note', target, { cleared: false, length: s.note.length }, daysAgo(s.days_ago, 10.5)))
-      const path: FindingStatus[] = ['open', 'reviewing', 'valid', 'resolved']
-      for (let i = 1; i <= path.indexOf(s.status); i++) events.push(auditEvent(ws.id, demoActor, 'finding.stage_changed', target, { from: path[i - 1], to: path[i], via: 'detail' }, daysAgo(s.days_ago, 10.2 - i * 0.1)))
-    }
     for (const e of events) await b.logEvent(ws.id, e)
     setData(await b.loadAll(ws.id))
   }, [])

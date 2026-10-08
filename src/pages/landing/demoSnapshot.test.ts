@@ -19,8 +19,8 @@ describe('landing demo snapshot', () => {
   })
 
   it('splits the headline into High confidence and Requires review', () => {
-    expect(DEMO.totals.highConfidence).toBe(2405)
-    expect(DEMO.totals.requiresReview).toBe(1876)
+    expect(DEMO.totals.highConfidence).toBe(1405)
+    expect(DEMO.totals.requiresReview).toBe(2876)
     expect(DEMO.totals.highConfidence + DEMO.totals.requiresReview).toBe(DEMO.totals.identified)
     expect(DEMO.totals.highConfidence).toBe(DEMO.levels.find((l) => l.level === 'HIGH')?.value)
   })
