@@ -8,9 +8,9 @@
 | Infrastructure | £2.50 per customer | pricing-strategy.md (a budget, not measured) |
 | AI | £3.00 per customer | pricing-strategy.md ("deliberately generous budget, not measured usage") |
 | Tools | £1.00 per customer | pricing-strategy.md |
-| Founder salary | £60k x 1.2 on-costs = £6,000 a month | pricing-strategy.md (the model pays the founder from day 1). Kieran's real draw is unknown: ask |
+| Founder salary | £0 in year 1 | Kieran, 9 Oct 2026 ("No pay"). The £60k x 1.2 comparison from pricing-strategy.md is kept in numbers-founder-salary.json |
 | Platform fixed | £60 a month at 25 customers or fewer | pricing-strategy.md |
-| Non-people opex | £2,500 a month at 10 customers | pricing-strategy.md |
+| Non-people opex (salaried comparison only) | £2,500 a month | pricing-strategy.md |
 | Lean opex | £1,000 a month | **Estimate**: software, accounting, insurance and a little marketing, with no paid team |
 | Legal review | £1,000 | **Estimate**: drafts already exist in /mnt/project-files/headroom/legal/; this is a solicitor's review and a DPA |
 | Cyber Essentials | £350 | **Estimate**: several panel owners asked for it; check the certification body's current price |

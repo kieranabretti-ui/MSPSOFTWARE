@@ -1,27 +1,72 @@
 {
-  "business": "Headroom (Growth plan, founder-led year 1)",
-  "unit": "paying MSP-month (one Growth customer for one month)",
-  "price": 240,
-  "variable": [
-    {"label": "Stripe card fee (1.5% + 20p)", "cost": 3.80},
-    {"label": "Stripe Billing (0.7%)", "cost": 1.68},
-    {"label": "Infrastructure (Supabase, hosting)", "cost": 2.50},
-    {"label": "AI budget (explanations, contract PDF parsing)", "cost": 3.00},
-    {"label": "Tools (email, monitoring, PDF rendering)", "cost": 1.00}
-  ],
-  "fixed_monthly": [
-    {"label": "Founder salary £60k x 1.2 on-costs", "cost": 6000},
-    {"label": "Platform (founder-only stage)", "cost": 60},
-    {"label": "Non-people opex (marketing, software, legal, accounting, insurance)", "cost": 2500}
-  ],
-  "startup": [
-    {"label": "Legal review of terms, privacy policy and DPA (estimate)", "cost": 1000},
-    {"label": "Cyber Essentials certification (estimate)", "cost": 350},
-    {"label": "ICO data protection fee, tier 1 (check current fee)", "cost": 52},
-    {"label": "Launch marketing: events, LinkedIn, content (estimate)", "cost": 1000}
-  ],
-  "days_per_month": 1,
-  "capacity_per_day": 25,
-  "plan_per_day": 50,
-  "ramp_per_day": [0.0, 0.6, 1.5, 2.6, 4.1, 5.4, 6.8, 8.4, 9.9, 11.4, 12.9, 14.3]
+ "business": "Headroom (Growth plan, founder takes no salary in year 1)",
+ "unit": "paying MSP-month (one Growth customer for one month)",
+ "price": 240,
+ "variable": [
+  {
+   "label": "Stripe card fee (1.5% + 20p)",
+   "cost": 3.8
+  },
+  {
+   "label": "Stripe Billing (0.7%)",
+   "cost": 1.68
+  },
+  {
+   "label": "Infrastructure (Supabase, hosting)",
+   "cost": 2.5
+  },
+  {
+   "label": "AI budget (explanations, contract PDF parsing)",
+   "cost": 3.0
+  },
+  {
+   "label": "Tools (email, monitoring, PDF rendering)",
+   "cost": 1.0
+  }
+ ],
+ "fixed_monthly": [
+  {
+   "label": "Platform (founder-only stage)",
+   "cost": 60
+  },
+  {
+   "label": "Lean non-people opex (software, accounting, insurance, small marketing; estimate)",
+   "cost": 1000
+  }
+ ],
+ "startup": [
+  {
+   "label": "Legal review of terms, privacy policy and DPA (estimate)",
+   "cost": 1000
+  },
+  {
+   "label": "Cyber Essentials certification (estimate)",
+   "cost": 350
+  },
+  {
+   "label": "ICO data protection fee, tier 1 (check current fee)",
+   "cost": 52
+  },
+  {
+   "label": "Launch marketing: events, LinkedIn, content (estimate)",
+   "cost": 1000
+  }
+ ],
+ "days_per_month": 1,
+ "capacity_per_day": 25,
+ "plan_per_day": 50,
+ "ramp_per_day": [
+  0.0,
+  0.6,
+  1.5,
+  2.6,
+  4.1,
+  5.4,
+  6.8,
+  8.4,
+  9.9,
+  11.4,
+  12.9,
+  14.3
+ ]
 }
