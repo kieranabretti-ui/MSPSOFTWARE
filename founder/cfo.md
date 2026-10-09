@@ -1,6 +1,6 @@
 # CFO: Headroom
 
-Updated 10 October 2026. **Kieran takes no salary from Headroom in year 1**, so this is the main case. Prices are the locked ones: Growth £240 a month + VAT. Revenue below is before VAT (UK VAT at 20% is added on top and passed to HMRC). The model counts Growth only, so Pro is upside. **Not financial, tax or legal advice: an accountant should check the structure and tax before money moves.**
+Updated 9 October 2026. **Kieran takes no salary from Headroom in year 1**, so this is the main case. Prices are the locked ones: Growth £240 a month + VAT. Revenue below is before VAT (UK VAT at 20% is added on top and passed to HMRC). The model counts Growth only, so Pro is upside. **Not financial, tax or legal advice: an accountant should check the structure and tax before money moves.**
 
 The tool's "per day" is used here as "per month": one unit is one paying customer for one month. Inputs are in `founder/numbers.json`. The salaried comparison is kept in `founder/numbers-founder-salary.json`. Sources are in `founder/cfo-sources.md`.
 
